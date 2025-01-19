@@ -12,4 +12,4 @@ test:
 	uv run pytest tests
 
 coverage: # for ci purposes
-	uv run pytest tests --cov-branch --cov-report xml:./coverage.xml --cov=cyclops -n auto
+	uv run pytest tests --cov-branch --cov-report xml:./coverage.xml --cov=cyclops
