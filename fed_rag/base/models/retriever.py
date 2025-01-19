@@ -1,0 +1,1 @@
+"""Base Retriever Model"""
