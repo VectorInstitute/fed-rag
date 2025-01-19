@@ -33,7 +33,6 @@ jobs:
         shell: bash
         run: uv pip install pre-commit
 
-
       - name: Run linter and formatter
         run: |
           uv run make lint
