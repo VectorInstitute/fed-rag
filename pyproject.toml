@@ -2,18 +2,35 @@
 name = "fed-rag"
 version = "0.0.1"
 description = "A framework for fine-tuning retrieval-augmented generation (RAG) systems."
+license = "MIT"
+keywords = ["machine learning", "federated learning", "deep learning", "llms", "rag", "retrieval", "semantic search"]
+authors = [
+    {name = "Andrei Fajardo", email = "andrei.fajardo@vectorinstitute.ai"},
+    {name = "David Emerson", email = "david.emerson@vectorinstitute.ai"},
+]
+maintainers = [
+    {name = "Chi Ho Cheung", email = "chiho00hk@hotmail.com"}
+]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10,<4.0"
 dependencies = [
+    "asyncio>=3.4.3",
     "flwr>=1.14.0",
     "pydantic>=2.10.5",
+    "pydantic-settings>=2.7.1",
     "torch>=2.5.1",
+    "typing-extensions>=4.12.2",
 ]
 
 [dependency-groups]
 dev = [
     "black>=24.10.0",
+    "codespell>=2.3.0",
+    "ipykernel>=6.29.5",
     "isort>=5.13.2",
+    "pylint>=3.3.3",
     "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.2",
+    "pytest-mock>=3.14.0",
     "ruff>=0.9.2",
 ]
