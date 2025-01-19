@@ -57,3 +57,8 @@ repos:
     hooks:
       - id: isort
         args: [--profile=black, --line-length=79]
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.5.8
+    hooks:
+      - id: uv-lock
