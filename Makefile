@@ -9,7 +9,7 @@ lint:	## Run linters: pre-commit (black, ruff, codespell) and mypy
 	pre-commit install && git ls-files | xargs pre-commit run --show-diff-on-failure --files
 
 test:
-	uv run pytest tests
+	pytest tests
 
 coverage: # for ci purposes
-	uv run pytest --cov-branch --cov-report=xml
+	pytest --cov fed_rag --cov-report=xml tests
