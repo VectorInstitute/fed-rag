@@ -1,4 +1,4 @@
-name: Unit Testing
+name: Unit Testing and Upload Coverage
 on:
   push:
     branches:
@@ -31,4 +31,13 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run make test
+          uv run make coverage
+
+      - if: matrix.python-version == '3.12'
+        name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: VectorInstitute/fed-rag
+          fail_ci_if_error: true
+          verbose: true
