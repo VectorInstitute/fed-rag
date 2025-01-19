@@ -19,6 +19,7 @@ jobs:
         with:
           # Install a specific version of uv.
           version: "0.5.21"
+          enable-cache: true
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
@@ -28,10 +29,10 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
-      - name: Enable caching
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
+      - name: Install pre-commit
+        shell: bash
+        run: uv pip install pre-commit
+
 
       - name: Run linter and formatter
         run: |
