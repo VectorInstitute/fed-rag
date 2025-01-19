@@ -7,7 +7,7 @@ on:
 
 jobs:
   release_github:
-    needs: deploy
+    # needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Create GitHub Release
@@ -19,4 +19,4 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: false
-          prerelease: false
+          prerelease: true
