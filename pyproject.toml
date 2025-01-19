@@ -1,0 +1,19 @@
+[project]
+name = "fed-rag"
+version = "0.0.1"
+description = "A framework for fine-tuning retrieval-augmented generation (RAG) systems."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flwr>=1.14.0",
+    "pydantic>=2.10.5",
+    "torch>=2.5.1",
+]
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "isort>=5.13.2",
+    "pytest>=8.3.4",
+    "ruff>=0.9.2",
+]

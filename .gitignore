@@ -1,0 +1,7 @@
+# Local development
+venv/
+.venv/
+.ipynb_checkpoints
+.__pycache__
+__pycache__
+dev_notebooks/
