@@ -10,3 +10,6 @@ lint:	## Run linters: pre-commit (black, ruff, codespell) and mypy
 
 test:
 	uv run pytest tests
+
+coverage: # for ci purposes
+	uv run pytest tests --cov-branch --cov-report=xml
