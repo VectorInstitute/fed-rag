@@ -13,7 +13,7 @@ dev = [
 
 [project]
 name = "fed-rag"
-version = "0.0.1"
+version = "0.0.1-a1"
 description = "A framework for federated fine-tuning of retrieval-augmented generation (RAG) systems."
 license = "MIT"
 keywords = ["machine learning", "federated learning", "deep learning", "llms", "rag", "retrieval", "semantic search"]
