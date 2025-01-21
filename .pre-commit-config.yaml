@@ -44,8 +44,7 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        args: [--config-file=./pyproject.toml, --package=fed_rag]
-        entry: bash -c "export MYPYPATH=src"
+        entry: bash -c 'mypy --config-file=mypy.ini "$@"' --
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
     hooks:

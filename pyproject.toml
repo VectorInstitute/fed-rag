@@ -40,24 +40,3 @@ dependencies = [
   "torch>=2.5.1",
   "typing-extensions>=4.12.2"
 ]
-
-[tool.mypy]
-ignore_missing_imports = true
-pretty = true
-namespace_packages = true
-explicit_package_bases = true
-disallow_untyped_defs = true
-non_interactive = true
-warn_unused_configs = true
-allow_any_generics = false
-allow_subclassing_any = false
-allow_untyped_calls = false
-allow_incomplete_defs = false
-check_untyped_defs = true
-allow_untyped_decorators = false
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-implicit_reexport = false
-strict_equality = true
-extra_checks = true
