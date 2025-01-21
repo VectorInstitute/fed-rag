@@ -33,9 +33,7 @@ class BaseTaskModel(BaseModel):
         """
 
     @abstractmethod
-    def train(
-        self, train_data: DataT, val_data: DataT, **kwargs: Any
-    ) -> dict[str, float]:
+    def train(self, train_data: DataT, val_data: DataT, **kwargs: Any):
         """Train the base model using the supplied `trainer_callback`.
 
         Args:
