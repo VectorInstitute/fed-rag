@@ -44,7 +44,13 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        args: [--config-file=pyproject.toml]
+        args: [
+          --namespace-packages,
+          --explicit-package-bases,
+          --disallow-untyped-defs,
+          --ignore-missing-imports,
+          --python-version=3.12,
+        ]
         entry: bash -c "export MYPYPATH=src"
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
