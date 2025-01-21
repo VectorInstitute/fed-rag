@@ -7,10 +7,10 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from fed_rag.base.models.base_task_model import BaseTaskModel
+from fed_rag.base.models.base_fl_task import BaseFLTask
 
 
-class PyTorchTaskModel(BaseTaskModel):
+class PyTorchFLTask(BaseFLTask):
     net: nn.Module
 
     def get_weights(self) -> List[np.ndarray]:
@@ -49,4 +49,4 @@ class PyTorchTaskModel(BaseTaskModel):
         Returns:
             dict[str, float]: A dictionary containing the results of the training.
         """
-        return self.train_callback(train_data=train_data, val_data=val_data)
+        ...

@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 DataT: TypeAlias = Union[Iterable[Dict[str, Any]], DataLoader]
 
 
-class BaseTaskModel(BaseModel):
+class BaseFLTask(BaseModel):
     @abstractmethod
     def get_weights(self) -> List[np.ndarray]:
         """Get weights of the TorchModel's `net`.
