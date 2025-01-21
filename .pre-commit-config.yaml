@@ -44,7 +44,11 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: bash -c "export MYPYPATH=src && mypy --config-file pyproject.toml"
+        args:
+          [
+            --config-file=mypy.ini,
+          ]
+        entry: bash -c "export MYPYPATH=src"
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
     hooks:
