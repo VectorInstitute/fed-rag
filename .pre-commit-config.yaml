@@ -45,7 +45,7 @@ repos:
       - id: mypy
         name: mypy
         pass_filenames: false
-        entry: uv run mypy --config-file pyproject.toml
+        entry: python3 -m mypy --config-file pyproject.toml
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
     hooks:
