@@ -2,15 +2,15 @@ import flwr as fl
 import torch
 from torch.utils.data import DataLoader
 
-from fed_rag import create_fl_system_from_trainer
-from fed_rag.decorators import trainer
+from fed_rag import fl_task_from_trainloop
+from fed_rag.decorators import federate
 
 # define your PyTorch model
 model: torch.nn.Module = ...
 
 
 # define your train loop, wrap it with @trainer decorator
-@trainer
+@federate.pytorch
 def train_loop(
     model: torch.nn.Module,
     train_data: DataLoader,
@@ -23,19 +23,19 @@ def train_loop(
 
 
 # create your fl system
-fl_system = create_fl_system_from_trainer(trainer=train_loop)
+fl_task = fl_task_from_trainloop(trainer=train_loop)
 
 
 ## What can you do with your fl system?
 
 ### 1. simulate a run
-sim_results = fl_system.simulate(num_clients=2, strategy="fedavg")
+sim_results = fl_task.simulate(num_clients=2, strategy="fedavg")
 
 ### 2. start server
 fl.server.start_server(
-    server=fl_system.server,
+    server=fl_task.server,
     server_address="0.0.0.0:8080",
 )
 
 ### 3. start client
-fl.client.start_client(server_address="0.0.0.0:8080", client=fl_system.client)
+fl.client.start_client(server_address="0.0.0.0:8080", client=fl_task.client)
