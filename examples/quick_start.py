@@ -23,7 +23,7 @@ def train_loop(
 
 
 # create your fl system
-fl_task = fl_task_from_trainloop(trainer=train_loop)
+fl_task = train_loop.to_fl_task()
 
 
 ## What can you do with your fl system?

@@ -1,15 +1,35 @@
 """Base FL Task"""
 
-from abc import abstractmethod
-from typing import Any, Dict, Iterable, List, TypeAlias, Union
+from abc import abstractmethod, ABC
+from typing import Any, Callable
 
-import numpy as np
 from pydantic import BaseModel
-from torch.utils.data import DataLoader
 
-DataT: TypeAlias = Union[Iterable[Dict[str, Any]], DataLoader]
+from flwr.client.client import Client
+from flwr.server.server import Server
 
 
-class BaseFLTask(BaseModel):
-    model: Any
-    training_loop: Any
+class BaseFLTask(BaseModel, ABC):
+
+    @property
+    @abstractmethod
+    def model(self) -> Any: ...
+
+    @property
+    @abstractmethod
+    def training_loop(self) -> Callable: ...
+
+    def simulate(self, num_clients, **kwargs) -> Any:
+        """Simulate the FL task.
+
+        Either use flwr's simulation tools, or create our own here.
+        """
+        ...
+
+    def server(self) -> Server:
+        """Create a flwr.Server object."""
+        ...
+
+    def client(self) -> Client:
+        """Create a flwr.Client object."""
+        ...
