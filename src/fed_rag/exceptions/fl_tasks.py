@@ -1,0 +1,2 @@
+class MissingFLTaskConfig(Exception):
+    pass

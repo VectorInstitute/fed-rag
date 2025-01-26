@@ -1,9 +1,11 @@
+from typing import Any
+
 import flwr as fl
 import torch
 from torch.utils.data import DataLoader
 
-from fed_rag import fl_task_from_trainloop
 from fed_rag.decorators import federate
+from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
 # define your PyTorch model
 model: torch.nn.Module = ...
@@ -17,13 +19,13 @@ def train_loop(
     val_data: DataLoader,
     num_epochs: int,
     learning_rate: float,
-):
+) -> Any:
     """My custom train loop."""
     ...
 
 
 # create your fl system
-fl_task = train_loop.to_fl_task()
+fl_task = PyTorchFLTask.from_training_loop(train_loop)
 
 
 ## What can you do with your fl system?

@@ -1,22 +1,21 @@
 """Decorators"""
 
-from functools import wraps
-from typing import Any, Callable
+from typing import Callable
 
 
 class TrainerDecorators:
-
-    def pytorch(func: Callable) -> Callable:
-        @wraps(func)
-        def decorator(*func_args: Any, **func_kwargs: Any) -> Any:
+    def pytorch(self, func: Callable) -> Callable:
+        def decorator(func: Callable) -> Callable:
             # inspect func sig
 
             # find nn.Model
 
             # store fl_task config
-            func.__fl_task_config = ...
+            func.__fl_task_config = None  # type: ignore[attr-defined]
 
-        return decorator
+            return func
+
+        return decorator(func)
 
 
 federate = TrainerDecorators()
