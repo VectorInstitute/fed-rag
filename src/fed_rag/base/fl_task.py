@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from flwr.client.client import Client
 from flwr.server.server import Server
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing_extensions import Self
 
 from fed_rag.exceptions import MissingFLTaskConfig
@@ -16,6 +16,8 @@ class BaseFLTaskConfig(BaseModel):
 
 
 class BaseFLTask(BaseModel, ABC):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     @property
     @abstractmethod
     def net(self) -> Any:
@@ -34,8 +36,10 @@ class BaseFLTask(BaseModel, ABC):
     @classmethod
     @abstractmethod
     def from_training_loop(cls, training_loop: Callable) -> Self:
-        cfg = getattr(training_loop, "__fl_task_config", None)
-        if not cfg:
+        try:
+            cfg = getattr(training_loop, "__fl_task_config")
+        except AttributeError:
+            ...
             msg = (
                 "`__fl_task_config` has not been set on training loop. Make "
                 "sure to decorate your training loop with the appropriate "

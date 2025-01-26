@@ -21,7 +21,7 @@ def train_loop(
     learning_rate: float,
 ) -> Any:
     """My custom train loop."""
-    ...
+    pass
 
 
 # create your fl system

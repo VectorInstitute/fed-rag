@@ -11,7 +11,7 @@ class TrainerDecorators:
             # find nn.Model
 
             # store fl_task config
-            func.__fl_task_config = None  # type: ignore[attr-defined]
+            func.__setattr__("__fl_task_config", {})  # type: ignore[attr-defined]
 
             return func
 
