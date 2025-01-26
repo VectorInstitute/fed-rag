@@ -39,7 +39,6 @@ class BaseFLTask(BaseModel, ABC):
         try:
             cfg = getattr(training_loop, "__fl_task_config")
         except AttributeError:
-            ...
             msg = (
                 "`__fl_task_config` has not been set on training loop. Make "
                 "sure to decorate your training loop with the appropriate "
