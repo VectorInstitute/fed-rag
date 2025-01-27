@@ -30,22 +30,35 @@ class BaseFLTask(BaseModel, ABC):
 
     @classmethod
     @abstractmethod
-    def from_config(cls, cfg: BaseFLTaskConfig) -> Self:
+    def from_configs(
+        cls, trainer_cfg: BaseFLTaskConfig, tester_cfg: Any
+    ) -> Self:
         ...
 
     @classmethod
     @abstractmethod
-    def from_training_loop(cls, training_loop: Callable) -> Self:
+    def from_trainer_and_tester(
+        cls, trainer: Callable, tester: Callable
+    ) -> Self:
         try:
-            cfg = getattr(training_loop, "__fl_task_config")
+            trainer_cfg = getattr(trainer, "__fl_task_trainer_config")
         except AttributeError:
             msg = (
-                "`__fl_task_config` has not been set on training loop. Make "
+                "`__fl_task_trainer_config` has not been set on training loop. Make "
                 "sure to decorate your training loop with the appropriate "
                 "decorator."
             )
             raise MissingFLTaskConfig(msg)
-        return cls.from_config(cfg)
+
+        try:
+            tester_cfg = getattr(tester, "__fl_task_tester_config")
+        except AttributeError:
+            msg = (
+                "`__fl_task_tester_config` has not been set on tester callable. Make "
+                "sure to decorate your tester with the appropriate decorator."
+            )
+            raise MissingFLTaskConfig(msg)
+        return cls.from_configs(trainer_cfg, tester_cfg)
 
     def simulate(self, num_clients: int, **kwargs: Any) -> Any:
         """Simulate the FL task.
