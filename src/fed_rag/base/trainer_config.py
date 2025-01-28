@@ -44,3 +44,35 @@ class BaseTrainerConfig(BaseModel):
         if self._extra_train_kwargs:
             data["_extra_train_kwargs"] = self._extra_train_kwargs
         return data  # type: ignore[no-any-return]
+
+    def __getattr__(self, __name: str) -> Any:
+        if (
+            __name in self.__private_attributes__
+            or __name in self.model_fields
+        ):
+            return super().__getattr__(__name)  # type: ignore
+        else:
+            try:
+                return self._data[__name]
+            except KeyError:
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{__name}'"
+                )
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in self.__private_attributes__ or name in self.model_fields:
+            super().__setattr__(name, value)
+        else:
+            self._extra_train_kwargs.__setitem__(name, value)
+
+    def __getitem__(self, key: str) -> Any:
+        return self._extra_train_kwargs[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self._extra_train_kwargs[key] = value
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._extra_train_kwargs.get(key, default)
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._extra_train_kwargs
