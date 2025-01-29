@@ -18,7 +18,7 @@ def train_loop(
     train_data: DataLoader,
     val_data: DataLoader,
     num_epochs: int,
-    learning_rate: float,
+    learning_rate: float | None,
 ) -> Any:
     """My custom train loop."""
     pass
