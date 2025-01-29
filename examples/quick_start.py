@@ -4,7 +4,7 @@ import flwr as fl
 import torch
 from torch.utils.data import DataLoader
 
-from fed_rag.decorators import tester, trainer
+from fed_rag.decorators import federate
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
 # define your PyTorch model
@@ -12,7 +12,7 @@ model: torch.nn.Module = ...
 
 
 # define your train loop, wrap it with @trainer decorator
-@trainer.pytorch
+@federate.trainer.pytorch
 def train_loop(
     model: torch.nn.Module,
     train_data: DataLoader,
@@ -24,7 +24,7 @@ def train_loop(
     pass
 
 
-@tester.pytorch
+@federate.tester.pytorch
 def test(model: torch.nn.Module, test_loader: DataLoader) -> Any:
     """My custom tester."""
     pass
