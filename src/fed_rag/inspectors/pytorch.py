@@ -1,22 +1,21 @@
 """PyTorch Inspectors"""
 
 import inspect
-from typing import Any, Callable, List, Optional, Union, get_args, get_origin
+from typing import Callable, List
 
-from fed_rag.trainer_configs import PyTorchTrainerConfig
+from pydantic import BaseModel
 
-
-def _get_param_types(param: inspect.Parameter) -> List[Any]:
-    """Extract the types of a parameter. Handles Union and Optional types."""
-    typ = param.annotation
-    if typ is inspect.Parameter.empty:
-        return [Any]
-    if get_origin(typ) in (Union, Optional):
-        return [t for t in get_args(typ) if t is not type(None)]
-    return [typ]
+from fed_rag.exceptions import MissingDataParams, MissingNetParam
 
 
-def _inspect_signature(fn: Callable) -> PyTorchTrainerConfig:
+class TrainerSignatureSpec(BaseModel):
+    net_parameter: str
+    train_data_param: str
+    val_data_param: str
+    extra_train_kwargs: List[str] = []
+
+
+def inspect_signature(fn: Callable) -> TrainerSignatureSpec:
     sig = inspect.signature(fn)
 
     # inspect fn params
@@ -44,7 +43,33 @@ def _inspect_signature(fn: Callable) -> PyTorchTrainerConfig:
 
         extra_train_kwargs.append(name)
 
-    print(f"net_param: {net_param}", flush=True)
-    print(f"train_data_param: {train_data_param}", flush=True)
-    print(f"val_data_param: {val_data_param}", flush=True)
-    print(f"extra_train_kwargs: {extra_train_kwargs}", flush=True)
+    if net_param is None:
+        msg = (
+            "Inspection failed to find a model param. "
+            "For PyTorch this param must have type `nn.Module`."
+        )
+        raise MissingNetParam(msg)
+
+    if train_data_param is None:
+        msg = (
+            "Inspection failed to find two data params for train and val datasets."
+            "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
+        )
+        raise MissingDataParams(msg)
+
+    if val_data_param is None:
+        msg = (
+            "Inspection found one data param but failed to find another. "
+            "Two data params are required for train and val datasets."
+            "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
+        )
+        raise MissingDataParams(msg)
+
+    spec = TrainerSignatureSpec(
+        net_parameter=net_param,
+        train_data_param=train_data_param,
+        val_data_param=val_data_param,
+        extra_train_kwargs=extra_train_kwargs,
+    )
+    print(spec.model_dump(), flush=True)
+    return spec
