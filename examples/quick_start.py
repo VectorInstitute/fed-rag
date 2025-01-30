@@ -4,7 +4,7 @@ import flwr as fl
 import torch
 from torch.utils.data import DataLoader
 
-from fed_rag.decorators import tester, trainer
+from fed_rag.decorators import federate
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
 # define your PyTorch model
@@ -12,19 +12,19 @@ model: torch.nn.Module = ...
 
 
 # define your train loop, wrap it with @trainer decorator
-@trainer.pytorch
+@federate.trainer.pytorch
 def train_loop(
     model: torch.nn.Module,
     train_data: DataLoader,
     val_data: DataLoader,
     num_epochs: int,
-    learning_rate: float,
+    learning_rate: float | None,
 ) -> Any:
     """My custom train loop."""
     pass
 
 
-@tester.pytorch
+@federate.tester.pytorch
 def test(model: torch.nn.Module, test_loader: DataLoader) -> Any:
     """My custom tester."""
     pass
@@ -49,3 +49,10 @@ fl.server.start_server(
 
 ### 3. start client
 fl.client.start_client(server_address="0.0.0.0:8080", client=fl_task.client)
+
+## BTW, you can still use your training loop as you would in centralized ML
+train_data = ...
+val_data = ...
+num_epochs = ...
+learning_rate = ...
+train_loop(model, train_data, val_data, num_epochs, learning_rate)
