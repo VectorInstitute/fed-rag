@@ -5,5 +5,9 @@ class MissingNetParam(Exception):
     pass
 
 
-class MissingDataParams(Exception):
+class MissingMultipleDataParams(Exception):
+    pass
+
+
+class MissingDataParam(Exception):
     pass

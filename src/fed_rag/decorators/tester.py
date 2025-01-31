@@ -5,13 +5,16 @@ from typing import Callable
 
 class TesterDecorators:
     def pytorch(self, func: Callable) -> Callable:
+        from fed_rag.inspectors.pytorch import inspect_tester_signature
+
         def decorator(func: Callable) -> Callable:
             # inspect func sig
-
-            # find nn.Model
+            spec = inspect_tester_signature(
+                func
+            )  # may need to create a cfg for this if decorater accepts params
 
             # store fl_task config
-            func.__setattr__("__fl_task_tester_config", {})  # type: ignore[attr-defined]
+            func.__setattr__("__fl_task_tester_config", spec)  # type: ignore[attr-defined]
 
             return func
 

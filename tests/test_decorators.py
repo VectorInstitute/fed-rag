@@ -7,8 +7,15 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
-from fed_rag.exceptions.trainer import MissingDataParams, MissingNetParam
-from fed_rag.inspectors.pytorch import TrainerSignatureSpec
+from fed_rag.exceptions.trainer import (
+    MissingDataParam,
+    MissingMultipleDataParams,
+    MissingNetParam,
+)
+from fed_rag.inspectors.pytorch import (
+    TesterSignatureSpec,
+    TrainerSignatureSpec,
+)
 
 
 def test_decorated_trainer() -> None:
@@ -52,7 +59,7 @@ def test_decorated_trainer_fails_to_find_two_data_params() -> None:
         "Inspection failed to find two data params for train and val datasets."
         "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
     )
-    with pytest.raises(MissingDataParams, match=msg):
+    with pytest.raises(MissingMultipleDataParams, match=msg):
         federate.trainer.pytorch(fn)
 
 
@@ -65,14 +72,21 @@ def test_decorated_trainer_fails_due_to_missing_data_loader() -> None:
         "Two data params are required for train and val datasets."
         "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
     )
-    with pytest.raises(MissingDataParams, match=msg):
+    with pytest.raises(MissingDataParam, match=msg):
         federate.trainer.pytorch(fn)
 
 
 def test_decorated_tester() -> None:
-    def fn(net: nn.Module) -> Any:
+    def fn(
+        mdl: nn.Module,
+        test_loader: DataLoader,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
         pass
 
     decorated = federate.tester.pytorch(fn)
-    config = getattr(decorated, "__fl_task_tester_config")
-    assert len(config) == 0
+    config: TesterSignatureSpec = getattr(decorated, "__fl_task_tester_config")
+    assert config.net_parameter == "mdl"
+    assert config.test_data_param == "test_loader"
+    assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
