@@ -56,5 +56,4 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
         test_data_param=test_data_param,
         extra_test_kwargs=extra_tester_kwargs,
     )
-    print(spec.model_dump(), flush=True)
     return spec

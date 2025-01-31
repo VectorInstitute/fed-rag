@@ -75,5 +75,4 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
         val_data_param=val_data_param,
         extra_train_kwargs=extra_train_kwargs,
     )
-    print(spec.model_dump(), flush=True)
     return spec
