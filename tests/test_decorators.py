@@ -90,3 +90,27 @@ def test_decorated_tester() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
+
+
+def test_decorated_tester_raises_missing_net_param_error() -> None:
+    def fn(
+        test_loader: DataLoader,
+    ) -> Any:
+        pass
+
+    with pytest.raises(MissingNetParam):
+        federate.tester.pytorch(fn)
+
+
+def test_decorated_tester_fails_to_a_data_params() -> None:
+    def fn(
+        model: nn.Module,
+    ) -> Any:
+        pass
+
+    msg = (
+        "Inspection failed to find a data param for a test dataset."
+        "For PyTorch this params must be of type `torch.utils.data.DataLoader`"
+    )
+    with pytest.raises(MissingDataParam, match=msg):
+        federate.tester.pytorch(fn)
