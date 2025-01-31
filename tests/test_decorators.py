@@ -114,3 +114,41 @@ def test_decorated_tester_fails_to_a_data_params() -> None:
     )
     with pytest.raises(MissingDataParam, match=msg):
         federate.tester.pytorch(fn)
+
+
+def test_decorated_tester_from_instance_method() -> None:
+    class _TestClass:
+        @federate.tester.pytorch
+        def fn(
+            self,
+            mdl: nn.Module,
+            test_loader: DataLoader,
+            extra_param_1: int,
+        ) -> Any:
+            pass
+
+    obj = _TestClass()
+    config: TesterSignatureSpec = getattr(obj.fn, "__fl_task_tester_config")
+    assert config.net_parameter == "mdl"
+    assert config.test_data_param == "test_loader"
+    assert config.extra_test_kwargs == ["extra_param_1"]
+
+
+def test_decorated_tester_from_class_method() -> None:
+    class _TestClass:
+        @classmethod
+        @federate.tester.pytorch
+        def fn(
+            cls,
+            mdl: nn.Module,
+            test_loader: DataLoader,
+            extra_param_1: int,
+        ) -> Any:
+            pass
+
+    config: TesterSignatureSpec = getattr(
+        _TestClass.fn, "__fl_task_tester_config"
+    )
+    assert config.net_parameter == "mdl"
+    assert config.test_data_param == "test_loader"
+    assert config.extra_test_kwargs == ["extra_param_1"]
