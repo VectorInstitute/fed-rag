@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
-from fed_rag.exceptions.trainer import (
+from fed_rag.exceptions.inspectors import (
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,

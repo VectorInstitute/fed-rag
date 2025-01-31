@@ -1,4 +1,4 @@
-"""Exceptions for trainers"""
+"""Exceptions for inspectors"""
 
 
 class MissingNetParam(Exception):

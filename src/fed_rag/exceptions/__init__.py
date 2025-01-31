@@ -1,5 +1,5 @@
 from .fl_tasks import MissingFLTaskConfig
-from .trainer import (
+from .inspectors import (
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
