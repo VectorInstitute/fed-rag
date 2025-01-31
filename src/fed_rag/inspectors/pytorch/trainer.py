@@ -1,11 +1,15 @@
-"""PyTorch Inspectors"""
+"""PyTorch Trainer Inspector"""
 
 import inspect
 from typing import Callable, List
 
 from pydantic import BaseModel
 
-from fed_rag.exceptions import MissingDataParams, MissingNetParam
+from fed_rag.exceptions import (
+    MissingDataParam,
+    MissingMultipleDataParams,
+    MissingNetParam,
+)
 
 
 class TrainerSignatureSpec(BaseModel):
@@ -15,7 +19,7 @@ class TrainerSignatureSpec(BaseModel):
     extra_train_kwargs: List[str] = []
 
 
-def inspect_signature(fn: Callable) -> TrainerSignatureSpec:
+def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     sig = inspect.signature(fn)
 
     # inspect fn params
@@ -55,7 +59,7 @@ def inspect_signature(fn: Callable) -> TrainerSignatureSpec:
             "Inspection failed to find two data params for train and val datasets."
             "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
         )
-        raise MissingDataParams(msg)
+        raise MissingMultipleDataParams(msg)
 
     if val_data_param is None:
         msg = (
@@ -63,7 +67,7 @@ def inspect_signature(fn: Callable) -> TrainerSignatureSpec:
             "Two data params are required for train and val datasets."
             "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
         )
-        raise MissingDataParams(msg)
+        raise MissingDataParam(msg)
 
     spec = TrainerSignatureSpec(
         net_parameter=net_param,
@@ -71,5 +75,4 @@ def inspect_signature(fn: Callable) -> TrainerSignatureSpec:
         val_data_param=val_data_param,
         extra_train_kwargs=extra_train_kwargs,
     )
-    print(spec.model_dump(), flush=True)
     return spec

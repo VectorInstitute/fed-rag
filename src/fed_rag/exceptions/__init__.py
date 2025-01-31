@@ -1,8 +1,13 @@
 from .fl_tasks import MissingFLTaskConfig
-from .trainer import MissingDataParams, MissingNetParam
+from .inspectors import (
+    MissingDataParam,
+    MissingMultipleDataParams,
+    MissingNetParam,
+)
 
 __all__ = [
     "MissingFLTaskConfig",
     "MissingNetParam",
-    "MissingDataParams",
+    "MissingMultipleDataParams",
+    "MissingDataParam",
 ]
