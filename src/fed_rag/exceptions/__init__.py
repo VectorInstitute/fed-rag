@@ -3,6 +3,8 @@ from .inspectors import (
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
+    MissingTesterSpec,
+    MissingTrainerSpec,
 )
 
 __all__ = [
@@ -10,4 +12,6 @@ __all__ = [
     "MissingNetParam",
     "MissingMultipleDataParams",
     "MissingDataParam",
+    "MissingTrainerSpec",
+    "MissingTesterSpec",
 ]

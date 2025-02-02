@@ -11,3 +11,11 @@ class MissingMultipleDataParams(Exception):
 
 class MissingDataParam(Exception):
     pass
+
+
+class MissingTrainerSpec(Exception):
+    pass
+
+
+class MissingTesterSpec(Exception):
+    pass
