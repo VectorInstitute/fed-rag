@@ -19,3 +19,7 @@ class MissingTrainerSpec(Exception):
 
 class MissingTesterSpec(Exception):
     pass
+
+
+class UnequalNetParamWarning(Warning):
+    pass

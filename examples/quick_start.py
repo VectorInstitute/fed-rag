@@ -25,7 +25,7 @@ def train_loop(
 
 
 @federate.tester.pytorch
-def test(model: torch.nn.Module, test_loader: DataLoader) -> Any:
+def test(models: torch.nn.Module, test_loader: DataLoader) -> Any:
     """My custom tester."""
     pass
 

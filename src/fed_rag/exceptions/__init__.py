@@ -5,6 +5,7 @@ from .inspectors import (
     MissingNetParam,
     MissingTesterSpec,
     MissingTrainerSpec,
+    UnequalNetParamWarning,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "MissingDataParam",
     "MissingTrainerSpec",
     "MissingTesterSpec",
+    "UnequalNetParamWarning",
 ]
