@@ -9,6 +9,9 @@ from fed_rag.exceptions import MissingDataParam, MissingNetParam
 
 
 class TesterSignatureSpec(BaseModel):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
     net_parameter: str
     test_data_param: str
     extra_test_kwargs: List[str] = []
