@@ -87,7 +87,6 @@ def _build_client(
 
 
 class PyTorchFLTask(BaseFLTask):
-    _net: nn.Module = PrivateAttr()
     _client: NumPyClient = PrivateAttr()
     _trainer: Callable = PrivateAttr()
     _trainer_spec: TrainerSignatureSpec = PrivateAttr()
@@ -107,10 +106,6 @@ class PyTorchFLTask(BaseFLTask):
         self._trainer_spec = trainer_spec
         self._tester = tester
         self._tester_spec = tester_spec
-
-    @property
-    def net(self) -> nn.Module:
-        return self.net
 
     @property
     def training_loop(self) -> Callable:

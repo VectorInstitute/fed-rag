@@ -20,11 +20,6 @@ class BaseFLTask(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def net(self) -> Any:
-        ...
-
-    @property
-    @abstractmethod
     def training_loop(self) -> Callable:
         ...
 
