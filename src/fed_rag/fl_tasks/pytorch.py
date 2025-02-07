@@ -11,7 +11,9 @@ from flwr.common.typing import NDArrays, Scalar
 from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
-from pydantic import PrivateAttr
+from pydantic import BaseModel, PrivateAttr
+from torch.types import Device
+from torch.utils.data import DataLoader
 from typing_extensions import Self
 
 from fed_rag.base.fl_task import BaseFLTask, BaseFLTaskConfig
@@ -31,21 +33,30 @@ class PyTorchFLTaskConfig(BaseFLTaskConfig):
     pass
 
 
+class BaseFLTaskBundle(BaseModel):
+    net: nn.Module
+    trainloader: DataLoader
+    valloader: DataLoader
+    device: Device
+    trainer: Callable
+    tester: Callable
+    extra_test_kwargs: Any
+    extra_train_kwargs: Any
+
+
 class PyTorchFlowerClient(NumPyClient):
     def __init__(
         self,
-        net: nn.Module,
-        trainer: Callable,
-        trainer_spec: TrainerSignatureSpec,
-        tester: Callable,
-        tester_spec: TesterSignatureSpec,
+        task_bundle: BaseFLTaskBundle,
     ) -> None:
         super().__init__()
-        self.net = net
-        self.trainer = trainer
-        self.trainer_spec = trainer_spec
-        self.tester = tester
-        self.tester_spec = tester_spec
+        self.task_bundle = task_bundle
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.task_bundle.model_fields:
+            return self.task_bundle.__getattr__(name)
+        else:
+            return super().__getattr__(name)
 
     def get_weights(self) -> NDArrays:
         return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
@@ -172,4 +183,17 @@ class PyTorchFLTask(BaseFLTask):
         if self._trainer_spec.net_parameter not in kwargs:
             msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
             raise MissingRequiredNetParam(msg)
-        return None
+        # build bundle
+        bundle = BaseFLTaskBundle(
+            net=kwargs.get(self._trainer_spec.net_parameter),
+            trainloader=kwargs.get(self._trainer_spec.trainloader),
+            valloader=kwargs.get(self._trainer_spec.valloader),
+            device=torch.device(
+                "cuda:0" if torch.cuda.is_available() else "cpu"
+            ),
+            extra_train_kwargs=kwargs.get(
+                self._trainer_spec.extra_train_kwargs
+            ),
+            extra_test_kwargs=kwargs.get(self._tester_spec.extra_test_kwargs),
+        )
+        return PyTorchFlowerClient(task_bundle=bundle)

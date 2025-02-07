@@ -4,6 +4,7 @@ import flwr as fl
 import torch
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
+from torch.types import Device
 from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
@@ -19,6 +20,7 @@ def train_loop(
     model: torch.nn.Module,
     train_data: DataLoader,
     val_data: DataLoader,
+    device: Device,
     num_epochs: int,
     learning_rate: float | None,
 ) -> Any:
