@@ -52,13 +52,19 @@ server = fl_task.server(
     model=model,
 )
 
-fl.server.start_server(
-    server=fl_task.server,
-    server_address="0.0.0.0:8080",
-)
+if server:
+    fl.server.start_server(
+        server=fl_task.server,
+        server_address="0.0.0.0:8080",
+    )
 
-### 3. start client
-fl.client.start_client(server_address="0.0.0.0:8080", client=fl_task.client)
+### 3. build a client
+client = fl_task.client(model=model)
+
+if client:
+    fl.client.start_client(
+        server_address="0.0.0.0:8080", client=fl_task.client
+    )
 
 ## BTW, you can still use your training loop as you would in centralized ML
 train_data = ...

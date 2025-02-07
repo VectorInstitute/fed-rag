@@ -6,6 +6,7 @@ from typing import Any, Callable, OrderedDict
 import torch
 import torch.nn as nn
 from flwr.client import NumPyClient
+from flwr.client.client import Client
 from flwr.common.typing import NDArrays, Scalar
 from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
@@ -15,6 +16,7 @@ from typing_extensions import Self
 
 from fed_rag.base.fl_task import BaseFLTask, BaseFLTaskConfig
 from fed_rag.exceptions import (
+    MissingRequiredNetParam,
     MissingTesterSpec,
     MissingTrainerSpec,
     UnequalNetParamWarning,
@@ -158,5 +160,16 @@ class PyTorchFLTask(BaseFLTask):
 
     def server(
         self, strategy: Strategy, config: ServerConfig, **kwargs: Any
-    ) -> Server:
-        ...
+    ) -> Server | None:
+        # validate kwargs
+        if self._trainer_spec.net_parameter not in kwargs:
+            msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
+            raise MissingRequiredNetParam(msg)
+        return None
+
+    def client(self, **kwargs: Any) -> Client:
+        # validate kwargs
+        if self._trainer_spec.net_parameter not in kwargs:
+            msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
+            raise MissingRequiredNetParam(msg)
+        return None
