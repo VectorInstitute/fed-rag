@@ -11,7 +11,7 @@ from flwr.common.typing import NDArrays, Scalar
 from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 from torch.types import Device
 from torch.utils.data import DataLoader
 from typing_extensions import Self
@@ -34,6 +34,7 @@ class PyTorchFLTaskConfig(BaseFLTaskConfig):
 
 
 class BaseFLTaskBundle(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     net: nn.Module
     trainloader: DataLoader
     valloader: DataLoader
