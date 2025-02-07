@@ -2,6 +2,8 @@ from typing import Any
 
 import flwr as fl
 import torch
+from flwr.server.server_config import ServerConfig
+from flwr.server.strategy import Strategy
 from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
@@ -41,7 +43,15 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
 ### 1. simulate a run
 sim_results = fl_task.simulate(num_clients=2, strategy="fedavg")
 
-### 2. start server
+### 2. build a server
+strategy: Strategy = ...
+config: ServerConfig = ...
+server = fl_task.server(
+    strategy=strategy,
+    config=config,
+    model=model,
+)
+
 fl.server.start_server(
     server=fl_task.server,
     server_address="0.0.0.0:8080",

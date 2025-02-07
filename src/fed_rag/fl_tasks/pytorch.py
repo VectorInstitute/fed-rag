@@ -7,6 +7,9 @@ import torch
 import torch.nn as nn
 from flwr.client import NumPyClient
 from flwr.common.typing import NDArrays, Scalar
+from flwr.server.server import Server
+from flwr.server.server_config import ServerConfig
+from flwr.server.strategy import Strategy
 from pydantic import PrivateAttr
 from typing_extensions import Self
 
@@ -152,3 +155,8 @@ class PyTorchFLTask(BaseFLTask):
     @classmethod
     def from_configs(cls, trainer_cfg: Any, tester_cfg: Any) -> Any:
         return super().from_configs(trainer_cfg, tester_cfg)
+
+    def server(
+        self, strategy: Strategy, config: ServerConfig, **kwargs: Any
+    ) -> Server:
+        ...

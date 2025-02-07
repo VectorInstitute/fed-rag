@@ -62,10 +62,10 @@ class BaseFLTask(BaseModel, ABC):
         """
         ...
 
-    def server(self) -> Server:
+    def server(self, **kwargs: Any) -> Server:
         """Create a flwr.Server object."""
         ...
 
-    def client(self) -> Client:
+    def client(self, **kwargs: Any) -> Client:
         """Create a flwr.Client object."""
         ...
