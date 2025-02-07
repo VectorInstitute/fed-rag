@@ -167,7 +167,7 @@ class PyTorchFLTask(BaseFLTask):
             raise MissingRequiredNetParam(msg)
         return None
 
-    def client(self, **kwargs: Any) -> Client:
+    def client(self, **kwargs: Any) -> Client | None:
         # validate kwargs
         if self._trainer_spec.net_parameter not in kwargs:
             msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
