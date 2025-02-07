@@ -42,16 +42,16 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
 
 ## What can you do with your fl system?
 
-### 1. simulate a run
-sim_results = fl_task.simulate(num_clients=2, strategy="fedavg")
+### 1. build a server
 
-### 2. build a server
+# requires the fl strategy and config
 strategy: Strategy = ...
 config: ServerConfig = ...
+
 server = fl_task.server(
     strategy=strategy,
     config=config,
-    model=model,
+    model=model,  # needs the model uses same param as model in trainer
 )
 
 if server:
@@ -60,8 +60,26 @@ if server:
         server_address="0.0.0.0:8080",
     )
 
-### 3. build a client
-client = fl_task.client(model=model)
+### 2. build a client trainer
+
+# requires the exact same params as the defined trainer
+train_data = ...
+val_data = ...
+device = ...
+num_epochs = ...
+learning_rate = ...
+
+client = fl_task.client(
+    # train params
+    model=model,
+    train_data=train_data,
+    val_data=val_data,
+    device=device,
+    num_epochs=num_epochs,
+    learning_rate=learning_rate,
+    # tester params
+    test_loader=val_data,
+)
 
 if client:
     fl.client.start_client(
