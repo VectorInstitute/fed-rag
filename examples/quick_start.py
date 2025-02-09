@@ -1,5 +1,3 @@
-from typing import Any
-
 import flwr as fl
 import torch
 from flwr.server.server_config import ServerConfig
@@ -9,6 +7,7 @@ from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
+from fed_rag.types import TestResult, TrainResult
 
 # define your PyTorch model
 model: torch.nn.Module = ...
@@ -23,15 +22,15 @@ def train_loop(
     device: Device,
     num_epochs: int,
     learning_rate: float | None,
-) -> Any:
+) -> TrainResult:
     """My custom train loop."""
-    pass
+    return TrainResult(loss=0.1)
 
 
 @federate.tester.pytorch
-def test(models: torch.nn.Module, test_loader: DataLoader) -> Any:
+def test(m: torch.nn.Module, test_loader: DataLoader) -> TestResult:
     """My custom tester."""
-    pass
+    return TestResult(loss=0.0, metrics={})
 
 
 # create your fl system
