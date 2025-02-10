@@ -3,11 +3,42 @@
 from typing import Callable
 
 import pytest
+import torch
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import FedAvg
+from torch.utils.data import DataLoader
 
 from fed_rag.exceptions import MissingRequiredNetParam
-from fed_rag.fl_tasks.pytorch import PyTorchFLTask
+from fed_rag.fl_tasks.pytorch import (
+    BaseFLTaskBundle,
+    PyTorchFlowerClient,
+    PyTorchFLTask,
+)
+
+
+def test_init_flower_client(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    bundle = BaseFLTaskBundle(
+        net=torch.nn.Linear(2, 1),
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+
+    assert client.task_bundle.tester == tester
+    assert client.task_bundle.trainer == trainer
+    assert client.task_bundle.trainloader == train_dataloader
+    assert client.task_bundle.valloader == val_dataloader
+    assert client.task_bundle.extra_train_kwargs == {}
+    assert client.task_bundle.extra_test_kwargs == {}
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
