@@ -1,13 +1,11 @@
 """PyTorch FL Task"""
 
 import warnings
-from typing import Any, Callable, OrderedDict
+from typing import Any, Callable
 
-import torch
 import torch.nn as nn
 from flwr.client import NumPyClient
 from flwr.client.client import Client
-from flwr.common.typing import NDArrays, Scalar
 from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
@@ -26,7 +24,6 @@ from fed_rag.inspectors.pytorch import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
-from fed_rag.types import TestResult, TrainResult
 
 
 class PyTorchFLTaskConfig(BaseFLTaskConfig):
@@ -58,47 +55,37 @@ class PyTorchFlowerClient(NumPyClient):
         else:
             return super().__getattr__(name)
 
-    def get_weights(self) -> NDArrays:
-        return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
+    # def get_weights(self) -> NDArrays:
+    #     return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
 
-    def set_weights(self, parameters: NDArrays) -> None:
-        params_dict = zip(self.net.state_dict().keys(), parameters)
-        state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-        self.net.load_state_dict(state_dict, strict=True)
+    # def set_weights(self, parameters: NDArrays) -> None:
+    #     params_dict = zip(self.net.state_dict().keys(), parameters)
+    #     state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+    #     self.net.load_state_dict(state_dict, strict=True)
 
-    def fit(
-        self, parameters: NDArrays, config: dict[str, Scalar]
-    ) -> tuple[NDArrays, int, dict[str, Scalar]]:
-        self.set_weights(parameters)
+    # def fit(
+    #     self, parameters: NDArrays, config: dict[str, Scalar]
+    # ) -> tuple[NDArrays, int, dict[str, Scalar]]:
+    #     self.set_weights(parameters)
 
-        result: TrainResult = self.trainer(
-            self.net,
-            self.trainloader,
-            self.valloader,
-            **self.task_bundle.extra_train_kwargs,
-        )
-        return (
-            self.get_weights(),
-            len(self.trainloader.dataset),
-            result.loss,
-        )
+    #     result: TrainResult = self.trainer(
+    #         self.net,
+    #         self.trainloader,
+    #         self.valloader,
+    #         **self.task_bundle.extra_train_kwargs,
+    #     )
+    #     return (
+    #         self.get_weights(),
+    #         len(self.trainloader.dataset),
+    #         result.loss,
+    #     )
 
-    def evaluate(
-        self, parameters: NDArrays, config: dict[str, Scalar]
-    ) -> tuple[float, int, dict[str, Scalar]]:
-        self.set_weights(parameters)
-        result: TestResult = self.tester(self.net, self.valloader, self.device)
-        return result.loss, len(self.valloader.dataset), result.metrics
-
-
-def _build_client(
-    net: nn.Module,
-    trainer: Callable,
-    trainer_spec: TrainerSignatureSpec,
-    tester: Callable,
-    tester_spec: TesterSignatureSpec,
-) -> NumPyClient:
-    ...
+    # def evaluate(
+    #     self, parameters: NDArrays, config: dict[str, Scalar]
+    # ) -> tuple[float, int, dict[str, Scalar]]:
+    #     self.set_weights(parameters)
+    #     result: TestResult = self.tester(self.net, self.valloader, self.device)
+    #     return result.loss, len(self.valloader.dataset), result.metrics
 
 
 class PyTorchFLTask(BaseFLTask):
