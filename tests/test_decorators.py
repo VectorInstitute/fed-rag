@@ -40,6 +40,23 @@ def test_decorated_trainer() -> None:
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
 
 
+def test_decorated_trainer_raises_invalid_return_type_error() -> None:
+    def fn(
+        net: nn.Module,
+        train_loader: DataLoader,
+        val_loader: DataLoader,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
+        pass
+
+    with pytest.raises(
+        InvalidReturnType,
+        match="Trainer should return a fed_rag.types.TrainResult or a subclsas of it.",
+    ):
+        federate.trainer.pytorch(fn)
+
+
 def test_decorated_trainer_raises_missing_net_param_error() -> None:
     def fn(
         train_loader: DataLoader,
@@ -148,7 +165,7 @@ def test_decorated_tester_raises_invalid_return_type() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Trainer should return a fed_rag.types.TestResult or a subclsas of it.",
+        match="Tester should return a fed_rag.types.TestResult or a subclsas of it.",
     ):
         federate.tester.pytorch(fn)
 

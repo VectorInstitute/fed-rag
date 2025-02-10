@@ -28,7 +28,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     # validate return type
     return_type = sig.return_annotation
     if not issubclass(return_type, TestResult):
-        msg = "Trainer should return a fed_rag.types.TestResult or a subclsas of it."
+        msg = "Tester should return a fed_rag.types.TestResult or a subclsas of it."
         raise InvalidReturnType(msg)
 
     # inspect fn params
