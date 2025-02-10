@@ -76,8 +76,6 @@ client = fl_task.client(
     device=device,
     num_epochs=num_epochs,
     learning_rate=learning_rate,
-    # tester params
-    test_loader=val_data,
 )
 
 if client:

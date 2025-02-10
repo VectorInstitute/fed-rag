@@ -12,7 +12,6 @@ from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
 from pydantic import BaseModel, ConfigDict, PrivateAttr
-from torch.types import Device
 from torch.utils.data import DataLoader
 from typing_extensions import Self
 
@@ -27,6 +26,7 @@ from fed_rag.inspectors.pytorch import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
+from fed_rag.types import TestResult, TrainResult
 
 
 class PyTorchFLTaskConfig(BaseFLTaskConfig):
@@ -38,7 +38,6 @@ class BaseFLTaskBundle(BaseModel):
     net: nn.Module
     trainloader: DataLoader
     valloader: DataLoader
-    device: Device
     trainer: Callable
     tester: Callable
     extra_test_kwargs: Any
@@ -72,25 +71,24 @@ class PyTorchFlowerClient(NumPyClient):
     ) -> tuple[NDArrays, int, dict[str, Scalar]]:
         self.set_weights(parameters)
 
-        results = self.trainer(
+        result: TrainResult = self.trainer(
             self.net,
             self.trainloader,
             self.valloader,
-            self.local_epochs,
-            self.device,
+            **self.task_bundle.extra_train_kwargs,
         )
         return (
             self.get_weights(),
             len(self.trainloader.dataset),
-            results,
+            result.loss,
         )
 
     def evaluate(
         self, parameters: NDArrays, config: dict[str, Scalar]
     ) -> tuple[float, int, dict[str, Scalar]]:
         self.set_weights(parameters)
-        loss, accuracy = self.tester(self.net, self.valloader, self.device)
-        return loss, len(self.valloader.dataset), {"accuracy": accuracy}
+        result: TestResult = self.tester(self.net, self.valloader, self.device)
+        return result.loss, len(self.valloader.dataset), result.metrics
 
 
 def _build_client(
@@ -184,13 +182,16 @@ class PyTorchFLTask(BaseFLTask):
         if self._trainer_spec.net_parameter not in kwargs:
             msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
             raise MissingRequiredNetParam(msg)
-        # # build bundle
-        # bundle = BaseFLTaskBundle(
-        #     net=kwargs.get(self._trainer_spec.net_parameter),
-        #     trainloader=kwargs.get(self._trainer_spec.train_data_param),
-        #     valloader=kwargs.get(self._trainer_spec.val_data_param),
-        #     device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
-        #     extra_train_kwargs=self._trainer_spec.extra_train_kwargs,
-        #     extra_test_kwargs=self._tester_spec.extra_test_kwargs,
-        # )
-        return None
+        # build bundle
+        net = kwargs.pop(self._trainer_spec.net_parameter)
+        trainloader = kwargs.pop(self._trainer_spec.train_data_param)
+        valloader = kwargs.pop(self._trainer_spec.val_data_param)
+
+        bundle = BaseFLTaskBundle(
+            net=net,
+            trainloader=trainloader,
+            valloader=valloader,
+            extra_train_kwargs=kwargs,
+            extra_test_kwargs={},  # TODO make this functional or get rid of it
+        )
+        return PyTorchFlowerClient(task_bundle=bundle)
