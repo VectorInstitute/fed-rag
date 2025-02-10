@@ -20,11 +20,6 @@ class BaseFLTask(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def net(self) -> Any:
-        ...
-
-    @property
-    @abstractmethod
     def training_loop(self) -> Callable:
         ...
 
@@ -60,6 +55,7 @@ class BaseFLTask(BaseModel, ABC):
             raise MissingFLTaskConfig(msg)
         return cls.from_configs(trainer_cfg, tester_cfg)
 
+    @abstractmethod
     def simulate(self, num_clients: int, **kwargs: Any) -> Any:
         """Simulate the FL task.
 
@@ -67,10 +63,12 @@ class BaseFLTask(BaseModel, ABC):
         """
         ...
 
-    def server(self) -> Server:
+    @abstractmethod
+    def server(self, **kwargs: Any) -> Server:
         """Create a flwr.Server object."""
         ...
 
-    def client(self) -> Client:
+    @abstractmethod
+    def client(self, **kwargs: Any) -> Client:
         """Create a flwr.Client object."""
         ...

@@ -11,3 +11,19 @@ class MissingMultipleDataParams(Exception):
 
 class MissingDataParam(Exception):
     pass
+
+
+class MissingTrainerSpec(Exception):
+    pass
+
+
+class MissingTesterSpec(Exception):
+    pass
+
+
+class UnequalNetParamWarning(Warning):
+    pass
+
+
+class InvalidReturnType(Exception):
+    pass

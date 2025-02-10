@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
 from fed_rag.exceptions.inspectors import (
+    InvalidReturnType,
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
@@ -16,6 +17,7 @@ from fed_rag.inspectors.pytorch import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
+from fed_rag.types import TestResult, TrainResult
 
 
 def test_decorated_trainer() -> None:
@@ -25,7 +27,7 @@ def test_decorated_trainer() -> None:
         val_loader: DataLoader,
         extra_param_1: int,
         extra_param_2: float | None,
-    ) -> Any:
+    ) -> TrainResult:
         pass
 
     decorated = federate.trainer.pytorch(fn)
@@ -38,11 +40,28 @@ def test_decorated_trainer() -> None:
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
 
 
+def test_decorated_trainer_raises_invalid_return_type_error() -> None:
+    def fn(
+        net: nn.Module,
+        train_loader: DataLoader,
+        val_loader: DataLoader,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
+        pass
+
+    with pytest.raises(
+        InvalidReturnType,
+        match="Trainer should return a fed_rag.types.TrainResult or a subclsas of it.",
+    ):
+        federate.trainer.pytorch(fn)
+
+
 def test_decorated_trainer_raises_missing_net_param_error() -> None:
     def fn(
         train_loader: DataLoader,
         val_loader: DataLoader,
-    ) -> Any:
+    ) -> TrainResult:
         pass
 
     with pytest.raises(MissingNetParam):
@@ -52,7 +71,7 @@ def test_decorated_trainer_raises_missing_net_param_error() -> None:
 def test_decorated_trainer_fails_to_find_two_data_params() -> None:
     def fn(
         model: nn.Module,
-    ) -> Any:
+    ) -> TrainResult:
         pass
 
     msg = (
@@ -64,7 +83,7 @@ def test_decorated_trainer_fails_to_find_two_data_params() -> None:
 
 
 def test_decorated_trainer_fails_due_to_missing_data_loader() -> None:
-    def fn(model: nn.Module, val_loader: DataLoader) -> Any:
+    def fn(model: nn.Module, val_loader: DataLoader) -> TrainResult:
         pass
 
     msg = (
@@ -86,7 +105,7 @@ def test_decorated_trainer_from_instance_method() -> None:
             val_loader: DataLoader,
             extra_param_1: int,
             extra_param_2: float | None,
-        ) -> Any:
+        ) -> TrainResult:
             pass
 
     obj = _TestClass()
@@ -108,7 +127,7 @@ def test_decorated_trainer_from_class_method() -> None:
             val_loader: DataLoader,
             extra_param_1: int,
             extra_param_2: float | None,
-        ) -> Any:
+        ) -> TrainResult:
             pass
 
     obj = _TestClass()
@@ -125,7 +144,7 @@ def test_decorated_tester() -> None:
         test_loader: DataLoader,
         extra_param_1: int,
         extra_param_2: float | None,
-    ) -> Any:
+    ) -> TestResult:
         pass
 
     decorated = federate.tester.pytorch(fn)
@@ -135,10 +154,26 @@ def test_decorated_tester() -> None:
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
 
 
+def test_decorated_tester_raises_invalid_return_type() -> None:
+    def fn(
+        mdl: nn.Module,
+        test_loader: DataLoader,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
+        pass
+
+    with pytest.raises(
+        InvalidReturnType,
+        match="Tester should return a fed_rag.types.TestResult or a subclsas of it.",
+    ):
+        federate.tester.pytorch(fn)
+
+
 def test_decorated_tester_raises_missing_net_param_error() -> None:
     def fn(
         test_loader: DataLoader,
-    ) -> Any:
+    ) -> TestResult:
         pass
 
     with pytest.raises(MissingNetParam):
@@ -148,7 +183,7 @@ def test_decorated_tester_raises_missing_net_param_error() -> None:
 def test_decorated_tester_fails_to_a_data_params() -> None:
     def fn(
         model: nn.Module,
-    ) -> Any:
+    ) -> TestResult:
         pass
 
     msg = (
@@ -167,7 +202,7 @@ def test_decorated_tester_from_instance_method() -> None:
             mdl: nn.Module,
             test_loader: DataLoader,
             extra_param_1: int,
-        ) -> Any:
+        ) -> TestResult:
             pass
 
     obj = _TestClass()
@@ -186,7 +221,7 @@ def test_decorated_tester_from_class_method() -> None:
             mdl: nn.Module,
             test_loader: DataLoader,
             extra_param_1: int,
-        ) -> Any:
+        ) -> TestResult:
             pass
 
     config: TesterSignatureSpec = getattr(

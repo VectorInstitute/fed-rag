@@ -1,15 +1,17 @@
 """PyTorch Trainer Inspector"""
 
 import inspect
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from pydantic import BaseModel
 
 from fed_rag.exceptions import (
+    InvalidReturnType,
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
 )
+from fed_rag.types import TrainResult
 
 
 class TrainerSignatureSpec(BaseModel):
@@ -21,6 +23,12 @@ class TrainerSignatureSpec(BaseModel):
 
 def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     sig = inspect.signature(fn)
+
+    # validate return type
+    return_type = sig.return_annotation
+    if (return_type is Any) or not issubclass(return_type, TrainResult):
+        msg = "Trainer should return a fed_rag.types.TrainResult or a subclsas of it."
+        raise InvalidReturnType(msg)
 
     # inspect fn params
     extra_train_kwargs = []

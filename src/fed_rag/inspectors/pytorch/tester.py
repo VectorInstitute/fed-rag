@@ -1,14 +1,22 @@
 """PyTorch Tester Inspector"""
 
 import inspect
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from pydantic import BaseModel
 
-from fed_rag.exceptions import MissingDataParam, MissingNetParam
+from fed_rag.exceptions import (
+    InvalidReturnType,
+    MissingDataParam,
+    MissingNetParam,
+)
+from fed_rag.types import TestResult
 
 
 class TesterSignatureSpec(BaseModel):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
     net_parameter: str
     test_data_param: str
     extra_test_kwargs: List[str] = []
@@ -16,6 +24,12 @@ class TesterSignatureSpec(BaseModel):
 
 def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     sig = inspect.signature(fn)
+
+    # validate return type
+    return_type = sig.return_annotation
+    if (return_type is Any) or not issubclass(return_type, TestResult):
+        msg = "Tester should return a fed_rag.types.TestResult or a subclsas of it."
+        raise InvalidReturnType(msg)
 
     # inspect fn params
     extra_tester_kwargs = []
