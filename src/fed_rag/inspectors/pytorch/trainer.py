@@ -1,7 +1,7 @@
 """PyTorch Trainer Inspector"""
 
 import inspect
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from pydantic import BaseModel
 
@@ -26,7 +26,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
 
     # validate return type
     return_type = sig.return_annotation
-    if not issubclass(return_type, TrainResult):
+    if (return_type is Any) or not issubclass(return_type, TrainResult):
         msg = "Trainer should return a fed_rag.types.TrainResult or a subclsas of it."
         raise InvalidReturnType(msg)
 

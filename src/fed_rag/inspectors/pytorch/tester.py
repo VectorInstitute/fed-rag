@@ -1,7 +1,7 @@
 """PyTorch Tester Inspector"""
 
 import inspect
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from pydantic import BaseModel
 
@@ -27,7 +27,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
 
     # validate return type
     return_type = sig.return_annotation
-    if not issubclass(return_type, TestResult):
+    if (return_type is Any) or not issubclass(return_type, TestResult):
         msg = "Tester should return a fed_rag.types.TestResult or a subclsas of it."
         raise InvalidReturnType(msg)
 
