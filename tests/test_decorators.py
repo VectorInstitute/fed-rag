@@ -1,5 +1,6 @@
 """Decorators unit tests"""
 
+from typing import Any
 
 import pytest
 import torch.nn as nn
@@ -7,6 +8,7 @@ from torch.utils.data import DataLoader
 
 from fed_rag.decorators import federate
 from fed_rag.exceptions.inspectors import (
+    InvalidReturnType,
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
@@ -133,6 +135,22 @@ def test_decorated_tester() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
+
+
+def test_decorated_tester_raises_invalid_return_type() -> None:
+    def fn(
+        mdl: nn.Module,
+        test_loader: DataLoader,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
+        pass
+
+    with pytest.raises(
+        InvalidReturnType,
+        match="Trainer should return a fed_rag.types.TestResult or a subclsas of it.",
+    ):
+        federate.tester.pytorch(fn)
 
 
 def test_decorated_tester_raises_missing_net_param_error() -> None:
