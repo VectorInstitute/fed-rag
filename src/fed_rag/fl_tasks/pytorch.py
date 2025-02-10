@@ -182,3 +182,6 @@ class PyTorchFLTask(BaseFLTask):
             extra_test_kwargs={},  # TODO make this functional or get rid of it
         )
         return PyTorchFlowerClient(task_bundle=bundle)
+
+    def simulate(self, num_clients: int, **kwargs: Any) -> Any:
+        raise NotImplementedError
