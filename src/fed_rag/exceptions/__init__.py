@@ -1,5 +1,6 @@
 from .fl_tasks import MissingFLTaskConfig, MissingRequiredNetParam
 from .inspectors import (
+    InvalidReturnType,
     MissingDataParam,
     MissingMultipleDataParams,
     MissingNetParam,
@@ -17,4 +18,5 @@ __all__ = [
     "MissingTrainerSpec",
     "MissingTesterSpec",
     "UnequalNetParamWarning",
+    "InvalidReturnType",
 ]

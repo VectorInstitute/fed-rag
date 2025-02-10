@@ -5,7 +5,12 @@ from typing import Callable, List
 
 from pydantic import BaseModel
 
-from fed_rag.exceptions import MissingDataParam, MissingNetParam
+from fed_rag.exceptions import (
+    InvalidReturnType,
+    MissingDataParam,
+    MissingNetParam,
+)
+from fed_rag.types import TestResult
 
 
 class TesterSignatureSpec(BaseModel):
@@ -19,6 +24,12 @@ class TesterSignatureSpec(BaseModel):
 
 def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     sig = inspect.signature(fn)
+
+    # validate return type
+    return_type = sig.return_annotation
+    if not issubclass(return_type, TestResult):
+        msg = "Trainer should return a fed_rag.types.TestResult or a subclsas of it."
+        raise InvalidReturnType(msg)
 
     # inspect fn params
     extra_tester_kwargs = []

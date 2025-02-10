@@ -184,17 +184,13 @@ class PyTorchFLTask(BaseFLTask):
         if self._trainer_spec.net_parameter not in kwargs:
             msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
             raise MissingRequiredNetParam(msg)
-        # build bundle
-        bundle = BaseFLTaskBundle(
-            net=kwargs.get(self._trainer_spec.net_parameter),
-            trainloader=kwargs.get(self._trainer_spec.trainloader),
-            valloader=kwargs.get(self._trainer_spec.valloader),
-            device=torch.device(
-                "cuda:0" if torch.cuda.is_available() else "cpu"
-            ),
-            extra_train_kwargs=kwargs.get(
-                self._trainer_spec.extra_train_kwargs
-            ),
-            extra_test_kwargs=kwargs.get(self._tester_spec.extra_test_kwargs),
-        )
-        return PyTorchFlowerClient(task_bundle=bundle)
+        # # build bundle
+        # bundle = BaseFLTaskBundle(
+        #     net=kwargs.get(self._trainer_spec.net_parameter),
+        #     trainloader=kwargs.get(self._trainer_spec.train_data_param),
+        #     valloader=kwargs.get(self._trainer_spec.val_data_param),
+        #     device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+        #     extra_train_kwargs=self._trainer_spec.extra_train_kwargs,
+        #     extra_test_kwargs=self._tester_spec.extra_test_kwargs,
+        # )
+        return None

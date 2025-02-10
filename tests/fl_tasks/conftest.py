@@ -8,6 +8,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
 from fed_rag.decorators import federate
+from fed_rag.types import TestResult, TrainResult
 
 
 class _TestDataset(Dataset):
@@ -41,8 +42,8 @@ def trainer() -> Callable:
         net: nn.Module,
         train_loader: DataLoader,
         val_loader: DataLoader,
-    ) -> Any:
-        pass
+    ) -> TrainResult:
+        return TrainResult(loss=0.0)
 
     return fn  # type: ignore
 
@@ -53,7 +54,7 @@ def tester() -> Callable:
     def fn(
         net: nn.Module,
         test_loader: DataLoader,
-    ) -> Any:
-        pass
+    ) -> TestResult:
+        return TestResult(loss=0.0, metrics={})
 
     return fn  # type: ignore

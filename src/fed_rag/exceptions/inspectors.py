@@ -23,3 +23,7 @@ class MissingTesterSpec(Exception):
 
 class UnequalNetParamWarning(Warning):
     pass
+
+
+class InvalidReturnType(Exception):
+    pass
