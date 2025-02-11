@@ -41,6 +41,31 @@ def test_init_flower_client(
     assert client.extra_test_kwargs == {}
 
 
+def test_init_flower_client_get_weights(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    expected_weights = [
+        val.cpu().numpy() for _, val in net.state_dict().items()
+    ]
+
+    assert all((client.get_weights()[0] == expected_weights[0]).flatten())
+    assert all((client.get_weights()[1] == expected_weights[1]).flatten())
+
+
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
     fl_task = PyTorchFLTask.from_trainer_and_tester(
         trainer=trainer, tester=tester

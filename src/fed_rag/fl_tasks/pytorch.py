@@ -1,11 +1,13 @@
 """PyTorch FL Task"""
 
 import warnings
-from typing import Any, Callable
+from typing import Any, Callable, OrderedDict
 
+import torch
 import torch.nn as nn
 from flwr.client import NumPyClient
 from flwr.client.client import Client
+from flwr.common import NDArrays
 from flwr.server.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
@@ -55,13 +57,13 @@ class PyTorchFlowerClient(NumPyClient):
         else:
             return super().__getattr__(name)
 
-    # def get_weights(self) -> NDArrays:
-    #     return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
+    def get_weights(self) -> NDArrays:
+        return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
 
-    # def set_weights(self, parameters: NDArrays) -> None:
-    #     params_dict = zip(self.net.state_dict().keys(), parameters)
-    #     state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-    #     self.net.load_state_dict(state_dict, strict=True)
+    def set_weights(self, parameters: NDArrays) -> None:
+        params_dict = zip(self.net.state_dict().keys(), parameters)
+        state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+        self.net.load_state_dict(state_dict, strict=True)
 
     # def fit(
     #     self, parameters: NDArrays, config: dict[str, Scalar]
