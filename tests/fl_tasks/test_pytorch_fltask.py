@@ -33,12 +33,12 @@ def test_init_flower_client(
     )
     client = PyTorchFlowerClient(task_bundle=bundle)
 
-    assert client.task_bundle.tester == tester
-    assert client.task_bundle.trainer == trainer
-    assert client.task_bundle.trainloader == train_dataloader
-    assert client.task_bundle.valloader == val_dataloader
-    assert client.task_bundle.extra_train_kwargs == {}
-    assert client.task_bundle.extra_test_kwargs == {}
+    assert client.tester == tester
+    assert client.trainer == trainer
+    assert client.trainloader == train_dataloader
+    assert client.valloader == val_dataloader
+    assert client.extra_train_kwargs == {}
+    assert client.extra_test_kwargs == {}
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
