@@ -43,7 +43,7 @@ def test_init_flower_client(
     assert client.extra_test_kwargs == {}
 
 
-def test_init_flower_client_get_weights(
+def test_flower_client_get_weights(
     train_dataloader: DataLoader,
     val_dataloader: DataLoader,
     trainer: Callable,
@@ -69,7 +69,7 @@ def test_init_flower_client_get_weights(
 
 
 @patch.object(Module, "load_state_dict")
-def test_init_flower_client_set_weights(
+def test_flower_client_set_weights(
     mock_load_state_dict: MagicMock,
     train_dataloader: DataLoader,
     val_dataloader: DataLoader,
