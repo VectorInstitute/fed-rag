@@ -16,6 +16,7 @@ from fed_rag.fl_tasks.pytorch import (
     PyTorchFlowerClient,
     PyTorchFLTask,
 )
+from fed_rag.types import TrainResult
 
 
 def test_init_flower_client(
@@ -97,10 +98,41 @@ def test_flower_client_set_weights(
     args, kwargs = mock_load_state_dict.call_args
     params_dict = zip(net.state_dict().keys(), parameters)
     state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-    assert (
-        args[0].get("weight") - state_dict["weight"]
-    ).flatten().sum().item() < 1e-5
+    assert (args[0].get("weight") == state_dict["weight"]).all()
     assert kwargs == {"strict": True}
+
+
+def test_flower_client_fit(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+    mock_trainer = MagicMock()
+    client.trainer = mock_trainer
+    mock_trainer.return_value = TrainResult(loss=0.01)
+
+    # act
+    result = client.fit(parameters, config={})
+
+    # assert
+    mock_trainer.assert_called_once()
+    for a, b in zip(result[0], client.get_weights()):
+        assert (a == b).all()
+    assert result[1] == len(client.trainloader.dataset)
+    assert result[2] == 0.01
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
