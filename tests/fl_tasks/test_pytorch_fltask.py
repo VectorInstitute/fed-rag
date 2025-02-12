@@ -1,11 +1,13 @@
 """PyTorchFLTask Unit Tests"""
 
-from typing import Callable
+from typing import Callable, OrderedDict
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import FedAvg
+from torch.nn import Module
 from torch.utils.data import DataLoader
 
 from fed_rag.exceptions import MissingRequiredNetParam
@@ -64,6 +66,41 @@ def test_init_flower_client_get_weights(
 
     assert all((client.get_weights()[0] == expected_weights[0]).flatten())
     assert all((client.get_weights()[1] == expected_weights[1]).flatten())
+
+
+@patch.object(Module, "load_state_dict")
+def test_init_flower_client_set_weights(
+    mock_load_state_dict: MagicMock,
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+
+    # act
+    client.set_weights(parameters)
+
+    # assert
+    mock_load_state_dict.assert_called_once()
+    args, kwargs = mock_load_state_dict.call_args
+    params_dict = zip(net.state_dict().keys(), parameters)
+    state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+    assert (
+        args[0].get("weight") - state_dict["weight"]
+    ).flatten().sum().item() < 1e-5
+    assert kwargs == {"strict": True}
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
