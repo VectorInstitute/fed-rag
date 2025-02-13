@@ -1,11 +1,13 @@
 """PyTorchFLTask Unit Tests"""
 
-from typing import Callable
+from typing import Callable, OrderedDict
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import FedAvg
+from torch.nn import Module
 from torch.utils.data import DataLoader
 
 from fed_rag.exceptions import MissingRequiredNetParam
@@ -14,6 +16,7 @@ from fed_rag.fl_tasks.pytorch import (
     PyTorchFlowerClient,
     PyTorchFLTask,
 )
+from fed_rag.types import TestResult, TrainResult
 
 
 def test_init_flower_client(
@@ -33,12 +36,137 @@ def test_init_flower_client(
     )
     client = PyTorchFlowerClient(task_bundle=bundle)
 
-    assert client.task_bundle.tester == tester
-    assert client.task_bundle.trainer == trainer
-    assert client.task_bundle.trainloader == train_dataloader
-    assert client.task_bundle.valloader == val_dataloader
-    assert client.task_bundle.extra_train_kwargs == {}
-    assert client.task_bundle.extra_test_kwargs == {}
+    assert client.tester == tester
+    assert client.trainer == trainer
+    assert client.trainloader == train_dataloader
+    assert client.valloader == val_dataloader
+    assert client.extra_train_kwargs == {}
+    assert client.extra_test_kwargs == {}
+
+
+def test_flower_client_get_weights(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    expected_weights = [
+        val.cpu().numpy() for _, val in net.state_dict().items()
+    ]
+
+    assert all((client.get_weights()[0] == expected_weights[0]).flatten())
+    assert all((client.get_weights()[1] == expected_weights[1]).flatten())
+
+
+@patch.object(Module, "load_state_dict")
+def test_flower_client_set_weights(
+    mock_load_state_dict: MagicMock,
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+
+    # act
+    client.set_weights(parameters)
+
+    # assert
+    mock_load_state_dict.assert_called_once()
+    args, kwargs = mock_load_state_dict.call_args
+    params_dict = zip(net.state_dict().keys(), parameters)
+    state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+    assert (args[0].get("weight") == state_dict["weight"]).all()
+    assert kwargs == {"strict": True}
+
+
+def test_flower_client_fit(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+    mock_trainer = MagicMock()
+    client.trainer = mock_trainer
+    mock_trainer.return_value = TrainResult(loss=0.01)
+
+    # act
+    result = client.fit(parameters, config={})
+
+    # assert
+    mock_trainer.assert_called_once()
+    for a, b in zip(result[0], client.get_weights()):
+        assert (a == b).all()
+    assert result[1] == len(client.trainloader.dataset)
+    assert result[2] == 0.01
+
+
+def test_flower_client_evaluate(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+    mock_tester = MagicMock()
+    client.tester = mock_tester
+    mock_tester.return_value = TestResult(
+        loss=0.01, metrics={"accuracy": 0.88}
+    )
+
+    # act
+    result = client.evaluate(parameters=parameters, config={})
+
+    # assert
+    mock_tester.assert_called_once()
+    assert result[0] == 0.01
+    assert result[1] == len(client.valloader.dataset)
+    assert result[2] == {"accuracy": 0.88}
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
