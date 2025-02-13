@@ -87,7 +87,7 @@ class PyTorchFlowerClient(NumPyClient):
         self, parameters: NDArrays, config: dict[str, Scalar]
     ) -> tuple[float, int, dict[str, Scalar]]:
         self.set_weights(parameters)
-        result: TestResult = self.tester(self.net, self.valloader, self.device)
+        result: TestResult = self.tester(self.net, self.valloader)
         return result.loss, len(self.valloader.dataset), result.metrics
 
 

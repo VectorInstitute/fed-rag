@@ -16,7 +16,7 @@ from fed_rag.fl_tasks.pytorch import (
     PyTorchFlowerClient,
     PyTorchFLTask,
 )
-from fed_rag.types import TrainResult
+from fed_rag.types import TestResult, TrainResult
 
 
 def test_init_flower_client(
@@ -133,6 +133,40 @@ def test_flower_client_fit(
         assert (a == b).all()
     assert result[1] == len(client.trainloader.dataset)
     assert result[2] == 0.01
+
+
+def test_flower_client_evaluate(
+    train_dataloader: DataLoader,
+    val_dataloader: DataLoader,
+    trainer: Callable,
+    tester: Callable,
+) -> None:
+    net = torch.nn.Linear(2, 1)
+    bundle = BaseFLTaskBundle(
+        net=net,
+        trainloader=train_dataloader,
+        valloader=val_dataloader,
+        trainer=trainer,
+        tester=tester,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = PyTorchFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+    mock_tester = MagicMock()
+    client.tester = mock_tester
+    mock_tester.return_value = TestResult(
+        loss=0.01, metrics={"accuracy": 0.88}
+    )
+
+    # act
+    result = client.evaluate(parameters=parameters, config={})
+
+    # assert
+    mock_tester.assert_called_once()
+    assert result[0] == 0.01
+    assert result[1] == len(client.valloader.dataset)
+    assert result[2] == {"accuracy": 0.88}
 
 
 def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
