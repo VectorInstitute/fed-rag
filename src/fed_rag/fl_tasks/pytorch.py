@@ -91,6 +91,10 @@ class PyTorchFlowerClient(NumPyClient):
         return result.loss, len(self.valloader.dataset), result.metrics
 
 
+class PyTorchFlowerServer(Server):
+    ...
+
+
 class PyTorchFLTask(BaseFLTask):
     _client: NumPyClient = PrivateAttr()
     _trainer: Callable = PrivateAttr()
