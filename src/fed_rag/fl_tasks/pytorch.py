@@ -8,9 +8,10 @@ import torch.nn as nn
 from flwr.client import NumPyClient
 from flwr.client.client import Client
 from flwr.common import NDArrays, Scalar
+from flwr.common.parameter import ndarrays_to_parameters
+from flwr.server.client_manager import ClientManager, SimpleClientManager
 from flwr.server.server import Server
-from flwr.server.server_config import ServerConfig
-from flwr.server.strategy import Strategy
+from flwr.server.strategy import FedAvg, Strategy
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from torch.utils.data import DataLoader
 from typing_extensions import Self
@@ -44,6 +45,10 @@ class BaseFLTaskBundle(BaseModel):
     extra_train_kwargs: Any
 
 
+def _get_weights(net: nn.Module) -> NDArrays:
+    return [val.cpu().numpy() for _, val in net.state_dict().items()]
+
+
 class PyTorchFlowerClient(NumPyClient):
     def __init__(
         self,
@@ -59,7 +64,7 @@ class PyTorchFlowerClient(NumPyClient):
             return super().__getattr__(name)
 
     def get_weights(self) -> NDArrays:
-        return [val.cpu().numpy() for _, val in self.net.state_dict().items()]
+        return _get_weights(self.net)
 
     def set_weights(self, parameters: NDArrays) -> None:
         params_dict = zip(self.net.state_dict().keys(), parameters)
@@ -163,13 +168,30 @@ class PyTorchFLTask(BaseFLTask):
         return super().from_configs(trainer_cfg, tester_cfg)
 
     def server(
-        self, strategy: Strategy, config: ServerConfig, **kwargs: Any
+        self,
+        strategy: Strategy | None = None,
+        client_manager: ClientManager | None = None,
+        **kwargs: Any,
     ) -> Server | None:
-        # validate kwargs
-        if self._trainer_spec.net_parameter not in kwargs:
-            msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
-            raise MissingRequiredNetParam(msg)
-        return None
+        if strategy is None:
+            if self._trainer_spec.net_parameter not in kwargs:
+                msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
+                raise MissingRequiredNetParam(msg)
+
+            model = kwargs.pop(self._trainer_spec.net_parameter)
+
+            ndarrays = _get_weights(model)
+            parameters = ndarrays_to_parameters(ndarrays)
+            strategy = FedAvg(
+                fraction_evaluate=1.0,
+                min_available_clients=2,
+                initial_parameters=parameters,
+            )
+
+        if client_manager is None:
+            client_manager = SimpleClientManager()
+
+        return Server(client_manager=client_manager, strategy=strategy)
 
     def client(self, **kwargs: Any) -> Client | None:
         # validate kwargs

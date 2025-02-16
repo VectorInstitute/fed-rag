@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
-from flwr.server.server_config import ServerConfig
+from flwr.server.client_manager import SimpleClientManager
 from flwr.server.strategy import FedAvg
 from torch.nn import Module
 from torch.utils.data import DataLoader
@@ -182,7 +182,7 @@ def test_init_from_trainer_tester(trainer: Callable, tester: Callable) -> None:
     assert fl_task._trainer == trainer
 
 
-def test_invoking_server_without_net_param_raises(
+def test_invoking_server_without_strategy_and_net_param_raises(
     trainer: Callable, tester: Callable
 ) -> None:
     fl_task = PyTorchFLTask.from_trainer_and_tester(
@@ -192,9 +192,20 @@ def test_invoking_server_without_net_param_raises(
         MissingRequiredNetParam,
         match="Please pass in a model using the model param name net.",
     ):
-        strategy = FedAvg()
-        config = ServerConfig()
-        fl_task.server(strategy=strategy, config=config)
+        client_manager = SimpleClientManager()
+        fl_task.server(client_manager=client_manager)
+
+
+def test_invoking_server(trainer: Callable, tester: Callable) -> None:
+    fl_task = PyTorchFLTask.from_trainer_and_tester(
+        trainer=trainer, tester=tester
+    )
+    strategy = FedAvg()
+    client_manager = SimpleClientManager()
+    server = fl_task.server(strategy=strategy, client_manager=client_manager)
+
+    assert server.client_manager() == client_manager
+    assert server.strategy == strategy
 
 
 def test_invoking_client_without_net_param_raises(
