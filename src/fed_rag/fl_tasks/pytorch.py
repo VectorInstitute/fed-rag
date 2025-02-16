@@ -1,7 +1,7 @@
 """PyTorch FL Task"""
 
 import warnings
-from typing import Any, Callable, OrderedDict
+from typing import Any, Callable, OrderedDict, TypeAlias
 
 import torch
 import torch.nn as nn
@@ -96,8 +96,7 @@ class PyTorchFlowerClient(NumPyClient):
         return result.loss, len(self.valloader.dataset), result.metrics
 
 
-class PyTorchFlowerServer(Server):
-    ...
+PyTorchFlowerServer: TypeAlias = Server
 
 
 class PyTorchFLTask(BaseFLTask):
@@ -172,7 +171,7 @@ class PyTorchFLTask(BaseFLTask):
         strategy: Strategy | None = None,
         client_manager: ClientManager | None = None,
         **kwargs: Any,
-    ) -> Server | None:
+    ) -> PyTorchFlowerServer | None:
         if strategy is None:
             if self._trainer_spec.net_parameter not in kwargs:
                 msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
@@ -191,7 +190,9 @@ class PyTorchFLTask(BaseFLTask):
         if client_manager is None:
             client_manager = SimpleClientManager()
 
-        return Server(client_manager=client_manager, strategy=strategy)
+        return PyTorchFlowerServer(
+            client_manager=client_manager, strategy=strategy
+        )
 
     def client(self, **kwargs: Any) -> Client | None:
         # validate kwargs
