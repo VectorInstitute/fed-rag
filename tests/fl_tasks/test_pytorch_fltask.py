@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
+from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import SimpleClientManager
 from flwr.server.strategy import FedAvg
 from torch.nn import Module
@@ -15,6 +16,7 @@ from fed_rag.fl_tasks.pytorch import (
     BaseFLTaskBundle,
     PyTorchFlowerClient,
     PyTorchFLTask,
+    _get_weights,
 )
 from fed_rag.types import TestResult, TrainResult
 
@@ -215,12 +217,15 @@ def test_invoking_server_using_defaults(
         trainer=trainer, tester=tester
     )
     net = torch.nn.Linear(2, 1)
+    ndarrays = _get_weights(net)
+    parameters = ndarrays_to_parameters(ndarrays)
 
     # act
     server = fl_task.server(net=net)
 
     assert type(server.client_manager()) is SimpleClientManager
     assert type(server.strategy) is FedAvg
+    assert server.strategy.initial_parameters == parameters
 
 
 def test_invoking_client_without_net_param_raises(
