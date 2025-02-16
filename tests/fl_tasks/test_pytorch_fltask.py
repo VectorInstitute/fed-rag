@@ -208,6 +208,21 @@ def test_invoking_server(trainer: Callable, tester: Callable) -> None:
     assert server.strategy == strategy
 
 
+def test_invoking_server_using_defaults(
+    trainer: Callable, tester: Callable
+) -> None:
+    fl_task = PyTorchFLTask.from_trainer_and_tester(
+        trainer=trainer, tester=tester
+    )
+    net = torch.nn.Linear(2, 1)
+
+    # act
+    server = fl_task.server(net=net)
+
+    assert type(server.client_manager()) is SimpleClientManager
+    assert type(server.strategy) is FedAvg
+
+
 def test_invoking_client_without_net_param_raises(
     trainer: Callable, tester: Callable
 ) -> None:
