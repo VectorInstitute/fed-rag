@@ -50,7 +50,6 @@ config: ServerConfig = ...
 server = fl_task.server(
     strategy=strategy,
     config=config,
-    model=model,  # needs the model uses same param as model in trainer
 )
 
 if server:
