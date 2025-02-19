@@ -92,7 +92,9 @@ class PyTorchFlowerClient(NumPyClient):
         self, parameters: NDArrays, config: dict[str, Scalar]
     ) -> tuple[float, int, dict[str, Scalar]]:
         self.set_weights(parameters)
-        result: TestResult = self.tester(self.net, self.valloader)
+        result: TestResult = self.tester(
+            self.net, self.valloader, **self.extra_test_kwargs
+        )
         return result.loss, len(self.valloader.dataset), result.metrics
 
 
@@ -210,6 +212,8 @@ class PyTorchFLTask(BaseFLTask):
             valloader=valloader,
             extra_train_kwargs=kwargs,
             extra_test_kwargs={},  # TODO make this functional or get rid of it
+            trainer=self._trainer,
+            tester=self._tester,
         )
         return PyTorchFlowerClient(task_bundle=bundle)
 
