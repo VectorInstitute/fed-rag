@@ -1,6 +1,6 @@
-import signal
 import threading
-from typing import Any, Callable
+import time
+from typing import Any
 
 # flwr
 import flwr as fl
@@ -143,7 +143,7 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
 ### 1. build a server
 
 # requires the fl strategy and config
-server = fl_task.server()
+server = fl_task.server(model=model)
 
 ### 2. build a client trainer
 
@@ -165,6 +165,7 @@ for i in range(2):
         learning_rate=learning_rate,
     )
     clients[i] = client
+print(f"clients: {clients}", flush=True)
 
 
 def start_local(
@@ -193,11 +194,14 @@ def start_local(
             start_fn = fl.server.start_server
 
         # start node
+        # try:
         start_fn(**kwargs)
+        # except ValueError as e:
+        #     pass
 
         # keep alive until event is set
         while not event.is_set():
-            continue
+            pass
 
         # TODO: graceful shutdown
         return
@@ -205,33 +209,31 @@ def start_local(
     # threads
     thread = threading.Thread(
         target=node_wrapper,
-        args=(fl_task, client, server, event),
+        args=(client, server, event),
         kwargs=kwargs,
     )
     thread.start()
     return thread
 
 
-def get_signal_handler(event: threading.Event) -> Callable:
-    def signal_handler(signum: int, frame: Any) -> None:
-        nonlocal event
-        event.set()
-
-    return signal_handler
-
-
 ## start local
-event = threading.Event()
-server_thread = start_local(
-    event=event,
-    server=server,
-    server_address="0.0.0.0:8080",
-)
-client_0_thread = start_local(
-    event=event, client=clients[0], server_address="0.0.0.0:8080"
-)
-client_1_thread = start_local(
-    event=event, client=clients[1], server_address="0.0.0.0:8080"
-)
-signal.signal(signal.SIGINT, get_signal_handler(event=event))
-signal.pause()
+try:
+    event = threading.Event()
+    server_thread = start_local(
+        event=event,
+        server=server,
+        server_address="[::]:8080",
+    )
+    time.sleep(5)
+    client_0_thread = start_local(
+        event=event, client=clients[0], server_address="[::]:8080"
+    )
+    client_1_thread = start_local(
+        event=event, client=clients[1], server_address="[::]:8080"
+    )
+
+    server_thread.join()
+    client_0_thread.join()
+    client_1_thread.join()
+except KeyboardInterrupt:
+    event.set()

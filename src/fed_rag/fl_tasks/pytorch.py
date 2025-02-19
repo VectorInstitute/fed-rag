@@ -212,6 +212,8 @@ class PyTorchFLTask(BaseFLTask):
             valloader=valloader,
             extra_train_kwargs=kwargs,
             extra_test_kwargs={},  # TODO make this functional or get rid of it
+            trainer=self._trainer,
+            tester=self._tester,
         )
         return PyTorchFlowerClient(task_bundle=bundle)
 
