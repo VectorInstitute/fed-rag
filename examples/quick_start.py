@@ -113,9 +113,9 @@ if client:
 
 
 def start_local(
+    event: threading.Event,
     client: Client | None = None,
     server: Server | None = None,
-    event: threading.Event | None = None,
     **kwargs: Any,
 ) -> threading.Thread:
     """Spins up a server/client node for the given FLTask.
@@ -137,8 +137,12 @@ def start_local(
             kwargs.update(server=server)
             start_fn = fl.server.start_server
 
+        # start node
+        start_fn(**kwargs)
+
+        # keep alive until event is set
         while not event.is_set():
-            start_fn(**kwargs)
+            continue
 
         # TODO: graceful shutdown
         return
