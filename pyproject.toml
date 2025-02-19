@@ -49,8 +49,10 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
   "asyncio>=3.4.3",
   "flwr>=1.14.0",
+  "flwr-datasets>=0.5.0",
   "pydantic>=2.10.5",
   "pydantic-settings>=2.7.1",
   "torch>=2.5.1",
+  "torchvision>=0.20.1",
   "typing-extensions>=4.12.2"
 ]
