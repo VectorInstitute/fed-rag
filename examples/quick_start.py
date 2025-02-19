@@ -1,7 +1,12 @@
+import threading
+from typing import Any
+
 import flwr as fl
 import torch
 import torch.functional as F
 import torch.nn as nn
+from flwr.client import Client
+from flwr.server import Server
 from flwr.server.server_config import ServerConfig
 from flwr.server.strategy import Strategy
 from torch.types import Device
@@ -105,6 +110,48 @@ if client:
     fl.client.start_client(
         server_address="0.0.0.0:8080", client=fl_task.client
     )
+
+
+def start_local(
+    client: Client | None = None,
+    server: Server | None = None,
+    event: threading.Event | None = None,
+    **kwargs: Any,
+) -> threading.Thread:
+    """Spins up a server/client node for the given FLTask.
+
+    Use threading.Event for graceful shutdown of nodes.
+    """
+
+    def node_wrapper(
+        client: Client | None,
+        server: Server | None,
+        event: threading.Event,
+        **kwargs: Any,
+    ) -> None:
+        if client:
+            kwargs.update(client=client)
+            start_fn = fl.client.start_client
+
+        if server:
+            kwargs.update(server=server)
+            start_fn = fl.server.start_server
+
+        while not event.is_set():
+            start_fn(**kwargs)
+
+        # TODO: graceful shutdown
+        return
+
+    # threads
+    thread = threading.Thread(
+        target=node_wrapper,
+        args=(fl_task, client, server, event),
+        kwargs=kwargs,
+    )
+    thread.start()
+    return thread
+
 
 ## BTW, you can still use your training loop as you would in centralized ML
 train_data = ...
