@@ -127,9 +127,7 @@ class PyTorchFLTask(BaseFLTask):
         return self._trainer
 
     @classmethod
-    def from_trainer_and_tester(
-        cls, trainer: Callable, tester: Callable
-    ) -> Self:
+    def from_trainer_and_tester(cls, trainer: Callable, tester: Callable) -> Self:
         # extract trainer spec
         try:
             trainer_spec: TrainerSignatureSpec = getattr(
@@ -145,9 +143,7 @@ class PyTorchFLTask(BaseFLTask):
                 tester, "__fl_task_tester_config"
             )
         except AttributeError:
-            msg = (
-                "Cannot extract `TesterSignatureSpec` from supplied `tester`."
-            )
+            msg = "Cannot extract `TesterSignatureSpec` from supplied `tester`."
             raise MissingTesterSpec(msg)
 
         if trainer_spec.net_parameter != tester_spec.net_parameter:
@@ -185,16 +181,13 @@ class PyTorchFLTask(BaseFLTask):
             parameters = ndarrays_to_parameters(ndarrays)
             strategy = FedAvg(
                 fraction_evaluate=1.0,
-                min_available_clients=2,
                 initial_parameters=parameters,
             )
 
         if client_manager is None:
             client_manager = SimpleClientManager()
 
-        return PyTorchFlowerServer(
-            client_manager=client_manager, strategy=strategy
-        )
+        return PyTorchFlowerServer(client_manager=client_manager, strategy=strategy)
 
     def client(self, **kwargs: Any) -> Client | None:
         # validate kwargs

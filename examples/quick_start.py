@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import time
 from typing import Any
@@ -46,12 +47,8 @@ def get_loaders(partition_id: int) -> tuple[DataLoader, DataLoader]:
         batch["img"] = [pytorch_transforms(img) for img in batch["img"]]
         return batch
 
-    partition_train_test = partition_train_test.with_transform(
-        apply_transforms
-    )
-    trainloader = DataLoader(
-        partition_train_test["train"], batch_size=32, shuffle=True
-    )
+    partition_train_test = partition_train_test.with_transform(apply_transforms)
+    trainloader = DataLoader(partition_train_test["train"], batch_size=32, shuffle=True)
     testloader = DataLoader(partition_train_test["test"], batch_size=32)
     return trainloader, testloader
 
@@ -113,9 +110,7 @@ def train_loop(
 
 
 @federate.tester.pytorch
-def test(
-    m: torch.nn.Module, test_loader: DataLoader, device: Device
-) -> TestResult:
+def test(m: torch.nn.Module, test_loader: DataLoader, device: Device) -> TestResult:
     """My custom tester."""
 
     m.to(device)
@@ -133,9 +128,7 @@ def test(
 
 
 # create your fl system
-fl_task = PyTorchFLTask.from_trainer_and_tester(
-    trainer=train_loop, tester=test
-)
+fl_task = PyTorchFLTask.from_trainer_and_tester(trainer=train_loop, tester=test)
 
 
 ## What can you do with your fl system?
@@ -168,72 +161,69 @@ for i in range(2):
 print(f"clients: {clients}", flush=True)
 
 
-def start_local(
-    event: threading.Event,
+def sync_to_async(fn: Any) -> Any:
+    """Sync to async."""
+
+    async def _async_wrapped_fn(*args: Any, **kwargs: Any) -> Any:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, lambda: fn(*args, **kwargs))
+
+    return _async_wrapped_fn
+
+
+async def start_local(
     client: Client | None = None,
     server: Server | None = None,
     **kwargs: Any,
-) -> threading.Thread:
+) -> None:
     """Spins up a server/client node for the given FLTask.
 
     Use threading.Event for graceful shutdown of nodes.
     """
+    print(f"here", flush=True)
+    if client:
+        kwargs.update(client=client)
+        start_fn = sync_to_async(fl.client.start_client)
 
-    def node_wrapper(
-        client: Client | None,
-        server: Server | None,
-        event: threading.Event,
-        **kwargs: Any,
-    ) -> None:
-        if client:
-            kwargs.update(client=client)
-            start_fn = fl.client.start_client
+    if server:
+        kwargs.update(server=server)
+        start_fn = sync_to_async(fl.server.start_server)
 
-        if server:
-            kwargs.update(server=server)
-            start_fn = fl.server.start_server
+    # start node
+    # try:
+    await start_fn(**kwargs)
+    # except ValueError as e:
+    #     pass
 
-        # start node
-        # try:
-        start_fn(**kwargs)
-        # except ValueError as e:
-        #     pass
+    # TODO: graceful shutdown
+    return
 
-        # keep alive until event is set
-        while not event.is_set():
-            pass
 
-        # TODO: graceful shutdown
-        return
-
-    # threads
-    thread = threading.Thread(
-        target=node_wrapper,
-        args=(client, server, event),
-        kwargs=kwargs,
+async def main():
+    server_task = asyncio.create_task(
+        start_local(
+            server=server,
+            server_address="[::]:8080",
+        )
     )
-    thread.start()
-    return thread
+    await asyncio.sleep(5)
+    client_1_task = asyncio.create_task(
+        start_local(client=clients[0], server_address="[::]:8080")
+    )
+    client_2_task = asyncio.create_task(
+        start_local(client=clients[1], server_address="[::]:8080")
+    )
+    tasks = [server_task, client_1_task, client_2_task]
+    try:
+        _, unfinished = await asyncio.wait(tasks, timeout=10)
+        for t in unfinished:
+            t.cancel()
+        await asyncio.gather(*unfinished, return_exceptions=True)
+    except KeyboardInterrupt:
+        for t in tasks:
+            t.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
 
-## start local
-try:
-    event = threading.Event()
-    server_thread = start_local(
-        event=event,
-        server=server,
-        server_address="[::]:8080",
-    )
-    time.sleep(5)
-    client_0_thread = start_local(
-        event=event, client=clients[0], server_address="[::]:8080"
-    )
-    client_1_thread = start_local(
-        event=event, client=clients[1], server_address="[::]:8080"
-    )
-
-    server_thread.join()
-    client_0_thread.join()
-    client_1_thread.join()
-except KeyboardInterrupt:
-    event.set()
+if __name__ == "__main__":
+    asyncio.run(main())

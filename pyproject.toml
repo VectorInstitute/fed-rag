@@ -54,5 +54,5 @@ dependencies = [
   "pydantic-settings>=2.7.1",
   "torch>=2.5.1",
   "torchvision>=0.20.1",
-  "typing-extensions>=4.12.2"
+  "typing-extensions>=4.12.2",
 ]
