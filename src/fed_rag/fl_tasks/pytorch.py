@@ -85,7 +85,7 @@ class PyTorchFlowerClient(NumPyClient):
         return (
             self.get_weights(),
             len(self.trainloader.dataset),
-            result.loss,
+            {"loss": result.loss},
         )
 
     def evaluate(
@@ -185,7 +185,6 @@ class PyTorchFLTask(BaseFLTask):
             parameters = ndarrays_to_parameters(ndarrays)
             strategy = FedAvg(
                 fraction_evaluate=1.0,
-                min_available_clients=2,
                 initial_parameters=parameters,
             )
 

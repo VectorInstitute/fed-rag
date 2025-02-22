@@ -134,7 +134,7 @@ def test_flower_client_fit(
     for a, b in zip(result[0], client.get_weights()):
         assert (a == b).all()
     assert result[1] == len(client.trainloader.dataset)
-    assert result[2] == 0.01
+    assert result[2] == {"loss": 0.01}
 
 
 def test_flower_client_evaluate(
