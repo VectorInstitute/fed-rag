@@ -6,17 +6,46 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install apt dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev libssl-dev
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@1edb52594c857e2b5b13128931090f0640537287
+        with:
+          # Install a specific version of uv.
+          version: "0.5.21"
+          enable-cache: true
+
+      - name: "Set up Python"
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
+      - name: Build package
+        run: uv build
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
   release_github:
-    # needs: deploy
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: ncipollo/release-action@v1.16.0
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: true
+          artifacts: "dist/*"
+          generateReleaseNotes: true
