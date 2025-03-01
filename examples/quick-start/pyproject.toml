@@ -1,0 +1,12 @@
+[project]
+name = "quick-start"
+version = "0.1.0"
+description = "A quick start example using fed-rag."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fed-rag"
+]
+
+[tool.uv.sources]
+fed-rag = {workspace = true}

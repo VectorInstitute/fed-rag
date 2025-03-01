@@ -57,3 +57,9 @@ dependencies = [
   "torchvision>=0.20.1",
   "typing-extensions>=4.12.2"
 ]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src", "tests"] # keep build small, exclude examples
+
+[tool.uv.workspace]
+members = ["examples/quick-start"]
