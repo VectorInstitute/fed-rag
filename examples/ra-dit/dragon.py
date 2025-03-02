@@ -1,3 +1,4 @@
+import torch
 from transformers import AutoModel, AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("facebook/dragon-plus-query-encoder")
@@ -23,5 +24,7 @@ ctx_emb = context_encoder(**ctx_input).last_hidden_state[:, 0, :]
 # Compute similarity scores using dot product
 score1 = query_emb @ ctx_emb[0]  # 396.5625
 score2 = query_emb @ ctx_emb[1]  # 393.8340
+
+print(isinstance(context_encoder, torch.nn.Module))
 
 print(score1, score2)
