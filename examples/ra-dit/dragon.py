@@ -1,30 +1,69 @@
-import torch
-from transformers import AutoModel, AutoTokenizer
+from sentence_transformers import SentenceTransformer
+from pydantic import BaseModel, PrivateAttr
+from typing import Optional
+from torch import Tensor
 
-tokenizer = AutoTokenizer.from_pretrained("facebook/dragon-plus-query-encoder")
-query_encoder = AutoModel.from_pretrained("facebook/dragon-plus-query-encoder")
-context_encoder = AutoModel.from_pretrained(
-    "facebook/dragon-plus-context-encoder"
+
+class DragonRetriever(BaseModel):
+    _encoder: Optional[SentenceTransformer] = PrivateAttr(default=None)
+    _query_encoder: Optional[SentenceTransformer] = PrivateAttr(default=None)
+    _context_encoder: Optional[SentenceTransformer] = PrivateAttr(default=None)
+
+    def __init__(
+        self,
+        encoder: Optional[SentenceTransformer] = None,
+        query_encoder: Optional[SentenceTransformer] = None,
+        context_encoder: Optional[SentenceTransformer] = None,
+    ) -> None:
+        """Init method."""
+
+        if encoder is not None:
+            if query_encoder is not None:
+                raise ValueError(
+                    "If `encoder` is supplied, then cannot provide `query_encoder` as well."
+                )
+            if context_encoder is not None:
+                raise ValueError(
+                    "If `encoder` is supplied, then cannot provide `query_encoder` as well."
+                )
+        else:
+            if query_encoder is None or context_encoder is None:
+                raise ValueError(
+                    "If `encoder` is None, then must supply both a `query_encoder` and a `context_encoder`."
+                )
+
+        super().__init__()
+        self._encoder = encoder
+        self._query_encoder = query_encoder
+        self._context_encoder = context_encoder
+
+    def encode_query(self, query: str | list[str]) -> Tensor:
+        encoder: SentenceTransformer = (
+            self._query_encoder if self._query_encoder else self._encoder
+        )
+        return encoder.encode(query)
+
+    def encode_context(self, context: str | list[str]) -> Tensor:
+        encoder: SentenceTransformer = (
+            self._context_encoder if self._context_encoder else self._encoder
+        )
+        return encoder.encode(context)
+
+
+dragon_retriever = DragonRetriever(
+    query_encoder=SentenceTransformer("nthakur/dragon-plus-query-encoder"),
+    context_encoder=SentenceTransformer("nthakur/dragon-plus-context-encoder"),
 )
 
-# We use msmarco query and passages as an example
+
 query = "Where was Marie Curie born?"
 contexts = [
     "Maria Sklodowska, later known as Marie Curie, was born on November 7, 1867.",
     "Born in Paris on 15 May 1859, Pierre Curie was the son of Eugène Curie, a doctor of French Catholic origin from Alsace.",
 ]
-# Apply tokenizer
-query_input = tokenizer(query, return_tensors="pt")
-ctx_input = tokenizer(
-    contexts, padding=True, truncation=True, return_tensors="pt"
-)
-# Compute embeddings: take the last-layer hidden state of the [CLS] token
-query_emb = query_encoder(**query_input).last_hidden_state[:, 0, :]
-ctx_emb = context_encoder(**ctx_input).last_hidden_state[:, 0, :]
-# Compute similarity scores using dot product
-score1 = query_emb @ ctx_emb[0]  # 396.5625
-score2 = query_emb @ ctx_emb[1]  # 393.8340
 
-print(isinstance(context_encoder, torch.nn.Module))
+query_embeddings = dragon_retriever.encode_query(query)
+context_embeddings = dragon_retriever.encode_context(contexts)
 
-print(score1, score2)
+scores = query_embeddings @ context_embeddings.T
+print(scores)
