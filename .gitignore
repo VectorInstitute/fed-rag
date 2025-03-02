@@ -6,3 +6,6 @@ venv/
 __pycache__
 dev_notebooks/
 .vscode
+.mypy_cache
+.pytest_cache
+.ruff_cache
