@@ -1,0 +1,14 @@
+[project]
+name = "ra-dit"
+version = "0.1.0"
+description = "Example of FedRAG following dual finetuning framework of RA-DIT."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fed-rag",
+  "sentence-transformers>=3.4.1",
+  "transformers>=4.49.0"
+]
+
+[tool.uv.sources]
+fed-rag = {path = "../../"}
