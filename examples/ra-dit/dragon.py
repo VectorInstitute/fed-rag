@@ -1,6 +1,7 @@
-from sentence_transformers import SentenceTransformer
-from pydantic import BaseModel, PrivateAttr
 from typing import Optional
+
+from pydantic import BaseModel, PrivateAttr
+from sentence_transformers import SentenceTransformer
 from torch import Tensor
 
 
