@@ -51,20 +51,22 @@ class DragonRetriever(BaseModel):
         return encoder.encode(context)
 
 
-dragon_retriever = DragonRetriever(
-    query_encoder=SentenceTransformer("nthakur/dragon-plus-query-encoder"),
-    context_encoder=SentenceTransformer("nthakur/dragon-plus-context-encoder"),
-)
+if __name__ == "__main__":
+    dragon_retriever = DragonRetriever(
+        query_encoder=SentenceTransformer("nthakur/dragon-plus-query-encoder"),
+        context_encoder=SentenceTransformer(
+            "nthakur/dragon-plus-context-encoder"
+        ),
+    )
 
+    query = "Where was Marie Curie born?"
+    contexts = [
+        "Maria Sklodowska, later known as Marie Curie, was born on November 7, 1867.",
+        "Born in Paris on 15 May 1859, Pierre Curie was the son of Eugène Curie, a doctor of French Catholic origin from Alsace.",
+    ]
 
-query = "Where was Marie Curie born?"
-contexts = [
-    "Maria Sklodowska, later known as Marie Curie, was born on November 7, 1867.",
-    "Born in Paris on 15 May 1859, Pierre Curie was the son of Eugène Curie, a doctor of French Catholic origin from Alsace.",
-]
+    query_embeddings = dragon_retriever.encode_query(query)
+    context_embeddings = dragon_retriever.encode_context(contexts)
 
-query_embeddings = dragon_retriever.encode_query(query)
-context_embeddings = dragon_retriever.encode_context(contexts)
-
-scores = query_embeddings @ context_embeddings.T
-print(scores)
+    scores = query_embeddings @ context_embeddings.T
+    print(scores)
