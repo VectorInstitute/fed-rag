@@ -1,4 +1,4 @@
-"""Dragon Retriever"""
+"""Dragon Retriever."""
 
 from typing import Optional
 
