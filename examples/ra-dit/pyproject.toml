@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "fed-rag",
+  "fire>=0.7.0",
   "sentence-transformers>=3.4.1",
   "transformers>=4.49.0"
 ]
