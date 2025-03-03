@@ -10,6 +10,7 @@ from transformers import (
     PreTrainedModel,
     PreTrainedTokenizer,
 )
+from transformers.utils.quantization_config import BitsAndBytesConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__file__)
@@ -48,9 +49,17 @@ class LLM(BaseModel):
 
 
 def main(model_name: str, prompt: str) -> None:
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(model_name)
-    model = model.to(device)
+    if not model_name.startswith("/model-weights/"):
+        import os
+
+        from huggingface_hub import login
+
+        login(token=os.getenv("HUGGINGFACE_API_TOKEN"))
+
+    quantization_config = BitsAndBytesConfig(load_in_8bit=True)
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, quantization_config=quantization_config
+    )
     logger.info(f"model device: {model.device}")
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     llm = LLM(model=model, tokenizer=tokenizer)
@@ -58,11 +67,12 @@ def main(model_name: str, prompt: str) -> None:
 
 
 if __name__ == "__main__":
-    import os
+    import gc
 
     import fire
-    from huggingface_hub import login
 
-    login(token=os.getenv("HUGGINGFACE_API_TOKEN"))
+    torch.cuda.empty_cache()
+
+    gc.collect()
 
     fire.Fire(main)
