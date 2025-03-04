@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 
+import torch
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -119,3 +120,27 @@ def test_hf_pretrained_load_model_from_hf(
     mock_model_from_pretrained.assert_called_once()
     assert generator.model == model
     assert generator.tokenizer == tokenizer
+
+
+def test_generate() -> None:
+    # arrange
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_tokenizer = MagicMock()
+    mock_model = MagicMock()
+    mock_model.device = torch.device("cpu")
+    mock_model.generate.return_value = torch.Tensor([1, 2, 3])
+    mock_tokenizer_result = MagicMock()
+    mock_tokenizer_result.input_ids = torch.ones(2)
+    mock_tokenizer.batch_decode.return_value = ["Mock output"]
+    mock_tokenizer.return_value = mock_tokenizer_result
+    generator.tokenizer = mock_tokenizer
+    generator.model = mock_model
+
+    # act
+    result = generator.generate("fake input", "fake context")
+
+    assert result == "Mock output"
+    mock_tokenizer.assert_called_once()
+    mock_model.generate.assert_called_once()
