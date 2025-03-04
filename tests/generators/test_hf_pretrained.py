@@ -64,3 +64,28 @@ def test_hf_pretrained_generator_class_init(
     assert generator.tokenizer == dummy_pretrained_model_and_tokenizer[1]
     assert args == ()
     assert kwargs == {}
+
+
+@patch.object(HFPretrainedModelGenerator, "_load_model_from_hf")
+def test_hf_pretrained_generator_class_init_no_load(
+    mock_load_from_hf: MagicMock,
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+) -> None:
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name", load_model_at_init=False
+    )
+
+    mock_load_from_hf.assert_not_called()
+    assert generator.model_name == "fake_name"
+    assert generator._model is None
+    assert generator._tokenizer is None
+
+    # load model using setter
+    model, tokenizer = dummy_pretrained_model_and_tokenizer
+    generator.model = model
+    generator.tokenizer = tokenizer
+
+    assert generator.model == model
+    assert generator.tokenizer == tokenizer
