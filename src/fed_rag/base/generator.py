@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 
+import torch
 from pydantic import BaseModel, ConfigDict
 
 
@@ -13,4 +14,9 @@ class BaseGenerator(BaseModel, ABC):
     @abstractmethod
     def generate(self, input: str) -> str:
         """Generate an output from a given input."""
+        ...
+
+    @property
+    @abstractmethod
+    def model(self) -> torch.nn.Module:
         ...
