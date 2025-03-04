@@ -40,7 +40,6 @@ def dummy_pretrained_model_and_tokenizer() -> (
     tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
     tokenizer = PreTrainedTokenizerFast(
         tokenizer_object=tokenizer,
-        unk_token="[UNK]",
         pad_token="[PAD]",
         cls_token="[CLS]",
         sep_token="[SEP]",

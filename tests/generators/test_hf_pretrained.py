@@ -1,6 +1,11 @@
 from unittest.mock import MagicMock, patch
 
-from transformers import PreTrainedModel, PreTrainedTokenizer
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    PreTrainedModel,
+    PreTrainedTokenizer,
+)
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
@@ -87,5 +92,30 @@ def test_hf_pretrained_generator_class_init_no_load(
     generator.model = model
     generator.tokenizer = tokenizer
 
+    assert generator.model == model
+    assert generator.tokenizer == tokenizer
+
+
+@patch.object(AutoModelForCausalLM, "from_pretrained")
+@patch.object(AutoTokenizer, "from_pretrained")
+def test_hf_pretrained_load_model_from_hf(
+    mock_tokenizer_from_pretrained: MagicMock,
+    mock_model_from_pretrained: MagicMock,
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+) -> None:
+    # arrange
+    model, tokenizer = dummy_pretrained_model_and_tokenizer
+    mock_model_from_pretrained.return_value = model
+    mock_tokenizer_from_pretrained.return_value = tokenizer
+
+    # act
+    generator = HFPretrainedModelGenerator(model_name="fake_name")
+
+    # assert
+    assert generator.model_name == "fake_name"
+    mock_tokenizer_from_pretrained.assert_called_once()
+    mock_model_from_pretrained.assert_called_once()
     assert generator.model == model
     assert generator.tokenizer == tokenizer
