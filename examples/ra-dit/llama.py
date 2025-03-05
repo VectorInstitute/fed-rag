@@ -24,6 +24,7 @@ def main(model_name: str, question: str, context: str) -> None:
         do_sample=True,
         eos_token_id=[128000, 128009],
         bos_token_id=128000,
+        max_new_tokens=4096,
         top_p=0.9,
         temperature=0.6,
         cache_implementation="offloaded",

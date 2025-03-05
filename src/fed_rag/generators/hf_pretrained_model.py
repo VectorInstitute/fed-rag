@@ -118,13 +118,6 @@ class HFPretrainedModelGenerator(BaseGenerator):
         inputs: torch.Tensor = tokenizer_result.input_ids
         inputs = inputs.to(self.model.device)
 
-        # update generation config
-        attention_mask: torch.Tensor = tokenizer_result.attention_mask
-        self.generation_config.attention_mask = attention_mask
-        if max_new_tokens := self.generation_config.max_new_tokens:
-            max_new_tokens -= inputs.numel()
-            self.generation_config.max_new_tokens = max_new_tokens
-
         # generate
         generated_ids = self.model.generate(
             inputs=inputs,
