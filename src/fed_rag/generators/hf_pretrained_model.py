@@ -40,9 +40,9 @@ class HFPretrainedModelGenerator(BaseGenerator):
     generation_config: GenerationConfig = Field(
         description="The generation config used for generating with the PreTrainedModel."
     )
-    load_model_kwargs: dict | None = Field(
+    load_model_kwargs: dict = Field(
         description="Optional kwargs dict for loading models from HF. Defaults to None.",
-        default=None,
+        default_factory=dict,
     )
     prompt_template: str = Field(description="Prompt template for RAG.")
     _model: PreTrainedModel | None = PrivateAttr(default=None)
@@ -66,18 +66,17 @@ class HFPretrainedModelGenerator(BaseGenerator):
             model_name=model_name,
             generation_config=generation_config,
             prompt_template=prompt_template,
-            load_model_kwargs=load_model_kwargs,
+            load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
         )
         if load_model_at_init:
-            load_model_kwargs = load_model_kwargs if load_model_kwargs else {}
-            self._model, self._tokenizer = self._load_model_from_hf(
-                **load_model_kwargs
-            )
+            self._model, self._tokenizer = self._load_model_from_hf()
 
     def _load_model_from_hf(
-        self,
+        self, **kwargs: Any
     ) -> tuple[PreTrainedModel, PreTrainedTokenizer]:
-        load_kwargs = self.load_model_kwargs if self.load_model_kwargs else {}
+        load_kwargs = self.load_model_kwargs
+        load_kwargs.update(kwargs)
+        self.load_model_kwargs = load_kwargs
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, **load_kwargs
         )
@@ -88,7 +87,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
     def model(self) -> PreTrainedModel:
         if self._model is None:
             # load HF Pretrained Model
-            model, _ = self._load_model_from_hf()
+            model, _ = self._load_model_from_hf(**self.load_model_kwargs)
             self._model = model
         return self._model
 
@@ -120,11 +119,11 @@ class HFPretrainedModelGenerator(BaseGenerator):
         inputs = inputs.to(self.model.device)
 
         # generate
-
         generated_ids = self.model.generate(
             inputs=inputs,
             generation_config=self.generation_config,
             tokenizer=self._tokenizer,
+            **kwargs,
         )
 
         # decode tokens
