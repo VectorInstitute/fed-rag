@@ -130,7 +130,6 @@ class HFPretrainedModelGenerator(BaseGenerator):
             inputs=inputs,
             generation_config=self.generation_config,
             tokenizer=self._tokenizer,
-            attention_mask=attention_mask,
             **kwargs,
         )
 
