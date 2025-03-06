@@ -2,6 +2,7 @@
 
 from typing import Any
 
+import torch
 from pydantic import ConfigDict, Field, PrivateAttr
 from sentence_transformers import SentenceTransformer
 
@@ -43,3 +44,25 @@ class HFSentenceTransformerRetriever(BaseRetriever):
 
     def _load_model_from_hf(self, **kwargs: Any) -> SentenceTransformer:
         return SentenceTransformer(self.model_name)
+
+    def encode_context(
+        self, context: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
+        raise NotImplementedError
+
+    def encode_query(
+        self, query: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
+        raise NotImplementedError
+
+    @property
+    def encoder(self) -> SentenceTransformer | None:
+        return self._encoder
+
+    @property
+    def query_encoder(self) -> SentenceTransformer | None:
+        return self._query_encoder
+
+    @property
+    def context_encoder(self) -> SentenceTransformer | None:
+        return self._context_encoder

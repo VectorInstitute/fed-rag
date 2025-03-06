@@ -10,7 +10,9 @@ def test_base_abstract_attr() -> None:
 
     assert "encode_context" in abstract_methods
     assert "encode_query" in abstract_methods
-    assert "model" in abstract_methods
+    assert "encoder" in abstract_methods
+    assert "query_encoder" in abstract_methods
+    assert "context_encoder" in abstract_methods
 
 
 def test_base_encode(mock_retriever: BaseRetriever) -> None:
