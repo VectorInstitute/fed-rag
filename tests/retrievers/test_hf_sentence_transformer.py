@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, _Call, patch
 
 from sentence_transformers import SentenceTransformer
 
@@ -16,7 +16,7 @@ def test_hf_pretrained_generator_class() -> None:
 
 
 @patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
-def test_hf_pretrained_generator_class_init_no_load(
+def test_hf_pretrained_generator_class_init_delayed_load(
     mock_load_from_hf: MagicMock,
     dummy_sentence_transformer: SentenceTransformer,
 ) -> None:
@@ -39,3 +39,36 @@ def test_hf_pretrained_generator_class_init_no_load(
     assert retriever.encoder == dummy_sentence_transformer
     assert args == ()
     assert kwargs == {"load_type": "encoder"}
+
+
+@patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
+def test_hf_pretrained_generator_class_init_delayed_dual_encoder_load(
+    mock_load_from_hf: MagicMock,
+    dummy_sentence_transformer: SentenceTransformer,
+) -> None:
+    retriever = HFSentenceTransformerRetriever(
+        query_model_name="query_fake_name",
+        context_model_name="context_fake_name",
+        load_model_at_init=False,
+    )
+
+    assert retriever.model_name is None
+    assert retriever.query_model_name == "query_fake_name"
+    assert retriever.context_model_name == "context_fake_name"
+    assert retriever._encoder is None
+    assert retriever._query_encoder is None
+    assert retriever._context_encoder is None
+
+    # load models
+    mock_load_from_hf.return_value = dummy_sentence_transformer
+    retriever._load_model_from_hf(load_type="query_encoder")
+    retriever._load_model_from_hf(load_type="context_encoder")
+
+    # assert
+    calls = [
+        _Call(((), {"load_type": "query_encoder"})),
+        _Call(((), {"load_type": "context_encoder"})),
+    ]
+    mock_load_from_hf.assert_has_calls(calls)
+    assert retriever.query_encoder == dummy_sentence_transformer
+    assert retriever.context_encoder == dummy_sentence_transformer
