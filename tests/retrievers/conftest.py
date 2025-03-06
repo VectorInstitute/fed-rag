@@ -3,6 +3,7 @@ from typing import Any
 import pytest
 import torch
 from pydantic import PrivateAttr
+from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
 
@@ -32,3 +33,8 @@ class MockRetriever(BaseRetriever):
 @pytest.fixture
 def mock_retriever() -> MockRetriever:
     return MockRetriever()
+
+
+@pytest.fixture
+def dummy_sentence_transformer() -> SentenceTransformer:
+    return SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
