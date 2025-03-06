@@ -53,6 +53,7 @@ dependencies = [
   "flwr-datasets>=0.5.0",
   "pydantic>=2.10.5",
   "pydantic-settings>=2.7.1",
+  "sentence-transformers>=3.4.1",
   "torch>=2.5.1",
   "torchvision>=0.20.1",
   "transformers>=4.49.0",
