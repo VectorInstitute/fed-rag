@@ -17,16 +17,14 @@ class BaseRetriever(BaseModel, ABC):
         self, query: str | list[str], **kwargs: Any
     ) -> torch.Tensor:
         """Encode query."""
-        ...
 
     @abstractmethod
     def encode_context(
         self, context: str | list[str], **kwargs: Any
     ) -> torch.Tensor:
         """Encode context."""
-        ...
 
     @property
     @abstractmethod
     def model(self) -> torch.nn.Module:
-        ...
+        """PyTorch model associated with the Retriever."""
