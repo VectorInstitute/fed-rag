@@ -8,17 +8,25 @@ from fed_rag.base.retriever import BaseRetriever
 
 
 class MockRetriever(BaseRetriever):
-    _model: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
+    _encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
 
     def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
-        return self._model.forward(torch.ones(2))
+        return self._encoder.forward(torch.ones(2))
 
     def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
-        return self._model.forward(torch.zeros(2))
+        return self._encoder.forward(torch.zeros(2))
 
     @property
-    def model(self) -> torch.nn.Module:
-        return self._model
+    def encoder(self) -> torch.nn.Module:
+        return self._encoder
+
+    @property
+    def query_encoder(self) -> torch.nn.Module | None:
+        return None
+
+    @property
+    def context_encoder(self) -> torch.nn.Module | None:
+        return None
 
 
 @pytest.fixture
