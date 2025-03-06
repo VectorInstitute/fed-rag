@@ -1,6 +1,6 @@
 """HuggingFace SentenceTransformer Retriever"""
 
-from typing import Any
+from typing import Any, Literal
 
 import torch
 from pydantic import ConfigDict, Field, PrivateAttr
@@ -40,10 +40,29 @@ class HFSentenceTransformerRetriever(BaseRetriever):
             context_model_name=context_model_name,
         )
         if load_model_at_init:
-            ...
+            if model_name:
+                self._encoder = self._load_model_from_hf(load_type="encoder")
+            else:
+                self._query_encoder = self._load_model_from_hf(
+                    load_type="query_encoder"
+                )
+                self._context_encoder = self._load_model_from_hf(
+                    load_type="context_encoder"
+                )
 
-    def _load_model_from_hf(self, **kwargs: Any) -> SentenceTransformer:
-        return SentenceTransformer(self.model_name)
+    def _load_model_from_hf(
+        self,
+        load_type: Literal["encoder", "query_encoder", "context_encoder"],
+        **kwargs: Any,
+    ) -> SentenceTransformer:
+        if load_type == "encoder":
+            return SentenceTransformer(self.model_name, **kwargs)
+        elif load_type == "context_encoder":
+            return SentenceTransformer(self.context_model_name, **kwargs)
+        elif load_type == "query_encoder":
+            return SentenceTransformer(self.query_model_name, **kwargs)
+        else:
+            raise ValueError("Invalid `load_type` supplied.")
 
     def encode_context(
         self, context: str | list[str], **kwargs: Any
@@ -57,12 +76,22 @@ class HFSentenceTransformerRetriever(BaseRetriever):
 
     @property
     def encoder(self) -> SentenceTransformer | None:
+        if self.model_name and self._encoder is None:
+            self._encoder = self._load_model_from_hf(load_type="encoder")
         return self._encoder
 
     @property
     def query_encoder(self) -> SentenceTransformer | None:
+        if self.query_model_name and self._query_encoder is None:
+            self._query_encoder = self._load_model_from_hf(
+                load_type="query_encoder"
+            )
         return self._query_encoder
 
     @property
     def context_encoder(self) -> SentenceTransformer | None:
+        if self.context_model_name and self._context_encoder is None:
+            self._context_encoder = self._load_model_from_hf(
+                load_type="context_encoder"
+            )
         return self._context_encoder
