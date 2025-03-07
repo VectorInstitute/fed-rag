@@ -1,6 +1,6 @@
 """HuggingFace SentenceTransformer Retriever"""
 
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import torch
 from pydantic import ConfigDict, Field, PrivateAttr
@@ -67,12 +67,20 @@ class HFSentenceTransformerRetriever(BaseRetriever):
     def encode_context(
         self, context: str | list[str], **kwargs: Any
     ) -> torch.Tensor:
-        raise NotImplementedError
+        # validation guarantees one of these is not None
+        encoder = self.encoder if self.encoder else self.context_encoder
+        encoder = cast(SentenceTransformer, encoder)
+
+        return encoder.encode(context)
 
     def encode_query(
         self, query: str | list[str], **kwargs: Any
     ) -> torch.Tensor:
-        raise NotImplementedError
+        # validation guarantees one of these is not None
+        encoder = self.encoder if self.encoder else self.query_encoder
+        encoder = cast(SentenceTransformer, encoder)
+
+        return encoder.encode(query)
 
     @property
     def encoder(self) -> SentenceTransformer | None:
