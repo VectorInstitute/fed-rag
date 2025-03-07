@@ -170,3 +170,24 @@ def test_load_model_from_hf_raises_invalid_type_error() -> None:
     # act/assert
     with pytest.raises(InvalidLoadType, match="Invalid `load_type` supplied."):
         retriever._load_model_from_hf(load_type="unsupported_type")
+
+
+@patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
+def test_encode_query(
+    mock_load_from_hf: MagicMock,
+) -> None:
+    # arrange
+    mock_encoder = MagicMock()
+    mock_encoder.encode.side_effect = iter([[1, 2, 3], [4, 5, 6]])
+    mock_load_from_hf.return_value = mock_encoder
+    retriever = HFSentenceTransformerRetriever(
+        model_name="query_fake_name",
+    )
+
+    # act
+    context_emb = retriever.encode_context("fake_context")
+    query_emb = retriever.encode_query("fake_query")
+
+    # assert
+    assert context_emb == [1, 2, 3]
+    assert query_emb == [4, 5, 6]
