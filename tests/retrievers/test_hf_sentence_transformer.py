@@ -72,3 +72,51 @@ def test_hf_pretrained_generator_class_init_delayed_dual_encoder_load(
     mock_load_from_hf.assert_has_calls(calls)
     assert retriever.query_encoder == dummy_sentence_transformer
     assert retriever.context_encoder == dummy_sentence_transformer
+
+
+@patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
+def test_hf_pretrained_generator_class_init_dual_encoder(
+    mock_load_from_hf: MagicMock,
+    dummy_sentence_transformer: SentenceTransformer,
+) -> None:
+    # arrange
+    mock_load_from_hf.return_value = dummy_sentence_transformer
+
+    # act
+    retriever = HFSentenceTransformerRetriever(
+        query_model_name="query_fake_name",
+        context_model_name="context_fake_name",
+    )
+
+    # assert
+    calls = [
+        _Call(((), {"load_type": "query_encoder"})),
+        _Call(((), {"load_type": "context_encoder"})),
+    ]
+    mock_load_from_hf.assert_has_calls(calls)
+    assert retriever.encoder is None
+    assert retriever.query_encoder == dummy_sentence_transformer
+    assert retriever.context_encoder == dummy_sentence_transformer
+
+
+@patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
+def test_hf_pretrained_generator_class_init_encoder(
+    mock_load_from_hf: MagicMock,
+    dummy_sentence_transformer: SentenceTransformer,
+) -> None:
+    # arrange
+    mock_load_from_hf.return_value = dummy_sentence_transformer
+
+    # act
+    retriever = HFSentenceTransformerRetriever(
+        model_name="fake_name",
+    )
+
+    # assert
+    calls = [
+        _Call(((), {"load_type": "encoder"})),
+    ]
+    mock_load_from_hf.assert_has_calls(calls)
+    assert retriever.encoder == dummy_sentence_transformer
+    assert retriever.query_encoder is None
+    assert retriever.context_encoder is None
