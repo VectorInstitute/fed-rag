@@ -9,6 +9,10 @@ from sentence_transformers import SentenceTransformer
 from fed_rag.base.retriever import BaseRetriever
 
 
+class InvalidLoadType(Exception):
+    pass
+
+
 class HFSentenceTransformerRetriever(BaseRetriever):
     model_config = ConfigDict(protected_namespaces=("pydantic_model_",))
     model_name: str | None = Field(
@@ -62,7 +66,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         elif load_type == "query_encoder":
             return SentenceTransformer(self.query_model_name, **kwargs)
         else:
-            raise ValueError("Invalid `load_type` supplied.")
+            raise InvalidLoadType("Invalid `load_type` supplied.")
 
     def encode_context(
         self, context: str | list[str], **kwargs: Any

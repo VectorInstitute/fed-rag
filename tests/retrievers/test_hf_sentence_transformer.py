@@ -1,10 +1,12 @@
 from unittest.mock import MagicMock, _Call, patch
 
+import pytest
 from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
+    InvalidLoadType,
 )
 
 
@@ -157,3 +159,14 @@ def test_load_model_from_hf_constructs_sentence_transformer_obj_dual(
         ]
     )
     assert retriever.encoder is None
+
+
+def test_load_model_from_hf_raises_invalid_type_error() -> None:
+    # arrange
+    retriever = HFSentenceTransformerRetriever(
+        model_name="fake_name", load_model_at_init=False
+    )
+
+    # act/assert
+    with pytest.raises(InvalidLoadType, match="Invalid `load_type` supplied."):
+        retriever._load_model_from_hf(load_type="unsupported_type")
