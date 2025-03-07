@@ -8,7 +8,7 @@ from fed_rag.retrievers.hf_sentence_transformer import (
 )
 
 
-def test_hf_pretrained_generator_class() -> None:
+def test_hf_sentence_transformer_retriever_class() -> None:
     names_of_base_classes = [
         b.__name__ for b in HFSentenceTransformerRetriever.__mro__
     ]
@@ -16,7 +16,7 @@ def test_hf_pretrained_generator_class() -> None:
 
 
 @patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
-def test_hf_pretrained_generator_class_init_delayed_load(
+def test_hf_sentence_transformer_retriever_class_init_delayed_load(
     mock_load_from_hf: MagicMock,
     dummy_sentence_transformer: SentenceTransformer,
 ) -> None:
@@ -42,7 +42,7 @@ def test_hf_pretrained_generator_class_init_delayed_load(
 
 
 @patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
-def test_hf_pretrained_generator_class_init_delayed_dual_encoder_load(
+def test_hf_sentence_transformer_retriever_class_init_delayed_dual_encoder_load(
     mock_load_from_hf: MagicMock,
     dummy_sentence_transformer: SentenceTransformer,
 ) -> None:
@@ -75,7 +75,7 @@ def test_hf_pretrained_generator_class_init_delayed_dual_encoder_load(
 
 
 @patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
-def test_hf_pretrained_generator_class_init_dual_encoder(
+def test_hf_sentence_transformer_retriever_class_init_dual_encoder(
     mock_load_from_hf: MagicMock,
     dummy_sentence_transformer: SentenceTransformer,
 ) -> None:
@@ -100,7 +100,7 @@ def test_hf_pretrained_generator_class_init_dual_encoder(
 
 
 @patch.object(HFSentenceTransformerRetriever, "_load_model_from_hf")
-def test_hf_pretrained_generator_class_init_encoder(
+def test_hf_sentence_transformer_retriever_class_init_encoder(
     mock_load_from_hf: MagicMock,
     dummy_sentence_transformer: SentenceTransformer,
 ) -> None:
@@ -120,3 +120,40 @@ def test_hf_pretrained_generator_class_init_encoder(
     assert retriever.encoder == dummy_sentence_transformer
     assert retriever.query_encoder is None
     assert retriever.context_encoder is None
+
+
+@patch("fed_rag.retrievers.hf_sentence_transformer.SentenceTransformer")
+def test_load_model_from_hf_constructs_sentence_transformer_obj(
+    mock_sentence_transformer: MagicMock,
+) -> None:
+    # arrange
+    # act
+    retriever = HFSentenceTransformerRetriever(
+        model_name="fake_name",
+    )
+
+    # assert
+    mock_sentence_transformer.assert_called_once_with("fake_name")
+    assert retriever.query_encoder is None
+    assert retriever.context_encoder is None
+
+
+@patch("fed_rag.retrievers.hf_sentence_transformer.SentenceTransformer")
+def test_load_model_from_hf_constructs_sentence_transformer_obj_dual(
+    mock_sentence_transformer: MagicMock,
+) -> None:
+    # arrange
+    # act
+    retriever = HFSentenceTransformerRetriever(
+        query_model_name="fake_query_model_name",
+        context_model_name="fake_context_model_name",
+    )
+
+    # assert
+    mock_sentence_transformer.assert_has_calls(
+        [
+            _Call((("fake_query_model_name",), {})),
+            _Call((("fake_context_model_name",), {})),
+        ]
+    )
+    assert retriever.encoder is None
