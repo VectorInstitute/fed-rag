@@ -26,5 +26,15 @@ class BaseRetriever(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def model(self) -> torch.nn.Module:
-        """PyTorch model associated with the Retriever."""
+    def encoder(self) -> torch.nn.Module | None:
+        """PyTorch model associated with the encoder associated with retriever."""
+
+    @property
+    @abstractmethod
+    def query_encoder(self) -> torch.nn.Module | None:
+        """PyTorch model associated with the query encoder associated with retriever."""
+
+    @property
+    @abstractmethod
+    def context_encoder(self) -> torch.nn.Module | None:
+        """PyTorch model associated with the context encoder associated with retriever."""
