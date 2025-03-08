@@ -52,6 +52,52 @@ def test_image_knowledge_node_init_raises_validation_error() -> None:
         )
 
 
+@patch("fed_rag.types.knowledge_node.uuid")
+def test_multimodal_knowledge_node_init(mock_uuid: MagicMock) -> None:
+    mock_uuid.uuid4.return_value = "mock_id"
+    node = KnowledgeNode(
+        embedding=[0.1, 0.2, 0.3],
+        node_type="multimodal",
+        text_content="fake content",
+        image_content=b"mock_base64_str",
+    )
+
+    assert node.node_id == "mock_id"
+    assert node.embedding == [0.1, 0.2, 0.3]
+    assert node.text_content == "fake content"
+    assert node.node_type == "multimodal"
+    assert isinstance(node.image_content, bytes)
+    assert node.image_content == b"mock_base64_str"
+
+
+def test_multimodal_knowledge_node_init_raises_validation_error_missing_text() -> (
+    None
+):
+    with pytest.raises(
+        ValueError, match="NodeType == 'multimodal', but text_content is None."
+    ):
+        KnowledgeNode(
+            node_id="mock_id",
+            embedding=[0.1, 0.2, 0.3],
+            node_type="multimodal",
+        )
+
+
+def test_multimodal_knowledge_node_init_raises_validation_error_missing_image() -> (
+    None
+):
+    with pytest.raises(
+        ValueError,
+        match="NodeType == 'multimodal', but image_content is None.",
+    ):
+        KnowledgeNode(
+            node_id="mock_id",
+            embedding=[0.1, 0.2, 0.3],
+            node_type="multimodal",
+            text_content="fake content",
+        )
+
+
 @pytest.mark.parametrize(
     ("node", "expected_content"),
     [
