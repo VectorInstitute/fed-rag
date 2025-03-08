@@ -85,7 +85,7 @@ def test_image_knowledge_node_init_raises_validation_error() -> None:
         ),
     ],
 )
-def test_get_content_dict(
+def test_get_content(
     node: KnowledgeNode, expected_content: NodeContent
 ) -> None:
-    assert node.get_content_dict() == expected_content
+    assert node.get_content() == expected_content

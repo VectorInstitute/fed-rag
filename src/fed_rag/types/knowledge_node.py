@@ -83,7 +83,7 @@ class KnowledgeNode(BaseModel):
 
         return value
 
-    def get_content_dict(self) -> NodeContent:
+    def get_content(self) -> NodeContent:
         """Return dict of node content."""
         content: NodeContent = {
             "image_content": self.image_content,
