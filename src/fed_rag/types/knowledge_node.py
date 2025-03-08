@@ -27,3 +27,12 @@ class KnowledgeNode(BaseModel):
     image_content: bytes | None = Field(
         description="Image content as binary data (decoded from base64)"
     )
+
+    def get_content(self) -> str | bytes | dict | None:
+        """Return the appropriate content based on node_type."""
+        if self.node_type == NodeType.TEXT:
+            return self.text_content
+        elif self.node_type == NodeType.IMAGE:
+            return self.image_content
+        elif self.node_type == NodeType.MULTIMODAL:
+            return {"text": self.text_content, "image": self.image_content}
