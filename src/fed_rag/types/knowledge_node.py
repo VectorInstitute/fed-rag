@@ -2,6 +2,7 @@
 
 import uuid
 from enum import Enum
+from typing import TypedDict
 
 from pydantic import (
     BaseModel,
@@ -10,6 +11,11 @@ from pydantic import (
     ValidationInfo,
     field_validator,
 )
+
+
+class NodeContent(TypedDict):
+    text_content: str | None
+    image_content: bytes | None
 
 
 class NodeType(str, Enum):
@@ -77,11 +83,10 @@ class KnowledgeNode(BaseModel):
 
         return value
 
-    def get_content(self) -> str | bytes | dict | None:
-        """Return the appropriate content based on node_type."""
-        if self.node_type == NodeType.TEXT:
-            return self.text_content
-        elif self.node_type == NodeType.IMAGE:
-            return self.image_content
-        elif self.node_type == NodeType.MULTIMODAL:
-            return {"text": self.text_content, "image": self.image_content}
+    def get_content_dict(self) -> NodeContent:
+        """Return dict of node content."""
+        content: NodeContent = {
+            "image_content": self.image_content,
+            "text_content": self.text_content,
+        }
+        return content

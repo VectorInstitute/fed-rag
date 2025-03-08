@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types.knowledge_node import KnowledgeNode, NodeContent
 
 
 @patch("fed_rag.types.knowledge_node.uuid")
@@ -50,3 +50,42 @@ def test_image_knowledge_node_init_raises_validation_error() -> None:
         KnowledgeNode(
             node_id="mock_id", embedding=[0.1, 0.2, 0.3], node_type="image"
         )
+
+
+@pytest.mark.parametrize(
+    ("node", "expected_content"),
+    [
+        (
+            KnowledgeNode(
+                node_type="text",
+                embedding=[0.1, 0.2],
+                text_content="fake content",
+            ),
+            {"text_content": "fake content", "image_content": None},
+        ),
+        (
+            KnowledgeNode(
+                node_type="image",
+                embedding=[0.1, 0.2],
+                image_content=b"fake-base64-str",
+            ),
+            {"text_content": None, "image_content": b"fake-base64-str"},
+        ),
+        (
+            KnowledgeNode(
+                node_type="multimodal",
+                embedding=[0.1, 0.2],
+                text_content="fake content",
+                image_content=b"fake-base64-str",
+            ),
+            {
+                "text_content": "fake content",
+                "image_content": b"fake-base64-str",
+            },
+        ),
+    ],
+)
+def test_get_content_dict(
+    node: KnowledgeNode, expected_content: NodeContent
+) -> None:
+    assert node.get_content_dict() == expected_content
