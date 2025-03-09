@@ -16,8 +16,8 @@ def text_nodes() -> list[KnowledgeNode]:
         ),
         KnowledgeNode(
             embedding=[
-                0.0,
-                0.0,
+                1.0,
+                1.0,
                 0.0,
             ],
             node_type="text",
@@ -58,6 +58,18 @@ def test_delete_node(text_nodes: list[KnowledgeNode]) -> None:
     assert text_nodes[0].node_id not in knowledge_store._data
 
 
+def test_delete_node_returns_false(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+
+    assert knowledge_store.count == 3
+
+    res = knowledge_store.delete_node("non_included_id")
+
+    assert res is False
+    assert knowledge_store.count == 3
+    assert all(n.node_id in knowledge_store._data for n in text_nodes)
+
+
 def test_load_node(text_nodes: list[KnowledgeNode]) -> None:
     knowledge_store = InMemoryKnowledgeStore()
     assert knowledge_store.count == 0
@@ -88,11 +100,22 @@ def test_clear(text_nodes: list[KnowledgeNode]) -> None:
     assert all(n.node_id not in knowledge_store._data for n in text_nodes)
 
 
-def test_retrieve(text_nodes: list[KnowledgeNode]) -> None:
+@pytest.mark.parametrize(
+    ("query_emb", "top_k", "expected_node_ix"),
+    [([1.0, 1.0, 1.0], 2, [0, 2]), ([0.5, 0.0, 0.0], 1, [1])],
+    ids=[str([1.0, 1.0, 1.0]), str([0.5, 0.0, 0.0])],
+)
+def test_retrieve(
+    query_emb: list[float],
+    top_k: int,
+    expected_node_ix: list[int],
+    text_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-    query_emb = [1.0, 1.0, 1.0]
 
-    res = knowledge_store.retrieve(query_emb, top_k=2)
+    # act
+    res = knowledge_store.retrieve(query_emb, top_k=top_k)
 
-    assert res[0][1] == text_nodes[0]
-    assert res[1][1] == text_nodes[1]
+    # assert
+    assert [el[1] for el in res] == [text_nodes[ix] for ix in expected_node_ix]
