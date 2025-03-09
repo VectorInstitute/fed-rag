@@ -9,13 +9,19 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 def text_nodes() -> list[KnowledgeNode]:
     return [
         KnowledgeNode(
-            embedding=[0.1], node_type="text", text_content="node 1"
+            embedding=[1.0, 0.0, 1.0], node_type="text", text_content="node 1"
         ),
         KnowledgeNode(
-            embedding=[0.2], node_type="text", text_content="node 2"
+            embedding=[1.0, 0.0, 0.0], node_type="text", text_content="node 2"
         ),
         KnowledgeNode(
-            embedding=[0.3], node_type="text", text_content="node 3"
+            embedding=[
+                0.0,
+                0.0,
+                0.0,
+            ],
+            node_type="text",
+            text_content="node 3",
         ),
     ]
 
@@ -80,3 +86,13 @@ def test_clear(text_nodes: list[KnowledgeNode]) -> None:
 
     assert knowledge_store.count == 0
     assert all(n.node_id not in knowledge_store._data for n in text_nodes)
+
+
+def test_retrieve(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    query_emb = [1.0, 1.0, 1.0]
+
+    res = knowledge_store.retrieve(query_emb, top_k=2)
+
+    assert res[0][1] == text_nodes[0]
+    assert res[1][1] == text_nodes[1]
