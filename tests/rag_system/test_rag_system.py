@@ -8,7 +8,7 @@ from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
 from fed_rag.types.rag_system import RAGConfig, RAGSystem, SourceNode
 
-from .conftest import MockRetriever
+from .conftest import MockGenerator, MockRetriever
 
 
 def test_rag_system_init(
@@ -79,7 +79,7 @@ def test_rag_system_query(
 def test_rag_system_retrieve(
     mock_encode_query: MagicMock,
     mock_generator: BaseGenerator,
-    mock_retriever: MagicMock,
+    mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange mocks
@@ -105,7 +105,38 @@ def test_rag_system_retrieve(
     result = rag_system.retrieve("fake query")
 
     # assert
+    mock_encode_query.assert_called_with("fake query")
     assert all(res.node == exp.node for res, exp in zip(result, expected))
     assert all(
         abs(res.score - exp.score) < 1e-5 for res, exp in zip(result, expected)
     )
+
+
+@patch.object(MockGenerator, "generate")
+def test_rag_system_generate(
+    mock_generate: MagicMock,
+    mock_generator: MockGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_generate.return_value = "fake generate response"
+
+    # build rag system
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    # act
+    res = rag_system.generate(query="fake query", context="fake context")
+
+    # assert
+    mock_generate.assert_called_once_with(
+        query="fake query", context="fake context"
+    )
+    assert res == "fake generate response"

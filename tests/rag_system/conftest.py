@@ -67,8 +67,8 @@ def knowledge_nodes() -> list[KnowledgeNode]:
 
 
 class MockGenerator(BaseGenerator):
-    def generate(self, input: str) -> str:
-        return f"mock output from '{input}'."
+    def generate(self, query: str, context: str, **kwargs: dict) -> str:
+        return f"mock output from '{query}' with '{context}'."
 
     @property
     def model(self) -> torch.nn.Module:
