@@ -38,3 +38,15 @@ def test_from_nodes(text_nodes: list[KnowledgeNode]) -> None:
 
     assert knowledge_store.count == 3
     assert all(n.node_id in knowledge_store._data for n in text_nodes)
+
+
+def test_delete_node(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+
+    assert knowledge_store.count == 3
+
+    res = knowledge_store.delete_node(text_nodes[0].node_id)
+
+    assert res is True
+    assert knowledge_store.count == 2
+    assert text_nodes[0].node_id not in knowledge_store._data
