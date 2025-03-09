@@ -45,6 +45,8 @@ repos:
       - id: mypy
         name: mypy
         entry: bash -c 'mypy --config-file=mypy.ini "$@"' --
+        additional_dependencies:
+          - "pydantic>=2.10.5"
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
     hooks:

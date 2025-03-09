@@ -52,7 +52,7 @@ class RAGSystem(BaseModel):
 
     def generate(self, query: str, context: str) -> str:
         """Generate response to query with context."""
-        return str(self.generator.generate(query=query, context=context))
+        return self.generator.generate(query=query, context=context)  # type: ignore
 
     def _format_context(self, source_nodes: list[KnowledgeNode]) -> str:
         """Format the context from the source nodes."""
