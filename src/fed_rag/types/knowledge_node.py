@@ -2,7 +2,7 @@
 
 import uuid
 from enum import Enum
-from typing import TypedDict
+from typing import TypedDict, cast
 
 from pydantic import (
     BaseModel,
@@ -52,7 +52,8 @@ class KnowledgeNode(BaseModel):
     def validate_text_content(
         cls, value: str | None, info: ValidationInfo
     ) -> str | None:
-        node_type: NodeType = info.data.get("node_type")
+        node_type = info.data.get("node_type")
+        node_type = cast(NodeType, node_type)
         if node_type == NodeType.TEXT and value is None:
             raise ValueError("NodeType == 'text', but text_content is None.")
 
@@ -68,7 +69,8 @@ class KnowledgeNode(BaseModel):
     def validate_image_content(
         cls, value: str | None, info: ValidationInfo
     ) -> str | None:
-        node_type: NodeType = info.data.get("node_type")
+        node_type = info.data.get("node_type")
+        node_type = cast(NodeType, node_type)
         if node_type == NodeType.IMAGE:
             if value is None:
                 raise ValueError(
