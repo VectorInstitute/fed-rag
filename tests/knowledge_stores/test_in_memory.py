@@ -50,3 +50,13 @@ def test_delete_node(text_nodes: list[KnowledgeNode]) -> None:
     assert res is True
     assert knowledge_store.count == 2
     assert text_nodes[0].node_id not in knowledge_store._data
+
+
+def test_load_node(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore()
+    assert knowledge_store.count == 0
+
+    knowledge_store.load_node(text_nodes[-1])
+
+    assert knowledge_store.count == 1
+    assert text_nodes[-1].node_id in knowledge_store._data
