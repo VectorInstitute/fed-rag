@@ -23,7 +23,7 @@ class RAGResponse(BaseModel):
 
 class RAGConfig(BaseModel):
     top_k: int
-    context_template: str
+    context_separator: str = "\n"
 
 
 class RAGSystem(BaseModel):
@@ -56,6 +56,7 @@ class RAGSystem(BaseModel):
 
     def _format_context(self, source_nodes: list[KnowledgeNode]) -> str:
         """Format the context from the source nodes."""
-        return self.rag_config.context_template.format(
-            source_nodes=source_nodes
+        # TODO: how to format image context
+        return self.rag_config.context_separator.join(
+            [node.get_content()["text_content"] for node in source_nodes]
         )

@@ -50,7 +50,8 @@ def knowledge_nodes() -> list[KnowledgeNode]:
         ),
         KnowledgeNode(
             embedding=[1.0, 0.0, 0.0],
-            node_type="image",
+            node_type="multimodal",
+            text_content="node 2",
             image_content=b"node 2",
         ),
         KnowledgeNode(

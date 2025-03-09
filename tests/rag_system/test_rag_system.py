@@ -17,7 +17,9 @@ def test_rag_system_init(
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
-    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_config = RAGConfig(
+        top_k=2,
+    )
     rag_system = RAGSystem(
         generator=mock_generator,
         retriever=mock_retriever,
@@ -53,7 +55,9 @@ def test_rag_system_query(
 
     # build rag system
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
-    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_config = RAGConfig(
+        top_k=2,
+    )
     rag_system = RAGSystem(
         generator=mock_generator,
         retriever=mock_retriever,
@@ -87,7 +91,9 @@ def test_rag_system_retrieve(
 
     # build rag system
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
-    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_config = RAGConfig(
+        top_k=2,
+    )
     rag_system = RAGSystem(
         generator=mock_generator,
         retriever=mock_retriever,
@@ -124,7 +130,9 @@ def test_rag_system_generate(
 
     # build rag system
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
-    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_config = RAGConfig(
+        top_k=2,
+    )
     rag_system = RAGSystem(
         generator=mock_generator,
         retriever=mock_retriever,
@@ -140,3 +148,29 @@ def test_rag_system_generate(
         query="fake query", context="fake context"
     )
     assert res == "fake generate response"
+
+
+def test_rag_system_format_context(
+    mock_generator: MockGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # build rag system
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    # act
+    formatted_context = rag_system._format_context(
+        source_nodes=knowledge_nodes
+    )
+
+    # assert
+    assert formatted_context == "node 1\nnode 2\nnode 3"
