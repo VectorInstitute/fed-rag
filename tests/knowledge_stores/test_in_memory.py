@@ -1,0 +1,34 @@
+from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
+from fed_rag.types.knowledge_node import KnowledgeNode
+
+
+def test_in_memory_knowledge_store_class() -> None:
+    names_of_base_classes = [
+        b.__name__ for b in InMemoryKnowledgeStore.__mro__
+    ]
+    assert BaseKnowledgeStore.__name__ in names_of_base_classes
+
+
+def test_in_memory_knowledge_store_init() -> None:
+    knowledge_store = InMemoryKnowledgeStore()
+
+    assert knowledge_store.count == 0
+
+
+def test_from_nodes() -> None:
+    nodes = [
+        KnowledgeNode(
+            embedding=[0.1], node_type="text", text_content="node 1"
+        ),
+        KnowledgeNode(
+            embedding=[0.2], node_type="text", text_content="node 2"
+        ),
+        KnowledgeNode(
+            embedding=[0.3], node_type="text", text_content="node 3"
+        ),
+    ]
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=nodes)
+
+    assert knowledge_store.count == 3
+    assert all(n.node_id in knowledge_store._data for n in nodes)

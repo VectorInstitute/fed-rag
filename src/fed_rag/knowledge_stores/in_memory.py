@@ -2,6 +2,7 @@
 
 import numpy as np
 from pydantic import PrivateAttr
+from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
@@ -40,6 +41,12 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
+
+    @classmethod
+    def from_nodes(cls, nodes: list[KnowledgeNode]) -> Self:
+        instance = cls()
+        instance.load_nodes(nodes)
+        return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
         if node.node_id not in self._data:
