@@ -1,5 +1,7 @@
 """RAG System"""
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.generator import BaseGenerator
@@ -50,12 +52,11 @@ class RAGSystem(BaseModel):
             SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
         ]
 
-    def generate(self, query: str, context: str | None) -> str:
+    def generate(self, query: str, context: str | None) -> Any:
         """Generate response to query with context."""
-        return ""
-        # return self.generator.generate(
-        #     query=query, context=context if context else ""
-        # )
+        return self.generator.generate(
+            query=query, context=context if context else ""
+        )
 
     def _format_context(self, source_nodes: list[KnowledgeNode]) -> str:
         """Format the context from the source nodes."""
