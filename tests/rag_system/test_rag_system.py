@@ -1,10 +1,14 @@
 from unittest.mock import MagicMock, patch
 
+import torch
+
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
 from fed_rag.types.rag_system import RAGConfig, RAGSystem, SourceNode
+
+from .conftest import MockRetriever
 
 
 def test_rag_system_init(
@@ -69,3 +73,39 @@ def test_rag_system_query(
     assert rag_response.source_nodes == source_nodes
     assert rag_response.response == "fake generation response"
     assert str(rag_response) == "fake generation response"
+
+
+@patch.object(MockRetriever, "encode_query")
+def test_rag_system_retrieve(
+    mock_encode_query: MagicMock,
+    mock_generator: BaseGenerator,
+    mock_retriever: MagicMock,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_encode_query.return_value = torch.Tensor([1.0, 1.0, 1.0])
+
+    # build rag system
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(top_k=2, context_template="{source_nodes}")
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    # expected retrieved source nodes
+    expected = [
+        SourceNode(score=0.8164965809277259, node=knowledge_nodes[0]),
+        SourceNode(score=0.8164965809277259, node=knowledge_nodes[2]),
+    ]
+
+    # act
+    result = rag_system.retrieve("fake query")
+
+    # assert
+    assert all(res.node == exp.node for res, exp in zip(result, expected))
+    assert all(
+        abs(res.score - exp.score) < 1e-5 for res, exp in zip(result, expected)
+    )

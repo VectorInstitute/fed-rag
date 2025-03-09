@@ -11,13 +11,13 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 
 
 class MockRetriever(BaseRetriever):
-    _encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
+    _encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(3, 3))
 
     def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
-        return self._encoder.forward(torch.ones(2))
+        return self._encoder.forward(torch.ones(3))
 
     def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
-        return self._encoder.forward(torch.zeros(2))
+        return self._encoder.forward(torch.zeros(3))
 
     @property
     def encoder(self) -> torch.nn.Module:
