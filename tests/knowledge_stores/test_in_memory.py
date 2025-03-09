@@ -60,3 +60,13 @@ def test_load_node(text_nodes: list[KnowledgeNode]) -> None:
 
     assert knowledge_store.count == 1
     assert text_nodes[-1].node_id in knowledge_store._data
+
+
+def test_load_nodes(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore()
+    assert knowledge_store.count == 0
+
+    knowledge_store.load_nodes(text_nodes)
+
+    assert knowledge_store.count == 3
+    assert all(n.node_id in knowledge_store._data for n in text_nodes)
