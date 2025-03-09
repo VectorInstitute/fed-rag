@@ -23,8 +23,13 @@ class BaseKnowledgeStore(BaseModel, ABC):
     @abstractmethod
     def retrieve(
         self, query_emb: list[float], top_k: int
-    ) -> list[KnowledgeNode]:
-        """Retrieve top-k nodes from KnowledgeStore against a provided user query."""
+    ) -> list[tuple[float, KnowledgeNode]]:
+        """Retrieve top-k nodes from KnowledgeStore against a provided user query.
+
+        Returns:
+            A list of tuples where the first element represents the similarity score
+            of the node to the query, and the second element is the node itself.
+        """
 
     @abstractmethod
     def delete_node(self, node_id: str) -> bool:

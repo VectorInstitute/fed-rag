@@ -1,5 +1,6 @@
 """In Memory Knowledge Store"""
 
+import numpy as np
 from pydantic import PrivateAttr
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
@@ -12,8 +13,27 @@ def _get_top_k_nodes(
     nodes: list[KnowledgeNode],
     query_emb: list[float],
     top_k: int = DEFAULT_TOP_K,
-) -> list[KnowledgeNode]:
-    return []
+) -> list[tuple[str, float]]:
+    """Retrieves the top-k similar nodes against query.
+
+    Returns:
+        list[tuple[float, str]] — the node_ids and similarity scores of top-k nodes
+    """
+
+    def cosine_sim(a: list[float], b: list[float]) -> float:
+        """Compute cosine similarity between two embeddings."""
+        np_a = np.array(a)
+        np_b = np.array(b)
+        cosine_sim: float = np.dot(np_a, np_b) / (
+            np.linalg.norm(np_a) * np.linalg.norm(np_b)
+        )
+        return cosine_sim
+
+    scores = [
+        (node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes
+    ]
+    scores.sort(key=lambda tup: tup[1], reverse=True)
+    return scores[:top_k]
 
 
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
@@ -31,11 +51,12 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
 
     def retrieve(
         self, query_emb: list[float], top_k: int
-    ) -> list[KnowledgeNode]:
+    ) -> list[tuple[float, KnowledgeNode]]:
         all_nodes = list(self._data.values())
-        return _get_top_k_nodes(
+        node_ids_and_scores = _get_top_k_nodes(
             nodes=all_nodes, query_emb=query_emb, top_k=top_k
         )
+        return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
     def delete_node(self, node_id: str) -> bool:
         if node_id in self._data:
