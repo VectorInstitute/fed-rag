@@ -13,7 +13,7 @@ class SourceNode(BaseModel):
     node: KnowledgeNode
 
 
-class Response(BaseModel):
+class RAGResponse(BaseModel):
     response: str
     source_nodes: list[SourceNode]
 
@@ -33,12 +33,12 @@ class RAGSystem(BaseModel):
     knowledge_store: BaseKnowledgeStore
     rag_config: RAGConfig
 
-    def query(self, query: str) -> Response:
+    def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""
         source_nodes = self.retrieve(query)
         context = self._format_context(source_nodes)
         response = self.generate(query=query, context=context)
-        return Response(source_nodes=source_nodes, response=response)
+        return RAGResponse(source_nodes=source_nodes, response=response)
 
     def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from KnowledgeStore."""
