@@ -10,3 +10,4 @@ dev_notebooks/
 .pytest_cache
 .ruff_cache
 .env
+data/
