@@ -4,18 +4,14 @@ from transformers.generation.utils import GenerationConfig
 from transformers.utils.quantization_config import BitsAndBytesConfig
 
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
-from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
-# Build a rag system
+from .knowledge_store import knowledge_store
 
-## knowledge store
-knowledge_store = (
-    InMemoryKnowledgeStore()
-)  # load knowledge store built with knowledge_store.py
+# Build a rag system
 
 ## retriever
 dragon_retriever = HFSentenceTransformerRetriever(
@@ -45,8 +41,16 @@ llama3_generator = HFPretrainedModelGenerator(
 ## assemble
 rag_config = RAGConfig(top_k=2)
 rag_system = RAGSystem(
-    knowledge_store=knowledge_store,
+    knowledge_store=knowledge_store,  # knowledge store loaded from knowledge_store.py
     generator=llama3_generator,
     retriever=dragon_retriever,
     rag_config=rag_config,
 )
+
+
+if __name__ == "__main__":
+    source_nodes = rag_system.retrieve("What is a Tulip?")
+    response = rag_system.query("What is a Tulip?")
+
+    print(source_nodes[0].score, source_nodes[0].node.text_content)
+    print(f"\n{response}")
