@@ -13,7 +13,8 @@ from fed_rag.types import TrainResult
 
 from .rag_system import main as get_rag_system
 
-model_name = "/model-weights/Llama-2-7b-hf"
+# model_name = "/model-weights/Llama-2-7b-hf"
+model_name = "meta-llama/Llama-2-7b-hf"
 rag_system = get_rag_system(model_name)
 
 # Define your train examples. You need more than just two examples...
@@ -46,7 +47,7 @@ def retriever_train_loop(
         optimizer_params={"lr": learning_rate},
         warmup_steps=100,
     )
-    return TrainResult(train_loss)
+    return TrainResult(loss=0.0)
 
 
 if __name__ == "__main__":
