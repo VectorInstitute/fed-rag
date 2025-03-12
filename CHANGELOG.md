@@ -1,3 +1,5 @@
+<!-- markdownlint-disable-file MD024 -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -8,15 +10,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.3] - 2025-03-12
+
+### Added
+
+- Build RAG system implementation (#50)
+- Added RAGSystem class (#45)
+- Implemented InMemoryKnowledgeStore (#43)
+- Added BaseKnowledgeStore and KnowledgeNode models (#41)
+- Added HFSentenceTransformerRetriever (#38)
+- Added BaseRetriever class (#35)
+- Added HFPreTrainedGenerator class for generative models (#34)
+- Implemented BaseGenerator and HFPretrainedModelGenerator classes (#33)
+- Added support for llama3 models (#30)
+- Added example Retrieval-Augmented Generation with LLM integration (#28)
+- Implemented DragonRetriever for example RAG system (#26)
+
+### Changed
+
+- Updated to use HFSentenceTransformerRetriever in examples (#48)
+
 ## [0.0.2] - 2025-03-01
 
-## Changed
+### Changed
 
 - Quickstart as a workspace member, smaller package builds (#24)
 
 ## [0.0.1] - 2025-03-01
 
-## Added
+### Added
 
 - Working QuickStart! (#20)
 - Implementation PyTorchFLTask.server() (#17)
