@@ -29,10 +29,6 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
 
-      - name: Install pre-commit
-        shell: bash
-        run: uv pip install pre-commit
-
       - name: Run linter and formatter
         run: |
           uv run make lint
