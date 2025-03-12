@@ -1,53 +1,29 @@
 """Federate RAG via RA-DIT."""
 
-from typing import Any
-
 # torch
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.types import Device
-from torch.utils.data import DataLoader, Dataset
 
 # hf
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import InputExample, SentenceTransformer, losses
+from torch.types import Device
+from torch.utils.data import DataLoader
 
 # fedrag
-from fed_rag.decorators import federate
-from fed_rag.fl_tasks.pytorch import PyTorchFLTask
-from fed_rag.types import TestResult, TrainResult
-from fed_rag.retrievers.hf_sentence_transformer import HFSentenceTransformerRetriever
-
+from fed_rag.types import TrainResult
 
 from .rag_system import main as get_rag_system
 
 model_name = "/model-weights/Llama-2-7b-hf"
 rag_system = get_rag_system(model_name)
 
+# Define your train examples. You need more than just two examples...
+train_examples = [
+    InputExample(texts=["My first sentence", "My second sentence"], label=0.8),
+    InputExample(texts=["Another pair", "Unrelated sentence"], label=0.3),
+]
 
-class SentencesDataset(Dataset):
-
-    def __init__(self, sentences=list[str]):
-        self.sentences = sentences
-
-    def __getitem__(self, index):
-        return self.sentences[index]
-
-    def __len__(self):
-        return len(self.sentences)
-
-
-# build custom Dataset
-sentences = ["this is a test", "this is also a test", "this is yet another test"]
-dataset = SentencesDataset(sentences)
-
-
-def custom_collate_fn(batch: Any) -> dict:
-    sentences = [s for s in batch]
-    return {"sentences": sentences}
-
-
-data_loader = DataLoader(dataset, batch_size=3, collate_fn=custom_collate_fn)
+# Define your train dataset, the dataloader and the train loss
+train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=16)
 
 
 def retriever_train_loop(
@@ -60,32 +36,25 @@ def retriever_train_loop(
 ) -> TrainResult:
     model.to(device)
     # dummy loss for now
-    criterion = torch.nn.MSELoss().to(device)
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
     model.train()
-    running_loss = 0.0
-    for _ in range(num_epochs):
-        for batch in train_data:
-            sentences = batch["sentences"]
-            outputs: torch.Tensor = torch.from_numpy(model.encode(sentences))
-            targets = torch.zeros_like(outputs)
-            optimizer.zero_grad()
-            loss = criterion(outputs, targets)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
+    train_loss = losses.CosineSimilarityLoss(model)
 
-    avg_trainloss = running_loss / len(train_data)
-    return TrainResult(loss=avg_trainloss)
+    # Tune the model
+    model.fit(
+        train_objectives=[(train_data, train_loss)],
+        epochs=num_epochs,
+        optimizer_params={"lr": learning_rate},
+        warmup_steps=100,
+    )
+    return TrainResult(train_loss)
 
 
 if __name__ == "__main__":
-
     retriever = rag_system.retriever
     train_result = retriever_train_loop(
         model=retriever.query_encoder,
-        train_data=data_loader,
-        val_data=data_loader,
+        train_data=train_dataloader,
+        val_data=train_dataloader,
         device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
         num_epochs=1,
         learning_rate=0.1,

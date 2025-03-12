@@ -21,6 +21,7 @@ from fed_rag.types import TestResult, TrainResult
 
 
 def test_decorated_trainer() -> None:
+    @federate.trainer.pytorch
     def fn(
         net: nn.Module,
         train_loader: DataLoader,
@@ -30,10 +31,7 @@ def test_decorated_trainer() -> None:
     ) -> TrainResult:
         pass
 
-    decorated = federate.trainer.pytorch(fn)
-    config: TrainerSignatureSpec = getattr(
-        decorated, "__fl_task_trainer_config"
-    )
+    config: TrainerSignatureSpec = getattr(fn, "__fl_task_trainer_config")
     assert config.net_parameter == "net"
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
