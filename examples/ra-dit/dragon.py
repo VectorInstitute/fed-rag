@@ -22,7 +22,7 @@ def main(
 if __name__ == "__main__":
     import fire
 
-    retriever = fire.Fire(main)
+    retriever: HFSentenceTransformerRetriever = fire.Fire(main)
 
     query = "Where was Marie Curie born?"
     contexts = [
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         "Born in Paris on 15 May 1859, Pierre Curie was the son of Eugène Curie, a doctor of French Catholic origin from Alsace.",
     ]
 
-    query_embeddings = retriever.encode_query(query)
+    query_embeddings = retriever.query_encoder(query)
     context_embeddings = retriever.encode_context(contexts)
 
     scores = query_embeddings @ context_embeddings.T
