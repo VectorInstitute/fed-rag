@@ -1,5 +1,7 @@
 """RAG System"""
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.generator import BaseGenerator
@@ -11,6 +13,10 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 class SourceNode(BaseModel):
     score: float
     node: KnowledgeNode
+
+    def __getattr__(self, __name: str) -> Any:
+        """Convenient wrapper on getattr of associated node."""
+        return getattr(self.node, __name)
 
 
 class RAGResponse(BaseModel):
@@ -54,7 +60,7 @@ class RAGSystem(BaseModel):
         """Generate response to query with context."""
         return self.generator.generate(query=query, context=context)  # type: ignore
 
-    def _format_context(self, source_nodes: list[KnowledgeNode]) -> str:
+    def _format_context(self, source_nodes: list[SourceNode]) -> str:
         """Format the context from the source nodes."""
         # TODO: how to format image context
         return self.rag_config.context_separator.join(
