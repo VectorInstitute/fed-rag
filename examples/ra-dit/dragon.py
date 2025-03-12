@@ -4,11 +4,25 @@ from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
 
-if __name__ == "__main__":
-    dragon_retriever = HFSentenceTransformerRetriever(
-        query_model_name="nthakur/dragon-plus-query-encoder",
-        context_model_name="nthakur/dragon-plus-context-encoder",
+
+def main(
+    model_name: str | None = None,
+    query_model_name: str | None = None,
+    context_model_name: str | None = None,
+) -> HFSentenceTransformerRetriever:
+    return HFSentenceTransformerRetriever(
+        model_name=model_name,
+        query_model_name=query_model_name,
+        context_model_name=context_model_name,
+        # query_model_name="nthakur/dragon-plus-query-encoder",
+        # context_model_name="nthakur/dragon-plus-context-encoder",
     )
+
+
+if __name__ == "__main__":
+    import fire
+
+    retriever = fire.Fire(main)
 
     query = "Where was Marie Curie born?"
     contexts = [
@@ -16,8 +30,8 @@ if __name__ == "__main__":
         "Born in Paris on 15 May 1859, Pierre Curie was the son of Eugène Curie, a doctor of French Catholic origin from Alsace.",
     ]
 
-    query_embeddings = dragon_retriever.encode_query(query)
-    context_embeddings = dragon_retriever.encode_context(contexts)
+    query_embeddings = retriever.encode_query(query)
+    context_embeddings = retriever.encode_context(contexts)
 
     scores = query_embeddings @ context_embeddings.T
     print(scores)
