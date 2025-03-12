@@ -112,7 +112,6 @@ class HFPretrainedModelGenerator(BaseGenerator):
         formatted_query = self.prompt_template.format(
             question=query, context=context
         )
-        print(formatted_query, flush=True)
 
         # encode query
         tokenizer_result = self.tokenizer(formatted_query, return_tensors="pt")
