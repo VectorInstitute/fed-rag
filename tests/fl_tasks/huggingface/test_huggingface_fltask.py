@@ -107,6 +107,7 @@ def test_flower_client_set_weights(
     assert (args[0].get("model.weight") == state_dict["model.weight"]).all()
     assert (args[0].get("model.bias") == state_dict["model.bias"]).all()
     assert kwargs == {"strict": True}
+    assert client.task_bundle == bundle
 
 
 def test_flower_client_fit(
