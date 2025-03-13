@@ -1,4 +1,4 @@
-"""PyTorch Trainer Inspector"""
+"""HuggingFace Trainer Inspector"""
 
 import inspect
 from typing import Any, Callable
@@ -33,15 +33,18 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
             continue
 
         if type_name := getattr(t.annotation, "__name__", None):
-            if type_name == "Module" and net_param is None:
+            if (
+                type_name.isin(["SentenceTransformer", "PreTrainedModel"])
+                and net_param is None
+            ):
                 net_param = name
                 continue
 
-            if type_name == "DataLoader" and train_data_param is None:
+            if type_name == "Dataset" and train_data_param is None:
                 train_data_param = name
                 continue
 
-            if type_name == "DataLoader" and val_data_param is None:
+            if type_name == "Dataset" and val_data_param is None:
                 val_data_param = name
                 continue
 
@@ -50,14 +53,14 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     if net_param is None:
         msg = (
             "Inspection failed to find a model param. "
-            "For PyTorch this param must have type `nn.Module`."
+            "For HuggingFace this param must have type `PreTrainedModel` or `SentenceTransformers`."
         )
         raise MissingNetParam(msg)
 
     if train_data_param is None:
         msg = (
             "Inspection failed to find two data params for train and val datasets."
-            "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
+            "For HuggingFace these params must be of type `datasets.Dataset`"
         )
         raise MissingMultipleDataParams(msg)
 
@@ -65,7 +68,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
         msg = (
             "Inspection found one data param but failed to find another. "
             "Two data params are required for train and val datasets."
-            "For PyTorch these params must be of type `torch.utils.data.DataLoader`"
+            "For HuggingFace these params must be of type `datasets.Dataset`"
         )
         raise MissingDataParam(msg)
 
