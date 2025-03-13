@@ -305,3 +305,19 @@ def test_creating_fl_task_with_mismatched_net_params_raises_warning(
             trainer=trainer_pretrained_model,
             tester=mismatch_tester_pretrained_model,
         )
+
+
+def test_fl_task_methods_not_implemented(
+    trainer_pretrained_model: Callable,
+    tester_pretrained_model: Callable,
+) -> None:
+    # from_configs
+    with pytest.raises(NotImplementedError):
+        HuggingFaceFLTask.from_configs(None, None)
+
+    # simulate
+    fl_task = HuggingFaceFLTask.from_trainer_and_tester(
+        trainer=trainer_pretrained_model, tester=tester_pretrained_model
+    )
+    with pytest.raises(NotImplementedError):
+        fl_task.simulate(42)

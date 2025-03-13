@@ -170,10 +170,6 @@ class HuggingFaceFLTask(BaseFLTask):
             tester_spec=tester_spec,
         )
 
-    @classmethod
-    def from_configs(cls, trainer_cfg: Any, tester_cfg: Any) -> Any:
-        return super().from_configs(trainer_cfg, tester_cfg)
-
     def server(
         self,
         strategy: Strategy | None = None,
@@ -223,4 +219,8 @@ class HuggingFaceFLTask(BaseFLTask):
         return HuggingFaceFlowerClient(task_bundle=bundle)
 
     def simulate(self, num_clients: int, **kwargs: Any) -> Any:
+        raise NotImplementedError
+
+    @classmethod
+    def from_configs(cls, trainer_cfg: Any, tester_cfg: Any) -> Any:
         raise NotImplementedError
