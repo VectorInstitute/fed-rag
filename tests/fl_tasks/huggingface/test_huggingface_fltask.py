@@ -49,6 +49,7 @@ def test_init_flower_client(
     assert client.val_dataset == val_dataset
     assert client.extra_train_kwargs == {}
     assert client.extra_test_kwargs == {}
+    assert client.task_bundle == bundle
 
 
 def test_flower_client_get_weights(
