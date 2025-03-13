@@ -17,6 +17,7 @@ from fed_rag.fl_tasks.huggingface import (
     BaseFLTaskBundle,
     HuggingFaceFlowerClient,
     HuggingFaceFLTask,
+    MissingTrainerSpec,
     _get_weights,
 )
 from fed_rag.types import TestResult, TrainResult
@@ -259,3 +260,17 @@ def test_invoking_client_without_net_param_raises(
         match="Please pass in a model using the model param name net.",
     ):
         fl_task.client()
+
+
+def test_creating_fl_task_with_undecorated_trainer_raises_error(
+    undecorated_trainer_pretrained_model: Callable,
+    tester_pretrained_model: Callable,
+) -> None:
+    with pytest.raises(
+        MissingTrainerSpec,
+        match="Cannot extract `TrainerSignatureSpec` from supplied `trainer`.",
+    ):
+        HuggingFaceFLTask.from_trainer_and_tester(
+            trainer=undecorated_trainer_pretrained_model,
+            tester=tester_pretrained_model,
+        )
