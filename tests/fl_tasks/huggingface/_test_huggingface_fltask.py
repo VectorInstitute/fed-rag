@@ -1,6 +1,6 @@
 """HuggingFaceFLTask Unit Tests"""
 
-from typing import Callable, OrderedDict
+from typing import Any, Callable, OrderedDict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -10,6 +10,7 @@ from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import SimpleClientManager
 from flwr.server.strategy import FedAvg
 from torch.nn import Module
+from transformers import PretrainedConfig, PreTrainedModel
 
 from fed_rag.exceptions import MissingRequiredNetParam
 from fed_rag.fl_tasks.huggingface import (
@@ -21,14 +22,40 @@ from fed_rag.fl_tasks.huggingface import (
 from fed_rag.types import TestResult, TrainResult
 
 
+class _TestHFConfig(PretrainedConfig):
+    model_type = "testmodel"
+
+    def __init__(self, num_hidden: int = 42, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.num_hidden = num_hidden
+
+
+class _TestHFPretrainedModel(PreTrainedModel):
+    config_class = _TestHFConfig
+
+    def __init__(self, config: _TestHFConfig):
+        super().__init__(config)
+        self.config = config
+        self.model = torch.nn.Linear(3, self.config.num_hidden)
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        return self.model(input)
+
+
+@pytest.fixture
+def hf_pretrained_model() -> PreTrainedModel:
+    return _TestHFPretrainedModel(_TestHFConfig())
+
+
 def test_init_flower_client(
     train_dataset: Dataset,
     val_dataset: Dataset,
     trainer: Callable,
     tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
     bundle = BaseFLTaskBundle(
-        net=torch.nn.Linear(2, 1),
+        net=hf_pretrained_model,
         trainloader=train_dataset,
         valloader=val_dataset,
         trainer=trainer,
@@ -51,10 +78,11 @@ def test_flower_client_get_weights(
     val_dataset: Dataset,
     trainer: Callable,
     tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
     net = torch.nn.Linear(2, 1)
     bundle = BaseFLTaskBundle(
-        net=net,
+        net=hf_pretrained_model,
         trainloader=train_dataset,
         valloader=val_dataset,
         trainer=trainer,
@@ -78,8 +106,9 @@ def test_flower_client_set_weights(
     val_dataset: Dataset,
     trainer: Callable,
     tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
-    net = torch.nn.Linear(2, 1)
+    net = hf_pretrained_model
     bundle = BaseFLTaskBundle(
         net=net,
         trainloader=train_dataset,
@@ -109,8 +138,9 @@ def test_flower_client_fit(
     val_dataset: Dataset,
     trainer: Callable,
     tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
-    net = torch.nn.Linear(2, 1)
+    net = hf_pretrained_model
     bundle = BaseFLTaskBundle(
         net=net,
         trainloader=train_dataset,
@@ -142,8 +172,9 @@ def test_flower_client_evaluate(
     val_dataset: Dataset,
     trainer: Callable,
     tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
-    net = torch.nn.Linear(2, 1)
+    net = hf_pretrained_model
     bundle = BaseFLTaskBundle(
         net=net,
         trainloader=train_dataset,
@@ -211,17 +242,18 @@ def test_invoking_server(trainer: Callable, tester: Callable) -> None:
 
 
 def test_invoking_server_using_defaults(
-    trainer: Callable, tester: Callable
+    trainer: Callable,
+    tester: Callable,
+    hf_pretrained_model: PreTrainedModel,
 ) -> None:
     fl_task = HuggingFaceFLTask.from_trainer_and_tester(
         trainer=trainer, tester=tester
     )
-    net = torch.nn.Linear(2, 1)
-    ndarrays = _get_weights(net)
+    ndarrays = _get_weights(hf_pretrained_model)
     parameters = ndarrays_to_parameters(ndarrays)
 
     # act
-    server = fl_task.server(net=net)
+    server = fl_task.server(net=hf_pretrained_model)
 
     assert type(server.client_manager()) is SimpleClientManager
     assert type(server.strategy) is FedAvg
