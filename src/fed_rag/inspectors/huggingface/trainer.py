@@ -19,7 +19,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     # validate return type
     return_type = sig.return_annotation
     if (return_type is Any) or not issubclass(return_type, TrainResult):
-        msg = "Trainer should return a fed_rag.types.TrainResult or a subclsas of it."
+        msg = "Trainer should return a fed_rag.types.TrainResult or a subclass of it."
         raise InvalidReturnType(msg)
 
     # inspect fn params
