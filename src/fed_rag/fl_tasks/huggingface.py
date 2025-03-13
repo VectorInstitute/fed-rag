@@ -84,13 +84,13 @@ class HuggingFaceFlowerClient(NumPyClient):
 
         result: TrainResult = self.trainer(
             self.net,
-            self.trainloader,
-            self.valloader,
+            self.train_dataset,
+            self.val_dataset,
             **self.task_bundle.extra_train_kwargs,
         )
         return (
             self.get_weights(),
-            len(self.trainloader.dataset),
+            len(self.train_dataset),
             {"loss": result.loss},
         )
 
@@ -99,9 +99,9 @@ class HuggingFaceFlowerClient(NumPyClient):
     ) -> tuple[float, int, dict[str, Scalar]]:
         self.set_weights(parameters)
         result: TestResult = self.tester(
-            self.net, self.valloader, **self.extra_test_kwargs
+            self.net, self.val_dataset, **self.extra_test_kwargs
         )
-        return result.loss, len(self.valloader.dataset), result.metrics
+        return result.loss, len(self.val_dataset), result.metrics
 
 
 PyTorchFlowerServer: TypeAlias = Server
