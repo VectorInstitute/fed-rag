@@ -27,6 +27,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         description="Name of HuggingFace SentenceTransformer model used for encoding context.",
         default=None,
     )
+    device: str = "cpu"
     _encoder: SentenceTransformer | None = PrivateAttr(default=None)
     _query_encoder: SentenceTransformer | None = PrivateAttr(default=None)
     _context_encoder: SentenceTransformer | None = PrivateAttr(default=None)
@@ -64,7 +65,9 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         elif load_type == "context_encoder":
             return SentenceTransformer(self.context_model_name, **kwargs)
         elif load_type == "query_encoder":
-            return SentenceTransformer(self.query_model_name, **kwargs)
+            return SentenceTransformer(
+                self.query_model_name, device=self.device, **kwargs
+            )
         else:
             raise InvalidLoadType("Invalid `load_type` supplied.")
 

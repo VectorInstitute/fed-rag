@@ -41,7 +41,9 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
             continue
 
         if type_name := getattr(t.annotation, "__name__", None):
-            if type_name == "Module" and net_param is None:
+            if (
+                type_name == "Module" or type_name == "SentenceTransformer"
+            ) and net_param is None:
                 net_param = name
                 continue
 

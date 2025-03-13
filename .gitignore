@@ -11,3 +11,6 @@ dev_notebooks/
 .ruff_cache
 .env
 data/
+
+# hf trainer
+tmp_trainer/

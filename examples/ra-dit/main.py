@@ -1,63 +1,72 @@
 """Federate RAG via RA-DIT."""
 
-# torch
-import torch
+from typing import Literal
 
-# hf
-from sentence_transformers import InputExample, SentenceTransformer, losses
-from torch.types import Device
+import torch
+from datasets import Dataset
 from torch.utils.data import DataLoader
 
 # fedrag
-from fed_rag.types import TrainResult
+from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
-from .rag_system import main as get_rag_system
+from .retriever_train_loop import (
+    rag_system,
+    retriever_evaluate,
+    retriever_train_loop,
+)
 
-# model_name = "/model-weights/Llama-2-7b-hf"
-model_name = "meta-llama/Llama-2-7b-hf"
-rag_system = get_rag_system(model_name)
+# Create your FLTask
+retrieval_fl_task = PyTorchFLTask.from_trainer_and_tester(
+    trainer=retriever_train_loop, tester=retriever_evaluate
+)
 
-# Define your train examples. You need more than just two examples...
-train_examples = [
-    InputExample(texts=["My first sentence", "My second sentence"], label=0.8),
-    InputExample(texts=["Another pair", "Unrelated sentence"], label=0.3),
-]
+## 1. construct a server
+model = rag_system.retriever.query_encoder
+server = retrieval_fl_task.server(model=model)
 
-# Define your train dataset, the dataloader and the train loss
-train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=16)
-
-
-def retriever_train_loop(
-    model: SentenceTransformer,
-    train_data: DataLoader,
-    val_data: DataLoader,
-    device: Device,
-    num_epochs: int,
-    learning_rate: float | None,
-) -> TrainResult:
-    model.to(device)
-    # dummy loss for now
-    model.train()
-    train_loss = losses.CosineSimilarityLoss(model)
-
-    # Tune the model
-    model.fit(
-        train_objectives=[(train_data, train_loss)],
-        epochs=num_epochs,
-        optimizer_params={"lr": learning_rate},
-        warmup_steps=100,
+### 2. construct a client trainer
+clients = []
+for i in range(2):
+    train_dataset = Dataset.from_dict(
+        {
+            "text1": ["My first sentence", "Another pair"],
+            "text2": ["My second sentence", "Unrelated sentence"],
+            "label": [0.8, 0.3],
+        }
     )
-    return TrainResult(loss=0.0)
+    train_data = DataLoader(train_dataset, batch_size=10)
+    val_data = DataLoader(train_dataset, batch_size=10)
+    device = torch.device("cuda:1")
+
+    client = retrieval_fl_task.client(
+        # train params
+        model=model,
+        train_data=train_data,
+        val_data=val_data,
+        device=device,
+        train_dataset=train_dataset,
+    )
+    clients.append(client)
+
+
+# NOTE: The code below is merely for building a quick CLI to start server, and clients.
+def start_component(
+    component: Literal["server", "client_1", "client_2"]
+) -> None:
+    """For starting any of the FL Task components."""
+    import flwr as fl
+
+    if component == "server":
+        fl.server.start_server(server=server, server_address="[::]:8080")
+    elif component == "client_1":
+        fl.client.start_client(client=clients[0], server_address="[::]:8080")
+    elif component == "client_2":
+        fl.client.start_client(client=clients[1], server_address="[::]:8080")
+    else:
+        raise ValueError("Unrecognized component.")
 
 
 if __name__ == "__main__":
-    retriever = rag_system.retriever
-    train_result = retriever_train_loop(
-        model=retriever.query_encoder,
-        train_data=train_dataloader,
-        val_data=train_dataloader,
-        device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
-        num_epochs=1,
-        learning_rate=0.1,
-    )
-    print(train_result)
+    import fire
+
+    fire.Fire(start_component)

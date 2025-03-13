@@ -45,6 +45,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
         default_factory=dict,
     )
     prompt_template: str = Field(description="Prompt template for RAG.")
+    device: str = "cpu"
     _model: PreTrainedModel | None = PrivateAttr(default=None)
     _tokenizer: PreTrainedTokenizer | None = PrivateAttr(default=None)
 
@@ -78,7 +79,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
         model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, **load_kwargs
+            self.model_name, device_map=self.device, **load_kwargs
         )
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         return model, tokenizer
