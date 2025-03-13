@@ -19,6 +19,7 @@ from fed_rag.fl_tasks.huggingface import (
     HuggingFaceFLTask,
     MissingTesterSpec,
     MissingTrainerSpec,
+    UnequalNetParamWarning,
     _get_weights,
 )
 from fed_rag.types import TestResult, TrainResult
@@ -288,4 +289,19 @@ def test_creating_fl_task_with_undecorated_tested_raises_error(
         HuggingFaceFLTask.from_trainer_and_tester(
             trainer=trainer_pretrained_model,
             tester=undecorated_tester,
+        )
+
+
+def test_creating_fl_task_with_mismatched_net_params_raises_warning(
+    trainer_pretrained_model: Callable,
+    mismatch_tester_pretrained_model: Callable,
+) -> None:
+    msg = (
+        "`trainer`'s model parameter name is not the same as that for `tester`. "
+        "Will use the name supplied in `trainer`."
+    )
+    with pytest.warns(UnequalNetParamWarning, match=msg):
+        HuggingFaceFLTask.from_trainer_and_tester(
+            trainer=trainer_pretrained_model,
+            tester=mismatch_tester_pretrained_model,
         )

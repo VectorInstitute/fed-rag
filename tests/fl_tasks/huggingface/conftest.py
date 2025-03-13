@@ -97,6 +97,18 @@ def tester_pretrained_model() -> Callable:
 
 
 @pytest.fixture()
+def mismatch_tester_pretrained_model() -> Callable:
+    @federate.tester.huggingface
+    def fn(
+        mdl: PreTrainedModel,  # mismatch here
+        test_dataset: Dataset,
+    ) -> TestResult:
+        return TestResult(loss=0.0, metrics={})
+
+    return fn  # type: ignore
+
+
+@pytest.fixture()
 def undecorated_trainer() -> Callable:
     def fn(
         net: PreTrainedModel,
