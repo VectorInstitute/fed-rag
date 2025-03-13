@@ -97,13 +97,24 @@ def tester_pretrained_model() -> Callable:
 
 
 @pytest.fixture()
-def undecorated_trainer_pretrained_model() -> Callable:
+def undecorated_trainer() -> Callable:
     def fn(
         net: PreTrainedModel,
         train_dataset: Dataset,
         val_dataset: Dataset,
     ) -> TrainResult:
         return TrainResult(loss=0.0)
+
+    return fn  # type: ignore
+
+
+@pytest.fixture()
+def undecorated_tester() -> Callable:
+    def fn(
+        net: PreTrainedModel,
+        test_dataset: Dataset,
+    ) -> TestResult:
+        return TestResult(loss=0.0, metrics={})
 
     return fn  # type: ignore
 

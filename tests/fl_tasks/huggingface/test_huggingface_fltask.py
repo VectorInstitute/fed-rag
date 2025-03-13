@@ -263,7 +263,7 @@ def test_invoking_client_without_net_param_raises(
 
 
 def test_creating_fl_task_with_undecorated_trainer_raises_error(
-    undecorated_trainer_pretrained_model: Callable,
+    undecorated_trainer: Callable,
     tester_pretrained_model: Callable,
 ) -> None:
     with pytest.raises(
@@ -271,6 +271,20 @@ def test_creating_fl_task_with_undecorated_trainer_raises_error(
         match="Cannot extract `TrainerSignatureSpec` from supplied `trainer`.",
     ):
         HuggingFaceFLTask.from_trainer_and_tester(
-            trainer=undecorated_trainer_pretrained_model,
+            trainer=undecorated_trainer,
             tester=tester_pretrained_model,
+        )
+
+
+def test_creating_fl_task_with_undecorated_tested_raises_error(
+    trainer_pretrained_model: Callable,
+    undecorated_tester: Callable,
+) -> None:
+    with pytest.raises(
+        MissingTrainerSpec,
+        match="Cannot extract `TesterSignatureSpec` from supplied `tester`.",
+    ):
+        HuggingFaceFLTask.from_trainer_and_tester(
+            trainer=trainer_pretrained_model,
+            tester=undecorated_tester,
         )
