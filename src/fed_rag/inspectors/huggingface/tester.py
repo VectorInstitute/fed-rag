@@ -18,7 +18,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     # validate return type
     return_type = sig.return_annotation
     if (return_type is Any) or not issubclass(return_type, TestResult):
-        msg = "Tester should return a fed_rag.types.TestResult or a subclsas of it."
+        msg = "Tester should return a fed_rag.types.TestResult or a subclass of it."
         raise InvalidReturnType(msg)
 
     # inspect fn params
@@ -31,11 +31,14 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
             continue
 
         if type_name := getattr(t.annotation, "__name__", None):
-            if type_name == "Module" and net_param is None:
+            if (
+                type_name in ["PreTrainedModel", "SentenceTransformer"]
+                and net_param is None
+            ):
                 net_param = name
                 continue
 
-            if type_name == "DataLoader" and test_data_param is None:
+            if type_name == "Dataset" and test_data_param is None:
                 test_data_param = name
                 continue
 
@@ -44,14 +47,14 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     if net_param is None:
         msg = (
             "Inspection failed to find a model param. "
-            "For PyTorch this param must have type `nn.Module`."
+            "For HuggingFace this param must have type `PreTrainedModel` or `SentenceTransformers`."
         )
         raise MissingNetParam(msg)
 
     if test_data_param is None:
         msg = (
             "Inspection failed to find a data param for a test dataset."
-            "For PyTorch this params must be of type `torch.utils.data.DataLoader`"
+            "For HuggingFace these params must be of type `datasets.Dataset`"
         )
         raise MissingDataParam(msg)
 

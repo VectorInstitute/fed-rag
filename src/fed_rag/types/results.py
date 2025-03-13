@@ -10,6 +10,9 @@ class TrainResult(BaseModel):
 
 
 class TestResult(BaseModel):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
     loss: float
     metrics: dict[str, Any] = Field(
         description="Additional metrics computed on test set.",
