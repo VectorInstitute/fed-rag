@@ -34,7 +34,11 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
 
         if type_name := getattr(t.annotation, "__name__", None):
             if (
-                type_name.isin(["SentenceTransformer", "PreTrainedModel"])
+                type_name
+                in [
+                    "SentenceTransformer",
+                    "PreTrainedModel",
+                ]  # TODO: should accept union types involving these two
                 and net_param is None
             ):
                 net_param = name
