@@ -1,12 +1,23 @@
 """HuggingFace SentenceTransformer Retriever"""
 
-from typing import Any, Literal, cast
+from typing import Any, Literal, TypedDict, cast
 
 import torch
 from pydantic import ConfigDict, Field, PrivateAttr
 from sentence_transformers import SentenceTransformer
+from typing_extensions import Self
 
 from fed_rag.base.retriever import BaseRetriever
+
+
+class LoadKwargs(TypedDict):
+    model: dict
+    query: dict
+    context: dict
+
+    @classmethod  # type: ignore[misc]
+    def default(cls) -> Self:
+        return cls(model={}, query={}, context={})
 
 
 class InvalidLoadType(Exception):
@@ -26,6 +37,10 @@ class HFSentenceTransformerRetriever(BaseRetriever):
     context_model_name: str | None = Field(
         description="Name of HuggingFace SentenceTransformer model used for encoding context.",
         default=None,
+    )
+    load_model_kwargs: LoadKwargs = Field(
+        description="Optional kwargs dict for loading models from HF. Defaults to None.",
+        default_factory=LoadKwargs.default,  # type: ignore[attr-defined]
     )
     _encoder: SentenceTransformer | None = PrivateAttr(default=None)
     _query_encoder: SentenceTransformer | None = PrivateAttr(default=None)
@@ -60,10 +75,16 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         **kwargs: Any,
     ) -> SentenceTransformer:
         if load_type == "encoder":
+            load_kwargs = self.load_model_kwargs["model"]
+            load_kwargs.update(kwargs)
             return SentenceTransformer(self.model_name, **kwargs)
         elif load_type == "context_encoder":
+            load_kwargs = self.load_model_kwargs["context"]
+            load_kwargs.update(kwargs)
             return SentenceTransformer(self.context_model_name, **kwargs)
         elif load_type == "query_encoder":
+            load_kwargs = self.load_model_kwargs["query"]
+            load_kwargs.update(kwargs)
             return SentenceTransformer(self.query_model_name, **kwargs)
         else:
             raise InvalidLoadType("Invalid `load_type` supplied.")
