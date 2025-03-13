@@ -194,6 +194,7 @@ def test_init_from_trainer_tester(
     )
     assert fl_task._tester == tester_pretrained_model
     assert fl_task._trainer == trainer_pretrained_model
+    assert fl_task.training_loop == trainer_pretrained_model
 
 
 def test_invoking_server_without_strategy_and_net_param_raises(
