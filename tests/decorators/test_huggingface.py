@@ -18,6 +18,7 @@ from fed_rag.inspectors.huggingface import TrainerSignatureSpec
 from fed_rag.types import TrainResult
 
 
+### PretrainedModel
 def test_decorated_trainer_hf_pretrained_model() -> None:
     def train_loop(
         net: PreTrainedModel,
@@ -111,7 +112,7 @@ def test_decorated_trainer_from_instance_method_hf_pretrained() -> None:
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
 
 
-def test_decorated_trainer_from_class_method() -> None:
+def test_decorated_trainer_from_class_method_hf_pretrained() -> None:
     class _TestClass:
         @classmethod
         @federate.trainer.huggingface
@@ -135,7 +136,8 @@ def test_decorated_trainer_from_class_method() -> None:
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
 
 
-def test_decorated_trainer_hf_sentence_transformer() -> None:
+### Sentence Transformers
+def test_decorated_trainer_hf_st() -> None:
     def train_loop(
         net: SentenceTransformer,
         train_dataset: Dataset,
@@ -152,6 +154,99 @@ def test_decorated_trainer_hf_sentence_transformer() -> None:
     assert config.net_parameter == "net"
     assert config.train_data_param == "train_dataset"
     assert config.val_data_param == "val_dataset"
+    assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+
+
+def test_decorated_trainer_raises_invalid_return_type_error_hf_st() -> None:
+    def train_loop(
+        net: SentenceTransformer,
+        train_dataset: Dataset,
+        val_dataset: Dataset,
+        extra_param_1: int,
+        extra_param_2: float | None,
+    ) -> Any:
+        pass
+
+    with pytest.raises(
+        InvalidReturnType,
+        match="Trainer should return a fed_rag.types.TrainResult or a subclass of it.",
+    ):
+        federate.trainer.huggingface(train_loop)
+
+
+def test_decorated_trainer_fails_to_find_two_data_params_hf_st() -> None:
+    def train_loop(
+        model: SentenceTransformer,
+    ) -> TrainResult:
+        pass
+
+    msg = (
+        "Inspection failed to find two data params for train and val datasets."
+        "For HuggingFace these params must be of type `datasets.Dataset`"
+    )
+    with pytest.raises(MissingMultipleDataParams, match=msg):
+        federate.trainer.huggingface(train_loop)
+
+
+def test_decorated_trainer_fails_due_to_missing_data_loader_hf_st() -> None:
+    def train_loop(
+        model: SentenceTransformer, val_loader: Dataset
+    ) -> TrainResult:
+        pass
+
+    msg = (
+        "Inspection found one data param but failed to find another. "
+        "Two data params are required for train and val datasets."
+        "For HuggingFace these params must be of type `datasets.Dataset`"
+    )
+    with pytest.raises(MissingDataParam, match=msg):
+        federate.trainer.huggingface(train_loop)
+
+
+def test_decorated_trainer_from_instance_method_hf_st() -> None:
+    class _TestClass:
+        @federate.trainer.huggingface
+        def train_loop(
+            self,
+            net: SentenceTransformer,
+            train_loader: Dataset,
+            val_loader: Dataset,
+            extra_param_1: int,
+            extra_param_2: float | None,
+        ) -> TrainResult:
+            pass
+
+    obj = _TestClass()
+    config: TrainerSignatureSpec = getattr(
+        obj.train_loop, "__fl_task_trainer_config"
+    )
+    assert config.net_parameter == "net"
+    assert config.train_data_param == "train_loader"
+    assert config.val_data_param == "val_loader"
+    assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+
+
+def test_decorated_trainer_from_class_method_hf_st() -> None:
+    class _TestClass:
+        @classmethod
+        @federate.trainer.huggingface
+        def train_loop(
+            cls,
+            net: SentenceTransformer,
+            train_loader: Dataset,
+            val_loader: Dataset,
+            extra_param_1: int,
+            extra_param_2: float | None,
+        ) -> TrainResult:
+            pass
+
+    obj = _TestClass()
+    config: TrainerSignatureSpec = getattr(
+        obj.train_loop, "__fl_task_trainer_config"
+    )
+    assert config.net_parameter == "net"
+    assert config.train_data_param == "train_loader"
+    assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
 
 
