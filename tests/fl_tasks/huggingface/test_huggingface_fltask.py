@@ -17,6 +17,7 @@ from fed_rag.fl_tasks.huggingface import (
     BaseFLTaskBundle,
     HuggingFaceFlowerClient,
     HuggingFaceFLTask,
+    MissingTesterSpec,
     MissingTrainerSpec,
     _get_weights,
 )
@@ -281,7 +282,7 @@ def test_creating_fl_task_with_undecorated_tested_raises_error(
     undecorated_tester: Callable,
 ) -> None:
     with pytest.raises(
-        MissingTrainerSpec,
+        MissingTesterSpec,
         match="Cannot extract `TesterSignatureSpec` from supplied `tester`.",
     ):
         HuggingFaceFLTask.from_trainer_and_tester(
