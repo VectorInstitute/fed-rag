@@ -7,6 +7,7 @@ from fed_rag.base.retriever import BaseRetriever
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
     InvalidLoadType,
+    LoadKwargs,
 )
 
 
@@ -131,11 +132,13 @@ def test_load_model_from_hf_constructs_sentence_transformer_obj(
     # arrange
     # act
     retriever = HFSentenceTransformerRetriever(
-        model_name="fake_name",
+        model_name="fake_name", load_model_kwargs={"device": "cpu"}
     )
 
     # assert
-    mock_sentence_transformer.assert_called_once_with("fake_name")
+    mock_sentence_transformer.assert_called_once_with(
+        "fake_name", device="cpu"
+    )
     assert retriever.query_encoder is None
     assert retriever.context_encoder is None
 
@@ -149,13 +152,17 @@ def test_load_model_from_hf_constructs_sentence_transformer_obj_dual(
     retriever = HFSentenceTransformerRetriever(
         query_model_name="fake_query_model_name",
         context_model_name="fake_context_model_name",
+        load_model_kwargs=LoadKwargs(
+            query_encoder={"device": "cuda:0"},
+            context_encoder={"device": "cpu"},
+        ),
     )
 
     # assert
     mock_sentence_transformer.assert_has_calls(
         [
-            _Call((("fake_query_model_name",), {})),
-            _Call((("fake_context_model_name",), {})),
+            _Call((("fake_query_model_name",), {"device": "cuda:0"})),
+            _Call((("fake_context_model_name",), {"device": "cpu"})),
         ]
     )
     assert retriever.encoder is None
