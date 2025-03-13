@@ -3,10 +3,16 @@
 from typing import Any, Literal, cast
 
 import torch
-from pydantic import ConfigDict, Field, PrivateAttr
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
+
+
+class LoadKwargs(BaseModel):
+    encoder: dict = Field(default_factory=dict)
+    query_encoder: dict = Field(default_factory=dict)
+    context_encoder: dict = Field(default_factory=dict)
 
 
 class InvalidLoadType(Exception):
@@ -27,6 +33,10 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         description="Name of HuggingFace SentenceTransformer model used for encoding context.",
         default=None,
     )
+    load_model_kwargs: LoadKwargs = Field(
+        description="Optional kwargs dict for loading models from HF. Defaults to None.",
+        default_factory=LoadKwargs,
+    )
     _encoder: SentenceTransformer | None = PrivateAttr(default=None)
     _query_encoder: SentenceTransformer | None = PrivateAttr(default=None)
     _context_encoder: SentenceTransformer | None = PrivateAttr(default=None)
@@ -36,12 +46,26 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         model_name: str | None = None,
         query_model_name: str | None = None,
         context_model_name: str | None = None,
+        load_model_kwargs: LoadKwargs | dict | None = None,
         load_model_at_init: bool = True,
     ):
+        if isinstance(load_model_kwargs, dict):
+            # use same dict for all
+            load_model_kwargs = LoadKwargs(
+                encoder=load_model_kwargs,
+                query_encoder=load_model_kwargs,
+                context_encoder=load_model_kwargs,
+            )
+
+        load_model_kwargs = (
+            load_model_kwargs if load_model_kwargs else LoadKwargs()
+        )
+
         super().__init__(
             model_name=model_name,
             query_model_name=query_model_name,
             context_model_name=context_model_name,
+            load_model_kwargs=load_model_kwargs,
         )
         if load_model_at_init:
             if model_name:
@@ -60,11 +84,17 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         **kwargs: Any,
     ) -> SentenceTransformer:
         if load_type == "encoder":
-            return SentenceTransformer(self.model_name, **kwargs)
+            load_kwargs = self.load_model_kwargs.encoder
+            load_kwargs.update(kwargs)
+            return SentenceTransformer(self.model_name, **load_kwargs)
         elif load_type == "context_encoder":
-            return SentenceTransformer(self.context_model_name, **kwargs)
+            load_kwargs = self.load_model_kwargs.context_encoder
+            load_kwargs.update(kwargs)
+            return SentenceTransformer(self.context_model_name, **load_kwargs)
         elif load_type == "query_encoder":
-            return SentenceTransformer(self.query_model_name, **kwargs)
+            load_kwargs = self.load_model_kwargs.query_encoder
+            load_kwargs.update(kwargs)
+            return SentenceTransformer(self.query_model_name, **load_kwargs)
         else:
             raise InvalidLoadType("Invalid `load_type` supplied.")
 

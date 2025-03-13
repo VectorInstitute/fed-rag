@@ -112,12 +112,16 @@ def test_hf_pretrained_load_model_from_hf(
     mock_tokenizer_from_pretrained.return_value = tokenizer
 
     # act
-    generator = HFPretrainedModelGenerator(model_name="fake_name")
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name", load_model_kwargs={"device_map": "cpu"}
+    )
 
     # assert
     assert generator.model_name == "fake_name"
     mock_tokenizer_from_pretrained.assert_called_once()
-    mock_model_from_pretrained.assert_called_once()
+    mock_model_from_pretrained.assert_called_once_with(
+        "fake_name", device_map="cpu"
+    )
     assert generator.model == model
     assert generator.tokenizer == tokenizer
 
