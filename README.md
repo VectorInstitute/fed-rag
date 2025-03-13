@@ -50,4 +50,9 @@ the client and the server.
 
 ## Contributing
 
-## Examples
+Environment setup:
+
+```sh
+# while in root directory of project `fed-rag/`
+uv sync --all-extras --dev
+```
