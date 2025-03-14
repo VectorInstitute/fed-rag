@@ -19,6 +19,7 @@ def main(model_name: str) -> RAGSystem:
     dragon_retriever = HFSentenceTransformerRetriever(
         query_model_name="nthakur/dragon-plus-query-encoder",
         context_model_name="nthakur/dragon-plus-context-encoder",
+        load_model_kwargs={"device": "cpu"},
     )
 
     ## generator
@@ -35,7 +36,10 @@ def main(model_name: str) -> RAGSystem:
     quantization_config = BitsAndBytesConfig(load_in_8bit=True)
     llama3_generator = HFPretrainedModelGenerator(
         model_name=model_name,
-        load_model_kwargs={"quantization_config": quantization_config},
+        load_model_kwargs={
+            "quantization_config": quantization_config,
+            "device_map": "cpu",
+        },
         generation_config=generation_cfg,
     )
 
