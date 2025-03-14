@@ -33,7 +33,7 @@ for i in range(2):
             "label": [0.8, 0.3],
         }
     )
-    device = torch.device("cuda:1")
+    device = torch.device("cuda:0")
 
     client = retrieval_fl_task.client(
         # train params
