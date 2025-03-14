@@ -16,9 +16,6 @@ from fed_rag.types import TestResult, TrainResult
 
 from .rag_system import main as get_rag_system
 
-# model_name = "/model-weights/Llama-2-7b-hf"
-model_name = "meta-llama/Llama-2-7b-hf"
-rag_system = get_rag_system(model_name)
 
 # Dataset
 train_dataset = load_dataset("stanfordnlp/imdb", split="train[:20]")
@@ -34,12 +31,13 @@ def generator_train_loop(
 ) -> TrainResult:
     """RA-DIT training loop for generator."""
 
+    model.to(device)
     training_args = SFTConfig(
         max_seq_length=512,
         output_dir="~/scratch/tmp",
     )
     trainer = SFTTrainer(
-        "facebook/opt-350m",
+        model,
         train_dataset=train_data,
         args=training_args,
         eval_dataset=val_data,
@@ -51,12 +49,17 @@ def generator_train_loop(
 
 
 @federate.tester.huggingface
-def retriever_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
+def generator_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
     return TestResult(loss=42.0, metrics={})
 
 
 if __name__ == "__main__":
     # centralized training
+
+    # model_name = "/model-weights/Llama-2-7b-hf"
+    # model_name = "meta-llama/Llama-2-7b-hf"
+    model_name = "/model-weights/Llama-3.2-1B"
+    rag_system = get_rag_system(model_name)
     generator = rag_system.generator
     train_result = generator_train_loop(
         model=generator.model,
