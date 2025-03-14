@@ -12,8 +12,8 @@ from fed_rag.types.rag_system import RAGConfig, RAGSystem
 from .knowledge_store import knowledge_store
 
 
-def main(model_name: str) -> None:
-    # Build a rag system
+def main(model_name: str) -> RAGSystem:
+    """Build RAG System."""
 
     ## retriever
     dragon_retriever = HFSentenceTransformerRetriever(
@@ -48,15 +48,17 @@ def main(model_name: str) -> None:
         rag_config=rag_config,
     )
 
+    return rag_system
+
+
+if __name__ == "__main__":
+    import fire
+
+    rag_system: RAGSystem = fire.Fire(main)
+
     ## use the rag_system
     source_nodes = rag_system.retrieve("What is a Tulip?")
     response = rag_system.query("What is a Tulip?")
 
     print(source_nodes[0].score)
     print(f"\n{response}")
-
-
-if __name__ == "__main__":
-    import fire
-
-    fire.Fire(main)

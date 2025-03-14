@@ -348,7 +348,7 @@ wheels = [
 
 [[package]]
 name = "fed-rag"
-version = "0.0.2"
+version = "0.0.3"
 source = { editable = "../../" }
 dependencies = [
     { name = "asyncio" },
@@ -385,6 +385,7 @@ dev = [
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "isort", specifier = ">=5.13.2" },
     { name = "mypy", specifier = ">=1.14.1" },
+    { name = "pre-commit", specifier = ">=4.1.0" },
     { name = "pylint", specifier = ">=3.3.3" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-asyncio", specifier = ">=0.25.2" },
