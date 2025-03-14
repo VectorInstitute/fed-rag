@@ -104,7 +104,7 @@ class HuggingFaceFlowerClient(NumPyClient):
         return result.loss, len(self.val_dataset), result.metrics
 
 
-PyTorchFlowerServer: TypeAlias = Server
+HuggingFaceFlowerServer: TypeAlias = Server
 
 
 class HuggingFaceFLTask(BaseFLTask):
@@ -175,7 +175,7 @@ class HuggingFaceFLTask(BaseFLTask):
         strategy: Strategy | None = None,
         client_manager: ClientManager | None = None,
         **kwargs: Any,
-    ) -> PyTorchFlowerServer | None:
+    ) -> HuggingFaceFlowerServer | None:
         if strategy is None:
             if self._trainer_spec.net_parameter not in kwargs:
                 msg = f"Please pass in a model using the model param name {self._trainer_spec.net_parameter}."
@@ -193,7 +193,7 @@ class HuggingFaceFLTask(BaseFLTask):
         if client_manager is None:
             client_manager = SimpleClientManager()
 
-        return PyTorchFlowerServer(
+        return HuggingFaceFlowerServer(
             client_manager=client_manager, strategy=strategy
         )
 
