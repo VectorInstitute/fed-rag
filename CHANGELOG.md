@@ -10,6 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.4] - 2025-03-14
+
+### Added
+
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
+
+## Unreleased
+
+- ...
+
+## [0.0.4] - 2025-03-14
+
+### Added
+
+- [EXAMPLE] Adds RA-DIT retriever train loop using HuggingFace integrations (#64)
+- Added HuggingFaceFLTask for federated learning with HuggingFace models (#61)
+- Added federate.tester.huggingface and associated inspectors (#59)
+- Added federate.trainer.huggingface decorators (#56)
+- Added ability to specify device on load for HF Models (#55)
+
 ## [0.0.3] - 2025-03-12
 
 ### Added
