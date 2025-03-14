@@ -99,7 +99,8 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
 ## What can you do with your FLTask?
 
 ### 1. construct a server
-model = Net()
+model = Net()  # lora weights
+lora: torch.nn.Module = torch.Parameters(...)
 server = fl_task.server(model=model)
 
 ### 2. construct a client trainer

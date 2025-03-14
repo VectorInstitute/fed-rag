@@ -16,8 +16,8 @@ from fed_rag.types import TestResult, TrainResult
 
 from .rag_system import main as get_rag_system
 
-model_name = "/model-weights/Llama-2-7b-hf"
-# model_name = "meta-llama/Llama-2-7b-hf"
+# model_name = "/model-weights/Llama-2-7b-hf"
+model_name = "meta-llama/Llama-2-7b-hf"
 rag_system = get_rag_system(model_name)
 
 # Dataset
