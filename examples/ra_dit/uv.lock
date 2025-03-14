@@ -348,7 +348,7 @@ wheels = [
 
 [[package]]
 name = "fed-rag"
-version = "0.0.3"
+version = "0.0.4"
 source = { editable = "../../" }
 dependencies = [
     { name = "asyncio" },
@@ -1359,6 +1359,7 @@ dependencies = [
     { name = "fire" },
     { name = "sentence-transformers" },
     { name = "transformers" },
+    { name = "trl" },
 ]
 
 [package.metadata]
@@ -1369,6 +1370,7 @@ requires-dist = [
     { name = "fire", specifier = ">=0.7.0" },
     { name = "sentence-transformers", specifier = ">=3.4.1" },
     { name = "transformers", specifier = ">=4.49.0" },
+    { name = "trl", specifier = ">=0.15.2" },
 ]
 
 [[package]]
@@ -1766,6 +1768,21 @@ source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/06/00/59500052cb1cf8cf5316be93598946bc451f14072c6ff256904428eaf03c/triton-3.2.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8d9b215efc1c26fa7eefb9a157915c92d52e000d2bf83e5f69704047e63f125c", size = 253159365 },
     { url = "https://files.pythonhosted.org/packages/c7/30/37a3384d1e2e9320331baca41e835e90a3767303642c7a80d4510152cbcf/triton-3.2.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e5dfa23ba84541d7c0a531dfce76d8bcd19159d50a4a8b14ad01e91734a5c1b0", size = 253154278 },
+]
+
+[[package]]
+name = "trl"
+version = "0.15.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accelerate" },
+    { name = "datasets" },
+    { name = "rich" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/95/fe/ae0d782c48eef56d0ec125ebd05998539ede7cbf0e307a48f9323998b9e7/trl-0.15.2.tar.gz", hash = "sha256:0f82190a058a0a194dbcfae1fe9548b68a0a05b2f4d1824f8db1ae7d949cdd47", size = 333962 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/29/25378447c48359843de0e4ce1995d367210601c3b437ddf1c779b6393d74/trl-0.15.2-py3-none-any.whl", hash = "sha256:bf2b88e3cf5da08cd533dc03273d977965bd5d86c5878f76285fba45d9cb9634", size = 318931 },
 ]
 
 [[package]]

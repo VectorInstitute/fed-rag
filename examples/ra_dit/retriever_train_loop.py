@@ -74,6 +74,7 @@ def retriever_evaluate(
 
 
 if __name__ == "__main__":
+    """centralized"""
     retriever = rag_system.retriever
     train_result = retriever_train_loop(
         model=retriever.query_encoder,
