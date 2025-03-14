@@ -1,12 +1,14 @@
 """Federate RAG via RA-DIT."""
 
 # torch
+import torch
 
 # hf
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 from torch.types import Device
-from transformers import PreTrainedModel, Trainer
+from transformers import PreTrainedModel
 from transformers.trainer_utils import TrainOutput
+from trl import SFTConfig, SFTTrainer
 
 # fedrag
 from fed_rag.decorators import federate
@@ -18,6 +20,10 @@ model_name = "/model-weights/Llama-2-7b-hf"
 # model_name = "meta-llama/Llama-2-7b-hf"
 rag_system = get_rag_system(model_name)
 
+# Dataset
+train_dataset = load_dataset("stanfordnlp/imdb", split="train[:20]")
+val_dataset = load_dataset("stanfordnlp/imdb", split="test[:10]")
+
 
 @federate.trainer.huggingface
 def generator_train_loop(
@@ -26,16 +32,17 @@ def generator_train_loop(
     val_data: Dataset,
     device: Device,
 ) -> TrainResult:
-    del val_data
+    """RA-DIT training loop for generator."""
 
-    model.to(device)
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
+    training_args = SFTConfig(
+        max_seq_length=512,
+        output_dir="~/scratch/tmp",
+    )
+    trainer = SFTTrainer(
+        "facebook/opt-350m",
         train_dataset=train_data,
+        args=training_args,
         eval_dataset=val_data,
-        compute_metrics=compute_metrics,
     )
 
     train_output: TrainOutput = trainer.train()
@@ -46,3 +53,15 @@ def generator_train_loop(
 @federate.tester.huggingface
 def retriever_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
     return TestResult(loss=42.0, metrics={})
+
+
+if __name__ == "__main__":
+    # centralized training
+    generator = rag_system.generator
+    train_result = generator_train_loop(
+        model=generator.model,
+        train_data=train_dataset,
+        val_data=val_dataset,
+        device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+    )
+    print(train_result)

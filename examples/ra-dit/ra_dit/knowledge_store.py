@@ -9,7 +9,7 @@ from fed_rag.retrievers.hf_sentence_transformer import (
 )
 from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
 
-DATA_PATH = Path(__file__).parents[0].absolute() / "data"
+DATA_PATH = Path(__file__).parents[1].absolute() / "data"
 
 knowledge_store = InMemoryKnowledgeStore()
 dragon_retriever = HFSentenceTransformerRetriever(
