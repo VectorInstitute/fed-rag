@@ -6,12 +6,6 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 
-[manifest]
-members = [
-    "fed-rag",
-    "quick-start",
-]
-
 [[package]]
 name = "aiohappyeyeballs"
 version = "2.4.6"
@@ -739,7 +733,7 @@ wheels = [
 
 [[package]]
 name = "fed-rag"
-version = "0.0.3"
+version = "0.0.4"
 source = { editable = "." }
 dependencies = [
     { name = "asyncio" },
@@ -2737,17 +2731,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/71/43/91fa4ff25bbfdc914ab6bafa0f03241d69370ef31a761d16bb859f346582/pyzmq-26.2.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2c4a71d5d6e7b28a47a394c0471b7e77a0661e2d651e7ae91e0cab0a587859ca", size = 752775 },
     { url = "https://files.pythonhosted.org/packages/ec/d2/3b2ab40f455a256cb6672186bea95cd97b459ce4594050132d71e76f0d6f/pyzmq-26.2.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:90412f2db8c02a3864cbfc67db0e3dcdbda336acf1c469526d3e869394fe001c", size = 550762 },
 ]
-
-[[package]]
-name = "quick-start"
-version = "0.1.0"
-source = { virtual = "examples/quick-start" }
-dependencies = [
-    { name = "fed-rag" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "fed-rag", editable = "." }]
 
 [[package]]
 name = "referencing"
