@@ -1,7 +1,6 @@
 """RA-DIT original RAG System."""
 
 from transformers.generation.utils import GenerationConfig
-from transformers.utils.quantization_config import BitsAndBytesConfig
 
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
 from fed_rag.retrievers.hf_sentence_transformer import (

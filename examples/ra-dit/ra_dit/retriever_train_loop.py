@@ -19,7 +19,6 @@ from fed_rag.types import TestResult, TrainResult
 
 from .rag_system import main as get_rag_system
 
-
 # Define your train examples. You need more than just two examples...
 train_dataset = Dataset.from_dict(
     {
@@ -64,7 +63,9 @@ def retriever_train_loop(
 
 
 @federate.tester.huggingface
-def retriever_evaluate(model: SentenceTransformer, test_data: Dataset) -> TestResult:
+def retriever_evaluate(
+    model: SentenceTransformer, test_data: Dataset
+) -> TestResult:
     return TestResult(loss=42.0, metrics={})
 
 
