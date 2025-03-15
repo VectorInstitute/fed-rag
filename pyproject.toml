@@ -65,5 +65,5 @@ dependencies = [
 only-include = ["src", "tests"] # keep build small, exclude examples
 
 [tool.uv.workspace]
-members = ["examples/quick-start"]
+members = ["examples/quickstart"]
 exclude = ["examples/ra-dit"]
