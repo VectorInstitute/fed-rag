@@ -6,14 +6,15 @@ import torch
 from datasets import Dataset, load_dataset
 
 # fedrag
-from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
-
-from .rag_system import main as get_rag_system
-from .retriever_train_loop import (
-    retriever_evaluate,
-    retriever_train_loop,
+from fed_rag.fl_tasks.huggingface import (
+    HuggingFaceFlowerClient,
+    HuggingFaceFlowerServer,
+    HuggingFaceFLTask,
 )
-from .generator_train_loop import generator_train_loop, generator_evaluate
+
+from .generator_train_loop import generator_evaluate, generator_train_loop
+from .rag_system import main as get_rag_system
+from .retriever_train_loop import retriever_evaluate, retriever_train_loop
 
 # RAG System
 
@@ -21,8 +22,9 @@ tasks = ["retriever", "generator"]
 
 
 # Models and Train/Test Functions
-def get_model(task):
-    model_name = "/model-weights/Llama-3.2-1B"
+def get_model(task: str) -> torch.nn.Module:
+    # model_name = "/model-weights/Llama-3.2-1B"
+    model_name = "facebook/opt-350m"
     rag_system = get_rag_system(model_name)
 
     if task == "retriever":
@@ -33,7 +35,10 @@ def get_model(task):
         raise ValueError("Unsupported task")
 
 
-trainers = {"retriever": retriever_train_loop, "generator": generator_train_loop}
+trainers = {
+    "retriever": retriever_train_loop,
+    "generator": generator_train_loop,
+}
 testers = {"retriever": retriever_evaluate, "generator": generator_evaluate}
 
 # Create your FLTasks
@@ -46,7 +51,9 @@ fl_tasks = {
 
 
 ## Servers
-def build_server(task: Literal["retriever", "generator"]):
+def build_server(
+    task: Literal["retriever", "generator"]
+) -> HuggingFaceFlowerServer:
     fl_task = fl_tasks[task]
     return fl_task.server(model=get_model(task))
 
@@ -77,13 +84,17 @@ datasets = {
 
 
 # dummy setup with clients using the same datasets
-def build_client(task: Literal["retriever", "generator"], device_id: str):
+def build_client(
+    task: Literal["retriever", "generator"], device_id: str
+) -> HuggingFaceFlowerClient:
     fl_task = fl_tasks[task]
+    device = torch.device(f"cuda:{device_id}")
+    model = get_model(task).to(device)
     return fl_task.client(
-        model=get_model(task),
+        model=model,
         train_data=datasets[task]["train_dataset"],
         val_data=datasets[task]["val_dataset"],
-        device=torch.device(f"cuda:{device_id}"),
+        device=device,
     )
 
 
@@ -99,16 +110,25 @@ def start(
         raise ValueError("Unrecognized task.")
 
     server = build_server(task)
+    grpc_max_message_length = int(512 * 1024 * 1024 * 3.75)
 
     if component == "server":
-        fl.server.start_server(server=server, server_address="[::]:8080")
+        fl.server.start_server(
+            server=server,
+            server_address="[::]:8080",
+            grpc_max_message_length=grpc_max_message_length,
+        )
     elif component == "client_1":
         fl.client.start_client(
-            client=build_client(task=task, device_id="0"), server_address="[::]:8080"
+            client=build_client(task=task, device_id="0"),
+            server_address="[::]:8080",
+            grpc_max_message_length=grpc_max_message_length,
         )
     elif component == "client_2":
         fl.client.start_client(
-            client=build_client(task=task, device_id="1"), server_address="[::]:8080"
+            client=build_client(task=task, device_id="1"),
+            server_address="[::]:8080",
+            grpc_max_message_length=grpc_max_message_length,
         )
     else:
         raise ValueError("Unrecognized component.")

@@ -16,7 +16,6 @@ from fed_rag.types import TestResult, TrainResult
 
 from .rag_system import main as get_rag_system
 
-
 # Dataset
 train_dataset = load_dataset("stanfordnlp/imdb", split="train[:20]")
 val_dataset = load_dataset("stanfordnlp/imdb", split="test[:10]")
@@ -56,10 +55,10 @@ def generator_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
 if __name__ == "__main__":
     # centralized training
 
-    # model_name = "/model-weights/Llama-2-7b-hf"
     # model_name = "meta-llama/Llama-2-7b-hf"
-    model_name = "/model-weights/Llama-3.2-1B"
+    model_name = "/model-weights/Llama-2-7b-hf"
     rag_system = get_rag_system(model_name)
+    print(rag_system.generator.model.dtype)
     generator = rag_system.generator
     train_result = generator_train_loop(
         model=generator.model,
