@@ -10,7 +10,8 @@ dependencies = [
   "fed-rag",
   "fire>=0.7.0",
   "sentence-transformers>=3.4.1",
-  "transformers>=4.49.0"
+  "transformers>=4.49.0",
+  "trl>=0.15.2"
 ]
 
 [tool.uv.sources]
