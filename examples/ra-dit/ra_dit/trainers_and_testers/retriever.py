@@ -1,4 +1,4 @@
-"""Federate RAG via RA-DIT."""
+"""Retriever trainer and tester following RA-DIT."""
 
 # torch
 import torch
@@ -16,8 +16,6 @@ from transformers.trainer_utils import TrainOutput
 # fedrag
 from fed_rag.decorators import federate
 from fed_rag.types import TestResult, TrainResult
-
-from .rag_system import main as get_rag_system
 
 # Define your train examples. You need more than just two examples...
 train_dataset = Dataset.from_dict(
@@ -71,11 +69,8 @@ def retriever_evaluate(
 
 if __name__ == "__main__":
     """centralized"""
+    from ra_dit.retrievers.dragon import retriever
 
-    model_name = "/model-weights/Llama-2-7b-hf"
-    # model_name = "meta-llama/Llama-2-7b-hf"
-    rag_system = get_rag_system(model_name)
-    retriever = rag_system.retriever
     train_result = retriever_train_loop(
         model=retriever.query_encoder,
         train_data=train_dataset,
