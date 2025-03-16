@@ -12,7 +12,7 @@ from flwr.server.strategy import FedAvg
 from torch.nn import Module
 from transformers import PreTrainedModel
 
-from fed_rag.exceptions import MissingRequiredNetParam
+from fed_rag.exceptions import MissingRequiredNetParam, NetTypeMismatch
 from fed_rag.fl_tasks.huggingface import (
     BaseFLTaskBundle,
     HuggingFaceFlowerClient,
@@ -322,6 +322,20 @@ def test_init_fl_task_with_mismatched_net_params_raises_warning(
             trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
             tester=mismatch_tester_pretrained_model,
             tester_spec=mismatch_tester_pretrained_model.__fl_task_tester_config,  # type: ignore[attr-defined]
+        )
+
+
+def test_init_fl_task_with_mismatched_net_param_type_raises_error(
+    trainer_pretrained_model: Callable,
+    tester_sentence_transformer: Callable,
+) -> None:
+    msg = "`trainer`'s model class is not the same as that for `tester`."
+    with pytest.raises(NetTypeMismatch, match=msg):
+        HuggingFaceFLTask(
+            trainer=trainer_pretrained_model,
+            trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=tester_sentence_transformer,
+            tester_spec=tester_sentence_transformer.__fl_task_tester_config,  # type: ignore[attr-defined]
         )
 
 
