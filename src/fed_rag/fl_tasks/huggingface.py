@@ -65,7 +65,7 @@ def _get_weights(
     ):
         state_dict = net.state_dict()
     else:
-        raise ValueError("Invalide `net` type.")
+        raise ValueError("Invalid `net` type.")
     return [val.cpu().numpy() for _, val in state_dict.items()]
 
 
