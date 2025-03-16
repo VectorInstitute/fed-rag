@@ -27,6 +27,7 @@ from fed_rag.exceptions import (
     MissingRequiredNetParam,
     MissingTesterSpec,
     MissingTrainerSpec,
+    NetTypeMismatch,
     UnequalNetParamWarning,
 )
 from fed_rag.inspectors.pytorch import (
@@ -122,6 +123,22 @@ class HuggingFaceFLTask(BaseFLTask):
         tester_spec: TesterSignatureSpec,
         **kwargs: Any,
     ) -> None:
+        if (
+            trainer_spec.net_parameter_class_name
+            != tester_spec.net_parameter_class_name
+        ):
+            msg = (
+                "`trainer`'s model class is not the same as that for `tester`."
+            )
+            raise NetTypeMismatch(msg)
+
+        if trainer_spec.net_parameter != tester_spec.net_parameter:
+            msg = (
+                "`trainer`'s model parameter name is not the same as that for `tester`. "
+                "Will use the name supplied in `trainer`."
+            )
+            warnings.warn(msg, UnequalNetParamWarning)
+
         super().__init__(**kwargs)
         self._trainer = trainer
         self._trainer_spec = trainer_spec
@@ -155,13 +172,6 @@ class HuggingFaceFLTask(BaseFLTask):
                 "Cannot extract `TesterSignatureSpec` from supplied `tester`."
             )
             raise MissingTesterSpec(msg)
-
-        if trainer_spec.net_parameter != tester_spec.net_parameter:
-            msg = (
-                "`trainer`'s model parameter name is not the same as that for `tester`. "
-                "Will use the name supplied in `trainer`."
-            )
-            warnings.warn(msg, UnequalNetParamWarning)
 
         return cls(
             trainer=trainer,

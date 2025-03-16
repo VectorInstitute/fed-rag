@@ -116,6 +116,13 @@ class PyTorchFLTask(BaseFLTask):
         tester_spec: TesterSignatureSpec,
         **kwargs: Any,
     ) -> None:
+        if trainer_spec.net_parameter != tester_spec.net_parameter:
+            msg = (
+                "`trainer`'s model parameter name is not the same as that for `tester`. "
+                "Will use the name supplied in `trainer`."
+            )
+            warnings.warn(msg, UnequalNetParamWarning)
+
         super().__init__(**kwargs)
         self._trainer = trainer
         self._trainer_spec = trainer_spec
@@ -149,13 +156,6 @@ class PyTorchFLTask(BaseFLTask):
                 "Cannot extract `TesterSignatureSpec` from supplied `tester`."
             )
             raise MissingTesterSpec(msg)
-
-        if trainer_spec.net_parameter != tester_spec.net_parameter:
-            msg = (
-                "`trainer`'s model parameter name is not the same as that for `tester`. "
-                "Will use the name supplied in `trainer`."
-            )
-            warnings.warn(msg, UnequalNetParamWarning)
 
         return cls(
             trainer=trainer,

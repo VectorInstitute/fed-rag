@@ -308,6 +308,23 @@ def test_creating_fl_task_with_mismatched_net_params_raises_warning(
         )
 
 
+def test_init_fl_task_with_mismatched_net_params_raises_warning(
+    trainer_pretrained_model: Callable,
+    mismatch_tester_pretrained_model: Callable,
+) -> None:
+    msg = (
+        "`trainer`'s model parameter name is not the same as that for `tester`. "
+        "Will use the name supplied in `trainer`."
+    )
+    with pytest.warns(UnequalNetParamWarning, match=msg):
+        HuggingFaceFLTask(
+            trainer=trainer_pretrained_model,
+            trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=mismatch_tester_pretrained_model,
+            tester_spec=mismatch_tester_pretrained_model.__fl_task_tester_config,  # type: ignore[attr-defined]
+        )
+
+
 def test_fl_task_methods_not_implemented(
     trainer_pretrained_model: Callable,
     tester_pretrained_model: Callable,
