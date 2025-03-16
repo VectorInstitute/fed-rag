@@ -435,3 +435,9 @@ def test_fl_task_methods_not_implemented(
     )
     with pytest.raises(NotImplementedError):
         fl_task.simulate(42)
+
+
+def test_private_get_weights_raises_error_with_invalid_net_type() -> None:
+    # act
+    with pytest.raises(ValueError):
+        _get_weights(3)
