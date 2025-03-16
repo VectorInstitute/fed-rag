@@ -25,6 +25,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     extra_tester_kwargs = []
     net_param = None
     test_data_param = None
+    net_parameter_class_name = None
 
     for name, t in sig.parameters.items():
         if name in ("self", "cls"):
@@ -36,6 +37,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
                 and net_param is None
             ):
                 net_param = name
+                net_parameter_class_name = type_name
                 continue
 
             if type_name == "Dataset" and test_data_param is None:
@@ -62,5 +64,6 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
         net_parameter=net_param,
         test_data_param=test_data_param,
         extra_test_kwargs=extra_tester_kwargs,
+        net_parameter_class_name=net_parameter_class_name,
     )
     return spec

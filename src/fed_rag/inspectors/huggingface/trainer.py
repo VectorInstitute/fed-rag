@@ -42,6 +42,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
                 and net_param is None
             ):
                 net_param = name
+                net_parameter_class_name = type_name
                 continue
 
             if type_name == "Dataset" and train_data_param is None:
@@ -81,5 +82,6 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
         train_data_param=train_data_param,
         val_data_param=val_data_param,
         extra_train_kwargs=extra_train_kwargs,
+        net_parameter_class_name=net_parameter_class_name,
     )
     return spec

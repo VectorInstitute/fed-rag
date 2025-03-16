@@ -8,6 +8,7 @@ class TrainerSignatureSpec(BaseModel):
     train_data_param: str
     val_data_param: str
     extra_train_kwargs: list[str] = []
+    net_parameter_class_name: str
 
 
 class TesterSignatureSpec(BaseModel):
@@ -17,3 +18,4 @@ class TesterSignatureSpec(BaseModel):
     net_parameter: str
     test_data_param: str
     extra_test_kwargs: list[str] = []
+    net_parameter_class_name: str
