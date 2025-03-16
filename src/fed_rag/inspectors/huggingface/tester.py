@@ -33,7 +33,8 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
 
         if type_name := getattr(t.annotation, "__name__", None):
             if (
-                type_name in ["PreTrainedModel", "SentenceTransformer"]
+                type_name
+                in ["PreTrainedModel", "SentenceTransformer", "PeftModel"]
                 and net_param is None
             ):
                 net_param = name

@@ -7,6 +7,7 @@ import torch
 
 # huggingface
 from datasets import Dataset
+from peft import PeftModel
 from sentence_transformers import SentenceTransformer
 from transformers import PretrainedConfig, PreTrainedModel
 
@@ -149,6 +150,31 @@ def tester_sentence_transformer() -> Callable:
     @federate.tester.huggingface
     def fn(
         net: SentenceTransformer,
+        test_dataset: Dataset,
+    ) -> TestResult:
+        return TestResult(loss=0.0, metrics={})
+
+    return fn  # type: ignore
+
+
+@pytest.fixture()
+def trainer_peft() -> Callable:
+    @federate.trainer.huggingface
+    def fn(
+        net: PeftModel,
+        train_dataset: Dataset,
+        val_dataset: Dataset,
+    ) -> TrainResult:
+        return TrainResult(loss=0.0)
+
+    return fn  # type: ignore
+
+
+@pytest.fixture()
+def tester_peft() -> Callable:
+    @federate.tester.huggingface
+    def fn(
+        net: PeftModel,
         test_dataset: Dataset,
     ) -> TestResult:
         return TestResult(loss=0.0, metrics={})
