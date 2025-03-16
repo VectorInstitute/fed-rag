@@ -9,6 +9,8 @@ from datasets import Dataset
 from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import SimpleClientManager
 from flwr.server.strategy import FedAvg
+from peft import PeftModel
+from peft.utils import get_peft_model_state_dict
 from torch.nn import Module
 from transformers import PreTrainedModel
 
@@ -120,11 +122,11 @@ def test_flower_client_get_weights_peft(
     val_dataset: Dataset,
     trainer_peft_model: Callable,
     tester_peft_model: Callable,
-    hf_pretrained_model: PreTrainedModel,
+    hf_peft_model: PeftModel,
 ) -> None:
-    net = hf_pretrained_model
+    net = hf_peft_model
     bundle = BaseFLTaskBundle(
-        net=hf_pretrained_model,
+        net=hf_peft_model,
         train_dataset=train_dataset,
         val_dataset=val_dataset,
         trainer=trainer_peft_model,
@@ -133,9 +135,8 @@ def test_flower_client_get_weights_peft(
         extra_train_kwargs={},
     )
     client = HuggingFaceFlowerClient(task_bundle=bundle)
-    expected_weights = [
-        val.cpu().numpy() for _, val in net.state_dict().items()
-    ]
+    state_dict = get_peft_model_state_dict(net)
+    expected_weights = [val.cpu().numpy() for _, val in state_dict.items()]
 
     assert all((client.get_weights()[0] == expected_weights[0]).flatten())
     assert all((client.get_weights()[1] == expected_weights[1]).flatten())
