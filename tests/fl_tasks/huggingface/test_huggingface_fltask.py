@@ -12,7 +12,7 @@ from flwr.server.strategy import FedAvg
 from torch.nn import Module
 from transformers import PreTrainedModel
 
-from fed_rag.exceptions import MissingRequiredNetParam
+from fed_rag.exceptions import MissingRequiredNetParam, NetTypeMismatch
 from fed_rag.fl_tasks.huggingface import (
     BaseFLTaskBundle,
     HuggingFaceFlowerClient,
@@ -25,6 +25,7 @@ from fed_rag.fl_tasks.huggingface import (
 from fed_rag.types import TestResult, TrainResult
 
 
+# TODO: parametrize tests using trainer/tester from pretrained models
 def test_init_flower_client(
     train_dataset: Dataset,
     val_dataset: Dataset,
@@ -305,6 +306,51 @@ def test_creating_fl_task_with_mismatched_net_params_raises_warning(
         HuggingFaceFLTask.from_trainer_and_tester(
             trainer=trainer_pretrained_model,
             tester=mismatch_tester_pretrained_model,
+        )
+
+
+def test_init_fl_task_with_mismatched_net_params_raises_warning(
+    trainer_pretrained_model: Callable,
+    mismatch_tester_pretrained_model: Callable,
+) -> None:
+    msg = (
+        "`trainer`'s model parameter name is not the same as that for `tester`. "
+        "Will use the name supplied in `trainer`."
+    )
+    with pytest.warns(UnequalNetParamWarning, match=msg):
+        HuggingFaceFLTask(
+            trainer=trainer_pretrained_model,
+            trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=mismatch_tester_pretrained_model,
+            tester_spec=mismatch_tester_pretrained_model.__fl_task_tester_config,  # type: ignore[attr-defined]
+        )
+
+
+def test_init_fl_task_with_mismatched_net_param_type_raises_error_i(
+    trainer_pretrained_model: Callable,
+    tester_sentence_transformer: Callable,
+) -> None:
+    msg = "`trainer`'s model class is not the same as that for `tester`."
+    with pytest.raises(NetTypeMismatch, match=msg):
+        HuggingFaceFLTask(
+            trainer=trainer_pretrained_model,
+            trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=tester_sentence_transformer,
+            tester_spec=tester_sentence_transformer.__fl_task_tester_config,  # type: ignore[attr-defined]
+        )
+
+
+def test_init_fl_task_with_mismatched_net_param_type_raises_error_ii(
+    trainer_pretrained_model: Callable,
+    tester_peft: Callable,
+) -> None:
+    msg = "`trainer`'s model class is not the same as that for `tester`."
+    with pytest.raises(NetTypeMismatch, match=msg):
+        HuggingFaceFLTask(
+            trainer=trainer_pretrained_model,
+            trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=tester_peft,
+            tester_spec=tester_peft.__fl_task_tester_config,  # type: ignore[attr-defined]
         )
 
 

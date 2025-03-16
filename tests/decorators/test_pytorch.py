@@ -38,6 +38,7 @@ def test_decorated_trainer() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "Module"
 
 
 def test_decorated_trainer_raises_invalid_return_type_error() -> None:
@@ -114,6 +115,7 @@ def test_decorated_trainer_from_instance_method() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "Module"
 
 
 def test_decorated_trainer_from_class_method() -> None:
@@ -136,6 +138,7 @@ def test_decorated_trainer_from_class_method() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "Module"
 
 
 def test_decorated_tester() -> None:
@@ -152,6 +155,7 @@ def test_decorated_tester() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "Module"
 
 
 def test_decorated_tester_raises_invalid_return_type() -> None:
@@ -210,6 +214,7 @@ def test_decorated_tester_from_instance_method() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "Module"
 
 
 def test_decorated_tester_from_class_method() -> None:
@@ -230,3 +235,4 @@ def test_decorated_tester_from_class_method() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "Module"

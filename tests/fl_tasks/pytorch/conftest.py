@@ -58,3 +58,15 @@ def tester() -> Callable:
         return TestResult(loss=0.0, metrics={})
 
     return fn  # type: ignore
+
+
+@pytest.fixture()
+def mismatch_tester() -> Callable:
+    @federate.tester.pytorch
+    def fn(
+        mdl: nn.Module,  # mismatch in name here
+        test_loader: DataLoader,
+    ) -> TestResult:
+        return TestResult(loss=0.0, metrics={})
+
+    return fn  # type: ignore

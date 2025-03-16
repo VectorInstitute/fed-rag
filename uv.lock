@@ -14,6 +14,24 @@ members = [
 ]
 
 [[package]]
+name = "accelerate"
+version = "1.5.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "psutil" },
+    { name = "pyyaml" },
+    { name = "safetensors" },
+    { name = "torch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a9/4c/a61132924da12cef62a88c04b5825246ab83dcc1bae6291d098cfcb0b72d/accelerate-1.5.2.tar.gz", hash = "sha256:a1cf39473edc0e42772a9d9a18c9eb1ce8ffd9e1719dc0ab80670f5c1fd4dc43", size = 352341 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/70/83/167d4b638bb758a966828eb8d23c5e7047825edfdf768ff5f4fb01440063/accelerate-1.5.2-py3-none-any.whl", hash = "sha256:68a3b272f6a6ffebb457bdc138581a2bf52efad6a5e0214dc46675f3edd98792", size = 345146 },
+]
+
+[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -748,6 +766,7 @@ dependencies = [
     { name = "asyncio" },
     { name = "flwr" },
     { name = "flwr-datasets" },
+    { name = "peft" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "sentence-transformers" },
@@ -794,6 +813,7 @@ requires-dist = [
     { name = "asyncio", specifier = ">=3.4.3" },
     { name = "flwr", specifier = "==1.9.0" },
     { name = "flwr-datasets", specifier = ">=0.5.0" },
+    { name = "peft", specifier = ">=0.14.0" },
     { name = "pydantic", specifier = ">=2.10.5" },
     { name = "pydantic-settings", specifier = ">=2.7.1" },
     { name = "sentence-transformers", specifier = ">=3.4.1" },
@@ -2117,6 +2137,27 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/01/d2/510cc0d218e753ba62a1bc1434651db3cd797a9716a0a66cc714cb4f0935/pbr-6.1.1.tar.gz", hash = "sha256:93ea72ce6989eb2eed99d0f75721474f69ad88128afdef5ac377eb797c4bf76b", size = 125702 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/47/ac/684d71315abc7b1214d59304e23a982472967f6bf4bde5a98f1503f648dc/pbr-6.1.1-py2.py3-none-any.whl", hash = "sha256:38d4daea5d9fa63b3f626131b9d34947fd0c8be9b05a29276870580050a25a76", size = 108997 },
+]
+
+[[package]]
+name = "peft"
+version = "0.14.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accelerate" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "psutil" },
+    { name = "pyyaml" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/21/33/fb0c31eaa8162c01e9250b21aa65d46a5339f17a818a97c68391db2ff44b/peft-0.14.0.tar.gz", hash = "sha256:546d69af7b42f5ef715a3d3261ed818bc917ae6055e5d7e187ed3f2c76ad72dc", size = 411902 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/05/e58e3aaa36544d30a917814e336fc65a746f708e5874945e92999bc22fa3/peft-0.14.0-py3-none-any.whl", hash = "sha256:2f04f3a870c3baf30f15e7dcaa5dd70d3e54cfdd146d3c6c187735d3ae0a0700", size = 374831 },
 ]
 
 [[package]]

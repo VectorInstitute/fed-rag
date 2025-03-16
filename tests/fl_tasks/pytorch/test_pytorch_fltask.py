@@ -11,7 +11,7 @@ from flwr.server.strategy import FedAvg
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
-from fed_rag.exceptions import MissingRequiredNetParam
+from fed_rag.exceptions import MissingRequiredNetParam, UnequalNetParamWarning
 from fed_rag.fl_tasks.pytorch import (
     BaseFLTaskBundle,
     PyTorchFlowerClient,
@@ -239,3 +239,35 @@ def test_invoking_client_without_net_param_raises(
         match="Please pass in a model using the model param name net.",
     ):
         fl_task.client()
+
+
+def test_creating_fl_task_with_mismatched_net_params_raises_warning(
+    trainer: Callable,
+    mismatch_tester: Callable,
+) -> None:
+    msg = (
+        "`trainer`'s model parameter name is not the same as that for `tester`. "
+        "Will use the name supplied in `trainer`."
+    )
+    with pytest.warns(UnequalNetParamWarning, match=msg):
+        PyTorchFLTask.from_trainer_and_tester(
+            trainer=trainer,
+            tester=mismatch_tester,
+        )
+
+
+def test_init_fl_task_with_mismatched_net_params_raises_warning(
+    trainer: Callable,
+    mismatch_tester: Callable,
+) -> None:
+    msg = (
+        "`trainer`'s model parameter name is not the same as that for `tester`. "
+        "Will use the name supplied in `trainer`."
+    )
+    with pytest.warns(UnequalNetParamWarning, match=msg):
+        PyTorchFLTask(
+            trainer=trainer,
+            trainer_spec=trainer.__fl_task_trainer_config,  # type: ignore[attr-defined]
+            tester=mismatch_tester,
+            tester_spec=mismatch_tester.__fl_task_tester_config,  # type: ignore[attr-defined]
+        )
