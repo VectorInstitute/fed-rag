@@ -51,7 +51,7 @@ def hf_peft_model() -> PeftModel:
         https://huggingface.co/docs/peft/main/en/developer_guides/custom_models
         """
 
-        def __init__(self, num_units_hidden: int = 2000):
+        def __init__(self, num_units_hidden: int = 40):
             super().__init__()
             self.seq = torch.nn.Sequential(
                 torch.nn.Linear(20, num_units_hidden),
@@ -67,6 +67,7 @@ def hf_peft_model() -> PeftModel:
 
     config = LoraConfig(
         target_modules=["seq.0", "seq.2"],
+        r=4,
     )
 
     base_model = MLP()

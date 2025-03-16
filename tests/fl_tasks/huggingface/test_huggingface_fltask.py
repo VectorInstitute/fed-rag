@@ -168,8 +168,17 @@ def test_flower_client_set_weights_peft(
     client.set_weights(parameters)
 
     # assert
-    state_dict = OrderedDict(get_peft_model_state_dict(net))
-    mock_peft_model_state_dict.assert_called_once_with(net, state_dict)
+    params_dict = zip(get_peft_model_state_dict(net).keys(), parameters)
+    expected_state_dict = OrderedDict(
+        {k: torch.tensor(v) for k, v in params_dict}
+    )
+    mock_peft_model_state_dict.assert_called_once()
+    (peft_arg, state_dict_arg), _ = mock_peft_model_state_dict.call_args
+    assert peft_arg == net
+    assert all(
+        x[1].equal(y[1])
+        for x, y in zip(state_dict_arg.items(), expected_state_dict.items())
+    )
     assert client.task_bundle == bundle
 
 

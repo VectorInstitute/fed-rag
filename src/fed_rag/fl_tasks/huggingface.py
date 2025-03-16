@@ -93,7 +93,7 @@ class HuggingFaceFlowerClient(NumPyClient):
             state_dict = cast(Dict[str, Any], state_dict)
 
             # update state dict with supplied parameters
-            params_dict = zip(self.net.state_dict().keys(), parameters)
+            params_dict = zip(state_dict.keys(), parameters)
             state_dict = OrderedDict(
                 {k: torch.tensor(v) for k, v in params_dict}
             )
@@ -103,7 +103,7 @@ class HuggingFaceFlowerClient(NumPyClient):
             state_dict = self.net.state_dict()
 
             # update state dict with supplied parameters
-            params_dict = zip(self.net.state_dict().keys(), parameters)
+            params_dict = zip(state_dict.keys(), parameters)
             state_dict = OrderedDict(
                 {k: torch.tensor(v) for k, v in params_dict}
             )
