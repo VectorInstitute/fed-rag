@@ -9,6 +9,8 @@ from datasets import Dataset
 from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import SimpleClientManager
 from flwr.server.strategy import FedAvg
+from peft import PeftModel
+from peft.utils import get_peft_model_state_dict
 from torch.nn import Module
 from transformers import PreTrainedModel
 
@@ -112,6 +114,71 @@ def test_flower_client_set_weights(
     assert (args[0].get("model.weight") == state_dict["model.weight"]).all()
     assert (args[0].get("model.bias") == state_dict["model.bias"]).all()
     assert kwargs == {"strict": True}
+    assert client.task_bundle == bundle
+
+
+def test_flower_client_get_weights_peft(
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    trainer_peft_model: Callable,
+    tester_peft_model: Callable,
+    hf_peft_model: PeftModel,
+) -> None:
+    net = hf_peft_model
+    bundle = BaseFLTaskBundle(
+        net=hf_peft_model,
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        trainer=trainer_peft_model,
+        tester=tester_peft_model,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = HuggingFaceFlowerClient(task_bundle=bundle)
+    state_dict = get_peft_model_state_dict(net)
+    expected_weights = [val.cpu().numpy() for _, val in state_dict.items()]
+
+    assert all((client.get_weights()[0] == expected_weights[0]).flatten())
+    assert all((client.get_weights()[1] == expected_weights[1]).flatten())
+
+
+@patch("fed_rag.fl_tasks.huggingface.set_peft_model_state_dict")
+def test_flower_client_set_weights_peft(
+    mock_peft_model_state_dict: MagicMock,
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    trainer_peft_model: Callable,
+    tester_peft_model: Callable,
+    hf_peft_model: PeftModel,
+) -> None:
+    net = hf_peft_model
+    bundle = BaseFLTaskBundle(
+        net=net,
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        trainer=trainer_peft_model,
+        tester=tester_peft_model,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = HuggingFaceFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+
+    # act
+    client.set_weights(parameters)
+
+    # assert
+    params_dict = zip(get_peft_model_state_dict(net).keys(), parameters)
+    expected_state_dict = OrderedDict(
+        {k: torch.tensor(v) for k, v in params_dict}
+    )
+    mock_peft_model_state_dict.assert_called_once()
+    (peft_arg, state_dict_arg), _ = mock_peft_model_state_dict.call_args
+    assert peft_arg == net
+    assert all(
+        x[1].equal(y[1])
+        for x, y in zip(state_dict_arg.items(), expected_state_dict.items())
+    )
     assert client.task_bundle == bundle
 
 
@@ -342,15 +409,15 @@ def test_init_fl_task_with_mismatched_net_param_type_raises_error_i(
 
 def test_init_fl_task_with_mismatched_net_param_type_raises_error_ii(
     trainer_pretrained_model: Callable,
-    tester_peft: Callable,
+    tester_peft_model: Callable,
 ) -> None:
     msg = "`trainer`'s model class is not the same as that for `tester`."
     with pytest.raises(NetTypeMismatch, match=msg):
         HuggingFaceFLTask(
             trainer=trainer_pretrained_model,
             trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
-            tester=tester_peft,
-            tester_spec=tester_peft.__fl_task_tester_config,  # type: ignore[attr-defined]
+            tester=tester_peft_model,
+            tester_spec=tester_peft_model.__fl_task_tester_config,  # type: ignore[attr-defined]
         )
 
 
@@ -368,3 +435,9 @@ def test_fl_task_methods_not_implemented(
     )
     with pytest.raises(NotImplementedError):
         fl_task.simulate(42)
+
+
+def test_private_get_weights_raises_error_with_invalid_net_type() -> None:
+    # act
+    with pytest.raises(ValueError):
+        _get_weights(3)

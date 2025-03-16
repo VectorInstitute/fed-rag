@@ -1,7 +1,7 @@
 """HuggingFace FL Task"""
 
 import warnings
-from typing import Any, Callable, OrderedDict, TypeAlias
+from typing import Any, Callable, Dict, OrderedDict, TypeAlias, cast
 
 import torch
 from datasets import Dataset
@@ -14,6 +14,8 @@ from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import ClientManager, SimpleClientManager
 from flwr.server.server import Server
 from flwr.server.strategy import FedAvg, Strategy
+from peft import PeftModel
+from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 # huggingface
@@ -39,7 +41,7 @@ from fed_rag.types import TestResult, TrainResult
 
 class BaseFLTaskBundle(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    net: SentenceTransformer | PreTrainedModel
+    net: SentenceTransformer | PreTrainedModel | PeftModel
     train_dataset: Dataset
     val_dataset: Dataset
     trainer: Callable
@@ -48,12 +50,23 @@ class BaseFLTaskBundle(BaseModel):
     extra_train_kwargs: Any
 
 
-def _get_weights(net: SentenceTransformer | PreTrainedModel) -> NDArrays:
+def _get_weights(
+    net: SentenceTransformer | PreTrainedModel | PeftModel,
+) -> NDArrays:
     """Get weights from net.
 
     NOTE: SentenceTransformer and PreTrainedModel are subclasses of torch.nn.Module
     """
-    return [val.cpu().numpy() for _, val in net.state_dict().items()]
+    if isinstance(net, PeftModel):
+        state_dict = get_peft_model_state_dict(net)
+        state_dict = cast(Dict[str, Any], state_dict)
+    elif isinstance(net, SentenceTransformer) or isinstance(
+        net, PreTrainedModel
+    ):
+        state_dict = net.state_dict()
+    else:
+        raise ValueError("Invalid `net` type.")
+    return [val.cpu().numpy() for _, val in state_dict.items()]
 
 
 class HuggingFaceFlowerClient(NumPyClient):
@@ -74,9 +87,27 @@ class HuggingFaceFlowerClient(NumPyClient):
         return _get_weights(self.net)
 
     def set_weights(self, parameters: NDArrays) -> None:
-        params_dict = zip(self.net.state_dict().keys(), parameters)
-        state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-        self.net.load_state_dict(state_dict, strict=True)
+        if isinstance(self.net, PeftModel):
+            # get state dict
+            state_dict = get_peft_model_state_dict(self.net)
+            state_dict = cast(Dict[str, Any], state_dict)
+
+            # update state dict with supplied parameters
+            params_dict = zip(state_dict.keys(), parameters)
+            state_dict = OrderedDict(
+                {k: torch.tensor(v) for k, v in params_dict}
+            )
+            set_peft_model_state_dict(self.net, state_dict)
+        else:  # SentenceTransformer | PreTrainedModel
+            # get state dict
+            state_dict = self.net.state_dict()
+
+            # update state dict with supplied parameters
+            params_dict = zip(state_dict.keys(), parameters)
+            state_dict = OrderedDict(
+                {k: torch.tensor(v) for k, v in params_dict}
+            )
+            self.net.load_state_dict(state_dict, strict=True)
 
     def fit(
         self, parameters: NDArrays, config: dict[str, Scalar]
