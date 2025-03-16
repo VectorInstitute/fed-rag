@@ -27,6 +27,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     net_param = None
     train_data_param = None
     val_data_param = None
+    net_parameter_class_name = None
 
     for name, t in sig.parameters.items():
         if name in ("self", "cls"):
@@ -38,6 +39,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
                 in [
                     "SentenceTransformer",
                     "PreTrainedModel",
+                    "PeftModel",
                 ]  # TODO: should accept union types involving these two
                 and net_param is None
             ):

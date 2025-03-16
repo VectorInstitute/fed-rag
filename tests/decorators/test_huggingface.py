@@ -41,6 +41,7 @@ def test_decorated_trainer_hf_pretrained_model() -> None:
     assert config.train_data_param == "train_dataset"
     assert config.val_data_param == "val_dataset"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 def test_decorated_trainer_raises_invalid_return_type_error_hf_pretrained() -> (
@@ -114,6 +115,7 @@ def test_decorated_trainer_from_instance_method_hf_pretrained() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 def test_decorated_trainer_from_class_method_hf_pretrained() -> None:
@@ -138,6 +140,7 @@ def test_decorated_trainer_from_class_method_hf_pretrained() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 ### Tester
@@ -155,6 +158,7 @@ def test_decorated_tester_hf_pretrained() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 def test_decorated_tester_raises_invalid_return_type_hf_pretrained() -> None:
@@ -215,6 +219,7 @@ def test_decorated_tester_from_instance_method_hf_pretrained() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 def test_decorated_tester_from_class_method_hf_pretrained() -> None:
@@ -235,6 +240,7 @@ def test_decorated_tester_from_class_method_hf_pretrained() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "PreTrainedModel"
 
 
 ## Sentence Transformers
@@ -257,6 +263,7 @@ def test_decorated_trainer_hf_st() -> None:
     assert config.train_data_param == "train_dataset"
     assert config.val_data_param == "val_dataset"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 def test_decorated_trainer_raises_invalid_return_type_error_hf_st() -> None:
@@ -326,6 +333,7 @@ def test_decorated_trainer_from_instance_method_hf_st() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 def test_decorated_trainer_from_class_method_hf_st() -> None:
@@ -350,6 +358,7 @@ def test_decorated_trainer_from_class_method_hf_st() -> None:
     assert config.train_data_param == "train_loader"
     assert config.val_data_param == "val_loader"
     assert config.extra_train_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 ### Tester
@@ -367,6 +376,7 @@ def test_decorated_tester_hf_st() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1", "extra_param_2"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 def test_decorated_tester_raises_invalid_return_type_hf_st() -> None:
@@ -382,16 +392,6 @@ def test_decorated_tester_raises_invalid_return_type_hf_st() -> None:
         InvalidReturnType,
         match="Tester should return a fed_rag.types.TestResult or a subclass of it.",
     ):
-        federate.tester.huggingface(fn)
-
-
-def test_decorated_tester_raises_missing_net_param_error_hf_st() -> None:
-    def fn(
-        test_loader: Dataset,
-    ) -> TestResult:
-        pass
-
-    with pytest.raises(MissingNetParam):
         federate.tester.huggingface(fn)
 
 
@@ -425,6 +425,7 @@ def test_decorated_tester_from_instance_method_hf_st() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 def test_decorated_tester_from_class_method_hf_st() -> None:
@@ -445,6 +446,7 @@ def test_decorated_tester_from_class_method_hf_st() -> None:
     assert config.net_parameter == "mdl"
     assert config.test_data_param == "test_loader"
     assert config.extra_test_kwargs == ["extra_param_1"]
+    assert config.net_parameter_class_name == "SentenceTransformer"
 
 
 ## For Both
