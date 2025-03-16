@@ -46,6 +46,11 @@ def hf_sentence_transformer() -> SentenceTransformer:
     return SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
 
 
+@pytest.fixture
+def hf_peft_model() -> PeftModel:
+    ...
+
+
 # Datasets
 @pytest.fixture
 def train_dataset() -> Dataset:
@@ -158,7 +163,7 @@ def tester_sentence_transformer() -> Callable:
 
 
 @pytest.fixture()
-def trainer_peft() -> Callable:
+def trainer_peft_model() -> Callable:
     @federate.trainer.huggingface
     def fn(
         net: PeftModel,
@@ -171,7 +176,7 @@ def trainer_peft() -> Callable:
 
 
 @pytest.fixture()
-def tester_peft() -> Callable:
+def tester_peft_model() -> Callable:
     @federate.tester.huggingface
     def fn(
         net: PeftModel,

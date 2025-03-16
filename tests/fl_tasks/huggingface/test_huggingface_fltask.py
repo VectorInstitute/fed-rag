@@ -115,6 +115,32 @@ def test_flower_client_set_weights(
     assert client.task_bundle == bundle
 
 
+def test_flower_client_get_weights_peft(
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    trainer_peft_model: Callable,
+    tester_peft_model: Callable,
+    hf_pretrained_model: PreTrainedModel,
+) -> None:
+    net = hf_pretrained_model
+    bundle = BaseFLTaskBundle(
+        net=hf_pretrained_model,
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        trainer=trainer_peft_model,
+        tester=tester_peft_model,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = HuggingFaceFlowerClient(task_bundle=bundle)
+    expected_weights = [
+        val.cpu().numpy() for _, val in net.state_dict().items()
+    ]
+
+    assert all((client.get_weights()[0] == expected_weights[0]).flatten())
+    assert all((client.get_weights()[1] == expected_weights[1]).flatten())
+
+
 def test_flower_client_fit(
     train_dataset: Dataset,
     val_dataset: Dataset,
@@ -342,15 +368,15 @@ def test_init_fl_task_with_mismatched_net_param_type_raises_error_i(
 
 def test_init_fl_task_with_mismatched_net_param_type_raises_error_ii(
     trainer_pretrained_model: Callable,
-    tester_peft: Callable,
+    tester_peft_model: Callable,
 ) -> None:
     msg = "`trainer`'s model class is not the same as that for `tester`."
     with pytest.raises(NetTypeMismatch, match=msg):
         HuggingFaceFLTask(
             trainer=trainer_pretrained_model,
             trainer_spec=trainer_pretrained_model.__fl_task_trainer_config,  # type: ignore[attr-defined]
-            tester=tester_peft,
-            tester_spec=tester_peft.__fl_task_tester_config,  # type: ignore[attr-defined]
+            tester=tester_peft_model,
+            tester_spec=tester_peft_model.__fl_task_tester_config,  # type: ignore[attr-defined]
         )
 
 
