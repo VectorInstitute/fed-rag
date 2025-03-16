@@ -142,6 +142,37 @@ def test_flower_client_get_weights_peft(
     assert all((client.get_weights()[1] == expected_weights[1]).flatten())
 
 
+@patch("fed_rag.fl_tasks.huggingface.set_peft_model_state_dict")
+def test_flower_client_set_weights_peft(
+    mock_peft_model_state_dict: MagicMock,
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    trainer_peft_model: Callable,
+    tester_peft_model: Callable,
+    hf_peft_model: PeftModel,
+) -> None:
+    net = hf_peft_model
+    bundle = BaseFLTaskBundle(
+        net=net,
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        trainer=trainer_peft_model,
+        tester=tester_peft_model,
+        extra_test_kwargs={},
+        extra_train_kwargs={},
+    )
+    client = HuggingFaceFlowerClient(task_bundle=bundle)
+    parameters = client.get_weights()
+
+    # act
+    client.set_weights(parameters)
+
+    # assert
+    state_dict = OrderedDict(get_peft_model_state_dict(net))
+    mock_peft_model_state_dict.assert_called_once_with(net, state_dict)
+    assert client.task_bundle == bundle
+
+
 def test_flower_client_fit(
     train_dataset: Dataset,
     val_dataset: Dataset,
