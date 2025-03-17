@@ -1,9 +1,12 @@
 """Federate RAG via RA-DIT."""
 
+# logging
+from logging import INFO
 from typing import Literal
 
 import torch
 from datasets import Dataset, load_dataset
+from flwr.common.logger import log
 from ra_dit.trainers_and_testers.generator import (
     generator_evaluate,
     generator_train_loop,
@@ -21,6 +24,11 @@ from fed_rag.fl_tasks.huggingface import (
 )
 
 from .rag_system import main as get_rag_system
+
+# import logging
+
+# logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO)
 
 tasks = ["retriever", "generator"]
 
@@ -61,7 +69,9 @@ def build_server(
     generator_id: str,
 ) -> HuggingFaceFlowerServer:
     fl_task = fl_tasks[task]
-    return fl_task.server(model=get_model(task, retriever_id, generator_id))
+    model = get_model(task, retriever_id, generator_id)
+    log(INFO, f"Server model loaded into device: {model.device}")
+    return fl_task.server(model=model)
 
 
 ## Clients
@@ -99,6 +109,7 @@ def build_client(
     fl_task = fl_tasks[task]
     device = torch.device(f"cuda:{device_id}")
     model = get_model(task, retriever_id, generator_id).to(device)
+    log(INFO, f"Client model loaded into device: {model.device}")
     return fl_task.client(
         model=model,
         train_data=datasets[task]["train_dataset"],
@@ -120,16 +131,17 @@ def start(
     if task not in ["retriever", "generator"]:
         raise ValueError("Unrecognized task.")
 
-    server = build_server(task, retriever_id, generator_id)
     grpc_max_message_length = int(512 * 1024 * 1024 * 3.75)
 
     if component == "server":
+        server = build_server(task, retriever_id, generator_id)
         fl.server.start_server(
             server=server,
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
         )
     elif component == "client_1":
+        log(INFO, "Starting client_1")
         fl.client.start_client(
             client=build_client(
                 task=task,
