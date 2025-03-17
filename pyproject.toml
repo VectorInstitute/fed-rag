@@ -44,7 +44,7 @@ authors = [
   {name = "David Emerson", email = "david.emerson@vectorinstitute.ai"}
 ]
 maintainers = [
-  {name = "Chi Ho Cheung", email = "chiho00hk@hotmail.com"}
+  {name = "Andrei Fajardo", email = "andrei.fajardo@vectorinstitute.ai"}
 ]
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
