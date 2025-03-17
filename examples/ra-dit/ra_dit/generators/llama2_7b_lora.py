@@ -1,6 +1,7 @@
 """Llama-2-7B with LoRA Generator."""
 
 from transformers.generation.utils import GenerationConfig
+from transformers.utils.quantization_config import BitsAndBytesConfig
 
 from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 
@@ -17,17 +18,27 @@ generation_cfg = GenerationConfig(
     cache_implementation="offloaded",
     stop_strings="</response>",
 )
+quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 generator = HFPeftModelGenerator(
     model_name=PEFT_MODEL_NAME,
     base_model_name=BASE_MODEL_NAME,
     generation_config=generation_cfg,
     load_model_at_init=False,
-    load_model_kwargs={"is_trainable": True, "device_map": "auto"},
-    load_base_model_kwargs={"device_map": "auto"},
+    load_model_kwargs={"is_trainable": True, "device_map": "cpu"},
+    load_base_model_kwargs={
+        "device_map": "cpu",
+        "quantization_config": quantization_config,
+    },
 )
 
 if __name__ == "__main__":
+    # use `auto` instead of `cpu` for inference
+    generator.load_model_kwargs.update(device_map="auto")
+    generator.load_base_model_kwargs.update(device_map="auto")
+
+    # print trainable params
     print(generator.model.print_trainable_parameters())
+
     # merge lora weights for faster inference
     generator.model = generator.model.merge_and_unload()
     response = generator.generate(

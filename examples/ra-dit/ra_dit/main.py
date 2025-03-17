@@ -1,5 +1,6 @@
 """Federate RAG via RA-DIT."""
 
+
 # logging
 from logging import INFO
 from typing import Literal
@@ -25,23 +26,23 @@ from fed_rag.fl_tasks.huggingface import (
 
 from .rag_system import main as get_rag_system
 
-# import logging
-
-# logger = logging.getLogger(__name__)
-# logging.basicConfig(level=logging.INFO)
-
 tasks = ["retriever", "generator"]
 
 
 # Models and Train/Test Functions
 def get_model(
-    task: str, retriever_id: str, generator_id: str
+    task: str, retriever_id: str, generator_id: str, client: bool = False
 ) -> torch.nn.Module:
     rag_system = get_rag_system(retriever_id, generator_id)
 
     if task == "retriever":
         return rag_system.retriever.query_encoder
     elif task == "generator":
+        if client:
+            rag_system.generator.load_model_kwargs.update(device_map="auto")
+            rag_system.generator.load_base_model_kwargs.update(
+                device_map="auto"
+            )
         return rag_system.generator.model
     else:
         raise ValueError("Unsupported task")
@@ -107,14 +108,12 @@ def build_client(
     device_id: str,
 ) -> HuggingFaceFlowerClient:
     fl_task = fl_tasks[task]
-    device = torch.device(f"cuda:{device_id}")
-    model = get_model(task, retriever_id, generator_id).to(device)
-    log(INFO, f"Client model loaded into device: {model.device}")
+    model = get_model(task, retriever_id, generator_id, client=True)
     return fl_task.client(
         model=model,
         train_data=datasets[task]["train_dataset"],
         val_data=datasets[task]["val_dataset"],
-        device=device,
+        peft_config=model.active_peft_config,
     )
 
 
@@ -147,12 +146,13 @@ def start(
                 task=task,
                 retriever_id=retriever_id,
                 generator_id=generator_id,
-                device_id="0",
+                device_id="1",
             ),
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
         )
     elif component == "client_2":
+        log(INFO, "Starting client_2")
         fl.client.start_client(
             client=build_client(
                 task=task,
