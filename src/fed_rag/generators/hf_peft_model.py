@@ -32,6 +32,12 @@ you to create the most accurate response.
 
 
 class HFPeftModelGenerator(BaseGenerator):
+    """HFPeftModelGenerator Class.
+
+    NOTE: this class supports loading PeftModel's from HF Hub or from local.
+    TODO: support loading custom models via a `~peft.Config` and `~peft.get_peft_model`
+    """
+
     model_config = ConfigDict(protected_namespaces=("pydantic_model_",))
     model_name: str = Field(
         description="Name of Peft model. Used for loading model from HF hub or local."
