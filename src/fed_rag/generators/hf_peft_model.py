@@ -2,6 +2,7 @@
 
 from typing import Any
 
+import torch
 from peft import PeftModel
 from pydantic import ConfigDict, Field, PrivateAttr
 from transformers import (
@@ -115,3 +116,40 @@ class HFPeftModelGenerator(BaseGenerator):
     @model.setter
     def model(self, value: PeftModel) -> None:
         self._model = value
+
+    @property
+    def tokenizer(self) -> PreTrainedTokenizer:
+        if self._tokenizer is None:
+            # load HF Pretrained Model
+            _, tokenizer = self._load_model_from_hf()
+            self._tokenizer = tokenizer
+        return self._tokenizer
+
+    @tokenizer.setter
+    def tokenizer(self, value: PreTrainedTokenizer) -> None:
+        self._tokenizer = value
+
+    # generate
+    def generate(self, query: str, context: str, **kwargs: Any) -> str:
+        formatted_query = self.prompt_template.format(
+            question=query, context=context
+        )
+
+        # encode query
+        tokenizer_result = self.tokenizer(formatted_query, return_tensors="pt")
+        inputs: torch.Tensor = tokenizer_result.input_ids
+        inputs = inputs.to(self.model.device)
+
+        # generate
+        generated_ids = self.model.generate(
+            inputs=inputs,
+            generation_config=self.generation_config,
+            tokenizer=self._tokenizer,
+            **kwargs,
+        )
+
+        # decode tokens
+        outputs: list[str] = self.tokenizer.batch_decode(
+            generated_ids, skip_special_tokens=True
+        )
+        return outputs[0]
