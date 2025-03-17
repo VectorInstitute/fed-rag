@@ -93,16 +93,17 @@ class HFPeftModelGenerator(BaseGenerator):
     def _load_model_from_hf(
         self, **kwargs: Any
     ) -> tuple[PeftModel, PreTrainedTokenizer]:
+        load_base_kwargs = self.load_base_model_kwargs
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
         base_model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, **load_kwargs
+            self.base_model_name, **load_base_kwargs
         )
         model = PeftModel.from_pretrained(
             base_model, self.model_name, **load_kwargs
         )
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(self.base_model_name)
         return model, tokenizer
 
     @property
