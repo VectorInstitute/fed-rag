@@ -22,7 +22,8 @@ generator = HFPeftModelGenerator(
     base_model_name=BASE_MODEL_NAME,
     generation_config=generation_cfg,
     load_model_at_init=False,
-    load_model_kwargs={"is_trainable": True},
+    load_model_kwargs={"is_trainable": True, "device_map": "auto"},
+    load_base_model_kwargs={"device_map": "auto"},
 )
 
 if __name__ == "__main__":
