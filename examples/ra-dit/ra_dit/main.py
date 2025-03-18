@@ -1,6 +1,5 @@
 """Federate RAG via RA-DIT."""
 
-
 # logging
 from logging import INFO
 from typing import Literal
@@ -31,14 +30,19 @@ tasks = ["retriever", "generator"]
 
 # Models and Train/Test Functions
 def get_model(
-    task: str, retriever_id: str, generator_id: str, client: bool = False
+    task: str,
+    retriever_id: str,
+    generator_id: str,
+    generator_variant: Literal["plain", "lora", "qlora"],
+    client: bool = False,
 ) -> torch.nn.Module:
-    rag_system = get_rag_system(retriever_id, generator_id)
+    rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
 
     if task == "retriever":
         return rag_system.retriever.query_encoder
     elif task == "generator":
         if client:
+            # by default device map is set to cpu
             rag_system.generator.load_model_kwargs.update(device_map="auto")
             rag_system.generator.load_base_model_kwargs.update(
                 device_map="auto"
@@ -68,9 +72,10 @@ def build_server(
     task: Literal["retriever", "generator"],
     retriever_id: str,
     generator_id: str,
+    generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerServer:
     fl_task = fl_tasks[task]
-    model = get_model(task, retriever_id, generator_id)
+    model = get_model(task, retriever_id, generator_id, generator_variant)
     log(INFO, f"Server model loaded into device: {model.device}")
     return fl_task.server(model=model)
 
@@ -105,10 +110,12 @@ def build_client(
     task: Literal["retriever", "generator"],
     retriever_id: str,
     generator_id: str,
-    device_id: str,
+    generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerClient:
     fl_task = fl_tasks[task]
-    model = get_model(task, retriever_id, generator_id, client=True)
+    model = get_model(
+        task, retriever_id, generator_id, generator_variant, client=True
+    )
     return fl_task.client(
         model=model,
         train_data=datasets[task]["train_dataset"],
@@ -123,6 +130,7 @@ def start(
     component: Literal["server", "client_1", "client_2"],
     retriever_id: str = "dragon",
     generator_id: str = "llama2_7b",
+    generator_variant: Literal["plain", "lora", "qlora"] = "qlora",
 ) -> None:
     """For starting any of the FL Task components."""
     import flwr as fl
@@ -133,7 +141,9 @@ def start(
     grpc_max_message_length = int(512 * 1024 * 1024 * 3.75)
 
     if component == "server":
-        server = build_server(task, retriever_id, generator_id)
+        server = build_server(
+            task, retriever_id, generator_id, generator_variant
+        )
         fl.server.start_server(
             server=server,
             server_address="[::]:8080",
@@ -146,7 +156,7 @@ def start(
                 task=task,
                 retriever_id=retriever_id,
                 generator_id=generator_id,
-                device_id="1",
+                generator_variant=generator_variant,
             ),
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
@@ -158,7 +168,7 @@ def start(
                 task=task,
                 retriever_id=retriever_id,
                 generator_id=generator_id,
-                device_id="1",
+                generator_variant=generator_variant,
             ),
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,

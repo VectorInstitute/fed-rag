@@ -1,5 +1,7 @@
 """RA-DIT original RAG System."""
 
+from typing import Literal
+
 from ra_dit.generators import GENERATORS
 from ra_dit.knowledge_stores import KNOWLEDGE_STORES
 from ra_dit.retrievers import RETRIEVERS
@@ -7,12 +9,20 @@ from ra_dit.retrievers import RETRIEVERS
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 
-def main(retriever_id: str, generator_id: str) -> RAGSystem:
+def main(
+    retriever_id: str,
+    generator_id: str,
+    generator_variant: Literal["plain", "lora", "qlora"] = "plain",
+) -> RAGSystem:
     """Build RAG System."""
 
     retriever = RETRIEVERS[retriever_id]
     knowledge_store = KNOWLEDGE_STORES[f"from_{retriever_id}"]
-    generator = GENERATORS[generator_id]
+    generator = GENERATORS[generator_id][generator_variant]
+
+    # model is default set to load into cpu
+    generator.load_model_kwargs.update(device_map="auto")
+    generator.load_base_model_kwargs.update(device_map="auto")
 
     ## assemble
     rag_config = RAGConfig(top_k=2)
