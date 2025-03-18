@@ -1,12 +1,13 @@
-"""HuggingFace FL Task"""
+"""HuggingFace FL Task.
+
+NOTE: Using this module requires the `huggingface` extra to be installed.
+"""
 
 import warnings
 from typing import Any, Callable, Dict, OrderedDict, TypeAlias, cast
 
 import torch
 from datasets import Dataset
-
-# flwr
 from flwr.client import NumPyClient
 from flwr.client.client import Client
 from flwr.common import NDArrays, Scalar
@@ -14,16 +15,24 @@ from flwr.common.parameter import ndarrays_to_parameters
 from flwr.server.client_manager import ClientManager, SimpleClientManager
 from flwr.server.server import Server
 from flwr.server.strategy import FedAvg, Strategy
-from peft import PeftModel
-from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
-# huggingface
-from sentence_transformers import SentenceTransformer
-from transformers import PreTrainedModel
+# check if huggingface extra was installed
+try:
+    from peft import PeftModel
+    from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
+    from sentence_transformers import SentenceTransformer
+    from transformers import PreTrainedModel
+except ModuleNotFoundError:
+    msg = (
+        "This decorator requires `huggingface` extra to be installed. "
+        "To fix please run `pip install fed-rag[huggingface]`."
+    )
+    raise ValueError(msg)
+
+
 from typing_extensions import Self
 
-# fedrag
 from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.exceptions import (
     MissingRequiredNetParam,

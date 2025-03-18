@@ -25,6 +25,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.5] - 2025-03-17
+
+### Added
+
+- [Feature] Added HFPeftModelGenerator for efficient fine-tuning (#84)
+- [Feature] Added HuggingFace's peft.PeftModel as an acceptable model type for decoration (#76)
+- Added vector compute submodule (#70)
+- [Example] Added RA-DIT implementation using HFPeftModelGenerator for llama-2-7b (#86)
+- [Example] Added mock generator training loop; federated for a 350M model (#67)
+
+### Changed
+
+- [Example] RA-DIT default generator model to load with device map auto (#88)
+- [Example] RA-DIT re-factor example for better organization (#87)
+- [Feature] Updated set_weights and get_weights for HuggingFaceFlowerClient to include logic for PeftModel (#82)
+- Re-organized RA-DIT example app (#69)
+
 ## [0.0.4] - 2025-03-14
 
 ### Added
