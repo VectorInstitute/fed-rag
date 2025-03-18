@@ -56,8 +56,6 @@ if __name__ == "__main__":
     # by default we load generator to cpu since fine-tuning just one generator
     # we instead set `device_map` to `auto`
     generator = generators["qlora"]
-    generator.load_model_kwargs.update(device_map="auto")
-    generator.load_base_model_kwargs.update(device_map="auto")
 
     train_result = generator_train_loop(
         model=generator.model,

@@ -34,18 +34,18 @@ def get_model(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
-    client: bool = False,
+    server: bool = False,
 ) -> torch.nn.Module:
     rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
 
     if task == "retriever":
         return rag_system.retriever.query_encoder
     elif task == "generator":
-        if client:
-            # by default device map is set to cpu
-            rag_system.generator.load_model_kwargs.update(device_map="auto")
+        if server:
+            # lazy load model, so we can still set device map to cpu
+            rag_system.generator.load_model_kwargs.update(device_map="cpu")
             rag_system.generator.load_base_model_kwargs.update(
-                device_map="auto"
+                device_map="cpu"
             )
         return rag_system.generator.model
     else:
@@ -75,7 +75,9 @@ def build_server(
     generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerServer:
     fl_task = fl_tasks[task]
-    model = get_model(task, retriever_id, generator_id, generator_variant)
+    model = get_model(
+        task, retriever_id, generator_id, generator_variant, server=True
+    )
     log(INFO, f"Server model loaded into device: {model.device}")
     return fl_task.server(model=model)
 
@@ -113,9 +115,7 @@ def build_client(
     generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerClient:
     fl_task = fl_tasks[task]
-    model = get_model(
-        task, retriever_id, generator_id, generator_variant, client=True
-    )
+    model = get_model(task, retriever_id, generator_id, generator_variant)
     return fl_task.client(
         model=model,
         train_data=datasets[task]["train_dataset"],
