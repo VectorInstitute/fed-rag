@@ -1,4 +1,7 @@
-"""HuggingFace FL Task"""
+"""HuggingFace FL Task.
+
+NOTE: Using this module requires the `huggingface` extra to be installed.
+"""
 
 import warnings
 from typing import Any, Callable, Dict, OrderedDict, TypeAlias, cast
