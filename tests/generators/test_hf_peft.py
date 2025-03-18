@@ -97,6 +97,7 @@ def test_hf_pretrained_generator_class_init_no_load(
     assert generator.tokenizer == tokenizer
 
 
+@patch("fed_rag.generators.hf_peft_model.prepare_model_for_kbit_training")
 @patch.object(PeftModel, "from_pretrained")
 @patch.object(AutoModelForCausalLM, "from_pretrained")
 @patch.object(AutoTokenizer, "from_pretrained")
@@ -104,6 +105,7 @@ def test_hf_peft_load_model_from_hf(
     mock_tokenizer_from_pretrained: MagicMock,
     mock_auto_model_from_pretrained: MagicMock,
     mock_peft_model_from_pretrained: MagicMock,
+    mock_prepare_model_for_kbit_training: MagicMock,
     dummy_pretrained_model_and_tokenizer: tuple[
         PreTrainedModel, PreTrainedTokenizer
     ],
@@ -113,6 +115,7 @@ def test_hf_peft_load_model_from_hf(
     model, tokenizer = dummy_peft_model_and_tokenizer
     base_model, _ = dummy_pretrained_model_and_tokenizer
     mock_auto_model_from_pretrained.return_value = base_model
+    mock_prepare_model_for_kbit_training.return_value = base_model
     mock_peft_model_from_pretrained.return_value = model
     mock_tokenizer_from_pretrained.return_value = tokenizer
 
@@ -120,7 +123,10 @@ def test_hf_peft_load_model_from_hf(
     generator = HFPeftModelGenerator(
         model_name="fake_name",
         base_model_name="fake_base_name",
-        load_base_model_kwargs={"device_map": "cpu"},
+        load_base_model_kwargs={
+            "device_map": "cpu",
+            "quantization_config": "fake config",
+        },
         load_model_kwargs={"fake_param": "fake_value"},
     )
 
@@ -129,8 +135,9 @@ def test_hf_peft_load_model_from_hf(
     assert generator.base_model_name == "fake_base_name"
     mock_tokenizer_from_pretrained.assert_called_once_with("fake_base_name")
     mock_auto_model_from_pretrained.assert_called_once_with(
-        "fake_base_name", device_map="cpu"
+        "fake_base_name", device_map="cpu", quantization_config="fake config"
     )
+    mock_prepare_model_for_kbit_training.assert_called_once_with(base_model)
     mock_peft_model_from_pretrained.assert_called_once_with(
         base_model, "fake_name", fake_param="fake_value"
     )

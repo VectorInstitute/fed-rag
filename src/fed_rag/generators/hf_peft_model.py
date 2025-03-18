@@ -3,7 +3,7 @@
 from typing import Any
 
 import torch
-from peft import PeftModel
+from peft import PeftModel, prepare_model_for_kbit_training
 from pydantic import ConfigDict, Field, PrivateAttr
 from transformers import (
     AutoModelForCausalLM,
@@ -96,10 +96,16 @@ class HFPeftModelGenerator(BaseGenerator):
         load_base_kwargs = self.load_base_model_kwargs
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
-        self.load_model_kwargs = load_kwargs
+        self.load_model_kwargs = load_kwargs  # update load_model_kwargs
         base_model = AutoModelForCausalLM.from_pretrained(
             self.base_model_name, **load_base_kwargs
         )
+
+        if "quantization_config" in load_base_kwargs:
+            # preprocess model for kbit fine-tuning
+            # https://huggingface.co/docs/peft/developer_guides/quantization
+            base_model = prepare_model_for_kbit_training(base_model)
+
         model = PeftModel.from_pretrained(
             base_model, self.model_name, **load_kwargs
         )
@@ -110,7 +116,7 @@ class HFPeftModelGenerator(BaseGenerator):
     def model(self) -> PeftModel:
         if self._model is None:
             # load HF PeftModel
-            model, _ = self._load_model_from_hf(**self.load_model_kwargs)
+            model, _ = self._load_model_from_hf()
             self._model = model
         return self._model
 
