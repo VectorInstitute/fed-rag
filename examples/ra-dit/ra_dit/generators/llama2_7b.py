@@ -1,6 +1,5 @@
 """Llama-2-7B with LoRA Generator."""
 
-
 from transformers.generation.utils import GenerationConfig
 from transformers.utils.quantization_config import BitsAndBytesConfig
 
@@ -29,16 +28,16 @@ generators: ModelVariants = {
         model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
-        load_model_kwargs={"device_map": "cpu"},
+        load_model_kwargs={"device_map": "auto"},
     ),
     "lora": HFPeftModelGenerator(
         model_name=PEFT_MODEL_NAME,
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
-        load_model_kwargs={"is_trainable": True, "device_map": "cpu"},
+        load_model_kwargs={"is_trainable": True, "device_map": "auto"},
         load_base_model_kwargs={
-            "device_map": "cpu",
+            "device_map": "auto",
         },
     ),
     "qlora": HFPeftModelGenerator(
@@ -46,9 +45,9 @@ generators: ModelVariants = {
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
-        load_model_kwargs={"is_trainable": True, "device_map": "cpu"},
+        load_model_kwargs={"is_trainable": True, "device_map": "auto"},
         load_base_model_kwargs={
-            "device_map": "cpu",
+            "device_map": "auto",
             "quantization_config": quantization_config,
         },
     ),
@@ -57,10 +56,6 @@ generators: ModelVariants = {
 if __name__ == "__main__":
     # use qlora
     generator = generators["qlora"]
-
-    # use `auto` instead of `cpu` for inference
-    generator.load_model_kwargs.update(device_map="auto")
-    generator.load_base_model_kwargs.update(device_map="auto")
 
     # print trainable params
     print(generator.model.print_trainable_parameters())

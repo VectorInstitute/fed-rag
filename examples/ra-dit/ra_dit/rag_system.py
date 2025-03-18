@@ -36,10 +36,6 @@ if __name__ == "__main__":
     import fire
 
     rag_system: RAGSystem = fire.Fire(main)
-    # The model is lazy loaded, and default to load into cpu. So change it here
-    # before it actually gets loaded.
-    rag_system.generator.load_model_kwargs.update(device_map="auto")
-    rag_system.generator.load_base_model_kwargs.update(device_map="auto")
 
     ## use the rag_system
     source_nodes = rag_system.retrieve("What is a Tulip?")
