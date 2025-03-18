@@ -21,12 +21,11 @@ try:
     from sentence_transformers import SentenceTransformer
     from transformers import PreTrainedModel
 except ModuleNotFoundError:
-    raise ValueError(
-        (
-            "This decorator requires `huggingface` extra to be installed. "
-            "To fix please run `pip install fed-rag[huggingface]`."
-        )
+    msg = (
+        "This decorator requires `huggingface` extra to be installed. "
+        "To fix please run `pip install fed-rag[huggingface]`."
     )
+    raise ValueError(msg)
 
 
 from typing_extensions import Self
