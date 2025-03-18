@@ -12,17 +12,13 @@ from fed_rag.types.rag_system import RAGConfig, RAGSystem
 def main(
     retriever_id: str,
     generator_id: str,
-    generator_variant: Literal["plain", "lora", "qlora"] = "plain",
+    generator_variant: Literal["plain", "lora", "qlora"],
 ) -> RAGSystem:
     """Build RAG System."""
 
     retriever = RETRIEVERS[retriever_id]
     knowledge_store = KNOWLEDGE_STORES[f"from_{retriever_id}"]
     generator = GENERATORS[generator_id][generator_variant]
-
-    # model is default set to load into cpu
-    generator.load_model_kwargs.update(device_map="auto")
-    generator.load_base_model_kwargs.update(device_map="auto")
 
     ## assemble
     rag_config = RAGConfig(top_k=2)
@@ -40,6 +36,10 @@ if __name__ == "__main__":
     import fire
 
     rag_system: RAGSystem = fire.Fire(main)
+    # The model is lazy loaded, and default to load into cpu. So change it here
+    # before it actually gets loaded.
+    rag_system.generator.load_model_kwargs.update(device_map="auto")
+    rag_system.generator.load_base_model_kwargs.update(device_map="auto")
 
     ## use the rag_system
     source_nodes = rag_system.retrieve("What is a Tulip?")
