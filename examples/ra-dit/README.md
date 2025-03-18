@@ -10,8 +10,8 @@ source .venv/bin/activate
 
 # run federated learning
 
-## start server
-CUDA_VISIBLE_DEVICES="-1" uv run -m ra_dit.main --task generator --generator_id llama2_7b \
+## start server (note this will load the model into cpu)
+uv run -m ra_dit.main --task generator --generator_id llama2_7b \
 --generator_variant qlora --component server
 
 ## start clients using a two-gpu setup
