@@ -2,6 +2,11 @@
 
 ## Usage
 
+Install the dependencies with `uv`:
+```sh
+uv sync --all-extras --dev
+```
+
 To run, execute the following commands while in `fed-rag/examples/quickstart`:
 
 ```sh
