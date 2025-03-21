@@ -11,6 +11,7 @@ dev_notebooks/
 .ruff_cache
 .env
 data/
+fed-rag.code-workspace
 
 # HF training artifacts
 tmp_trainer/
