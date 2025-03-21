@@ -7,7 +7,7 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
   "fed-rag",
   "torch",
-  "fire",
+  "fire"
 ]
 
 [tool.uv.sources]

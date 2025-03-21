@@ -50,9 +50,12 @@ the client and the server.
 
 ## Contributing
 
-Environment setup:
-
+Install the dependencies on dev mode:
 ```sh
 # while in root directory of project `fed-rag/`
 uv sync --all-extras --dev
 ```
+
+Install pre-commit hooks:
+```sh
+pre-commit install
