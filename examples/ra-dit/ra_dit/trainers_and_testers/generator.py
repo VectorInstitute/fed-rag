@@ -15,6 +15,11 @@ train_dataset = load_dataset("stanfordnlp/imdb", split="train[:20]")
 val_dataset = load_dataset("stanfordnlp/imdb", split="test[:10]")
 
 
+# Custom SFTTrainer to implement RA-IT
+class RetrievalAugmentedSFTTrainer(SFTTrainer):
+    """A custom SFTTrainer to implement retrieval-augmented instruction fine-tuning."""
+
+
 @federate.trainer.huggingface
 def generator_train_loop(
     model: PreTrainedModel,
