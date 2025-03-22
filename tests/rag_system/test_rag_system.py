@@ -54,14 +54,8 @@ def test_rag_system_with_dual_encoder_init(
     assert rag_system.generator == mock_generator
     assert rag_system.retriever == mock_dual_retriever
     assert rag_system.generator.model.__associated_rag_system == rag_system
-    assert (
-        rag_system.retriever.query_encoder.__associated_rag_system
-        == rag_system
-    )
-    assert (
-        rag_system.retriever.context_encoder.__associated_rag_system
-        == rag_system
-    )
+    assert rag_system.retriever.query_encoder.__associated_rag_system == rag_system
+    assert rag_system.retriever.context_encoder.__associated_rag_system == rag_system
 
 
 @patch.object(RAGSystem, "generate")
@@ -102,9 +96,7 @@ def test_rag_system_query(
     # assert
     mock_retrieve.assert_called_with("fake query")
     mock_format_context.assert_called_with(source_nodes)
-    mock_generate.assert_called_with(
-        query="fake query", context="fake context"
-    )
+    mock_generate.assert_called_with(query="fake query", context="fake context")
     assert rag_response.source_nodes == source_nodes
     assert rag_response.response == "fake generation response"
     assert str(rag_response) == "fake generation response"
@@ -144,9 +136,7 @@ def test_rag_system_retrieve(
     # assert
     mock_encode_query.assert_called_with("fake query")
     assert all(res.node == exp.node for res, exp in zip(result, expected))
-    assert all(
-        abs(res.score - exp.score) < 1e-5 for res, exp in zip(result, expected)
-    )
+    assert all(abs(res.score - exp.score) < 1e-5 for res, exp in zip(result, expected))
 
 
 @patch.object(MockGenerator, "generate")
@@ -175,9 +165,7 @@ def test_rag_system_generate(
     res = rag_system.generate(query="fake query", context="fake context")
 
     # assert
-    mock_generate.assert_called_once_with(
-        query="fake query", context="fake context"
-    )
+    mock_generate.assert_called_once_with(query="fake query", context="fake context")
     assert res == "fake generate response"
 
 
@@ -199,9 +187,7 @@ def test_rag_system_format_context(
     )
 
     # act
-    formatted_context = rag_system._format_context(
-        source_nodes=knowledge_nodes
-    )
+    formatted_context = rag_system._format_context(source_nodes=knowledge_nodes)
 
     # assert
     assert formatted_context == "node 1\nnode 2\nnode 3"
