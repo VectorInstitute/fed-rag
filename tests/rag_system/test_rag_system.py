@@ -31,6 +31,9 @@ def test_rag_system_init(
     assert rag_system.generator == mock_generator
     assert rag_system.retriever == mock_retriever
     assert rag_system.generator.model.__associated_rag_system == rag_system
+    assert rag_system.retriever.encoder.__associated_rag_system == rag_system
+    assert rag_system.retriever.query_encoder is None
+    assert rag_system.retriever.context_encoder is None
 
 
 @patch.object(RAGSystem, "generate")

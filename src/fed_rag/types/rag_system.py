@@ -41,7 +41,7 @@ class RAGSystem(BaseModel):
 
     def __init__(self, **kwargs: Any):
         super().__init__(**kwargs)
-        # set dunder on associated rag system
+        # make rag system accessible to underlying models for generator/retriever
         self.generator.model.__setattr__("__associated_rag_system", self)
         if self.retriever.encoder:
             self.retriever.encoder.__setattr__("__associated_rag_system", self)
