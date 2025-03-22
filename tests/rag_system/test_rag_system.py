@@ -32,8 +32,36 @@ def test_rag_system_init(
     assert rag_system.retriever == mock_retriever
     assert rag_system.generator.model.__associated_rag_system == rag_system
     assert rag_system.retriever.encoder.__associated_rag_system == rag_system
-    assert rag_system.retriever.query_encoder is None
-    assert rag_system.retriever.context_encoder is None
+
+
+def test_rag_system_with_dual_encoder_init(
+    mock_generator: BaseGenerator,
+    mock_dual_retriever: BaseRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_dual_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+    assert rag_system.knowledge_store == knowledge_store
+    assert rag_system.rag_config == rag_config
+    assert rag_system.generator == mock_generator
+    assert rag_system.retriever == mock_dual_retriever
+    assert rag_system.generator.model.__associated_rag_system == rag_system
+    assert (
+        rag_system.retriever.query_encoder.__associated_rag_system
+        == rag_system
+    )
+    assert (
+        rag_system.retriever.context_encoder.__associated_rag_system
+        == rag_system
+    )
 
 
 @patch.object(RAGSystem, "generate")
