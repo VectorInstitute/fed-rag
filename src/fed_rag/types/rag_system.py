@@ -46,9 +46,13 @@ class RAGSystem(BaseModel):
         if self.retriever.encoder:
             self.retriever.encoder.__setattr__("__associated_rag_system", self)
         if self.retriever.query_encoder:
-            self.retriever.query_encoder.__setattr__("__associated_rag_system", self)
+            self.retriever.query_encoder.__setattr__(
+                "__associated_rag_system", self
+            )
         if self.retriever.context_encoder:
-            self.retriever.context_encoder.__setattr__("__associated_rag_system", self)
+            self.retriever.context_encoder.__setattr__(
+                "__associated_rag_system", self
+            )
 
     def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""
@@ -63,7 +67,9 @@ class RAGSystem(BaseModel):
         raw_retrieval_result = self.knowledge_store.retrieve(
             query_emb=query_emb, top_k=self.rag_config.top_k
         )
-        return [SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result]
+        return [
+            SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
+        ]
 
     def generate(self, query: str, context: str) -> str:
         """Generate response to query with context."""
