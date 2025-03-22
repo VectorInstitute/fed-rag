@@ -26,11 +26,11 @@ def test_rag_system_init(
         knowledge_store=knowledge_store,
         rag_config=rag_config,
     )
-
     assert rag_system.knowledge_store == knowledge_store
     assert rag_system.rag_config == rag_config
     assert rag_system.generator == mock_generator
     assert rag_system.retriever == mock_retriever
+    assert rag_system.generator.model.__associated_rag_system == rag_system
 
 
 @patch.object(RAGSystem, "generate")

@@ -68,12 +68,14 @@ def knowledge_nodes() -> list[KnowledgeNode]:
 
 
 class MockGenerator(BaseGenerator):
+    _model: torch.nn.Module = torch.nn.Linear(2, 1)
+
     def generate(self, query: str, context: str, **kwargs: dict) -> str:
         return f"mock output from '{query}' with '{context}'."
 
     @property
     def model(self) -> torch.nn.Module:
-        return torch.nn.Linear(2, 1)
+        return self._model
 
 
 @pytest.fixture
