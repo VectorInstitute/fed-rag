@@ -32,9 +32,41 @@ class MockRetriever(BaseRetriever):
         return None
 
 
+class MockDualRetriever(BaseRetriever):
+    _query_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+    _context_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+
+    def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.ones(2))
+
+    def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.zeros(2))
+
+    @property
+    def encoder(self) -> torch.nn.Module | None:
+        return None
+
+    @property
+    def query_encoder(self) -> torch.nn.Module | None:
+        return self._query_encoder
+
+    @property
+    def context_encoder(self) -> torch.nn.Module | None:
+        return self._context_encoder
+
+
 @pytest.fixture
 def mock_retriever() -> MockRetriever:
     return MockRetriever()
+
+
+@pytest.fixture
+def mock_dual_retriever() -> MockDualRetriever:
+    return MockDualRetriever()
 
 
 @pytest.fixture
@@ -68,12 +100,14 @@ def knowledge_nodes() -> list[KnowledgeNode]:
 
 
 class MockGenerator(BaseGenerator):
+    _model: torch.nn.Module = torch.nn.Linear(2, 1)
+
     def generate(self, query: str, context: str, **kwargs: dict) -> str:
         return f"mock output from '{query}' with '{context}'."
 
     @property
     def model(self) -> torch.nn.Module:
-        return torch.nn.Linear(2, 1)
+        return self._model
 
 
 @pytest.fixture

@@ -39,6 +39,21 @@ class RAGSystem(BaseModel):
     knowledge_store: BaseKnowledgeStore
     rag_config: RAGConfig
 
+    def __init__(self, **kwargs: Any):
+        super().__init__(**kwargs)
+        # make rag system accessible to underlying models for generator/retriever
+        self.generator.model.__setattr__("__associated_rag_system", self)
+        if self.retriever.encoder:
+            self.retriever.encoder.__setattr__("__associated_rag_system", self)
+        if self.retriever.query_encoder:
+            self.retriever.query_encoder.__setattr__(
+                "__associated_rag_system", self
+            )
+        if self.retriever.context_encoder:
+            self.retriever.context_encoder.__setattr__(
+                "__associated_rag_system", self
+            )
+
     def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""
         source_nodes = self.retrieve(query)
