@@ -101,8 +101,8 @@ datasets = {
         ),
     },
     "generator": {
-        "train_dataset": load_dataset("stanfordnlp/imdb", split="train[:1]"),
-        "val_dataset": load_dataset("stanfordnlp/imdb", split="test[:1]"),
+        "train_dataset": load_dataset("stanfordnlp/imdb", split="train[:20]"),
+        "val_dataset": load_dataset("stanfordnlp/imdb", split="test[:10]"),
     },
 }
 
