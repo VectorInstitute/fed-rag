@@ -35,6 +35,12 @@ class HFPretrainedTokenizer(BaseTokenizer):
         load_model_kwargs: dict | None = None,
         load_model_at_init: bool = True,
     ):
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise ValueError(msg)
         super().__init__(
             model_name=model_name,
             load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
