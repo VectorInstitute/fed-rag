@@ -13,3 +13,4 @@ def test_pt_rag_ft_dataset_init(
 
     assert len(rag_ft_dataset) == len(input_ids)
     assert isinstance(rag_ft_dataset, torch.utils.data.Dataset)
+    assert rag_ft_dataset[:] == input_and_target_ids[:]
