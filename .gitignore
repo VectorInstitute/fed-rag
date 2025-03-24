@@ -18,6 +18,7 @@ data/
 !tests/utils/data
 fed-rag.code-workspace
 !src/fed_rag/utils/data
+!tests/utils/data
 
 # HF training artifacts
 tmp_trainer/
