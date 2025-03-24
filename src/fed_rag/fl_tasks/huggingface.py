@@ -4,7 +4,16 @@ NOTE: Using this module requires the `huggingface` extra to be installed.
 """
 
 import warnings
-from typing import Any, Callable, Dict, OrderedDict, TypeAlias, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    OrderedDict,
+    TypeAlias,
+    Union,
+    cast,
+)
 
 import torch
 from flwr.client import NumPyClient
@@ -23,13 +32,15 @@ try:
     from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
     from sentence_transformers import SentenceTransformer
     from transformers import PreTrainedModel
-except ModuleNotFoundError:
-    msg = (
-        "This decorator requires `huggingface` extra to be installed. "
-        "To fix please run `pip install fed-rag[huggingface]`."
-    )
-    raise ValueError(msg)
 
+    _has_huggingface = True
+except ModuleNotFoundError:
+    _has_huggingface = False
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+    from peft import PeftModel
+    from transformers import PreTrainedModel
 
 from typing_extensions import Self
 
@@ -47,10 +58,15 @@ from fed_rag.inspectors.pytorch import (
 )
 from fed_rag.types import TestResult, TrainResult
 
+HFModelType: TypeAlias = Union[
+    "SentenceTransformer", "PreTrainedModel", "PeftModel"
+]
+HuggingFaceFlowerServer: TypeAlias = Server
+
 
 class BaseFLTaskBundle(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    net: SentenceTransformer | PreTrainedModel | PeftModel
+    net: HFModelType
     train_dataset: Dataset
     val_dataset: Dataset
     trainer: Callable
@@ -58,10 +74,18 @@ class BaseFLTaskBundle(BaseModel):
     extra_test_kwargs: Any
     extra_train_kwargs: Any
 
+    def __init__(self, **kwargs: Any):
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise ValueError(msg)
 
-def _get_weights(
-    net: SentenceTransformer | PreTrainedModel | PeftModel,
-) -> NDArrays:
+        super().__init__(**kwargs)
+
+
+def _get_weights(net: HFModelType) -> NDArrays:
     """Get weights from net.
 
     NOTE: SentenceTransformer and PreTrainedModel are subclasses of torch.nn.Module
@@ -145,9 +169,6 @@ class HuggingFaceFlowerClient(NumPyClient):
         return result.loss, len(self.val_dataset), result.metrics
 
 
-HuggingFaceFlowerServer: TypeAlias = Server
-
-
 class HuggingFaceFLTask(BaseFLTask):
     _client: NumPyClient = PrivateAttr()
     _trainer: Callable = PrivateAttr()
@@ -163,6 +184,13 @@ class HuggingFaceFLTask(BaseFLTask):
         tester_spec: TesterSignatureSpec,
         **kwargs: Any,
     ) -> None:
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise ValueError(msg)
+
         if (
             trainer_spec.net_parameter_class_name
             != tester_spec.net_parameter_class_name

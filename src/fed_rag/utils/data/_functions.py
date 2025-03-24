@@ -4,7 +4,8 @@ from enum import Enum
 from typing import Any, Sequence
 
 from fed_rag.types.rag_system import RAGSystem
-from fed_rag.utils.data.finetuning_datasets.pytorch import (
+from fed_rag.utils.data.finetuning_datasets import (
+    HuggingfaceRAGFinetuningDataset,
     PyTorchRAGFinetuningDataset,
 )
 
@@ -63,11 +64,7 @@ def build_finetune_dataset(
             )
         elif return_dataset == ReturnType.HUGGINGFACE:
             # needs `fed-rag[huggingface]` extra to be installed
-            # this import will raise an error if its not installed
-            from fed_rag.utils.data.finetuning_datasets.huggingface import (
-                HuggingfaceRAGFinetuningDataset,
-            )
-
+            # this classmethod will fail if not installed
             return HuggingfaceRAGFinetuningDataset.from_inputs(
                 input_ids=inputs_list, target_ids=targets_list
             )
