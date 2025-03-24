@@ -37,7 +37,7 @@ try:
 except ModuleNotFoundError:
     _has_huggingface = False
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from sentence_transformers import SentenceTransformer
     from peft import PeftModel
     from transformers import PreTrainedModel
