@@ -7,7 +7,9 @@ from torch.utils.data import Dataset
 
 
 class PyTorchRAGFinetuningDataset(Dataset):
-    def __init__(self, input_ids: torch.Tensor, target_ids: torch.Tensor):
+    def __init__(
+        self, input_ids: list[torch.Tensor], target_ids: list[torch.Tensor]
+    ):
         self.input_ids = input_ids
         self.target_ids = target_ids
 
