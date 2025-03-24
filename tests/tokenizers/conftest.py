@@ -1,7 +1,11 @@
+from typing import Any
+
 import pytest
 import tokenizers
 from tokenizers import Tokenizer, models
 from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
+
+from fed_rag.base.tokenizer import BaseTokenizer
 
 
 @pytest.fixture
@@ -17,3 +21,20 @@ def dummy_tokenizer() -> PreTrainedTokenizer:
         sep_token="[SEP]",
         mask_token="[MASK]",
     )
+
+
+class MockTokenizer(BaseTokenizer):
+    def encode(self, input: str, **kwargs: Any) -> list[int]:
+        return [0, 1, 2]
+
+    def decode(self, input_ids: list[int], **kwargs: Any) -> str:
+        return "mock decoded sentence"
+
+    @property
+    def unwrapped_tokenizer(self) -> None:
+        return None
+
+
+@pytest.fixture()
+def mock_tokenizer() -> BaseTokenizer:
+    return MockTokenizer()
