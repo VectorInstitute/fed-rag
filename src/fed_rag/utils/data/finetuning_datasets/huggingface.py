@@ -21,7 +21,7 @@ class HuggingfaceRAGFinetuningDataset(Dataset):
     ) -> Self:
         if not _has_huggingface:
             msg = (
-                "HuggingFace finetuning datasets requires the `huggingface` extra to be installed. "
+                f"`{cls.__name__}` requires the `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
             raise ValueError(msg)
