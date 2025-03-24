@@ -1,11 +1,21 @@
 """HuggingFace PretrainedTokenizer"""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from pydantic import ConfigDict, Field, PrivateAttr
-from transformers import AutoTokenizer, PreTrainedTokenizer
 
 from fed_rag.base.tokenizer import BaseTokenizer
+
+try:
+    from transformers import AutoTokenizer, PreTrainedTokenizer
+
+    _has_huggingface = True
+except ModuleNotFoundError:
+    _has_huggingface = False
+
+
+if TYPE_CHECKING:  # pragma: no cover
+    from transformers import PreTrainedTokenizer
 
 
 class HFPretrainedTokenizer(BaseTokenizer):
@@ -17,7 +27,7 @@ class HFPretrainedTokenizer(BaseTokenizer):
         description="Optional kwargs dict for loading models from HF. Defaults to None.",
         default_factory=dict,
     )
-    _tokenizer: PreTrainedTokenizer | None = PrivateAttr(default=None)
+    _tokenizer: Optional["PreTrainedTokenizer"] = PrivateAttr(default=None)
 
     def __init__(
         self,
@@ -32,14 +42,14 @@ class HFPretrainedTokenizer(BaseTokenizer):
         if load_model_at_init:
             self._tokenizer = self._load_model_from_hf()
 
-    def _load_model_from_hf(self, **kwargs: Any) -> PreTrainedTokenizer:
+    def _load_model_from_hf(self, **kwargs: Any) -> "PreTrainedTokenizer":
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
         return AutoTokenizer.from_pretrained(self.model_name)
 
     @property
-    def unwrapped_tokenizer(self) -> PreTrainedTokenizer:
+    def unwrapped_tokenizer(self) -> "PreTrainedTokenizer":
         if self._tokenizer is None:
             # load HF Pretrained Tokenizer
             tokenizer = self._load_model_from_hf()
@@ -47,7 +57,7 @@ class HFPretrainedTokenizer(BaseTokenizer):
         return self._tokenizer
 
     @unwrapped_tokenizer.setter
-    def unwrapped_tokenizer(self, value: PreTrainedTokenizer) -> None:
+    def unwrapped_tokenizer(self, value: "PreTrainedTokenizer") -> None:
         self._tokenizer = value
 
     def encode(self, input: str, **kwargs: Any) -> list[int]:
