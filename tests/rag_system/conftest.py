@@ -34,12 +34,8 @@ class MockRetriever(BaseRetriever):
 
 
 class MockDualRetriever(BaseRetriever):
-    _query_encoder: torch.nn.Module = PrivateAttr(
-        default=torch.nn.Linear(2, 1)
-    )
-    _context_encoder: torch.nn.Module = PrivateAttr(
-        default=torch.nn.Linear(2, 1)
-    )
+    _query_encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
+    _context_encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
 
     def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
         return self._encoder.forward(torch.ones(2))
@@ -121,8 +117,8 @@ class MockGenerator(BaseGenerator):
     _model = torch.nn.Linear(2, 1)
     _tokenizer = MockTokenizer()
 
-    def generate(self, query: str, context: str, **kwargs: dict) -> str:
-        return f"mock output from '{query}' with '{context}'."
+    def generate(self, input: str) -> str:
+        return f"mock output from '{input}'."
 
     @property
     def model(self) -> torch.nn.Module:

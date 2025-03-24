@@ -7,7 +7,6 @@ import warnings
 from typing import Any, Callable, Dict, OrderedDict, TypeAlias, cast
 
 import torch
-from datasets import Dataset
 from flwr.client import NumPyClient
 from flwr.client.client import Client
 from flwr.common import NDArrays, Scalar
@@ -19,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 # check if huggingface extra was installed
 try:
+    from datasets import Dataset
     from peft import PeftModel
     from peft.utils import get_peft_model_state_dict, set_peft_model_state_dict
     from sentence_transformers import SentenceTransformer
