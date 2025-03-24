@@ -8,11 +8,7 @@ try:
     from datasets import Dataset
 except ModuleNotFoundError:
     msg = (
-<<<<<<< HEAD
         "`HuggingfaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
-=======
-        "HuggingFace finetuning datasets requires the `huggingface` extra to be installed. "
->>>>>>> afeb74c (add data module)
         "To fix please run `pip install fed-rag[huggingface]`."
     )
     raise ValueError(msg)
