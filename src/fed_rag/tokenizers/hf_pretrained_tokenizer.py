@@ -67,7 +67,7 @@ class HFPretrainedTokenizer(BaseTokenizer):
         self._tokenizer = value
 
     def encode(self, input: str, **kwargs: Any) -> list[int]:
-        return self.unwrapped_tokenizer.encode(text=input, **kwargs)  # type: ignore[no-any-return]
+        return self.unwrapped_tokenizer(text=input, **kwargs)  # type: ignore[no-any-return]
 
     def decode(self, input_ids: list[int], **kwargs: Any) -> str:
         return self.unwrapped_tokenizer.decode(token_ids=input_ids, **kwargs)  # type: ignore[no-any-return]
