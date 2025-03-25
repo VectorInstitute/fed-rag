@@ -34,7 +34,7 @@ def build_finetune_dataset(
     for example in examples:
         # retrieve
         source_nodes = rag_system.retrieve(query=example[query_key])
-        total_sum_scores = sum(s.node.score for s in source_nodes)
+        total_sum_scores = sum(s.score for s in source_nodes)
 
         # parallel in-context retrieval-augmentation creates
         # top_k separated finetuning instances
@@ -42,10 +42,10 @@ def build_finetune_dataset(
             finetune_instance_text = finetune_example_template.format(
                 query=example[query_key],
                 answer=example[answer_key],
-                context=[source.node.get_content()["text_content"]],
+                context=source.node.get_content()["text_content"],
             )
             finetuning_instances.append(finetune_instance_text)
-            _weight = source.node.score / total_sum_scores
+            _weight = source.score / total_sum_scores
 
             # tokenize to get input_ids and target_ids
             tokenizer = rag_system.generator.tokenizer
@@ -55,24 +55,24 @@ def build_finetune_dataset(
             inputs_list.append(input_ids)
             targets_list.append(target_ids)
 
-        if return_dataset == ReturnType.TEXT:
-            return finetuning_instances
-        elif return_dataset == ReturnType.PYTORCH:
-            return PyTorchRAGFinetuningDataset(
-                input_ids=torch.Tensor(inputs_list),
-                target_ids=torch.Tensor(targets_list),
-            )
-        elif return_dataset == ReturnType.HUGGINGFACE:
-            # needs `fed-rag[huggingface]` extra to be installed
-            # this import will fail if not installed
-            from fed_rag.utils.data.finetuning_datasets.huggingface import (
-                HuggingfaceRAGFinetuningDataset,
-            )
+    if return_dataset == ReturnType.TEXT:
+        return finetuning_instances
+    elif return_dataset == ReturnType.PYTORCH:
+        return PyTorchRAGFinetuningDataset(
+            input_ids=torch.Tensor(inputs_list),
+            target_ids=torch.Tensor(targets_list),
+        )
+    elif return_dataset == ReturnType.HUGGINGFACE:
+        # needs `fed-rag[huggingface]` extra to be installed
+        # this import will fail if not installed
+        from fed_rag.utils.data.finetuning_datasets.huggingface import (
+            HuggingfaceRAGFinetuningDataset,
+        )
 
-            return HuggingfaceRAGFinetuningDataset.from_inputs(
-                input_ids=inputs_list, target_ids=targets_list
-            )
-        else:
-            raise ValueError(
-                "Invalid `return_type` specified."
-            )  # TODO: give a proper exception to this
+        return HuggingfaceRAGFinetuningDataset.from_inputs(
+            input_ids=inputs_list, target_ids=targets_list
+        )
+    else:
+        raise ValueError(
+            "Invalid `return_type` specified."
+        )  # TODO: give a proper exception to this
