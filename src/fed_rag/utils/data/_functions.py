@@ -3,6 +3,8 @@
 from enum import Enum
 from typing import Any, Sequence
 
+import torch
+
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
 
@@ -57,7 +59,8 @@ def build_finetune_dataset(
             return finetuning_instances
         elif return_dataset == ReturnType.PYTORCH:
             return PyTorchRAGFinetuningDataset(
-                input_ids=inputs_list, target_ids=targets_list
+                input_ids=torch.Tensor(inputs_list),
+                target_ids=torch.Tensor(targets_list),
             )
         elif return_dataset == ReturnType.HUGGINGFACE:
             # needs `fed-rag[huggingface]` extra to be installed
