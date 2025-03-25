@@ -82,4 +82,4 @@ def build_finetune_dataset(
             input_ids=inputs_list, target_ids=targets_list
         )
     else:
-        assert_never(return_dataset)
+        assert_never(return_dataset)  # pragma: no cover
