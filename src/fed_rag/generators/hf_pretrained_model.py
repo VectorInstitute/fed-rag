@@ -88,7 +88,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
         if load_model_at_init:
             self._model = self._load_model_from_hf()
 
-    def _load_model_from_hf(self, **kwargs: Any) -> PreTrainedModel:
+    def _load_model_from_hf(self, **kwargs: Any) -> "PreTrainedModel":
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
@@ -98,7 +98,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
         return model
 
     @property
-    def model(self) -> PreTrainedModel:
+    def model(self) -> "PreTrainedModel":
         if self._model is None:
             # load HF Pretrained Model
             model = self._load_model_from_hf()
@@ -106,7 +106,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
         return self._model
 
     @model.setter
-    def model(self, value: PreTrainedModel) -> None:
+    def model(self, value: "PreTrainedModel") -> None:
         self._model = value
 
     @property

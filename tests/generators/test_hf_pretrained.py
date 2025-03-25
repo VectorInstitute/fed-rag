@@ -1,5 +1,8 @@
+import re
+import sys
 from unittest.mock import MagicMock, patch
 
+import pytest
 import torch
 from transformers import (
     AutoModelForCausalLM,
@@ -172,3 +175,31 @@ def test_generate() -> None:
     assert result == "Mock output"
     mock_tokenizer.assert_called_once()
     mock_model.generate.assert_called_once()
+
+
+def test_huggingface_extra_missing() -> None:
+    """Test extra is not installed."""
+
+    modules = {"transformers": None}
+    module_to_import = "fed_rag.generators.hf_pretrained_model"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`HFPretrainedModelGenerator` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            ValueError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.generators.hf_pretrained_model import (
+                HFPretrainedModelGenerator,
+            )
+
+            HFPretrainedModelGenerator("fake_name")
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
