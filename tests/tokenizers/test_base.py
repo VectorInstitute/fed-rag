@@ -7,4 +7,4 @@ def test_base(mock_tokenizer: BaseTokenizer) -> None:
 
     assert input_ids == [0, 1, 2]
     assert decoded_str == "mock decoded sentence"
-    assert mock_tokenizer.unwrapped_tokenizer is None
+    assert mock_tokenizer.unwrapped is None

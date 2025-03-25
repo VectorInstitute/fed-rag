@@ -87,7 +87,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
     def model(self) -> PreTrainedModel:
         if self._model is None:
             # load HF Pretrained Model
-            model, _ = self._load_model_from_hf(**self.load_model_kwargs)
+            model, _ = self._load_model_from_hf()
             self._model = model
         return self._model
 

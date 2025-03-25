@@ -8,8 +8,25 @@ from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
 from fed_rag.base.tokenizer import BaseTokenizer
 
 
+class MockTokenizer(BaseTokenizer):
+    def encode(self, input: str, **kwargs: Any) -> list[int]:
+        return [0, 1, 2]
+
+    def decode(self, input_ids: list[int], **kwargs: Any) -> str:
+        return "mock decoded sentence"
+
+    @property
+    def unwrapped(self) -> None:
+        return None
+
+
+@pytest.fixture()
+def mock_tokenizer() -> BaseTokenizer:
+    return MockTokenizer()
+
+
 @pytest.fixture
-def dummy_tokenizer() -> PreTrainedTokenizer:
+def hf_tokenizer() -> PreTrainedTokenizer:
     tokenizer = Tokenizer(
         models.WordPiece({"hello": 0, "[UNK]": 1}, unk_token="[UNK]")
     )
@@ -21,20 +38,3 @@ def dummy_tokenizer() -> PreTrainedTokenizer:
         sep_token="[SEP]",
         mask_token="[MASK]",
     )
-
-
-class MockTokenizer(BaseTokenizer):
-    def encode(self, input: str, **kwargs: Any) -> list[int]:
-        return [0, 1, 2]
-
-    def decode(self, input_ids: list[int], **kwargs: Any) -> str:
-        return "mock decoded sentence"
-
-    @property
-    def unwrapped_tokenizer(self) -> None:
-        return None
-
-
-@pytest.fixture()
-def mock_tokenizer() -> BaseTokenizer:
-    return MockTokenizer()

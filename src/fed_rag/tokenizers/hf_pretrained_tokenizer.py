@@ -52,22 +52,22 @@ class HFPretrainedTokenizer(BaseTokenizer):
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
-        return AutoTokenizer.from_pretrained(self.model_name)
+        return AutoTokenizer.from_pretrained(self.model_name, **load_kwargs)
 
     @property
-    def unwrapped_tokenizer(self) -> "PreTrainedTokenizer":
+    def unwrapped(self) -> "PreTrainedTokenizer":
         if self._tokenizer is None:
             # load HF Pretrained Tokenizer
             tokenizer = self._load_model_from_hf()
-        self._tokenizer = tokenizer
+            self._tokenizer = tokenizer
         return self._tokenizer
 
-    @unwrapped_tokenizer.setter
-    def unwrapped_tokenizer(self, value: "PreTrainedTokenizer") -> None:
+    @unwrapped.setter
+    def unwrapped(self, value: "PreTrainedTokenizer") -> None:
         self._tokenizer = value
 
     def encode(self, input: str, **kwargs: Any) -> list[int]:
-        return self.unwrapped_tokenizer(text=input, **kwargs)  # type: ignore[no-any-return]
+        return self.unwrapped(text=input, **kwargs)  # type: ignore[no-any-return]
 
     def decode(self, input_ids: list[int], **kwargs: Any) -> str:
-        return self.unwrapped_tokenizer.decode(token_ids=input_ids, **kwargs)  # type: ignore[no-any-return]
+        return self.unwrapped.decode(token_ids=input_ids, **kwargs)  # type: ignore[no-any-return]

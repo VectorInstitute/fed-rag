@@ -21,5 +21,5 @@ class BaseTokenizer(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def unwrapped_tokenizer(self) -> Any:
+    def unwrapped(self) -> Any:
         """Return the underlying tokenizer if there is one."""
