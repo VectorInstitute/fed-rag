@@ -1,5 +1,8 @@
+import re
+import sys
 from unittest.mock import MagicMock, patch
 
+import pytest
 import torch
 from transformers import (
     AutoModelForCausalLM,
@@ -10,6 +13,7 @@ from transformers import (
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
+from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
 def test_hf_pretrained_generator_class() -> None:
@@ -19,9 +23,11 @@ def test_hf_pretrained_generator_class() -> None:
     assert BaseGenerator.__name__ in names_of_base_classes
 
 
+@patch.object(HFPretrainedTokenizer, "_load_model_from_hf")
 @patch.object(HFPretrainedModelGenerator, "_load_model_from_hf")
 def test_hf_pretrained_generator_class_init_delayed_load(
     mock_load_from_hf: MagicMock,
+    mock_load_from_hf_tokenizer: MagicMock,
     dummy_pretrained_model_and_tokenizer: tuple[
         PreTrainedModel, PreTrainedTokenizer
     ],
@@ -32,30 +38,42 @@ def test_hf_pretrained_generator_class_init_delayed_load(
 
     assert generator.model_name == "fake_name"
     assert generator._model is None
-    assert generator._tokenizer is None
+    assert generator._tokenizer is not None
 
     # load model
-    mock_load_from_hf.return_value = dummy_pretrained_model_and_tokenizer
+    mock_load_from_hf_tokenizer.return_value = (
+        dummy_pretrained_model_and_tokenizer[1]
+    )
+    mock_load_from_hf.return_value = dummy_pretrained_model_and_tokenizer[0]
 
     generator._load_model_from_hf()
     args, kwargs = mock_load_from_hf.call_args
 
     mock_load_from_hf.assert_called_once()
     assert generator.model == dummy_pretrained_model_and_tokenizer[0]
-    assert generator.tokenizer == dummy_pretrained_model_and_tokenizer[1]
+    assert isinstance(generator.tokenizer, HFPretrainedTokenizer)
+    assert (
+        generator.tokenizer.unwrapped
+        == dummy_pretrained_model_and_tokenizer[1]
+    )
     assert args == ()
     assert kwargs == {}
 
 
+@patch.object(HFPretrainedTokenizer, "_load_model_from_hf")
 @patch.object(HFPretrainedModelGenerator, "_load_model_from_hf")
 def test_hf_pretrained_generator_class_init(
     mock_load_from_hf: MagicMock,
+    mock_load_from_hf_tokenizer: MagicMock,
     dummy_pretrained_model_and_tokenizer: tuple[
         PreTrainedModel, PreTrainedTokenizer
     ],
 ) -> None:
     # arrange
-    mock_load_from_hf.return_value = dummy_pretrained_model_and_tokenizer
+    mock_load_from_hf.return_value = dummy_pretrained_model_and_tokenizer[0]
+    mock_load_from_hf_tokenizer.return_value = (
+        dummy_pretrained_model_and_tokenizer[1]
+    )
 
     # act
     generator = HFPretrainedModelGenerator(
@@ -65,16 +83,23 @@ def test_hf_pretrained_generator_class_init(
 
     # assert
     mock_load_from_hf.assert_called_once()
+    mock_load_from_hf_tokenizer.assert_called_once()
     assert generator.model_name == "fake_name"
     assert generator.model == dummy_pretrained_model_and_tokenizer[0]
-    assert generator.tokenizer == dummy_pretrained_model_and_tokenizer[1]
+    assert isinstance(generator.tokenizer, HFPretrainedTokenizer)
+    assert (
+        generator.tokenizer.unwrapped
+        == dummy_pretrained_model_and_tokenizer[1]
+    )
     assert args == ()
     assert kwargs == {}
 
 
+@patch.object(HFPretrainedTokenizer, "_load_model_from_hf")
 @patch.object(HFPretrainedModelGenerator, "_load_model_from_hf")
 def test_hf_pretrained_generator_class_init_no_load(
     mock_load_from_hf: MagicMock,
+    mock_load_from_hf_tokenizer: MagicMock,
     dummy_pretrained_model_and_tokenizer: tuple[
         PreTrainedModel, PreTrainedTokenizer
     ],
@@ -84,17 +109,19 @@ def test_hf_pretrained_generator_class_init_no_load(
     )
 
     mock_load_from_hf.assert_not_called()
+    mock_load_from_hf_tokenizer.assert_not_called()
     assert generator.model_name == "fake_name"
     assert generator._model is None
-    assert generator._tokenizer is None
+    assert generator._tokenizer is not None
+    assert isinstance(generator.tokenizer, HFPretrainedTokenizer)
 
     # load model using setter
     model, tokenizer = dummy_pretrained_model_and_tokenizer
     generator.model = model
-    generator.tokenizer = tokenizer
+    generator.tokenizer.unwrapped = tokenizer
 
     assert generator.model == model
-    assert generator.tokenizer == tokenizer
+    assert generator.tokenizer.unwrapped == tokenizer
 
 
 @patch.object(AutoModelForCausalLM, "from_pretrained")
@@ -123,7 +150,7 @@ def test_hf_pretrained_load_model_from_hf(
         "fake_name", device_map="cpu"
     )
     assert generator.model == model
-    assert generator.tokenizer == tokenizer
+    assert generator.tokenizer.unwrapped == tokenizer
 
 
 def test_generate() -> None:
@@ -139,7 +166,7 @@ def test_generate() -> None:
     mock_tokenizer_result.input_ids = torch.ones(2)
     mock_tokenizer.batch_decode.return_value = ["Mock output"]
     mock_tokenizer.return_value = mock_tokenizer_result
-    generator.tokenizer = mock_tokenizer
+    generator.tokenizer.unwrapped = mock_tokenizer
     generator.model = mock_model
 
     # act
@@ -148,3 +175,31 @@ def test_generate() -> None:
     assert result == "Mock output"
     mock_tokenizer.assert_called_once()
     mock_model.generate.assert_called_once()
+
+
+def test_huggingface_extra_missing() -> None:
+    """Test extra is not installed."""
+
+    modules = {"transformers": None}
+    module_to_import = "fed_rag.generators.hf_pretrained_model"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`HFPretrainedModelGenerator` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            ValueError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.generators.hf_pretrained_model import (
+                HFPretrainedModelGenerator,
+            )
+
+            HFPretrainedModelGenerator("fake_name")
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module

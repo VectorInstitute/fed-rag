@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 import torch
 from pydantic import BaseModel, ConfigDict
 
+from fed_rag.base.tokenizer import BaseTokenizer
+
 
 class BaseGenerator(BaseModel, ABC):
     """Base Generator Class."""
@@ -19,3 +21,8 @@ class BaseGenerator(BaseModel, ABC):
     @abstractmethod
     def model(self) -> torch.nn.Module:
         """Model associated with this generator."""
+
+    @property
+    @abstractmethod
+    def tokenizer(self) -> BaseTokenizer:
+        """Tokenizer associated with this generator."""
