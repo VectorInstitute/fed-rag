@@ -143,3 +143,24 @@ def test_build_finetune_dataset_hf_return(
         ],
         "target_ids": [[1, 1, 42], [1, 1, 42]],
     }
+
+
+def test_build_finetune_dataset_invalid_return_raises_error(
+    mock_examples: Sequence[dict], mock_source_nodes: list[list[SourceNode]]
+) -> None:
+    # arrange
+    mock_rag_system = MagicMock()
+    mock_retrieve = MagicMock()
+    mock_retrieve.side_effect = mock_source_nodes
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_rag_system.retrieve = mock_retrieve
+    mock_rag_system.generator.tokenizer = mock_tokenizer
+
+    with pytest.raises(ValueError, match="Invalid `return_type` specified."):
+        build_finetune_dataset(
+            rag_system=mock_rag_system,
+            examples=mock_examples,
+            eos_token_id=42,
+            return_dataset="invalid_return",
+        )

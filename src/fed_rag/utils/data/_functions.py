@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Any, Sequence
 
 import torch
+from typing_extensions import assert_never
 
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
@@ -27,6 +28,14 @@ def build_finetune_dataset(
     return_dataset: ReturnType = ReturnType.PYTORCH,
 ) -> Any:
     """Generates the finetuning dataset using the supplied rag_system and examples."""
+
+    if (
+        isinstance(return_dataset, str)
+        and return_dataset not in ReturnType._value2member_map_.keys()
+    ):
+        raise ValueError(
+            "Invalid `return_type` specified."
+        )  # TODO: give a proper exception to this
 
     inputs_list = []
     targets_list = []
@@ -73,6 +82,4 @@ def build_finetune_dataset(
             input_ids=inputs_list, target_ids=targets_list
         )
     else:
-        raise ValueError(
-            "Invalid `return_type` specified."
-        )  # TODO: give a proper exception to this
+        assert_never(return_dataset)
