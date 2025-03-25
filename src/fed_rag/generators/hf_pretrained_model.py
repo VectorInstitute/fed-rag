@@ -1,11 +1,22 @@
 """HuggingFace PretrainedModel Generator"""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, Optional
 
 import torch
 from pydantic import ConfigDict, Field, PrivateAttr
-from transformers import AutoModelForCausalLM, PreTrainedModel
-from transformers.generation.utils import GenerationConfig
+
+try:
+    from transformers import AutoModelForCausalLM, PreTrainedModel
+    from transformers.generation.utils import GenerationConfig
+
+    _has_huggingface = True
+except ModuleNotFoundError:
+    _has_huggingface = False
+
+
+if TYPE_CHECKING:  # pragma: no cover
+    from transformers import PreTrainedModel
+    from transformers.generation.utils import GenerationConfig
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
@@ -33,7 +44,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
     model_name: str = Field(
         description="Name of HuggingFace model. Used for loading the model from HF hub or local."
     )
-    generation_config: GenerationConfig = Field(
+    generation_config: "GenerationConfig" = Field(
         description="The generation config used for generating with the PreTrainedModel."
     )
     load_model_kwargs: dict = Field(
@@ -41,17 +52,24 @@ class HFPretrainedModelGenerator(BaseGenerator):
         default_factory=dict,
     )
     prompt_template: str = Field(description="Prompt template for RAG.")
-    _model: PreTrainedModel | None = PrivateAttr(default=None)
+    _model: Optional["PreTrainedModel"] = PrivateAttr(default=None)
     _tokenizer: HFPretrainedTokenizer | None = PrivateAttr(default=None)
 
     def __init__(
         self,
         model_name: str,
-        generation_config: GenerationConfig | None = None,
+        generation_config: Optional["GenerationConfig"] = None,
         prompt_template: str | None = None,
         load_model_kwargs: dict | None = None,
         load_model_at_init: bool = True,
     ):
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise ValueError(msg)
+
         generation_config = (
             generation_config if generation_config else GenerationConfig()
         )
