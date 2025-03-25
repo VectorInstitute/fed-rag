@@ -12,6 +12,7 @@ from transformers import (
 )
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.tokenizer import BaseTokenizer
 
 
 class _TestHFConfig(PretrainedConfig):
@@ -86,13 +87,37 @@ def dummy_peft_model_and_tokenizer(
     return get_peft_model(base_model, config), dummy_tokenizer
 
 
+class MockTokenizer(BaseTokenizer):
+    def encode(self, input: str, **kwargs: Any) -> list[int]:
+        return [0, 1, 2]
+
+    def decode(self, input_ids: list[int], **kwargs: Any) -> str:
+        return "mock decoded sentence"
+
+    @property
+    def unwrapped(self) -> None:
+        return None
+
+
+@pytest.fixture()
+def mock_tokenizer() -> BaseTokenizer:
+    return MockTokenizer()
+
+
 class MockGenerator(BaseGenerator):
+    _model = torch.nn.Linear(2, 1)
+    _tokenizer = MockTokenizer()
+
     def generate(self, input: str) -> str:
         return f"mock output from '{input}'."
 
     @property
     def model(self) -> torch.nn.Module:
-        return torch.nn.Linear(2, 1)
+        return self._model
+
+    @property
+    def tokenizer(self) -> MockTokenizer:
+        return self._tokenizer
 
 
 @pytest.fixture
