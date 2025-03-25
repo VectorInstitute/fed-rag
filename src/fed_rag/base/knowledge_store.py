@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
 
 
 class BaseKnowledgeStore(BaseModel, ABC):
@@ -19,6 +19,27 @@ class BaseKnowledgeStore(BaseModel, ABC):
     @abstractmethod
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         """Load multiple KnowledgeNodes in batch."""
+
+    @abstractmethod
+    def persist(
+        self,
+        embedding: list[float],
+        node_type: NodeType,
+        text_content: str | None,
+        image_content: bytes | None,
+    ) -> None:
+        """Persist an embedding into the KnowledgeStore.
+
+        If note_type == NodeType.TEXT, then text_content is required.
+        If note_type == NodeType.IMAGE, then image_content is required.
+        If note_type == NodeType.MULTIMODAL, then text_content and image_content are required.
+
+        Args:
+            embedding (list[float]): The embedding to persist.
+            node_type (NodeType): The type of node to persist.
+            text_content (str | None): The text content to persist.
+            image_content (bytes | None): The image content to persist.
+        """
 
     @abstractmethod
     def retrieve(

@@ -5,7 +5,7 @@ from pydantic import PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
 
 DEFAULT_TOP_K = 2
 
@@ -55,6 +55,35 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
             self.load_node(node)
+
+    def persist(
+        self,
+        embedding: list[float],
+        node_type: NodeType,
+        text_content: str | None,
+        image_content: bytes | None,
+    ) -> None:
+        if node_type == NodeType.TEXT and text_content is None:
+            raise ValueError("text_content is required for NodeType.TEXT")
+        if node_type == NodeType.IMAGE and image_content is None:
+            raise ValueError("image_content is required for NodeType.IMAGE")
+        if node_type == NodeType.MULTIMODAL and (
+            text_content is None or image_content is None
+        ):
+            raise ValueError(
+                "text_content and image_content are required for NodeType.MULTIMODAL"
+            )
+
+        node = KnowledgeNode(embedding=embedding, node_type=node_type)
+        if node_type == NodeType.TEXT:
+            node.text_content = text_content
+        elif node_type == NodeType.IMAGE:
+            node.image_content = image_content
+        elif node_type == NodeType.MULTIMODAL:
+            node.text_content = text_content
+            node.image_content = image_content
+
+        self.load_node(node)
 
     def retrieve(
         self, query_emb: list[float], top_k: int
