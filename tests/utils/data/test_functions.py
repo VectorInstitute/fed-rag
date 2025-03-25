@@ -7,6 +7,9 @@ import torch
 from fed_rag.types.rag_system import KnowledgeNode, SourceNode
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
+from fed_rag.utils.data.finetuning_datasets.huggingface import (
+    HuggingfaceRAGFinetuningDataset,
+)
 
 
 @pytest.fixture()
@@ -103,3 +106,40 @@ def test_build_finetune_dataset_pt_return(
     assert len(result) == 4
     assert isinstance(result.input_ids[0], torch.Tensor)
     assert isinstance(result.target_ids[0], torch.Tensor)
+
+
+def test_build_finetune_dataset_hf_return(
+    mock_examples: Sequence[dict], mock_source_nodes: list[list[SourceNode]]
+) -> None:
+    # arrange
+    mock_rag_system = MagicMock()
+    mock_retrieve = MagicMock()
+    mock_retrieve.side_effect = mock_source_nodes
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_rag_system.retrieve = mock_retrieve
+    mock_rag_system.generator.tokenizer = mock_tokenizer
+
+    # act
+    result: HuggingfaceRAGFinetuningDataset = build_finetune_dataset(
+        rag_system=mock_rag_system,
+        examples=mock_examples,
+        eos_token_id=42,
+        return_dataset="hf",
+    )
+
+    # assert
+    assert isinstance(result, HuggingfaceRAGFinetuningDataset)
+    assert len(result) == 4
+    assert result.column_names == ["input_ids", "target_ids"]
+    assert result[:2] == {
+        "input_ids": [
+            [1, 1, 1],
+            [
+                1,
+                1,
+                1,
+            ],
+        ],
+        "target_ids": [[1, 1, 42], [1, 1, 42]],
+    }
