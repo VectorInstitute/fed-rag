@@ -1,7 +1,6 @@
 """Base Generator"""
 
 from abc import ABC, abstractmethod
-from typing import Any
 
 import torch
 from pydantic import BaseModel, ConfigDict

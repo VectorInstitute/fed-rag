@@ -34,8 +34,12 @@ class MockRetriever(BaseRetriever):
 
 
 class MockDualRetriever(BaseRetriever):
-    _query_encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
-    _context_encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(2, 1))
+    _query_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+    _context_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
 
     def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
         return self._encoder.forward(torch.ones(2))
