@@ -59,8 +59,8 @@ def build_finetune_dataset(
         return finetuning_instances
     elif return_dataset == ReturnType.PYTORCH:
         return PyTorchRAGFinetuningDataset(
-            input_ids=torch.Tensor(inputs_list),
-            target_ids=torch.Tensor(targets_list),
+            input_ids=[torch.Tensor(el) for el in inputs_list],
+            target_ids=[torch.Tensor(el) for el in targets_list],
         )
     elif return_dataset == ReturnType.HUGGINGFACE:
         # needs `fed-rag[huggingface]` extra to be installed
