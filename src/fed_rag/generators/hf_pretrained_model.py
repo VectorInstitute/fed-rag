@@ -4,15 +4,11 @@ from typing import Any
 
 import torch
 from pydantic import ConfigDict, Field, PrivateAttr
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    PreTrainedModel,
-    PreTrainedTokenizer,
-)
+from transformers import AutoModelForCausalLM, PreTrainedModel
 from transformers.generation.utils import GenerationConfig
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 DEFAULT_PROMPT_TEMPLATE = """
 You are a helpful assistant. Given the user's question, provide a succinct
@@ -46,7 +42,7 @@ class HFPretrainedModelGenerator(BaseGenerator):
     )
     prompt_template: str = Field(description="Prompt template for RAG.")
     _model: PreTrainedModel | None = PrivateAttr(default=None)
-    _tokenizer: PreTrainedTokenizer | None = PrivateAttr(default=None)
+    _tokenizer: HFPretrainedTokenizer | None = PrivateAttr(default=None)
 
     def __init__(
         self,
@@ -68,26 +64,26 @@ class HFPretrainedModelGenerator(BaseGenerator):
             prompt_template=prompt_template,
             load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
         )
+        self._tokenizer = HFPretrainedTokenizer(
+            model_name=model_name, load_model_at_init=load_model_at_init
+        )
         if load_model_at_init:
-            self._model, self._tokenizer = self._load_model_from_hf()
+            self._model = self._load_model_from_hf()
 
-    def _load_model_from_hf(
-        self, **kwargs: Any
-    ) -> tuple[PreTrainedModel, PreTrainedTokenizer]:
+    def _load_model_from_hf(self, **kwargs: Any) -> PreTrainedModel:
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, **load_kwargs
         )
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        return model, tokenizer
+        return model
 
     @property
     def model(self) -> PreTrainedModel:
         if self._model is None:
             # load HF Pretrained Model
-            model, _ = self._load_model_from_hf()
+            model = self._load_model_from_hf()
             self._model = model
         return self._model
 
@@ -96,16 +92,8 @@ class HFPretrainedModelGenerator(BaseGenerator):
         self._model = value
 
     @property
-    def tokenizer(self) -> PreTrainedTokenizer:
-        if self._tokenizer is None:
-            # load HF Pretrained Model
-            _, tokenizer = self._load_model_from_hf()
-            self._tokenizer = tokenizer
+    def tokenizer(self) -> HFPretrainedTokenizer:
         return self._tokenizer
-
-    @tokenizer.setter
-    def tokenizer(self, value: PreTrainedTokenizer) -> None:
-        self._tokenizer = value
 
     # generate
     def generate(self, query: str, context: str, **kwargs: Any) -> str:
@@ -114,7 +102,9 @@ class HFPretrainedModelGenerator(BaseGenerator):
         )
 
         # encode query
-        tokenizer_result = self.tokenizer(formatted_query, return_tensors="pt")
+        tokenizer_result = self.tokenizer.unwrapped(
+            formatted_query, return_tensors="pt"
+        )
         inputs: torch.Tensor = tokenizer_result.input_ids
         inputs = inputs.to(self.model.device)
 
@@ -122,12 +112,12 @@ class HFPretrainedModelGenerator(BaseGenerator):
         generated_ids = self.model.generate(
             inputs=inputs,
             generation_config=self.generation_config,
-            tokenizer=self._tokenizer,
+            tokenizer=self.tokenizer.unwrapped,
             **kwargs,
         )
 
         # decode tokens
-        outputs: list[str] = self.tokenizer.batch_decode(
+        outputs: list[str] = self.tokenizer.unwrapped.batch_decode(
             generated_ids, skip_special_tokens=True
         )
         return outputs[0]
