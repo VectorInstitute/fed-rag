@@ -121,8 +121,8 @@ class MockGenerator(BaseGenerator):
     _model = torch.nn.Linear(2, 1)
     _tokenizer = MockTokenizer()
 
-    def generate(self, query: str, context: str, **kwargs: dict) -> str:
-        return f"mock output from '{query}' with '{context}'."
+    def generate(self, input: str) -> str:
+        return f"mock output from '{input}'."
 
     @property
     def model(self) -> torch.nn.Module:

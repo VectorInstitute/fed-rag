@@ -1,6 +1,6 @@
 """HuggingFaceFLTask Unit Tests"""
 
-import importlib
+import re
 import sys
 from typing import Callable, OrderedDict
 from unittest.mock import MagicMock, patch
@@ -27,28 +27,6 @@ from fed_rag.fl_tasks.huggingface import (
     _get_weights,
 )
 from fed_rag.types import TestResult, TrainResult
-
-
-def test_huggingface_extra_missing() -> None:
-    """Test extra is not installed.
-
-    Combination of:
-    - https://docs.python.org/3/library/unittest.mock.html#order-of-precedence-of-side-effect-return-value-and-wraps
-    - https://medium.com/python-pandemonium/how-to-test-your-imports-1461c1113be1
-    """
-
-    modules = {"peft": None}
-    module_to_import = "fed_rag.fl_tasks.huggingface"
-
-    if module_to_import in sys.modules:
-        original_module = sys.modules.pop(module_to_import)
-
-    with patch.dict("sys.modules", modules):
-        with pytest.raises(ValueError):
-            importlib.import_module(module_to_import)
-
-    # restore module so to not affect other tests
-    sys.modules[module_to_import] = original_module
 
 
 # TODO: parametrize tests using trainer/tester from pretrained models
@@ -322,6 +300,84 @@ def test_invoking_server(
 
     assert server.client_manager() == client_manager
     assert server.strategy == strategy
+
+
+def test_huggingface_extra_missing_fltask(
+    trainer_pretrained_model: Callable,
+    tester_pretrained_model: Callable,
+) -> None:
+    """Test extra is not installed.
+
+    Combination of:
+    - https://docs.python.org/3/library/unittest.mock.html#order-of-precedence-of-side-effect-return-value-and-wraps
+    - https://medium.com/python-pandemonium/how-to-test-your-imports-1461c1113be1
+    """
+
+    modules = {"peft": None}
+    module_to_import = "fed_rag.fl_tasks.huggingface"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`HuggingFaceFLTask` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            ValueError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
+
+            HuggingFaceFLTask.from_trainer_and_tester(
+                trainer=trainer_pretrained_model,
+                tester=tester_pretrained_model,
+            )
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
+
+
+def test_huggingface_extra_missing_fltask_bundle(
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    trainer_pretrained_model: Callable,
+    tester_pretrained_model: Callable,
+    hf_pretrained_model: PreTrainedModel,
+) -> None:
+    """Test extra is not installed."""
+
+    modules = {"peft": None}
+    module_to_import = "fed_rag.fl_tasks.huggingface"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`BaseFLTaskBundle` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            ValueError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.fl_tasks.huggingface import BaseFLTaskBundle
+
+            net = hf_pretrained_model
+            BaseFLTaskBundle(
+                net=net,
+                train_dataset=train_dataset,
+                val_dataset=val_dataset,
+                trainer=trainer_pretrained_model,
+                tester=tester_pretrained_model,
+                extra_test_kwargs={},
+                extra_train_kwargs={},
+            )
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
 
 
 def test_invoking_server_using_defaults(

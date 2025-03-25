@@ -10,8 +10,12 @@ dev_notebooks/
 .pytest_cache
 .ruff_cache
 .env
-data/
 fed-rag.code-workspace
+
+# datasets for running examples
+data/
+!src/fed_rag/utils/data
+!tests/utils/data
 
 # HF training artifacts
 tmp_trainer/
