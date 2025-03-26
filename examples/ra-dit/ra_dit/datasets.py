@@ -1,7 +1,10 @@
 """Builds fine-tuning datasets for RA-DIT."""
 
+<<<<<<< HEAD
 import json
 from pathlib import Path
+=======
+>>>>>>> 3075ca4 (scaffolding ra_dit.datasets)
 from typing import Literal
 
 from ra_dit.generators import GENERATORS
@@ -27,11 +30,16 @@ finetune_example_template = """<instruction>
 </context>
 
 <response>
+<<<<<<< HEAD
 {answer}
+=======
+{response}
+>>>>>>> 3075ca4 (scaffolding ra_dit.datasets)
 </response>
 """
 
 
+<<<<<<< HEAD
 QA_DATA_REGISTRY = {"mock": "mock_qa_examples.jsonl"}
 QA_DATA_PATH = Path(__file__).parents[1].absolute() / "data"
 
@@ -43,6 +51,10 @@ def _load_qa_dataset(name: str) -> list[dict[str, str]]:
         for line in f:
             examples.append(json.loads(line))
     return examples
+=======
+def _load_qa_dataset(name: str) -> list[dict[str, str]]:
+    return []
+>>>>>>> 3075ca4 (scaffolding ra_dit.datasets)
 
 
 def main(
@@ -70,6 +82,7 @@ def main(
     )
 
     # generate retrieval-augmented instruction tuning dataset
+<<<<<<< HEAD
     unwrapped_tokenizer = generator.tokenizer.unwrapped
 
     # find eos_token_id
@@ -87,10 +100,20 @@ def main(
         answer_key="response",
         eos_token_id=eos_token_id,
         finetune_example_template=finetune_example_template,
+=======
+    _unwrapped_tokenizer = generator.tokenizer.unwrapped
+    eos_token_id = ...
+    dataset: HuggingfaceRAGFinetuningDataset = build_finetune_dataset(
+        rag_system=rag_system,
+        examples=examples,
+        eos_token_id=eos_token_id,
+        finetune_example_template=...,
+>>>>>>> 3075ca4 (scaffolding ra_dit.datasets)
         return_dataset="hf",
     )
 
     return dataset
+<<<<<<< HEAD
 
 
 if __name__ == "__main__":
@@ -99,3 +122,5 @@ if __name__ == "__main__":
     dataset = fire.Fire(main)
     print(len(dataset))
     print(dataset[0])
+=======
+>>>>>>> 3075ca4 (scaffolding ra_dit.datasets)
