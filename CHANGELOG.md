@@ -10,20 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
-## [0.0.4] - 2025-03-14
+## [0.0.6] - 2025-03-26
 
 ### Added
 
+- [Feature] Add utils.data module for building RAG Fine-tuning datasets given a RAGSystem and Sequence of examples (#98)
+- [Feature] Adds BaseTokenizer and HFPretrainedTokenizer subclass (#99)
+- [Feature] Enable BaseGenerator and BaseRetriever used in RAGSystem to access the rag system (#95)
 
-# Changelog
+### Changed
 
-All notable changes to this project will be documented in this file.
-The format is based on [Keep a Changelog](https://keepachangelog.com/),
-and this project adheres to [Semantic Versioning](https://semver.org/).
+- Small fixes to problems found while running the quick start example (#93)
 
-## Unreleased
+### Other
 
-- ...
+- Update LICENSE (#92)
 
 ## [0.0.5] - 2025-03-17
 
