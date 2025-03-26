@@ -19,9 +19,7 @@ keywords:
   - retrieval
   - semantic search
 license: MIT
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.15092361
+doi: 10.5281/zenodo.15092361
 repository-code: "https://github.com/VectorInstitute/fed-rag"
 type: software
 date-released: "2024-03-26"
