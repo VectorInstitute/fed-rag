@@ -9,7 +9,6 @@
 ![GitHub Release](https://img.shields.io/github/v/release/VectorInstitute/fed-rag)
 [![DOI](https://zenodo.org/badge/918377874.svg)](https://doi.org/10.5281/zenodo.15092361)
 
-
 FedRAG is a framework for federated fine-tuning of Retrieval-Augmented Generation
 (RAG) systems, wherein a server and potentially several client nodes share an overall
 model architecture. Since the model is common to all participants of the system,
