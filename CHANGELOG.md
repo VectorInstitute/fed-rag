@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [0.0.6] - 2025-03-26
 
+### Post
+
+- Test Zenodo
+
 ### Added
 
 - [Feature] Add utils.data module for building RAG Fine-tuning datasets given a RAGSystem and Sequence of examples (#98)
