@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
@@ -9,19 +11,22 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 def text_nodes() -> list[KnowledgeNode]:
     return [
         KnowledgeNode(
-            embedding=[1.0, 0.0, 1.0], node_type="text", text_content="node 1"
+            embedding=[1.0, 0.0, 1.0],
+            node_type="text",
+            text_content="node 1",
+            metadata={"key1": "value1"},
         ),
         KnowledgeNode(
-            embedding=[1.0, 0.0, 0.0], node_type="text", text_content="node 2"
+            embedding=[1.0, 0.0, 0.0],
+            node_type="text",
+            text_content="node 2",
+            metadata={"key2": "value2"},
         ),
         KnowledgeNode(
-            embedding=[
-                1.0,
-                1.0,
-                0.0,
-            ],
+            embedding=[1.0, 1.0, 0.0],
             node_type="text",
             text_content="node 3",
+            metadata={"key3": "value3"},
         ),
     ]
 
@@ -119,3 +124,32 @@ def test_retrieve(
 
     # assert
     assert [el[1] for el in res] == [text_nodes[ix] for ix in expected_node_ix]
+
+
+def test_persist(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store.persist()
+
+    assert os.path.exists(f"data/{knowledge_store.ks_id}.parquet")
+
+    # cleanup
+    os.remove(f"data/{knowledge_store.ks_id}.parquet")
+
+
+def test_load(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store.persist()
+
+    loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
+    assert loaded_knowledge_store.count == len(text_nodes)
+    for loaded_node in loaded_knowledge_store._data.values():
+        node = next(n for n in text_nodes if n.node_id == loaded_node.node_id)
+        assert loaded_node.node_id == node.node_id
+        assert loaded_node.text_content == node.text_content
+        assert loaded_node.image_content == node.image_content
+        assert loaded_node.embedding == node.embedding
+        assert loaded_node.node_type == node.node_type
+        assert loaded_node.metadata == node.metadata
+
+    # cleanup
+    os.remove(f"data/{knowledge_store.ks_id}.parquet")

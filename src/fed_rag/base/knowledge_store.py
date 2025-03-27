@@ -3,8 +3,9 @@
 from abc import ABC, abstractmethod
 
 from pydantic import BaseModel, ConfigDict
+from typing_extensions import Self
 
-from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
+from fed_rag.types.knowledge_node import KnowledgeNode
 
 
 class BaseKnowledgeStore(BaseModel, ABC):
@@ -19,27 +20,6 @@ class BaseKnowledgeStore(BaseModel, ABC):
     @abstractmethod
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         """Load multiple KnowledgeNodes in batch."""
-
-    @abstractmethod
-    def persist(
-        self,
-        embedding: list[float],
-        node_type: NodeType,
-        text_content: str | None,
-        image_content: bytes | None,
-    ) -> None:
-        """Persist an embedding into the KnowledgeStore.
-
-        If note_type == NodeType.TEXT, then text_content is required.
-        If note_type == NodeType.IMAGE, then image_content is required.
-        If note_type == NodeType.MULTIMODAL, then text_content and image_content are required.
-
-        Args:
-            embedding (list[float]): The embedding to persist.
-            node_type (NodeType): The type of node to persist.
-            text_content (str | None): The text content to persist.
-            image_content (bytes | None): The image content to persist.
-        """
 
     @abstractmethod
     def retrieve(
@@ -64,3 +44,17 @@ class BaseKnowledgeStore(BaseModel, ABC):
     @abstractmethod
     def count(self) -> int:
         """Return the number of nodes in the store."""
+
+    @abstractmethod
+    def persist(self) -> None:
+        """Save the KnowledgeStore nodes to a permanent storage."""
+
+    @classmethod
+    @abstractmethod
+    def load(cls, ks_id: str) -> Self:
+        """
+        Load the KnowledgeStore nodes from a permanent storage given an id.
+
+        Args:
+            ks_id: The id of the knowledge store to load.
+        """
