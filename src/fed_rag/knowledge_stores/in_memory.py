@@ -1,7 +1,14 @@
 """In Memory Knowledge Store"""
 
+import json
+import os
+import uuid
+from typing import Any
+
 import numpy as np
-from pydantic import PrivateAttr
+import pyarrow as pa
+import pyarrow.parquet as pq
+from pydantic import Field, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
@@ -40,12 +47,17 @@ def _get_top_k_nodes(
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
-    def from_nodes(cls, nodes: list[KnowledgeNode]) -> Self:
+    def from_nodes(
+        cls, nodes: list[KnowledgeNode], id: str | None = None
+    ) -> Self:
         instance = cls()
         instance.load_nodes(nodes)
+        if id:
+            instance.id = id
         return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
@@ -55,35 +67,6 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
             self.load_node(node)
-
-    def persist(
-        self,
-        embedding: list[float],
-        node_type: NodeType,
-        text_content: str | None,
-        image_content: bytes | None,
-    ) -> None:
-        if node_type == NodeType.TEXT and text_content is None:
-            raise ValueError("text_content is required for NodeType.TEXT")
-        if node_type == NodeType.IMAGE and image_content is None:
-            raise ValueError("image_content is required for NodeType.IMAGE")
-        if node_type == NodeType.MULTIMODAL and (
-            text_content is None or image_content is None
-        ):
-            raise ValueError(
-                "text_content and image_content are required for NodeType.MULTIMODAL"
-            )
-
-        node = KnowledgeNode(embedding=embedding, node_type=node_type)
-        if node_type == NodeType.TEXT:
-            node.text_content = text_content
-        elif node_type == NodeType.IMAGE:
-            node.image_content = image_content
-        elif node_type == NodeType.MULTIMODAL:
-            node.text_content = text_content
-            node.image_content = image_content
-
-        self.load_node(node)
 
     def retrieve(
         self, query_emb: list[float], top_k: int
@@ -107,3 +90,45 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     @property
     def count(self) -> int:
         return len(self._data)
+
+    def persist(self) -> None:
+        node_data: dict[str, list[Any]] = {
+            "node_id": [],
+            "text_content": [],
+            "image_content": [],
+            "embedding": [],
+            "node_type": [],
+            "metadata": [],
+        }
+
+        for node in self._data.values():
+            node_data["node_id"].append(node.node_id)
+            node_data["text_content"].append(node.text_content)
+            node_data["image_content"].append(node.image_content)
+            node_data["embedding"].append(node.embedding)
+            node_data["node_type"].append(node.node_type.value)
+            node_data["metadata"].append(json.dumps(node.metadata))
+
+        table = pa.Table.from_pydict(node_data)
+
+        os.makedirs("data", exist_ok=True)
+        pq.write_table(table, f"data/{self.id}.parquet")
+
+    @classmethod
+    def load(cls, id: str) -> Self:
+        parquet_data = pq.read_table(f"data/{id}.parquet").to_pydict()
+
+        nodes = []
+        for i in range(len(parquet_data["node_id"])):
+            nodes.append(
+                KnowledgeNode(
+                    node_id=parquet_data["node_id"][i],
+                    text_content=parquet_data["text_content"][i],
+                    image_content=parquet_data["image_content"][i],
+                    embedding=parquet_data["embedding"][i],
+                    node_type=NodeType(parquet_data["node_type"][i]),
+                    metadata=json.loads(parquet_data["metadata"][i]),
+                )
+            )
+
+        return cls.from_nodes(nodes, id)
