@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Fajardo"
+    given-names: "Andrei"
+    email: "andrei.fajardo@vectorinstitute.ai"
+  - family-names: "Emerson"
+    given-names: "David"
+    email: "david.emerson@vectorinstitute.ai"
+title: "fed-rag"
+version: "0.0.6.post1"
+abstract: "A framework for federated fine-tuning of retrieval-augmented generation (RAG) systems."
+keywords:
+  - machine learning
+  - federated learning
+  - deep learning
+  - llms
+  - rag
+  - retrieval
+  - semantic search
+license: Apache-2.0
+doi: 10.5281/zenodo.15092361
+repository-code: "https://github.com/VectorInstitute/fed-rag"
+type: software
+date-released: "2024-03-26"
+contact:
+  - family-names: "Fajardo"
+    given-names: "Andrei"
+    email: "andrei.fajardo@vectorinstitute.ai"
