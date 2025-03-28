@@ -1,5 +1,7 @@
 """Builds fine-tuning datasets for RA-DIT."""
 
+import json
+from pathlib import Path
 from typing import Literal
 
 from ra_dit.generators import GENERATORS
@@ -25,13 +27,22 @@ finetune_example_template = """<instruction>
 </context>
 
 <response>
-{response}
+{answer}
 </response>
 """
 
 
+QA_DATA_REGISTRY = {"mock": "mock_qa_examples.jsonl"}
+QA_DATA_PATH = Path(__file__).parents[1].absolute() / "data"
+
+
 def _load_qa_dataset(name: str) -> list[dict[str, str]]:
-    return []
+    data_file_path = QA_DATA_PATH / QA_DATA_REGISTRY[name]
+    examples = []
+    with open(data_file_path, "r") as f:
+        for line in f:
+            examples.append(json.loads(line))
+    return examples
 
 
 def main(
@@ -59,14 +70,32 @@ def main(
     )
 
     # generate retrieval-augmented instruction tuning dataset
-    _unwrapped_tokenizer = generator.tokenizer.unwrapped
-    eos_token_id = ...
+    unwrapped_tokenizer = generator.tokenizer.unwrapped
+
+    # find eos_token_id
+    try:
+        eos_token = unwrapped_tokenizer.special_tokens_map.get("eos_token")
+    except KeyError:
+        raise ValueError("Tokenizer doesn't have an `eos_token`.")
+    eos_token_ix = unwrapped_tokenizer.all_special_tokens.index(eos_token)
+    eos_token_id = unwrapped_tokenizer.all_special_ids[eos_token_ix]
+
+    # build dataset
     dataset: HuggingfaceRAGFinetuningDataset = build_finetune_dataset(
         rag_system=rag_system,
         examples=examples,
+        answer_key="response",
         eos_token_id=eos_token_id,
-        finetune_example_template=...,
+        finetune_example_template=finetune_example_template,
         return_dataset="hf",
     )
 
     return dataset
+
+
+if __name__ == "__main__":
+    import fire
+
+    dataset = fire.Fire(main)
+    print(len(dataset))
+    print(dataset[0])
