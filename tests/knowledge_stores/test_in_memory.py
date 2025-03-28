@@ -130,10 +130,13 @@ def test_persist(text_nodes: list[KnowledgeNode]) -> None:
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
     knowledge_store.persist()
 
-    assert os.path.exists(f"data/{knowledge_store.ks_id}.parquet")
+    filename = InMemoryKnowledgeStore.default_save_path.format(
+        knowledge_store.ks_id
+    )
+    assert os.path.exists(filename)
 
     # cleanup
-    os.remove(f"data/{knowledge_store.ks_id}.parquet")
+    os.remove(filename)
 
 
 def test_load(text_nodes: list[KnowledgeNode]) -> None:
@@ -141,6 +144,7 @@ def test_load(text_nodes: list[KnowledgeNode]) -> None:
     knowledge_store.persist()
 
     loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
+
     assert loaded_knowledge_store.count == len(text_nodes)
     for loaded_node in loaded_knowledge_store._data.values():
         node = next(n for n in text_nodes if n.node_id == loaded_node.node_id)
@@ -152,4 +156,7 @@ def test_load(text_nodes: list[KnowledgeNode]) -> None:
         assert loaded_node.metadata == node.metadata
 
     # cleanup
-    os.remove(f"data/{knowledge_store.ks_id}.parquet")
+    filename = InMemoryKnowledgeStore.default_save_path.format(
+        knowledge_store.ks_id
+    )
+    os.remove(filename)

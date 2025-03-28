@@ -1,9 +1,9 @@
 """In Memory Knowledge Store"""
 
 import json
-import os
 import uuid
-from typing import Any
+from pathlib import Path
+from typing import ClassVar
 
 import numpy as np
 import pyarrow as pa
@@ -12,7 +12,7 @@ from pydantic import Field, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
+from fed_rag.types.knowledge_node import KnowledgeNode
 
 DEFAULT_TOP_K = 2
 
@@ -46,6 +46,8 @@ def _get_top_k_nodes(
 
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
+
+    default_save_path: ClassVar[str] = ".fed_rag/data_cache/{0}.parquet"
 
     ks_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
@@ -92,43 +94,26 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         return len(self._data)
 
     def persist(self) -> None:
-        node_data: dict[str, list[Any]] = {
-            "node_id": [],
-            "text_content": [],
-            "image_content": [],
-            "embedding": [],
-            "node_type": [],
-            "metadata": [],
-        }
-
+        node_data = []
         for node in self._data.values():
-            node_data["node_id"].append(node.node_id)
-            node_data["text_content"].append(node.text_content)
-            node_data["image_content"].append(node.image_content)
-            node_data["embedding"].append(node.embedding)
-            node_data["node_type"].append(node.node_type.value)
-            node_data["metadata"].append(json.dumps(node.metadata))
+            data = node.model_dump()
+            data["metadata"] = json.dumps(data["metadata"])
+            node_data.append(data)
 
-        table = pa.Table.from_pydict(node_data)
+        table = pa.Table.from_pylist(node_data)
 
-        os.makedirs("data", exist_ok=True)
-        pq.write_table(table, f"data/{self.ks_id}.parquet")
+        filename = self.__class__.default_save_path.format(self.ks_id)
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        pq.write_table(table, filename)
 
     @classmethod
     def load(cls, ks_id: str) -> Self:
-        parquet_data = pq.read_table(f"data/{ks_id}.parquet").to_pydict()
+        filename = cls.default_save_path.format(ks_id)
+        parquet_data = pq.read_table(filename).to_pylist()
 
         nodes = []
-        for i in range(len(parquet_data["node_id"])):
-            nodes.append(
-                KnowledgeNode(
-                    node_id=parquet_data["node_id"][i],
-                    text_content=parquet_data["text_content"][i],
-                    image_content=parquet_data["image_content"][i],
-                    embedding=parquet_data["embedding"][i],
-                    node_type=NodeType(parquet_data["node_type"][i]),
-                    metadata=json.loads(parquet_data["metadata"][i]),
-                )
-            )
+        for data in parquet_data:
+            data["metadata"] = json.loads(data["metadata"])
+            nodes.append(KnowledgeNode(**data))
 
         return cls.from_nodes(nodes, ks_id)
