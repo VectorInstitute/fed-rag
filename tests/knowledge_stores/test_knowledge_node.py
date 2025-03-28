@@ -135,3 +135,55 @@ def test_get_content(
     node: KnowledgeNode, expected_content: NodeContent
 ) -> None:
     assert node.get_content() == expected_content
+
+
+def test_serialize_metadata() -> None:
+    # test when metadata is None
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+    )
+    serialized_content = node.model_dump()
+    assert not serialized_content["metadata"]
+
+    # test when metadata is not None
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+        metadata={"key1": "value1", "key2": "value2"},
+    )
+    serialized_content = node.model_dump()
+    assert (
+        serialized_content["metadata"]
+        == '{"key1": "value1", "key2": "value2"}'
+    )
+
+
+def test_deserialize_metadata() -> None:
+    # test when metadata is None
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+    )
+    assert node.metadata == {}
+
+    # test when metadata is a dictionary
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+        metadata={"key1": "value1", "key2": "value2"},
+    )
+    assert node.metadata == {"key1": "value1", "key2": "value2"}
+
+    # test when metadata is a json string
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+        metadata='{"key1": "value1", "key2": "value2"}',
+    )
+    assert node.metadata == {"key1": "value1", "key2": "value2"}
