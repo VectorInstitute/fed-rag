@@ -145,15 +145,32 @@ def test_load(text_nodes: list[KnowledgeNode]) -> None:
 
     loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
 
-    assert loaded_knowledge_store.count == len(text_nodes)
-    for loaded_node in loaded_knowledge_store._data.values():
-        node = next(n for n in text_nodes if n.node_id == loaded_node.node_id)
-        assert loaded_node.node_id == node.node_id
-        assert loaded_node.text_content == node.text_content
-        assert loaded_node.image_content == node.image_content
-        assert loaded_node.embedding == node.embedding
-        assert loaded_node.node_type == node.node_type
-        assert loaded_node.metadata == node.metadata
+    assert loaded_knowledge_store.ks_id == knowledge_store.ks_id
+    assert loaded_knowledge_store._data == knowledge_store._data
+
+    # cleanup
+    filename = InMemoryKnowledgeStore.default_save_path.format(
+        knowledge_store.ks_id
+    )
+    os.remove(filename)
+
+
+def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store.persist()
+
+    knowledge_store.load_node(
+        KnowledgeNode(
+            embedding=[1.0, 1.0, 1.0],
+            node_type="text",
+            text_content="node 4",
+            metadata={"key4": "value4"},
+        )
+    )
+    knowledge_store.persist()
+
+    loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
+    assert loaded_knowledge_store._data == knowledge_store._data
 
     # cleanup
     filename = InMemoryKnowledgeStore.default_save_path.format(

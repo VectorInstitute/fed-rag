@@ -11,7 +11,7 @@ dev_notebooks/
 .ruff_cache
 .env
 fed-rag.code-workspace
-.fed-rag/
+.fed_rag/
 
 # datasets for running examples
 data/

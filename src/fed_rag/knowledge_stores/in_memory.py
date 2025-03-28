@@ -1,14 +1,13 @@
 """In Memory Knowledge Store"""
 
-import json
 import uuid
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar, Dict, cast
 
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-from pydantic import Field, PrivateAttr
+from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
@@ -53,13 +52,9 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
-    def from_nodes(
-        cls, nodes: list[KnowledgeNode], ks_id: str | None = None
-    ) -> Self:
+    def from_nodes(cls, nodes: list[KnowledgeNode]) -> Self:
         instance = cls()
         instance.load_nodes(nodes)
-        if ks_id:
-            instance.ks_id = ks_id
         return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
@@ -93,27 +88,32 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def count(self) -> int:
         return len(self._data)
 
-    def persist(self) -> None:
-        node_data = []
-        for node in self._data.values():
-            data = node.model_dump()
-            data["metadata"] = json.dumps(data["metadata"])
-            node_data.append(data)
+    @model_serializer(mode="wrap")
+    def custom_model_dump(self, handler: Any) -> Dict[str, Any]:
+        data = handler(self)
+        data = cast(Dict[str, Any], data)
+        # include _data in serialization
+        if self._data:
+            data["_data"] = self._data
+        return data  # type: ignore[no-any-return]
 
-        table = pa.Table.from_pylist(node_data)
+    def persist(self) -> None:
+        serialized_model = self.model_dump()
+        data_values = list(serialized_model["_data"].values())
+
+        parquet_table = pa.Table.from_pylist(data_values)
 
         filename = self.__class__.default_save_path.format(self.ks_id)
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
-        pq.write_table(table, filename)
+        pq.write_table(parquet_table, filename)
 
     @classmethod
     def load(cls, ks_id: str) -> Self:
         filename = cls.default_save_path.format(ks_id)
         parquet_data = pq.read_table(filename).to_pylist()
 
-        nodes = []
-        for data in parquet_data:
-            data["metadata"] = json.loads(data["metadata"])
-            nodes.append(KnowledgeNode(**data))
-
-        return cls.from_nodes(nodes, ks_id)
+        knowledge_store = cls.from_nodes(
+            [KnowledgeNode(**data) for data in parquet_data]
+        )
+        knowledge_store.ks_id = ks_id
+        return knowledge_store
