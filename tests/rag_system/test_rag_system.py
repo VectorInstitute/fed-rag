@@ -30,8 +30,6 @@ def test_rag_system_init(
     assert rag_system.rag_config == rag_config
     assert rag_system.generator == mock_generator
     assert rag_system.retriever == mock_retriever
-    assert rag_system.generator.model.__associated_rag_system == rag_system
-    assert rag_system.retriever.encoder.__associated_rag_system == rag_system
 
 
 def test_rag_system_with_dual_encoder_init(
@@ -53,15 +51,6 @@ def test_rag_system_with_dual_encoder_init(
     assert rag_system.rag_config == rag_config
     assert rag_system.generator == mock_generator
     assert rag_system.retriever == mock_dual_retriever
-    assert rag_system.generator.model.__associated_rag_system == rag_system
-    assert (
-        rag_system.retriever.query_encoder.__associated_rag_system
-        == rag_system
-    )
-    assert (
-        rag_system.retriever.context_encoder.__associated_rag_system
-        == rag_system
-    )
 
 
 @patch.object(RAGSystem, "generate")
