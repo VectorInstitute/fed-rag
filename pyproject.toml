@@ -57,6 +57,12 @@ huggingface = [
   "sentence-transformers>=3.4.1"
 ]
 
+[project.urls]
+Documentation = "https://vectorinstitute.github.io/fed-rag/"
+Repository = "https://github.com/VectorInstitute/fed-rag"
+Issues = "https://github.com/VectorInstitute/fed-rag/issues"
+Changelog = "https://github.com/VectorInstitute/fed-rag/blob/main/CHANGELOG.md"
+
 [tool.hatch.build.targets.sdist]
 only-include = ["src", "tests"] # keep build small, exclude examples
 
