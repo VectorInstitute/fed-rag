@@ -1,0 +1,17 @@
+site_name: FedRAG
+nav:
+  - Home: index.md
+  - API: references.md
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+repo_url: https://github.com/VectorInstitute/fed-rag
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          show_submodules: true
