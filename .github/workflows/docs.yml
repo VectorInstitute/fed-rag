@@ -31,7 +31,7 @@ jobs:
           enable-cache: true
 
       - name: Install the project
-        run: uv sync --all-extras --with dev,docs
+        run: uv sync --all-extras --group dev --group docs
 
       - name: Deploy to Github pages
         run: |
