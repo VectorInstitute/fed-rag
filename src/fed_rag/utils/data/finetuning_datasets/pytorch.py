@@ -7,6 +7,12 @@ from torch.utils.data import Dataset
 
 
 class PyTorchRAGFinetuningDataset(Dataset):
+    """PyTorch RAG Fine-Tuning Dataset Class.
+
+    Args:
+        Dataset (_type_): _description_
+    """
+
     def __init__(
         self, input_ids: list[torch.Tensor], target_ids: list[torch.Tensor]
     ):
