@@ -12,6 +12,9 @@ dev_notebooks/
 .env
 fed-rag.code-workspace
 
+# docs
+site/
+
 # datasets for running examples
 data/
 !src/fed_rag/utils/data
