@@ -5,11 +5,12 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # To push a branch
+      pull-requests: write  # To create a PR from that branch
     steps:
       - name: get code
         uses: actions/checkout@v4
@@ -33,6 +34,12 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --group dev --group docs
 
-      - name: Deploy to Github pages
+      - name: Build docs
         run: |
-          uv run mkdocs gh-deploy --force
+          uv run mkdocs build
+
+      - name: Deploy to github pages
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: site # The folder the action should deploy.
