@@ -1,0 +1,10 @@
+:root > * {
+  --md-primary-fg-color: #eb088a;
+  --md-primary-fg-color--light: #f252a5;
+  --md-primary-fg-color--dark: #b00068;
+  --md-accent-fg-color: #48c0d9; /* Vector teal */
+}
+
+[data-md-color-scheme="slate"] {
+  --md-hue: 220;
+}
