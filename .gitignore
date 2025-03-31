@@ -14,6 +14,7 @@ fed-rag.code-workspace
 
 # docs
 site/
+docs/stylesheets/extra.css.map
 
 # datasets for running examples
 data/

@@ -4,8 +4,28 @@ nav:
   - API: references.md
 theme:
   name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
+extra_css:
+  - stylesheets/extra.css
 repo_url: https://github.com/VectorInstitute/fed-rag
 
 plugins:
