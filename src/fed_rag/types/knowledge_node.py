@@ -1,14 +1,16 @@
 """Knowledge Node"""
 
+import json
 import uuid
 from enum import Enum
-from typing import TypedDict, cast
+from typing import Any, TypedDict, cast
 
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
     ValidationInfo,
+    field_serializer,
     field_validator,
 )
 
@@ -92,3 +94,43 @@ class KnowledgeNode(BaseModel):
             "text_content": self.text_content,
         }
         return content
+
+    @field_serializer("metadata")
+    def serialize_metadata(
+        self, metadata: dict[Any, Any] | None
+    ) -> str | None:
+        """
+        Custom serializer for the metadata field.
+
+        Will serialize the metadata field into a json string.
+
+        Args:
+            metadata: Metadata dictionary to serialize.
+
+        Returns:
+            Serialized metadata as a json string.
+        """
+        if metadata:
+            return json.dumps(metadata)
+        return None
+
+    @field_validator("metadata", mode="before")
+    @classmethod
+    def deserialize_metadata(
+        cls, metadata: dict[Any, Any] | str | None
+    ) -> dict[Any, Any] | None:
+        """
+        Custom validator for the metadata field.
+
+        Will deserialize the metadata from a json string if it's a string.
+
+        Args:
+            metadata: Metadata to validate. If it is a json string, it will be deserialized into a dictionary.
+
+        Returns:
+            Validated metadata.
+        """
+        if isinstance(metadata, str):
+            deserialized_metadata = json.loads(metadata)
+            return cast(dict[Any, Any], deserialized_metadata)
+        return metadata
