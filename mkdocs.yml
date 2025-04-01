@@ -39,8 +39,7 @@ nav:
       - api_reference/fl_tasks/huggingface.md
     - Knowledge Stores:
       - api_reference/knowledge_stores/index.md
-      - api_reference/knowledge_stores/in_memory.md
-
+      - InMemory: api_reference/knowledge_stores/in_memory.md
 plugins:
   - search
   - mkdocstrings:
