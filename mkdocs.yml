@@ -1,7 +1,51 @@
-site_name: FedRAG
+extra_css:
+  - stylesheets/extra.css
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/mastodon
+      link: https://fosstodon.org/@squidfunk
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - md_in_html
+  - toc:
+      permalink: true
 nav:
   - Home: index.md
-  - API: references.md
+  - Getting started:
+    - getting-started/index.md
+    - Installation: getting-started/installation.md
+    - Creating your site: getting-started/creating-your-site.md
+  - API Reference:
+    - api_reference/index.md
+    - Decorators:
+      - api_reference/decorators/index.md
+      - Inspectors:
+        - api_reference/inspectors/index.md
+        - api_reference/inspectors/pytorch.md
+        - api_reference/inspectors/huggingface.md
+
+    - FL Tasks:
+      - api_reference/fl_tasks/index.md
+      - api_reference/fl_tasks/pytorch.md
+      - api_reference/fl_tasks/huggingface.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            members_order: source
+            docstring_style: google
+            show_submodules: true
+            show_root_heading: false
+            show_root_toc_entry: false
+repo_url: https://github.com/VectorInstitute/fed-rag
+repo_name: VectorInsitute/fed-rag
+site_name: FedRAG
 theme:
   name: material
   logo: assets/logo.svg
@@ -9,15 +53,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: custom
-      accent: indigo
+      primary: vector
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: custom
-      accent: indigo
+      primary: black
+      accent: vector-pink
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -26,14 +70,13 @@ theme:
     code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
-extra_css:
-  - stylesheets/extra.css
-repo_url: https://github.com/VectorInstitute/fed-rag
-
-plugins:
-- search
-- mkdocstrings:
-    handlers:
-      python:
-        options:
-          show_submodules: true
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - search.suggest
+    - search.highlight
