@@ -13,8 +13,8 @@
   --md-primary-bg-color: #eb088a;
 }
 
-[data-md-color-accent="vector-pink"] {
-  --md-accent-fg-color: #f252a5;
+[data-md-color-accent="vector-teal"] {
+  --md-accent-fg-color: #48c0d9;
   --md-accent-fg-color--transparent: #526cfe1a;
   --md-accent-bg-color: #fff;
   --md-accent-bg-color--light: #ffffffb3;
@@ -24,6 +24,7 @@
   --md-typeset-a-color: #eb088a;
 }
 
+/* for logo specification with dark/light modes to match overrides/partial/logo.html */
 #logo_light_mode {
   display: var(--md-footer-logo-light-mode);
 }
@@ -43,6 +44,7 @@
   --md-footer-logo-light-mode: none;
 }
 
+/* Vector logo css styling to match overrides/partial/copyright.html */
 .md-footer-vector {
   display: flex;
   align-items: center;
@@ -65,4 +67,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* To make socials and Vector logo not stack when viewing on mobile */
+@media screen and (max-width: 76.234375em) {
+  .md-footer-meta__inner.md-grid {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .md-copyright,
+  .md-social {
+    width: auto;
+    max-width: 49%;
+  }
+
+  /* Prevent margin that causes stacking */
+  .md-social {
+    margin: 0;
+  }
 }
