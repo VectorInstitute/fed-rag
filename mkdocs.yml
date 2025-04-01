@@ -54,7 +54,7 @@ repo_name: VectorInsitute/fed-rag
 site_name: FedRAG
 theme:
   custom_dir: docs/overrides
-  favicon: assets/favicon.svg
+  favicon: assets/favicon-48x48.svg
   features:
     - navigation.footer
     - navigation.indexes
