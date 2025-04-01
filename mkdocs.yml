@@ -1,38 +1,88 @@
-site_name: FedRAG
+extra_css:
+  - stylesheets/extra.css
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/discord
+      link: 404.html
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/vector-institute/
+    - icon: fontawesome/brands/bluesky
+      link: https://web-cdn.bsky.app/profile/vectorinstitute.ai
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/vectorinst
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - md_in_html
+  - toc:
+      permalink: true
 nav:
   - Home: index.md
-  - API: references.md
+  - Getting started:
+    - getting_started/index.md
+    - Installation: getting_started/installation.md
+    - Quickstart: getting_started/quickstart.md
+  - API Reference:
+    - api_reference/index.md
+    - Decorators:
+      - api_reference/decorators/index.md
+      - Inspectors:
+        - api_reference/inspectors/index.md
+        - api_reference/inspectors/pytorch.md
+        - api_reference/inspectors/huggingface.md
+
+    - FL Tasks:
+      - api_reference/fl_tasks/index.md
+      - api_reference/fl_tasks/pytorch.md
+      - api_reference/fl_tasks/huggingface.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            members_order: source
+            docstring_style: google
+            show_submodules: true
+            show_root_heading: false
+            show_root_toc_entry: false
+repo_url: https://github.com/VectorInstitute/fed-rag
+repo_name: VectorInsitute/fed-rag
+site_name: FedRAG
 theme:
+  custom_dir: docs/overrides
+  favicon: assets/favicon.svg
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+  logo_dark_mode: assets/logo-dark.svg
+  logo_light_mode: assets/logo.svg
+  logo_footer: assets/vector-logo.svg
   name: material
-  logo: assets/logo.svg
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: custom
-      accent: indigo
+      primary: vector
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: custom
-      accent: indigo
+      primary: black
+      accent: vector-pink
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  font:
-    text: Roboto
-    code: Roboto Mono
-  icon:
-    repo: fontawesome/brands/github
-extra_css:
-  - stylesheets/extra.css
-repo_url: https://github.com/VectorInstitute/fed-rag
-
-plugins:
-- search
-- mkdocstrings:
-    handlers:
-      python:
-        options:
-          show_submodules: true
