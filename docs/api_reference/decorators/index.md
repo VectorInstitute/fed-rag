@@ -1,4 +1,4 @@
-<!-- markdownlint-disable-file MD041 -->
+# Trainer and Tester Decorators
 
 ::: src.fed_rag.decorators.trainer
     options:
