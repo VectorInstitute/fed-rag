@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../inspectors/huggingface/">
+        <link rel="prev" href="../fl_tasks/huggingface/">
       
       
-        <link rel="next" href="pytorch/">
+        <link rel="next" href="in_memory/">
       
       
       <link rel="icon" href="../../assets/favicon-48x48.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Base FL Task Classes - FedRAG</title>
+        <title>Base KnowledgeStore - FedRAG</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#base-fl-task-classes" class="md-skip">
+        <a href="#base-knowledgestore" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Base FL Task Classes
+              Base KnowledgeStore
             
           </span>
         </div>
@@ -717,8 +717,6 @@
                 
   
   
-    
-  
   
   
     
@@ -739,15 +737,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -760,13 +758,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             FL Tasks
@@ -782,7 +780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="pytorch/" class="md-nav__link">
+      <a href="../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -805,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="huggingface/" class="md-nav__link">
+      <a href="../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -833,6 +831,8 @@
                 
   
   
+    
+  
   
   
     
@@ -851,15 +851,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../knowledge_stores/" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   
@@ -872,13 +872,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+              <label class="md-nav__link md-nav__link--active" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             Knowledge Stores
@@ -894,7 +894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="in_memory/" class="md-nav__link">
         
   
   
@@ -952,37 +952,82 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.base.fl_task.BaseFLTask" class="md-nav__link">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore" class="md-nav__link">
     <span class="md-ellipsis">
-      BaseFLTask
+      BaseKnowledgeStore
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="BaseFLTask">
+    <nav class="md-nav" aria-label="BaseKnowledgeStore">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#src.fed_rag.base.fl_task.BaseFLTask.simulate" class="md-nav__link">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.count" class="md-nav__link">
     <span class="md-ellipsis">
-      simulate
+      count
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#src.fed_rag.base.fl_task.BaseFLTask.server" class="md-nav__link">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_node" class="md-nav__link">
     <span class="md-ellipsis">
-      server
+      load_node
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#src.fed_rag.base.fl_task.BaseFLTask.client" class="md-nav__link">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_nodes" class="md-nav__link">
     <span class="md-ellipsis">
-      client
+      load_nodes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.retrieve" class="md-nav__link">
+    <span class="md-ellipsis">
+      retrieve
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.delete_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_node
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      clear
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.persist" class="md-nav__link">
+    <span class="md-ellipsis">
+      persist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load
     </span>
   </a>
   
@@ -990,15 +1035,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.base.fl_task.BaseFLTaskConfig" class="md-nav__link">
-    <span class="md-ellipsis">
-      BaseFLTaskConfig
-    </span>
-  </a>
   
 </li>
       
@@ -1021,7 +1057,7 @@
   
 
 
-<h1 id="base-fl-task-classes">Base FL Task Classes<a class="headerlink" href="#base-fl-task-classes" title="Permanent link">&para;</a></h1>
+<h1 id="base-knowledgestore">Base KnowledgeStore<a class="headerlink" href="#base-knowledgestore" title="Permanent link">&para;</a></h1>
 
 
 <div class="doc doc-object doc-module">
@@ -1031,7 +1067,7 @@
 
     <div class="doc doc-contents first">
 
-        <p>Base FL Task</p>
+        <p>Base Knowledge Store</p>
 
 
 
@@ -1054,17 +1090,19 @@
 
 
 
-<h2 id="src.fed_rag.base.fl_task.BaseFLTask" class="doc doc-heading">
-            <code>BaseFLTask</code>
+<h2 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore" class="doc doc-heading">
+            <code>BaseKnowledgeStore</code>
 
 
-<a href="#src.fed_rag.base.fl_task.BaseFLTask" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code>, <code><span title="abc.ABC">ABC</span></code></p>
 
+
+        <p>Base Knowledge Store Class.</p>
 
 
 
@@ -1073,8 +1111,15 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/base/fl_task.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+                <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -1116,77 +1161,56 @@
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseFLTask</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseKnowledgeStore</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Knowledge Store Class.&quot;&quot;&quot;</span>
+
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">KnowledgeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a KnowledgeNode into the KnowledgeStore.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load multiple KnowledgeNodes in batch.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query_emb</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">KnowledgeNode</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve top-k nodes from KnowledgeStore against a provided user query.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of tuples where the first element represents the similarity score</span>
+<span class="sd">            of the node to the query, and the second element is the node itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a node from the KnowledgeStore by ID, returning success status.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all nodes from the KnowledgeStore.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">training_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of nodes in the store.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the KnowledgeStore nodes to a permanent storage.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_configs</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">trainer_cfg</span><span class="p">:</span> <span class="n">BaseFLTaskConfig</span><span class="p">,</span> <span class="n">tester_cfg</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the KnowledgeStore nodes from a permanent storage given an id.</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_trainer_and_tester</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">tester</span><span class="p">:</span> <span class="n">Callable</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">trainer_cfg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="s2">&quot;__fl_task_trainer_config&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;`__fl_task_trainer_config` has not been set on training loop. Make &quot;</span>
-                <span class="s2">&quot;sure to decorate your training loop with the appropriate &quot;</span>
-                <span class="s2">&quot;decorator.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="n">MissingFLTaskConfig</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">tester_cfg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tester</span><span class="p">,</span> <span class="s2">&quot;__fl_task_tester_config&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;`__fl_task_tester_config` has not been set on tester callable. Make &quot;</span>
-                <span class="s2">&quot;sure to decorate your tester with the appropriate decorator.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="n">MissingFLTaskConfig</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_configs</span><span class="p">(</span><span class="n">trainer_cfg</span><span class="p">,</span> <span class="n">tester_cfg</span><span class="p">)</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_clients</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulate the FL task.</span>
-
-<span class="sd">        Either use flwr&#39;s simulation tools, or create our own here.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            ks_id: The id of the knowledge store to load.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Server</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a flwr.Server object.&quot;&quot;&quot;</span>
-        <span class="o">...</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a flwr.Client object.&quot;&quot;&quot;</span>
-        <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1200,42 +1224,165 @@
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.count" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">count</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.count" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the number of nodes in the store.</p>
+
+    </div>
+
+</div>
+
 
 
 <div class="doc doc-object doc-function">
 
 
-<h3 id="src.fed_rag.base.fl_task.BaseFLTask.simulate" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">simulate</span><span class="p">(</span><span class="n">num_clients</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_node" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">load_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
-<a href="#src.fed_rag.base.fl_task.BaseFLTask.simulate" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_node" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Simulate the FL task.</p>
-<p>Either use flwr's simulation tools, or create our own here.</p>
+        <p>Load a KnowledgeNode into the KnowledgeStore.</p>
 
 
             <details class="quote">
-              <summary>Source code in <code>src/fed_rag/base/fl_task.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_clients</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate the FL task.</span>
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">KnowledgeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a KnowledgeNode into the KnowledgeStore.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
 
-<span class="sd">    Either use flwr&#39;s simulation tools, or create our own here.</span>
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_nodes" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">load_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load_nodes" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load multiple KnowledgeNodes in batch.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load multiple KnowledgeNodes in batch.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.retrieve" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">retrieve</span><span class="p">(</span><span class="n">query_emb</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.retrieve" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieve top-k nodes from KnowledgeStore against a provided user query.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="list">list</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="fed_rag.types.knowledge_node.KnowledgeNode">KnowledgeNode</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of tuples where the first element represents the similarity score</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="list">list</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="fed_rag.types.knowledge_node.KnowledgeNode">KnowledgeNode</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>of the node to the query, and the second element is the node itself.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">query_emb</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">KnowledgeNode</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve top-k nodes from KnowledgeStore against a provided user query.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of tuples where the first element represents the similarity score</span>
+<span class="sd">        of the node to the query, and the second element is the node itself.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="o">...</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1245,30 +1392,28 @@
 <div class="doc doc-object doc-function">
 
 
-<h3 id="src.fed_rag.base.fl_task.BaseFLTask.server" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">server</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.delete_node" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">delete_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
-<a href="#src.fed_rag.base.fl_task.BaseFLTask.server" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.delete_node" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Create a flwr.Server object.</p>
+        <p>Remove a node from the KnowledgeStore by ID, returning success status.</p>
 
 
             <details class="quote">
-              <summary>Source code in <code>src/fed_rag/base/fl_task.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Server</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a flwr.Server object.&quot;&quot;&quot;</span>
-    <span class="o">...</span>
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a node from the KnowledgeStore by ID, returning success status.&quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1278,30 +1423,134 @@
 <div class="doc doc-object doc-function">
 
 
-<h3 id="src.fed_rag.base.fl_task.BaseFLTask.client" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">client</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.clear" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">clear</span><span class="p">()</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
-<a href="#src.fed_rag.base.fl_task.BaseFLTask.client" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.clear" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Create a flwr.Client object.</p>
+        <p>Clear all nodes from the KnowledgeStore.</p>
 
 
             <details class="quote">
-              <summary>Source code in <code>src/fed_rag/base/fl_task.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a flwr.Client object.&quot;&quot;&quot;</span>
-    <span class="o">...</span>
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all nodes from the KnowledgeStore.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.persist" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">persist</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.persist" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Save the KnowledgeStore nodes to a permanent storage.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the KnowledgeStore nodes to a permanent storage.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">load</span><span class="p">(</span><span class="n">ks_id</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#src.fed_rag.base.knowledge_store.BaseKnowledgeStore.load" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load the KnowledgeStore nodes from a permanent storage given an id.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>ks_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The id of the knowledge store to load.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/fed_rag/base/knowledge_store.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the KnowledgeStore nodes from a permanent storage given an id.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks_id: The id of the knowledge store to load.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1311,40 +1560,6 @@
 
 
   </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="src.fed_rag.base.fl_task.BaseFLTaskConfig" class="doc doc-heading">
-            <code>BaseFLTaskConfig</code>
-
-
-<a href="#src.fed_rag.base.fl_task.BaseFLTaskConfig" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
-
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>src/fed_rag/base/fl_task.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseFLTaskConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="k">pass</span>
-</code></pre></div></td></tr></table></div>
-              </details>
 
     </div>
 
@@ -1393,7 +1608,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../inspectors/huggingface/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Huggingface">
+          <a href="../fl_tasks/huggingface/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Huggingface">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1410,13 +1625,13 @@
         
         
           
-          <a href="pytorch/" class="md-footer__link md-footer__link--next" aria-label="Next: Pytorch">
+          <a href="in_memory/" class="md-footer__link md-footer__link--next" aria-label="Next: In memory">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Pytorch
+                In memory
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -9,21 +9,23 @@
       
       
       
+        <link rel="prev" href="../">
       
       
-      <link rel="icon" href="/assets/favicon-48x48.svg">
+      
+      <link rel="icon" href="../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>FedRAG</title>
+        <title>In memory - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="/assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -42,11 +44,11 @@
       
     
     
-      <link rel="stylesheet" href="/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#src.fed_rag.knowledge_stores.in_memory.InMemoryKnowledgeStore" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -81,15 +88,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="/assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="/assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -107,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              In memory
             
           </span>
         </div>
@@ -217,7 +224,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -238,7 +245,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/getting_started/" class="md-tabs__link">
+        <a href="../../../getting_started/" class="md-tabs__link">
           
   
   
@@ -256,11 +263,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/api_reference/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -296,15 +305,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="/assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="/assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -332,7 +341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -379,7 +388,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/getting_started/" class="md-nav__link ">
+            <a href="../../../getting_started/" class="md-nav__link ">
               
   
   
@@ -414,7 +423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/getting_started/installation/" class="md-nav__link">
+      <a href="../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -437,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/getting_started/quickstart/" class="md-nav__link">
+      <a href="../../../getting_started/quickstart/" class="md-nav__link">
         
   
   
@@ -464,6 +473,8 @@
       
   
   
+    
+  
   
   
     
@@ -485,18 +496,21 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/api_reference/" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -509,13 +523,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             API Reference
@@ -552,7 +566,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/api_reference/decorators/" class="md-nav__link ">
+            <a href="../../decorators/" class="md-nav__link ">
               
   
   
@@ -615,7 +629,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/api_reference/inspectors/" class="md-nav__link ">
+            <a href="../../inspectors/" class="md-nav__link ">
               
   
   
@@ -650,7 +664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api_reference/inspectors/pytorch/" class="md-nav__link">
+      <a href="../../inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -673,7 +687,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api_reference/inspectors/huggingface/" class="md-nav__link">
+      <a href="../../inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -729,7 +743,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/api_reference/fl_tasks/" class="md-nav__link ">
+            <a href="../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -764,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api_reference/fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -787,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/api_reference/fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -815,6 +829,8 @@
                 
   
   
+    
+  
   
   
     
@@ -833,15 +849,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="/api_reference/knowledge_stores/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -860,7 +876,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             Knowledge Stores
@@ -873,10 +889,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/api_reference/knowledge_stores/in_memory/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    In memory
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -887,6 +923,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.knowledge_stores.in_memory.InMemoryKnowledgeStore" class="md-nav__link">
+    <span class="md-ellipsis">
+      InMemoryKnowledgeStore
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -925,6 +988,23 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.knowledge_stores.in_memory.InMemoryKnowledgeStore" class="md-nav__link">
+    <span class="md-ellipsis">
+      InMemoryKnowledgeStore
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -935,8 +1015,262 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+  <h1>In memory</h1>
+
+<!-- markdownlint-disable-file MD041 -->
+
+
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>In Memory Knowledge Store</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.knowledge_stores.in_memory.InMemoryKnowledgeStore" class="doc doc-heading">
+            <code>InMemoryKnowledgeStore</code>
+
+
+<a href="#src.fed_rag.knowledge_stores.in_memory.InMemoryKnowledgeStore" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="fed_rag.base.knowledge_store.BaseKnowledgeStore">BaseKnowledgeStore</span></code></p>
+
+
+        <p>InMemoryKnowledgeStore Class.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/knowledge_stores/in_memory.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InMemoryKnowledgeStore</span><span class="p">(</span><span class="n">BaseKnowledgeStore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;InMemoryKnowledgeStore Class.&quot;&quot;&quot;</span>
+
+    <span class="n">default_save_path</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.fed_rag/data_cache/</span><span class="si">{0}</span><span class="s2">.parquet&quot;</span>
+
+    <span class="n">ks_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
+    <span class="n">_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KnowledgeNode</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_nodes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">load_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">KnowledgeNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">node_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">KnowledgeNode</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query_emb</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">KnowledgeNode</span><span class="p">]]:</span>
+        <span class="n">all_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">node_ids_and_scores</span> <span class="o">=</span> <span class="n">_get_top_k_nodes</span><span class="p">(</span>
+            <span class="n">nodes</span><span class="o">=</span><span class="n">all_nodes</span><span class="p">,</span> <span class="n">query_emb</span><span class="o">=</span><span class="n">query_emb</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">el</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">node_ids_and_scores</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+    <span class="nd">@model_serializer</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">custom_model_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">data</span><span class="p">)</span>
+        <span class="c1"># include _data in serialization</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="n">data</span>  <span class="c1"># type: ignore[no-any-return]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">serialized_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+        <span class="n">data_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">serialized_model</span><span class="p">[</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">parquet_table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pylist</span><span class="p">(</span><span class="n">data_values</span><span class="p">)</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">default_save_path</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ks_id</span><span class="p">)</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">parquet_table</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ks_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">default_save_path</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ks_id</span><span class="p">)</span>
+        <span class="n">parquet_data</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">to_pylist</span><span class="p">()</span>
+
+        <span class="n">knowledge_store</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_nodes</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">KnowledgeNode</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">parquet_data</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">knowledge_store</span><span class="o">.</span><span class="n">ks_id</span> <span class="o">=</span> <span class="n">ks_id</span>
+        <span class="k">return</span> <span class="n">knowledge_store</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -955,6 +1289,28 @@
         <footer class="md-footer">
   
     
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Base KnowledgeStore">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Base KnowledgeStore
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -962,7 +1318,7 @@
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="/assets/vector-logo.svg"
+        src="../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -1028,10 +1384,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/", "features": ["navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.suggest", "search.highlight"], "search": "/assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>
