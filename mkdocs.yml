@@ -29,10 +29,10 @@ nav:
     - api_reference/index.md
     - Decorators:
       - api_reference/decorators/index.md
-      - Inspectors:
-        - api_reference/inspectors/index.md
-        - api_reference/inspectors/pytorch.md
-        - api_reference/inspectors/huggingface.md
+    - Inspectors:
+      - api_reference/inspectors/index.md
+      - api_reference/inspectors/pytorch.md
+      - api_reference/inspectors/huggingface.md
 
     - FL Tasks:
       - api_reference/fl_tasks/index.md
