@@ -3,8 +3,14 @@ extra_css:
 extra:
   generator: false
   social:
-    - icon: fontawesome/brands/mastodon
-      link: https://fosstodon.org/@squidfunk
+    - icon: fontawesome/brands/discord
+      link: 404.html
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/vector-institute/
+    - icon: fontawesome/brands/bluesky
+      link: https://web-cdn.bsky.app/profile/vectorinstitute.ai
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/vectorinst
 markdown_extensions:
   - attr_list
   - admonition
@@ -47,9 +53,24 @@ repo_url: https://github.com/VectorInstitute/fed-rag
 repo_name: VectorInsitute/fed-rag
 site_name: FedRAG
 theme:
-  name: material
-  logo: assets/logo.svg
+  custom_dir: docs/overrides
   favicon: assets/favicon.svg
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+  logo_dark_mode: assets/logo-dark.svg
+  logo_light_mode: assets/logo.svg
+  logo_footer: assets/vector-logo.svg
+  name: material
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -65,18 +86,3 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  font:
-    text: Roboto
-    code: Roboto Mono
-  icon:
-    repo: fontawesome/brands/github
-  features:
-    - navigation.footer
-    - navigation.indexes
-    - navigation.instant
-    - navigation.tabs
-    - navigation.top
-    - toc.follow
-    - content.code.copy
-    - search.suggest
-    - search.highlight
