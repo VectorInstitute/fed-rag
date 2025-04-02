@@ -8,7 +8,7 @@ from fed_rag.types.rag_system import KnowledgeNode, SourceNode
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
-    HuggingfaceRAGFinetuningDataset,
+    HuggingFaceRAGFinetuningDataset,
 )
 
 
@@ -121,7 +121,7 @@ def test_build_finetune_dataset_hf_return(
     mock_rag_system.generator.tokenizer = mock_tokenizer
 
     # act
-    result: HuggingfaceRAGFinetuningDataset = build_finetune_dataset(
+    result: HuggingFaceRAGFinetuningDataset = build_finetune_dataset(
         rag_system=mock_rag_system,
         examples=mock_examples,
         eos_token_id=42,
@@ -129,7 +129,7 @@ def test_build_finetune_dataset_hf_return(
     )
 
     # assert
-    assert isinstance(result, HuggingfaceRAGFinetuningDataset)
+    assert isinstance(result, HuggingFaceRAGFinetuningDataset)
     assert len(result) == 4
     assert result.column_names == ["input_ids", "target_ids"]
     assert result[:2] == {

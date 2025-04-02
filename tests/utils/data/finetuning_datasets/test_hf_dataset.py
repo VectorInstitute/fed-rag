@@ -7,7 +7,7 @@ import torch
 from datasets import Dataset
 
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
-    HuggingfaceRAGFinetuningDataset,
+    HuggingFaceRAGFinetuningDataset,
 )
 
 
@@ -15,7 +15,7 @@ def test_hf_rag_ft_dataset_init(
     input_and_target_ids: tuple[torch.Tensor, torch.Tensor],
 ) -> None:
     input_ids, target_ids = input_and_target_ids
-    rag_ft_dataset = HuggingfaceRAGFinetuningDataset.from_inputs(
+    rag_ft_dataset = HuggingFaceRAGFinetuningDataset.from_inputs(
         input_ids=input_ids, target_ids=target_ids
     )
 
@@ -37,7 +37,7 @@ def test_hf_rag_ft_dataset_missing_extra_raises_error(
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "`HuggingfaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
+            "`HuggingFaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
 
@@ -46,10 +46,10 @@ def test_hf_rag_ft_dataset_missing_extra_raises_error(
             match=re.escape(msg),
         ):
             from fed_rag.utils.data.finetuning_datasets.huggingface import (
-                HuggingfaceRAGFinetuningDataset,
+                HuggingFaceRAGFinetuningDataset,
             )
 
-            HuggingfaceRAGFinetuningDataset.from_inputs(
+            HuggingFaceRAGFinetuningDataset.from_inputs(
                 input_ids=input_ids, target_ids=target_ids
             )
 

@@ -29,28 +29,50 @@ nav:
     - api_reference/index.md
     - Decorators:
       - api_reference/decorators/index.md
-    - Inspectors:
-      - api_reference/inspectors/index.md
-      - api_reference/inspectors/pytorch.md
-      - api_reference/inspectors/huggingface.md
+    - Finetuning Datasets:
+      - api_reference/finetuning_datasets/index.md
+      - api_reference/finetuning_datasets/pytorch.md
+      - api_reference/finetuning_datasets/huggingface.md
     - FL Tasks:
       - api_reference/fl_tasks/index.md
       - api_reference/fl_tasks/pytorch.md
       - api_reference/fl_tasks/huggingface.md
+    - Generators:
+      - api_reference/generators/index.md
+      - api_reference/generators/huggingface.md
+    - Inspectors:
+      - api_reference/inspectors/index.md
+      - api_reference/inspectors/pytorch.md
+      - api_reference/inspectors/huggingface.md
+    - Knowledge Nodes:
+      - api_reference/knowledge_nodes/index.md
     - Knowledge Stores:
       - api_reference/knowledge_stores/index.md
       - InMemory: api_reference/knowledge_stores/in_memory.md
+    - RAGSystem:
+      - api_reference/rag_system/index.md
+    - Retrievers:
+      - api_reference/retrievers/index.md
+      - api_reference/retrievers/huggingface.md
+    - Tokenizers:
+      - api_reference/tokenizers/index.md
+      - api_reference/tokenizers/huggingface.md
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
           options:
-            members_order: source
             docstring_style: google
+            members_order: source
+            separate_signature: true
+            show_overloads: true
             show_submodules: true
             show_root_heading: false
+            show_root_full_path: true
             show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 repo_url: https://github.com/VectorInstitute/fed-rag
 repo_name: VectorInsitute/fed-rag
 site_name: FedRAG
