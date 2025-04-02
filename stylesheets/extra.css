@@ -88,3 +88,14 @@
     margin: 0;
   }
 }
+
+/* Reduce margins for h2 when using grid cards */
+.grid.cards h2 {
+  margin-top: 0; /* Remove top margin completely in cards */
+  margin-bottom: 0.5rem; /* Smaller bottom margin in cards */
+}
+
+.vector-icon {
+  color: #eb088a;
+  opacity: 0.7;
+}
