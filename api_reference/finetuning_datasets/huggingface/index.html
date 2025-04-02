@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../pytorch/">
       
       
-        <link rel="next" href="../quickstart/">
+        <link rel="next" href="../../fl_tasks/">
       
       
-      <link rel="icon" href="../../assets/favicon-48x48.svg">
+      <link rel="icon" href="../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>Installation - FedRAG</title>
+        <title>Huggingface - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +46,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#src.fed_rag.utils.data.finetuning_datasets.huggingface.HuggingFaceRAGFinetuningDataset" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -85,15 +90,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -111,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              Huggingface
             
           </span>
         </div>
@@ -221,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -238,13 +243,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../getting_started/" class="md-tabs__link">
           
   
   
@@ -262,11 +265,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../api_reference/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -302,15 +307,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -338,7 +343,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -357,8 +362,6 @@
       
   
   
-    
-  
   
   
     
@@ -376,21 +379,18 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../getting_started/" class="md-nav__link ">
               
   
   
@@ -403,13 +403,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting started
@@ -422,17 +422,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -443,7 +436,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -456,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
+      <a href="../../../getting_started/quickstart/" class="md-nav__link">
         
   
   
@@ -483,6 +475,8 @@
       
   
   
+    
+  
   
   
     
@@ -516,18 +510,21 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -540,13 +537,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             API Reference
@@ -583,7 +580,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/decorators/" class="md-nav__link ">
+            <a href="../../decorators/" class="md-nav__link ">
               
   
   
@@ -618,6 +615,8 @@
                 
   
   
+    
+  
   
   
     
@@ -638,15 +637,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/finetuning_datasets/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -665,7 +664,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             Finetuning Datasets
@@ -681,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/finetuning_datasets/pytorch/" class="md-nav__link">
+      <a href="../pytorch/" class="md-nav__link">
         
   
   
@@ -701,10 +700,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../api_reference/finetuning_datasets/huggingface/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Huggingface
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -715,6 +734,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.utils.data.finetuning_datasets.huggingface.HuggingFaceRAGFinetuningDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceRAGFinetuningDataset
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -760,7 +806,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/fl_tasks/" class="md-nav__link ">
+            <a href="../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -795,7 +841,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -818,7 +864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -872,7 +918,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/generators/" class="md-nav__link ">
+            <a href="../../generators/" class="md-nav__link ">
               
   
   
@@ -907,7 +953,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/generators/huggingface/" class="md-nav__link">
+      <a href="../../generators/huggingface/" class="md-nav__link">
         
   
   
@@ -963,7 +1009,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/inspectors/" class="md-nav__link ">
+            <a href="../../inspectors/" class="md-nav__link ">
               
   
   
@@ -998,7 +1044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/inspectors/pytorch/" class="md-nav__link">
+      <a href="../../inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -1021,7 +1067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/inspectors/huggingface/" class="md-nav__link">
+      <a href="../../inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -1073,7 +1119,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/knowledge_nodes/" class="md-nav__link ">
+            <a href="../../knowledge_nodes/" class="md-nav__link ">
               
   
   
@@ -1134,7 +1180,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/knowledge_stores/" class="md-nav__link ">
+            <a href="../../knowledge_stores/" class="md-nav__link ">
               
   
   
@@ -1169,7 +1215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="../../knowledge_stores/in_memory/" class="md-nav__link">
         
   
   
@@ -1221,7 +1267,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/rag_system/" class="md-nav__link ">
+            <a href="../../rag_system/" class="md-nav__link ">
               
   
   
@@ -1282,7 +1328,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/retrievers/" class="md-nav__link ">
+            <a href="../../retrievers/" class="md-nav__link ">
               
   
   
@@ -1317,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/retrievers/huggingface/" class="md-nav__link">
+      <a href="../../retrievers/huggingface/" class="md-nav__link">
         
   
   
@@ -1371,7 +1417,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/tokenizers/" class="md-nav__link ">
+            <a href="../../tokenizers/" class="md-nav__link ">
               
   
   
@@ -1406,7 +1452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/tokenizers/huggingface/" class="md-nav__link">
+      <a href="../../tokenizers/huggingface/" class="md-nav__link">
         
   
   
@@ -1455,6 +1501,23 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.utils.data.finetuning_datasets.huggingface.HuggingFaceRAGFinetuningDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceRAGFinetuningDataset
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1472,9 +1535,114 @@
   
 
 
-  <h1>Installation</h1>
+  <h1>Huggingface</h1>
+
+<!-- markdownlint-disable-file MD041 -->
 
 
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>HuggingFace RAG Finetuning Dataset</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.utils.data.finetuning_datasets.huggingface.HuggingFaceRAGFinetuningDataset" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">HuggingFaceRAGFinetuningDataset</span>
+
+
+<a href="#src.fed_rag.utils.data.finetuning_datasets.huggingface.HuggingFaceRAGFinetuningDataset" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="datasets.Dataset">Dataset</span></code></p>
+
+
+        <p>Thin wrapper over ~datasets.Dataset.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/utils/data/finetuning_datasets/huggingface.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HuggingFaceRAGFinetuningDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thin wrapper over ~datasets.Dataset.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_inputs</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">target_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>  <span class="c1"># type: ignore[no-any-return]</span>
+            <span class="p">{</span><span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="n">input_ids</span><span class="p">,</span> <span class="s2">&quot;target_ids&quot;</span><span class="p">:</span> <span class="n">target_ids</span><span class="p">}</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -1510,7 +1678,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Index">
+          <a href="../pytorch/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Pytorch">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1520,20 +1688,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Index
+                Pytorch
               </div>
             </div>
           </a>
         
         
           
-          <a href="../quickstart/" class="md-footer__link md-footer__link--next" aria-label="Next: Quickstart">
+          <a href="../../fl_tasks/" class="md-footer__link md-footer__link--next" aria-label="Next: Base FL Task Classes">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quickstart
+                Base FL Task Classes
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1551,7 +1719,7 @@
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="../../assets/vector-logo.svg"
+        src="../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -1617,10 +1785,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "toc.follow", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>
