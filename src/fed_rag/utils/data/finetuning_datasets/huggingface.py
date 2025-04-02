@@ -7,13 +7,13 @@ try:
     from datasets import Dataset
 except ModuleNotFoundError:
     msg = (
-        "`HuggingfaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
+        "`HuggingFaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
         "To fix please run `pip install fed-rag[huggingface]`."
     )
     raise ValueError(msg)
 
 
-class HuggingfaceRAGFinetuningDataset(Dataset):
+class HuggingFaceRAGFinetuningDataset(Dataset):
     """Thin wrapper over ~datasets.Dataset."""
 
     @classmethod

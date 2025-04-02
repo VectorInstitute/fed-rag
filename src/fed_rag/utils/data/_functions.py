@@ -75,10 +75,10 @@ def build_finetune_dataset(
         # needs `fed-rag[huggingface]` extra to be installed
         # this import will fail if not installed
         from fed_rag.utils.data.finetuning_datasets.huggingface import (
-            HuggingfaceRAGFinetuningDataset,
+            HuggingFaceRAGFinetuningDataset,
         )
 
-        return HuggingfaceRAGFinetuningDataset.from_inputs(
+        return HuggingFaceRAGFinetuningDataset.from_inputs(
             input_ids=inputs_list, target_ids=targets_list
         )
     else:
