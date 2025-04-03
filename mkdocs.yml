@@ -25,11 +25,16 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting started:
-    - getting_started/index.md
+    - FedRAG Basics: getting_started/basics.md
+    - Quick Start: getting_started/quickstart.md
     - Installation: getting_started/installation.md
     - Standard Usage: getting_started/standard_usage.md
+    - Advanced Usage: getting_started/advanced_usage.md
+    - Concepts: getting_started/concepts.md
+    - Integrations: getting_started/integrations.md
   - Examples:
     - examples/index.md
+    - RA-DIT: examples/ra_dit.md
   - API Reference:
     - api_reference/index.md
     - Decorators:
@@ -66,15 +71,13 @@ nav:
     - community/index.md
     - Contributing:
       - community/contributing/index.md
-      - Ask a question: community/contributing/ask_question.md
-      - Submitting an issue: community/contributing/submit_issue.md
-      - Submitting a pull request: community/contributing/submit_pr.md
+      - Ask a Question: community/contributing/ask_question.md
+      - Submitting an Issue: community/contributing/submit_issue.md
+      - Submitting a Pull Request: community/contributing/submit_pr.md
     - Changelog: ../CHANGELOG.md
     - Resources:
       - community/resources/index.md
       - AI Pocket References: community/resources/pocket_references.md
-
-
 plugins:
   - search
   - mkdocstrings:
