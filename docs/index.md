@@ -7,7 +7,7 @@ hide:
 <!-- markdownlint-disable-file MD041 MD033 MD042 -->
 
 <h1 markdown>
-FedRAG :material-hexagon-multiple:{ .vector-icon }
+:material-hexagon-multiple:{ .vector-icon } FedRAG
 </h1>
 
 ## Simplified RAG fine-tuning across federated architectures
