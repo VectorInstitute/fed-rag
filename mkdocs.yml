@@ -25,7 +25,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting started:
-    - FedRAG Basics: getting_started/basics.md
+    - Essentials: getting_started/essentials.md
     - Quick Start: getting_started/quickstart.md
     - Installation: getting_started/installation.md
     - Standard Usage: getting_started/standard_usage.md
