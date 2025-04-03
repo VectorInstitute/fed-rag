@@ -20,7 +20,7 @@
     
     
       
-        <title>FedRAG Basics - FedRAG</title>
+        <title>Essentials - FedRAG</title>
       
     
     
@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#essentials" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -111,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FedRAG Basics
+              Essentials
             
           </span>
         </div>
@@ -472,18 +477,103 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Essentials
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    FedRAG Basics
+    Essentials
     
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#four-essential-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Four Essential Questions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Essential Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is RAG?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-federated-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is Federated Learning?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-federated-fine-tuning-of-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Federated Fine-Tuning of RAG?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#who-is-fedrag-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      Who is FedRAG for?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2018,6 +2108,67 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#four-essential-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Four Essential Questions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Essential Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is RAG?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-federated-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is Federated Learning?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-federated-fine-tuning-of-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Federated Fine-Tuning of RAG?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#who-is-fedrag-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      Who is FedRAG for?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2036,9 +2187,42 @@
   
 
 
-  <h1>FedRAG Basics</h1>
-
-
+<h1 id="essentials">Essentials<a class="headerlink" href="#essentials" title="Permanent link">&para;</a></h1>
+<p>To get to know FedRAG a bit better and understand its purpose, we provide the
+answers to the following four essential questions.</p>
+<h2 id="four-essential-questions">Four Essential Questions<a class="headerlink" href="#four-essential-questions" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-rag">What is RAG?<a class="headerlink" href="#what-is-rag" title="Permanent link">&para;</a></h3>
+<p>Retrieval-Augmented Generation (RAG) is a widely used technique that addresses a main drawback of Large Language Models (LLM), which is that they're trained on
+historical corpora and thus answering user queries that heavily rely on recent data
+are not really possible. Further, using the parametric knowledge of LLMs alone
+has yielded subpar performance on knowledge-intensive benchmarks.</p>
+<p>RAG provides access to relevant (and potentially more recent) non-parametric
+knowledge (i.e. data) that are stored in <em>Knowledge Stores</em> to the LLM so that it
+can use it in order to more accurately respond to user queries.</p>
+<h3 id="what-is-federated-learning">What is Federated Learning?<a class="headerlink" href="#what-is-federated-learning" title="Permanent link">&para;</a></h3>
+<p>Federated Learning (FL) is a technique for building machine learning (as well as
+deep learning) models when the data is decentralized. Rather than first centralizing
+the datasets to a central location, which may not be possible due to strict data
+residency regulations or may be uneconomical due to the significant monetary costs in moving massive datasets, FL enables collaborative model building by facilitating
+the sharing of the model weights between the data providers.</p>
+<h3 id="why-federated-fine-tuning-of-rag">Why Federated Fine-Tuning of RAG?<a class="headerlink" href="#why-federated-fine-tuning-of-rag" title="Permanent link">&para;</a></h3>
+<p>Fine-tuning is a technique that is used to enhance the performance of LLMs by
+speciliazing its general capabilities towards a specific domain. It has also been
+shown that fine-tuning the model components of RAG systems, namely the generator
+and retriever, on domain-specific datasets can lead to its overall improved
+performance.</p>
+<p>Accessing fine-tuning datasets may be challenging. And, in situations where the
+data is dispersed across several nodes, and centralizing is either not possible
+or uneconomical, the fine-tuning of these RAG systems can be made possible through
+FL.</p>
+<h3 id="who-is-fedrag-for">Who is FedRAG for?<a class="headerlink" href="#who-is-fedrag-for" title="Permanent link">&para;</a></h3>
+<p>FedRAG is for the model builders, data scientists, and researchers who wish to fine-tune
+their RAG systems on their own datasets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note — FedRAG also enables centralized RAG fine-tuning</p>
+<p>While the main premise for FedRAG is FL, that centralized fine-tuning is also
+supported (as our readers shall see shortly in the upcoming Quick Start example).</p>
+</div>
 
 
 
