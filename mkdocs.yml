@@ -27,7 +27,7 @@ nav:
   - Getting started:
     - getting_started/index.md
     - Installation: getting_started/installation.md
-    - Quickstart: getting_started/quickstart.md
+    - Standard Usage: getting_started/standard_usage.md
   - Examples:
     - examples/index.md
   - API Reference:
@@ -62,6 +62,19 @@ nav:
     - Tokenizers:
       - api_reference/tokenizers/index.md
       - api_reference/tokenizers/huggingface.md
+  - Community:
+    - community/index.md
+    - Contributing:
+      - community/contributing/index.md
+      - Ask a question: community/contributing/ask_question.md
+      - Submitting an issue: community/contributing/submit_issue.md
+      - Submitting a pull request: community/contributing/submit_pr.md
+    - Changelog: ../CHANGELOG.md
+    - Resources:
+      - community/resources/index.md
+      - AI Pocket References: community/resources/pocket_references.md
+
+
 plugins:
   - search
   - mkdocstrings:
