@@ -15,7 +15,13 @@ markdown_extensions:
   - attr_list
   - admonition
   - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.details
+  - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
@@ -101,15 +107,16 @@ theme:
   custom_dir: docs/overrides
   favicon: assets/favicon-48x48.svg
   features:
+    - content.code.annotate
+    - content.code.copy
     - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.tabs
     - navigation.top
-    - toc.follow
-    - content.code.copy
     - search.suggest
     - search.highlight
+    - toc.follow
   icon:
     repo: fontawesome/brands/github
   logo_dark_mode: assets/logo-dark.svg
