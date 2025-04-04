@@ -27,8 +27,8 @@ A RAG system is comprised of three main components, namely:
 - **Generator** — a model that takes in the user's query and additional context
   and provides a response to that query.
 
-!!! note
-    The **Retriever** is alos used to populate (i.e index) the **Knowledge Store**
+!!! info
+    The **Retriever** is also used to populate (i.e index) the **Knowledge Store**
     during setup.
 
 ## Building a RAG system
@@ -41,6 +41,11 @@ pip install "fed-rag[huggingface]"
 ```
 
 ### Retriever
+
+With the `huggingface` extra, we can use any `~sentence_transformers.SentenceTransfomer`
+as the retriever model, including dual encoders like the one used below. This
+HuggingFace encoder is used to define a
+[`HFSentenceTransformerRetriever`](../../api_reference/retrievers/huggingface.md).
 
 ``` py title="retriever"
 from fed_rag.retrievers.hf_sentence_transformer import (
@@ -58,6 +63,10 @@ retriever = HFSentenceTransformerRetriever(
 ```
 
 ### Knowledge Store
+
+To create a knowledge store, we've create a toy set of only two knowledge
+artifacts that we'll encode and subsequently load into an
+[`InMemoryKnowledgeStore`](../../api_reference/knowledge_stores/in_memory.md).
 
 ``` py title="knowledge artifacts"
 import json
@@ -93,6 +102,10 @@ knowledge_store.load_nodes(nodes=nodes)
 
 ### Generator
 
+With the `huggingface` extra installed, we can use any `~transformers.PreTrainedModel`
+as well as any `~peft.PeftModel`. For this example, we use the latter and define
+a [HFPeftModelGenerator](../../api_reference/generators/huggingface.md).
+
 ``` py title="generator"
 from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 from transformers.generation.utils import GenerationConfig
@@ -127,6 +140,9 @@ generator = HFPeftModelGenerator(
 
 ### RAG System
 
+Finally, with our three main components in hand, we can build our first
+[`RAGSystem`](../../api_reference/rag_system/index.md)!
+
 ``` py title="RAG system"
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
@@ -138,3 +154,19 @@ rag_system = RAGSystem(
     rag_config=rag_config,
 )
 ```
+
+```py title="querying our RAGSystem"
+# query the rag system
+response = rag_system.query("What is a Tulip?")
+
+print(f"\n{response}")
+
+# inspect source nodes
+print(response.source_nodes)
+```
+
+## What's next?
+
+Having explored federating a centralized task and building a RAG system, we'll
+dive deeper into fine-tuning RAG in our upcoming how-to guides. For now, let's
+proceed with installation and our usage patterns.
