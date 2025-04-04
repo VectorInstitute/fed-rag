@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#installation" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -628,6 +633,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -640,6 +660,91 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installing-from-package-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing from package managers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing from package managers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      PyPi
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conda
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing from source
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing from source">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-pip" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using pip
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-uv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using uv
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2241,6 +2346,82 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installing-from-package-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing from package managers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing from package managers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      PyPi
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conda
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-from-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing from source
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing from source">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-pip" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using pip
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-uv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using uv
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2259,9 +2440,58 @@
   
 
 
-  <h1>Installation</h1>
-
-
+<h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
+<h2 id="installing-from-package-managers">Installing from package managers<a class="headerlink" href="#installing-from-package-managers" title="Permanent link">&para;</a></h2>
+<h3 id="pypi">PyPi<a class="headerlink" href="#pypi" title="Permanent link">&para;</a></h3>
+<p>As seen in the previous quickstart examples, we can install FedRAG via <code>pip</code>:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>fed-rag
+</span></code></pre></div>
+<h3 id="conda">Conda<a class="headerlink" href="#conda" title="Permanent link">&para;</a></h3>
+<p>For <code>conda</code> users, <code>fed-rag</code> has been published to the
+<a href="https://conda-forge.org/"><code>conda-forge</code></a> channel, and thus can be installed
+with <code>conda</code> using the below command:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>fed-rag
+</span></code></pre></div>
+<h2 id="installing-from-source">Installing from source<a class="headerlink" href="#installing-from-source" title="Permanent link">&para;</a></h2>
+<p>To install from source, first clone the repository:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># https</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/VectorInstitute/fed-rag.git
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># ssh</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:VectorInstitute/fed-rag.git
+</span></code></pre></div>
+<p>After cloning the repository, you have a few options for installing the library.
+The next two subsections outline how to complete the installation using either
+<code>pip</code> or <code>uv</code>, respectively.</p>
+<h3 id="using-pip">Using <code>pip</code><a class="headerlink" href="#using-pip" title="Permanent link">&para;</a></h3>
+<p>To complete the installation, first <code>cd</code> into the <code>fed-rag</code> directory and then
+run the following <code>pip install</code> command:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>fed-rag
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>We recommended to always use a fresh virtual environment for new projects.
+Before running the above command, ensure that your dedicated virtual environment
+is active.</p>
+</div>
+<h3 id="using-uv">Using <code>uv</code><a class="headerlink" href="#using-uv" title="Permanent link">&para;</a></h3>
+<p>FedRAG uses <a href="https://docs.astral.sh/uv/"><code>uv</code></a> for dependency management, publishing
+to PyPi, and for setting up development environments.</p>
+<p>Users can also use <code>uv</code> to complete the source installation of FedRAG.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method requires <code>uv</code> to be installed onto the users development machine.
+For installation instructions visit <code>uv</code>'s <a href="https://docs.astral.sh/uv/getting-started/installation/">official documentation</a>.</p>
+</div>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">cd</span><span class="w"> </span>fed-rag
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>uv<span class="w"> </span>sync
+</span></code></pre></div>
+<p>To install with desired extras and groups, add the flags <code>--extra &lt;extra-name&gt;</code>
+and <code>--optional &lt;optional-name&gt;</code>, respectively. As an example:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">cd</span><span class="w"> </span>fed-rag
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>uv<span class="w"> </span>sync<span class="w"> </span>--extra<span class="w"> </span>huggingface<span class="w"> </span>--group<span class="w"> </span>dev
+</span></code></pre></div>
 
 
 
