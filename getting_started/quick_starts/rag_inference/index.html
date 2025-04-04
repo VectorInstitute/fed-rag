@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#build-a-rag-system" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -599,6 +604,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Build a RAG System
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -611,6 +631,94 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#components-of-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components of RAG
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-rag-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building a RAG system
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a RAG system">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retriever" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retriever
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge Store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rag-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG System
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's next?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2243,6 +2351,85 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#components-of-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components of RAG
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-rag-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building a RAG system
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a RAG system">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retriever" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retriever
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge Store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rag-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      RAG System
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's next?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2261,9 +2448,149 @@
   
 
 
-  <h1>Build a RAG System</h1>
+<h1 id="build-a-rag-system">Build a RAG System<a class="headerlink" href="#build-a-rag-system" title="Permanent link">&para;</a></h1>
+<!-- markdownlint-disable-file MD033 -->
 
-
+<p>In this quick start example, we'll demonstrate how to build a RAG system and subequently
+query it using FedRAG. We begin with a short primer on the components of RAG
+which mirror the abstractions that FedRAG uses to build such systems.</p>
+<h2 id="components-of-rag">Components of RAG<a class="headerlink" href="#components-of-rag" title="Permanent link">&para;</a></h2>
+<figure id="img_light_mode">
+  <img alt="Components of RAG" src="https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/nlp/rag-components.excalidraw.svg" />
+  <figcaption>The three main components of RAG.</figcaption>
+</figure>
+<figure id="img_dark_mode">
+  <img alt="Components of RAG" src="https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/nlp/rag-components-dark.excalidraw.svg" />
+  <figcaption>The three main components of RAG.</figcaption>
+</figure>
+<p>A RAG system is comprised of three main components, namely:</p>
+<ul>
+<li><strong>Knowledge Store</strong> — contains non-parametric knowledge facts that the system
+  can use at inference time in order to produce more accurate responses to queries.</li>
+<li><strong>Retriever</strong> — a model that takes in a user query and retrieves the most relevant
+  knowledge facts from the knowledge store.</li>
+<li><strong>Generator</strong> — a model that takes in the user's query and additional context
+  and provides a response to that query.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The <strong>Retriever</strong> is also used to populate (i.e index) the <strong>Knowledge Store</strong>
+during setup.</p>
+</div>
+<h2 id="building-a-rag-system">Building a RAG system<a class="headerlink" href="#building-a-rag-system" title="Permanent link">&para;</a></h2>
+<p>We'll install FedRAG with the <code>huggingface</code> extra this time in order to build our
+RAG system using HuggingFace models.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;fed-rag[huggingface]&quot;</span>
+</span></code></pre></div>
+<h3 id="retriever">Retriever<a class="headerlink" href="#retriever" title="Permanent link">&para;</a></h3>
+<p>With the <code>huggingface</code> extra, we can use any <code>~sentence_transformers.SentenceTransfomer</code>
+as the retriever model, including dual encoders like the one used below. This
+HuggingFace encoder is used to define a
+<a href="../../../api_reference/retrievers/huggingface/"><code>HFSentenceTransformerRetriever</code></a>.</p>
+<div class="language-py highlight"><span class="filename">retriever</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.retrievers.hf_sentence_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">HFSentenceTransformerRetriever</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">QUERY_ENCODER_NAME</span> <span class="o">=</span> <span class="s2">&quot;nthakur/dragon-plus-query-encoder&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">CONTEXT_ENCODER_NAME</span> <span class="o">=</span> <span class="s2">&quot;nthakur/dragon-plus-context-encoder&quot;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">retriever</span> <span class="o">=</span> <span class="n">HFSentenceTransformerRetriever</span><span class="p">(</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">query_model_name</span><span class="o">=</span><span class="n">QUERY_ENCODER_NAME</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">context_model_name</span><span class="o">=</span><span class="n">CONTEXT_ENCODER_NAME</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="knowledge-store">Knowledge Store<a class="headerlink" href="#knowledge-store" title="Permanent link">&para;</a></h3>
+<p>To create a knowledge store, we've create a toy set of only two knowledge
+artifacts that we'll encode and subsequently load into an
+<a href="../../../api_reference/knowledge_stores/in_memory/"><code>InMemoryKnowledgeStore</code></a>.</p>
+<div class="language-py highlight"><span class="filename">knowledge artifacts</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># knowledge chunks</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">chunks_json_strs</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="s1">&#39;{&quot;id&quot;: &quot;0&quot;, &quot;title&quot;: &quot;Orchid&quot;, &quot;text&quot;: &quot;Orchids are easily distinguished from other plants, as they share some very evident derived characteristics or synapomorphies. Among these are: bilateral symmetry of the flower (zygomorphism), many resupinate flowers, a nearly always highly modified petal (labellum), fused stamens and carpels, and extremely small seeds&quot;}&#39;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="s1">&#39;{&quot;id&quot;: &quot;1&quot;, &quot;title&quot;: &quot;Tulip&quot;, &quot;text&quot;: &quot;Tulips are easily distinguished from other plants, as they share some very evident derived characteristics or synapomorphies. Among these are: bilateral symmetry of the flower (zygomorphism), many resupinate flowers, a nearly always highly modified petal (labellum), fused stamens and carpels, and extremely small seeds&quot;}&#39;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">]</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">chunks_json_strs</span><span class="p">]</span>
+</span></code></pre></div>
+<div class="language-py highlight"><span class="filename">knowledge store</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.knowledge_stores.in_memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryKnowledgeStore</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types.knowledge_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span><span class="p">,</span> <span class="n">NodeType</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">knowledge_store</span> <span class="o">=</span> <span class="n">InMemoryKnowledgeStore</span><span class="p">()</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># create knowledge nodes</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">node</span> <span class="o">=</span> <span class="n">KnowledgeNode</span><span class="p">(</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="n">embedding</span><span class="o">=</span><span class="n">retriever</span><span class="o">.</span><span class="n">encode_context</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="n">node_type</span><span class="o">=</span><span class="n">NodeType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="n">text_content</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]},</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="p">)</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># load into knowledge_store</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="n">knowledge_store</span><span class="o">.</span><span class="n">load_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="generator">Generator<a class="headerlink" href="#generator" title="Permanent link">&para;</a></h3>
+<p>With the <code>huggingface</code> extra installed, we can use any <code>~transformers.PreTrainedModel</code>
+as well as any <code>~peft.PeftModel</code>. For this example, we use the latter and define
+a <a href="../../../api_reference/generators/huggingface/">HFPeftModelGenerator</a>.</p>
+<div class="language-py highlight"><span class="filename">generator</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.generators.hf_peft_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFPeftModelGenerator</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers.generation.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerationConfig</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers.utils.quantization_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">BitsAndBytesConfig</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">PEFT_MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;Styxxxx/llama2_7b_lora-quac&quot;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">BASE_MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;meta-llama/Llama-2-7b-hf&quot;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">generation_cfg</span> <span class="o">=</span> <span class="n">GenerationConfig</span><span class="p">(</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">do_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">eos_token_id</span><span class="o">=</span><span class="p">[</span><span class="mi">128000</span><span class="p">,</span> <span class="mi">128009</span><span class="p">],</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">bos_token_id</span><span class="o">=</span><span class="mi">128000</span><span class="p">,</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="n">cache_implementation</span><span class="o">=</span><span class="s2">&quot;offloaded&quot;</span><span class="p">,</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    <span class="n">stop_strings</span><span class="o">=</span><span class="s2">&quot;&lt;/response&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="p">)</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">quantization_config</span> <span class="o">=</span> <span class="n">BitsAndBytesConfig</span><span class="p">(</span><span class="n">load_in_4bit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="n">generator</span> <span class="o">=</span> <span class="n">HFPeftModelGenerator</span><span class="p">(</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>    <span class="n">model_name</span><span class="o">=</span><span class="n">PEFT_MODEL_NAME</span><span class="p">,</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>    <span class="n">base_model_name</span><span class="o">=</span><span class="n">BASE_MODEL_NAME</span><span class="p">,</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>    <span class="n">generation_config</span><span class="o">=</span><span class="n">generation_cfg</span><span class="p">,</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>    <span class="n">load_model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;is_trainable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;device_map&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">},</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>    <span class="n">load_base_model_kwargs</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>        <span class="s2">&quot;device_map&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>        <span class="s2">&quot;quantization_config&quot;</span><span class="p">:</span> <span class="n">quantization_config</span><span class="p">,</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>    <span class="p">},</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="rag-system">RAG System<a class="headerlink" href="#rag-system" title="Permanent link">&para;</a></h3>
+<p>Finally, with our three main components in hand, we can build our first
+<a href="../../../api_reference/rag_system/"><code>RAGSystem</code></a>!</p>
+<div class="language-py highlight"><span class="filename">RAG system</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types.rag_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGConfig</span><span class="p">,</span> <span class="n">RAGSystem</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">rag_config</span> <span class="o">=</span> <span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">rag_system</span> <span class="o">=</span> <span class="n">RAGSystem</span><span class="p">(</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">knowledge_store</span><span class="o">=</span><span class="n">knowledge_store</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">rag_config</span><span class="o">=</span><span class="n">rag_config</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-py highlight"><span class="filename">querying our RAGSystem</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># query the rag system</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">response</span> <span class="o">=</span> <span class="n">rag_system</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is a Tulip?&quot;</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># inspect source nodes</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">source_nodes</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="whats-next">What's next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Having explored federating a centralized task and building a RAG system, we'll
+dive deeper into fine-tuning RAG in our upcoming how-to guides. For now, let's
+proceed with installation and our usage patterns.</p>
 
 
 
