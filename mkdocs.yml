@@ -32,11 +32,17 @@ nav:
   - Home: index.md
   - Getting started:
     - Essentials: getting_started/essentials.md
-    - Quick Start: getting_started/quickstart.md
+    - Quick Starts:
+      - getting_started/quick_starts/index.md
+      - Centralized to Federated: getting_started/quick_starts/federated.md
+      - Build a RAG System: getting_started/quick_starts/rag_inference.md
     - Installation: getting_started/installation.md
     - Standard Usage: getting_started/standard_usage.md
     - Advanced Usage: getting_started/advanced_usage.md
-    - Concepts: getting_started/concepts.md
+    - How-To Guides:
+      - getting_started/how_to/index.md
+      - Create a Fine-tuning Dataset: getting_started/how_to/creating_finetuning_datasets.md
+      - Fine-tune RAG: getting_started/how_to/rag_finetuning.md
     - Integrations: getting_started/integrations.md
   - Examples:
     - examples/index.md
@@ -73,6 +79,7 @@ nav:
     - Tokenizers:
       - api_reference/tokenizers/index.md
       - api_reference/tokenizers/huggingface.md
+  - Glossary: glossary.md
   - Community:
     - community/index.md
     - Contributing:
