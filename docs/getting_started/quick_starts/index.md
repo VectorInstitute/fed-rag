@@ -1,5 +1,6 @@
-<!-- markdownlint-disable-file MD041 MD033 MD042 -->
 # Quick Starts
+
+<!-- markdownlint-disable-file MD041 MD033 MD042 -->
 
 In this next part in getting to know FedRAG, we provide a mini series of two
 quick start examples in order to get a better feeling of the library.
