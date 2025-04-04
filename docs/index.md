@@ -19,7 +19,7 @@ hide:
     Transform centralized RAG fine-tuning into federated learning with just a
     few additional lines of code.
 
-    [:octicons-arrow-right-24: Getting started](getting_started/index.md)
+    [:octicons-arrow-right-24: Getting started](getting_started/essentials.md)
 
 - <h2>:fontawesome-solid-cubes-stacked:{ .lg .middle } Work with your tools</h2>
 
