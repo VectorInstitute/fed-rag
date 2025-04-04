@@ -52,3 +52,25 @@ pip install -e .
     is active.
 
 ### Using `uv`
+
+FedRAG uses [`uv`](https://docs.astral.sh/uv/) for dependency management, publishing
+to PyPi, and for setting up development environments.
+
+Users can also use `uv` to complete the source installation of FedRAG.
+
+!!! note
+    This method requires `uv` to be installed onto the users development machine.
+    For installation instructions visit `uv`'s [official documentation](https://docs.astral.sh/uv/getting-started/installation/).
+
+``` sh
+cd fed-rag
+uv sync
+```
+
+To install with desired extras and groups, add the flags `--extra <extra-name>`
+and `--optional <optional-name>`, respectively. As an example:
+
+``` sh
+cd fed-rag
+uv sync --extra huggingface --group dev
+```
