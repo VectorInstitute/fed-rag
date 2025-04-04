@@ -24,7 +24,15 @@
   --md-typeset-a-color: #eb088a;
 }
 
-/* for logo specification with dark/light modes to match overrides/partial/logo.html */
+/* for logo/imgs specification with dark/light modes to match overrides/partial/logo.html */
+#img_light_mode {
+  display: var(--md-footer-logo-light-mode);
+}
+
+#img_dark_mode {
+  display: var(--md-footer-logo-dark-mode);
+}
+
 #logo_light_mode {
   display: var(--md-footer-logo-light-mode);
 }
