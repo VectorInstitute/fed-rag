@@ -182,4 +182,49 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
     making the transformation process more explicit. In typical usage, you would
     apply these decorators directly to your functions when defining them.
 
+### Getting a server and clients
+
+With the `FLTask` in hand, we can create a server and some clients in order to
+establish a federated network.
+
+``` py title="Getting a server and two clients"
+# the server
+model = Net()
+server = fl_task.server(model=model)
+
+# defining two clients
+clients = []
+for i in range(2):
+    train_data, val_data = get_loaders(partition_id=i)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    num_epochs = 1
+    learning_rate = 0.1
+
+    client = fl_task.client(
+        # train params
+        model=model,
+        train_data=train_data,
+        val_data=val_data,
+        device=device,
+        num_epochs=num_epochs,
+        learning_rate=learning_rate,
+    )
+    clients.append(client)
+```
+
 ### Federated training
+
+To perform the training, we simply need to start the servers and clients!
+
+``` py title="Starting the server and clients"
+import flwr as fl
+
+# the below commands are blocking and would need to be run in separate processes
+fl.server.start_server(server=server, server_address="[::]:8080")
+fl.client.start_client(client=clients[0], server_address="[::]:8080")
+fl.client.start_client(client=clients[1], server_address="[::]:8080")
+```
+
+!!! note
+    FedRAG uses the `flwr` library as its backend federated learning framework,
+    and like `torch`, comes bundled with installation of `fed-rag`.
