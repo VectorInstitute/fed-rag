@@ -8,7 +8,10 @@ and looks as follows:
 3. Define a training loop and evaluation function and decorate both of these with
 the appropriate [`decorators`](../api_reference/decorators/index.md).
 4. Create an [`FLTask`](../api_reference/fl_tasks/index.md)
-5. Spin up FL servers and FL clients to begin federated fine-tuning!
+5. Spin up FL servers and clients to begin federated fine-tuning!
+
+In the following subsections, we briefly elaborate on what's involved in each of
+these listed steps.
 
 !!! note
     Steps 1. through 3. are—minus the decoration of trainers and testers—typical
@@ -18,3 +21,21 @@ the appropriate [`decorators`](../api_reference/decorators/index.md).
     Before proceeding to federated learning, one should verify that the centralized
     task runs as intended with a representative dataset. In fact, centralized learning
     represents a standard baseline with which to compare federated learning results.
+
+## Build a `RAGSystem`
+
+Building a [`RAGSystem`](../api_reference/rag_system/index.md) involves defining
+a [`Retriever`](../api_reference/retrievers/index.md),
+[`KnowledgeStore`](../api_reference/knowledge_stores/index.md) as well as
+[`Generator`](../api_reference/generators/index.md), and subsequently supplying
+these along with a [`RAGConfig`](../api_reference/rag_system/index.md) (to define
+parameters such a `top_k`) to the [`RAGSystem`](../api_reference/rag_system/index.md)
+constructor.
+
+## Create a `RAGFinetuningDataset`
+
+## Define a training loop and evaluation function
+
+## Create an `FLTask`
+
+## Spin up FL servers and clients
