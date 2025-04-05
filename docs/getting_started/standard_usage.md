@@ -136,7 +136,7 @@ client = fl_task.client(...)  # (3)!
 
 # the below commands are blocking and would need to be run in separate processes
 fl.server.start_server(server=server, server_address="[::]:8080")
-fl.client.start_client(client=clients, server_address="[::]:8080")
+fl.client.start_client(client=client, server_address="[::]:8080")
 ```
 
 1. `flwr` is the backend federated learning framework for FedRAG and comes included
