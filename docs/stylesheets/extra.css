@@ -108,3 +108,9 @@
   opacity: 0.7;
   margin-right: 0.2em;
 }
+
+/* for ai pocket reference logo */
+.pocket-reference-logo img {
+  width: 18em; /* Approximately 288px at default font size */
+  max-width: 90%; /* Ensures it doesn't overflow on very small screens */
+}
