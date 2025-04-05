@@ -40,7 +40,6 @@ maintainers = [
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dependencies = [
-  "asyncio>=3.4.3",
   "datasets>=3.1.0",
   "flwr==1.9.0",
   "pyarrow>=19.0.1",
