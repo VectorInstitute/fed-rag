@@ -1,11 +1,11 @@
 # AI Pocket References
 
 <figure markdown="span" id="img_light_mode" class="pocket-reference-logo">
-  ![AIPocketRefLogoLight](https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/ai-pocket-reference-logo-light.svg)
+  ![AIPocketRefLogoLight](https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/aipr-logo-light.svg)
 </figure>
 
 <figure markdown="span" id="img_dark_mode" class="pocket-reference-logo">
-  ![AIPocketRefLogoDark](https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/ai-pocket-reference-logo-dark.svg)
+  ![AIPocketRefLogoDark](https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/aipr-logo-dark.svg)
 </figure>
 
 The [AI Pocket Reference](https://github.com/VectorInstitute/ai-pocket-reference)
