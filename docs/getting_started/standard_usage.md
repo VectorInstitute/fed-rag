@@ -32,6 +32,18 @@ these along with a [`RAGConfig`](../api_reference/rag_system/index.md) (to defin
 parameters such a `top_k`) to the [`RAGSystem`](../api_reference/rag_system/index.md)
 constructor.
 
+=== "torch"
+
+    ``` py title="retriever, generator"
+    ...
+    ```
+
+=== "huggingface"
+
+    ``` py title="retriever, generator"
+    ...
+    ```
+
 ``` py title="building a rag system"
 from fed_rag import RAGSystem, RAGConfig
 
