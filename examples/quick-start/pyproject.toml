@@ -7,7 +7,8 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
   "fed-rag",
   "torch",
-  "fire"
+  "fire",
+  "flwr-datasets>=0.5.0"
 ]
 
 [tool.uv.sources]
