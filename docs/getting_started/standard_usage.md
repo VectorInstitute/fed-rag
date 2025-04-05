@@ -59,6 +59,19 @@ retrieval-augmented examples that form the RAG fine-tuning dataset for generator
 model training. Our how-to guides provide detailed instructions on performing this
 type of fine-tuning, as well as other approaches.
 
+``` py title="creating a RAG fine-tuning dataset"
+from fed_rag.utils.data import build_finetune_dataset
+
+examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
+
+dataset = build_finetune_dataset(
+    rag_system=rag_system, examples=examples, ...  # (1)!
+)
+```
+
+1. Check the [API Reference](../api_reference/finetuning_datasets/index.md) for
+the remaining required parameters
+
 ## Define a training loop and evaluation function
 
 Like any model training process, a training loop establishes how the model learns
