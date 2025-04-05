@@ -77,11 +77,10 @@ from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
 # use from_trainer_tester class method
 fl_task = PyTorchFLTask.from_trainer_and_tester(
-    decorated_trainer, decorated_tester  # (1)!  # (2)!
+    trainer=decorated_trainer, tester=decorated_tester  # (1)!
 )
 ```
 
-1. decorated with `federate.trainer.pytorch`
-2. decoraredd with `federate.tester.pytorch`
+1. decorated with `federate.trainer.pytorch` and `federate.tester.pytorch`, respectively
 
 ## Spin up FL servers and clients
