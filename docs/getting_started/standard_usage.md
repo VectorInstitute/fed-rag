@@ -50,10 +50,10 @@ rag = RAGSystem(
 
 ## Create a `RAGFinetuningDataset`
 
-With a `RAGSystem` in place, we can create a fine-tuning dataset using examples
+With a [`RAGSystem`](../api_reference/rag_system/index.md) in place, we can create a fine-tuning dataset using examples
 that contain queries and their associated answers. In retrieval-augmented generator
 fine-tuning, we process each example by calling the `RAGSystem.retrieve()` method
-with the query to fetch relevant knowledge nodes from the connected `KnowledgeStore`.
+with the query to fetch relevant knowledge nodes from the connected [`KnowledgeStore`](../api_reference/knowledge_stores/index.md).
 These contextual nodes enhance each example, creating a collection of
 retrieval-augmented examples that form the RAG fine-tuning dataset for generator
 model training. Our how-to guides provide detailed instructions on performing this
