@@ -59,18 +59,35 @@ retrieval-augmented examples that form the RAG fine-tuning dataset for generator
 model training. Our how-to guides provide detailed instructions on performing this
 type of fine-tuning, as well as other approaches.
 
-``` py title="creating a RAG fine-tuning dataset"
-from fed_rag.utils.data import build_finetune_dataset
+=== "pytorch"
 
-examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
+    ``` py title="creating a RAG fine-tuning dataset"
+    from fed_rag.utils.data import build_finetune_dataset
 
-dataset = build_finetune_dataset(
-    rag_system=rag_system, examples=examples, ...  # (1)!
-)
-```
+    examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
 
-1. Check the [API Reference](../api_reference/finetuning_datasets/index.md) for
-the remaining required parameters
+    dataset = build_finetune_dataset(
+        rag_system=rag_system, examples=examples, return_dataset="pt", ...  # (1)!
+    )
+    ```
+
+    1. Check the [API Reference](../api_reference/finetuning_datasets/index.md)
+    for the remaining required parameters
+
+=== "huggingface"
+
+    ``` py title="creating a RAG fine-tuning dataset"
+    from fed_rag.utils.data import build_finetune_dataset
+
+    examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
+
+    dataset = build_finetune_dataset(
+        rag_system=rag_system, examples=examples, return_dataset="hf", ...  # (1)!
+    )
+    ```
+
+    1. Check the [API Reference](../api_reference/finetuning_datasets/index.md)
+    for the remaining required parameters
 
 ## Define a training loop and evaluation function
 
@@ -83,19 +100,37 @@ with FedRAG, and the first step towards this endeavour amounts to the applicatio
 of trainer and tester [`decorators`](../api_reference/decorators/index.md)
 on the respective functions.
 
-``` py title="decorating training loops and evaluation functions"
-from fed_rag.decorators import federate
+=== "pytorch"
+
+    ``` py title="decorating training loops and evaluation functions"
+    from fed_rag.decorators import federate
 
 
-@federate.trainer.pytorch
-def training_loop():
-    ...
+    @federate.trainer.pytorch
+    def training_loop():
+        ...
 
 
-@federate.tester.pytorch
-def evaluate():
-    ...
-```
+    @federate.tester.pytorch
+    def evaluate():
+        ...
+    ```
+
+=== "huggingface"
+
+    ``` py title="decorating training loops and evaluation functions"
+    from fed_rag.decorators import federate
+
+
+    @federate.trainer.huggingface
+    def training_loop():
+        ...
+
+
+    @federate.tester.huggingface
+    def evaluate():
+        ...
+    ```
 
 These decorators perform inspection on these functions to automatically parse
 the model as well as training and validation datasets.
@@ -106,16 +141,31 @@ The final step in the federation transformation involves building an
 [`FLTask`](../api_reference/fl_tasks/index.md) using the decorated trainer and
 evaluation function.
 
-``` py title="defining the FL task"
-from fed_rag.fl_tasks.pytorch import PyTorchFLTask
+=== "pytorch"
 
-# use from_trainer_tester class method
-fl_task = PyTorchFLTask.from_trainer_and_tester(
-    trainer=decorated_trainer, tester=decorated_tester  # (1)!
-)
-```
+    ``` py title="defining the FL task"
+    from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 
-1. decorated with `federate.trainer.pytorch` and `federate.tester.pytorch`, respectively
+    # use from_trainer_tester class method
+    fl_task = PyTorchFLTask.from_trainer_and_tester(
+        trainer=decorated_trainer, tester=decorated_tester  # (1)!
+    )
+    ```
+
+    1. decorated with `federate.trainer.pytorch` and `federate.tester.pytorch`, respectively
+
+=== "huggingface"
+
+    ``` py title="defining the FL task"
+    from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
+
+    # use from_trainer_tester class method
+    fl_task = HuggingFaceFLTask.from_trainer_and_tester(
+        trainer=decorated_trainer, tester=decorated_tester  # (1)!
+    )
+    ```
+
+    1. decorated with `federate.trainer.huggingface` and `federate.tester.huggingface`, respectively
 
 ## Spin up FL servers and clients
 
