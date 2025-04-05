@@ -45,6 +45,23 @@ type of fine-tuning, as well as other approaches.
 
 ## Define a training loop and evaluation function
 
+Like any model training process, a training loop establishes how the model learns
+from the dataset. Since RAG systems are essentially assemblies of component models
+(namely retriever and generator), we need to define a specific training loop to effectively learn from RAG fine-tuning datasets.
+
+The lift to transform this from a centralized task is to a federated one is minimal
+with FedRAG, and amounts to the application of trainer and tester decorators on
+the respective functions.
+
+``` py title="decorating training loops"
+from fed_rag.decorators import federate
+
+
+@federate.trainer.pytorch
+def training_loop():
+    ...
+```
+
 ## Create an `FLTask`
 
 ## Spin up FL servers and clients
