@@ -91,7 +91,6 @@ nav:
       - Submitting a Pull Request: community/contributing/submit_pr.md
     - Changelog: ../CHANGELOG.md
     - Resources:
-      - community/resources/index.md
       - AI Pocket References: community/resources/pocket_references.md
 plugins:
   - search
