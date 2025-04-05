@@ -32,6 +32,22 @@ these along with a [`RAGConfig`](../api_reference/rag_system/index.md) (to defin
 parameters such a `top_k`) to the [`RAGSystem`](../api_reference/rag_system/index.md)
 constructor.
 
+``` py title="building a rag system"
+from fed_rag import RAGSystem, RAGConfig
+
+# three main components
+retriever = ...
+knowledge_store = ...
+generator = ...
+
+rag = RAGSystem(
+    generator=generator,
+    retriever=retriever,
+    knowledge_store=knowledge_store,
+    rag_config=RAGConfig(top_k=2),
+)
+```
+
 ## Create a `RAGFinetuningDataset`
 
 With a `RAGSystem` in place, we can create a fine-tuning dataset using examples
@@ -54,12 +70,17 @@ with FedRAG, and the first step towards this endeavour amounts to the applicatio
 of trainer and tester [`decorators`](../api_reference/decorators/index.md)
 on the respective functions.
 
-``` py title="decorating training loops"
+``` py title="decorating training loops and evaluation functions"
 from fed_rag.decorators import federate
 
 
 @federate.trainer.pytorch
 def training_loop():
+    ...
+
+
+@federate.tester.pytorch
+def evaluate():
     ...
 ```
 
