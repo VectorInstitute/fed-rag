@@ -50,8 +50,9 @@ from the dataset. Since RAG systems are essentially assemblies of component mode
 (namely retriever and generator), we need to define a specific training loop to effectively learn from RAG fine-tuning datasets.
 
 The lift to transform this from a centralized task is to a federated one is minimal
-with FedRAG, and amounts to the application of trainer and tester decorators on
-the respective functions.
+with FedRAG, and the first step towards this endeavour amounts to the application
+of trainer and tester [`decorators`](../api_reference/decorators/index.md)
+on the respective functions.
 
 ``` py title="decorating training loops"
 from fed_rag.decorators import federate
@@ -62,6 +63,25 @@ def training_loop():
     ...
 ```
 
+These decorators perform inspection on these functions to automatically parse
+the model as well as training and validation datasets.
+
 ## Create an `FLTask`
+
+The final step in the federation transformation involves building an
+[`FLTask`](../api_reference/fl_tasks/index.md) using the decorated trainer and
+evaluation function.
+
+``` py title="defining the FL task"
+from fed_rag.fl_tasks.pytorch import PyTorchFLTask
+
+# use from_trainer_tester class method
+fl_task = PyTorchFLTask.from_trainer_and_tester(
+    decorated_trainer, decorated_tester  # (1)!  # (2)!
+)
+```
+
+1. decorated with `federate.trainer.pytorch`
+2. decoraredd with `federate.tester.pytorch`
 
 ## Spin up FL servers and clients
