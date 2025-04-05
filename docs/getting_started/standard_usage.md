@@ -118,3 +118,32 @@ fl_task = PyTorchFLTask.from_trainer_and_tester(
 1. decorated with `federate.trainer.pytorch` and `federate.tester.pytorch`, respectively
 
 ## Spin up FL servers and clients
+
+With an `FLTask`, we can obtain an FL server as well as clients. Starting a server
+and required number of clients will commence the federated training.
+
+``` py title="getting server and clients"
+import flwr as fl  # (1)!
+
+# federate generator fine-tuning
+model = rag_system.generator.model
+
+# server
+server = fl_task.server(model, ...)  # (2)!
+
+# client
+client = fl_task.client(...)  # (3)!
+
+# the below commands are blocking and would need to be run in separate processes
+fl.server.start_server(server=server, server_address="[::]:8080")
+fl.client.start_client(client=clients, server_address="[::]:8080")
+```
+
+1. `flwr` is the backend federated learning framework for FedRAG and comes included
+with the installation of `fed-rag`.
+2. Can pass in FL aggregation strategy, otherwise defaults to federated averaging.
+3. Requires the same arguments as the centralized `training_loop`.
+
+!!! note
+    Under the hood, `FLTask.server()` and `FLTask.client()` build `~flwr.Server`
+    and `~flwr.Client` objects, respectively.
