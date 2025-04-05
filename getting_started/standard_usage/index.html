@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#standard-usage" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -651,6 +656,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Standard Usage
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -663,6 +683,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#build-a-ragsystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build a RAGSystem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-ragfinetuningdataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a RAGFinetuningDataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-training-loop-and-evaluation-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Define a training loop and evaluation function
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-an-fltask" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create an FLTask
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spin-up-fl-servers-and-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spin up FL servers and clients
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -2241,6 +2325,61 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#build-a-ragsystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build a RAGSystem
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-ragfinetuningdataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a RAGFinetuningDataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#define-a-training-loop-and-evaluation-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Define a training loop and evaluation function
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-an-fltask" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create an FLTask
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spin-up-fl-servers-and-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spin up FL servers and clients
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2259,9 +2398,138 @@
   
 
 
-  <h1>Standard Usage</h1>
-
-
+<h1 id="standard-usage">Standard Usage<a class="headerlink" href="#standard-usage" title="Permanent link">&para;</a></h1>
+<p>The standard usage pattern for FedRAG aligns to a natural RAG fine-tuning workflow,
+and looks as follows:</p>
+<ol>
+<li>Build a <a href="../../api_reference/rag_system/"><code>RAGSystem</code></a></li>
+<li>Create a <a href="../../api_reference/finetuning_datasets/"><code>RAGFinetuningDataset</code></a></li>
+<li>Define a training loop and evaluation function and decorate both of these with
+the appropriate <a href="../../api_reference/decorators/"><code>decorators</code></a>.</li>
+<li>Create an <a href="../../api_reference/fl_tasks/"><code>FLTask</code></a></li>
+<li>Spin up FL servers and clients to begin federated fine-tuning!</li>
+</ol>
+<p>In the following subsections, we briefly elaborate on what's involved in each of
+these listed steps.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Steps 1. through 3. are—minus the decoration of trainers and testers—typical
+steps one would perform for a centralized RAG fine-tuning task.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Before proceeding to federated learning, one should verify that the centralized
+task runs as intended with a representative dataset. In fact, centralized learning
+represents a standard baseline with which to compare federated learning results.</p>
+</div>
+<h2 id="build-a-ragsystem">Build a <code>RAGSystem</code><a class="headerlink" href="#build-a-ragsystem" title="Permanent link">&para;</a></h2>
+<p>Building a <a href="../../api_reference/rag_system/"><code>RAGSystem</code></a> involves defining
+a <a href="../../api_reference/retrievers/"><code>Retriever</code></a>,
+<a href="../../api_reference/knowledge_stores/"><code>KnowledgeStore</code></a> as well as
+<a href="../../api_reference/generators/"><code>Generator</code></a>, and subsequently supplying
+these along with a <a href="../../api_reference/rag_system/"><code>RAGConfig</code></a> (to define
+parameters such a <code>top_k</code>) to the <a href="../../api_reference/rag_system/"><code>RAGSystem</code></a>
+constructor.</p>
+<div class="language-py highlight"><span class="filename">building a rag system</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># three main components</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">retriever</span> <span class="o">=</span> <span class="o">...</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">knowledge_store</span> <span class="o">=</span> <span class="o">...</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">generator</span> <span class="o">=</span> <span class="o">...</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">rag</span> <span class="o">=</span> <span class="n">RAGSystem</span><span class="p">(</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">knowledge_store</span><span class="o">=</span><span class="n">knowledge_store</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">rag_config</span><span class="o">=</span><span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="create-a-ragfinetuningdataset">Create a <code>RAGFinetuningDataset</code><a class="headerlink" href="#create-a-ragfinetuningdataset" title="Permanent link">&para;</a></h2>
+<p>With a <a href="../../api_reference/rag_system/"><code>RAGSystem</code></a> in place, we can create a fine-tuning dataset using examples
+that contain queries and their associated answers. In retrieval-augmented generator
+fine-tuning, we process each example by calling the <code>RAGSystem.retrieve()</code> method
+with the query to fetch relevant knowledge nodes from the connected <a href="../../api_reference/knowledge_stores/"><code>KnowledgeStore</code></a>.
+These contextual nodes enhance each example, creating a collection of
+retrieval-augmented examples that form the RAG fine-tuning dataset for generator
+model training. Our how-to guides provide detailed instructions on performing this
+type of fine-tuning, as well as other approaches.</p>
+<div class="language-py highlight"><span class="filename">creating a RAG fine-tuning dataset</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_finetune_dataset</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">examples</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span> <span class="o">...</span><span class="p">]</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">build_finetune_dataset</span><span class="p">(</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">rag_system</span><span class="o">=</span><span class="n">rag_system</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="n">examples</span><span class="p">,</span> <span class="o">...</span>  <span class="c1"># (1)!</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>Check the <a href="../../api_reference/finetuning_datasets/">API Reference</a> for
+the remaining required parameters</li>
+</ol>
+<h2 id="define-a-training-loop-and-evaluation-function">Define a training loop and evaluation function<a class="headerlink" href="#define-a-training-loop-and-evaluation-function" title="Permanent link">&para;</a></h2>
+<p>Like any model training process, a training loop establishes how the model learns
+from the dataset. Since RAG systems are essentially assemblies of component models
+(namely retriever and generator), we need to define a specific training loop to effectively learn from RAG fine-tuning datasets.</p>
+<p>The lift to transform this from a centralized task is to a federated one is minimal
+with FedRAG, and the first step towards this endeavour amounts to the application
+of trainer and tester <a href="../../api_reference/decorators/"><code>decorators</code></a>
+on the respective functions.</p>
+<div class="language-py highlight"><span class="filename">decorating training loops and evaluation functions</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">federate</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nd">@federate</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">pytorch</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">training_loop</span><span class="p">():</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="o">...</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nd">@federate</span><span class="o">.</span><span class="n">tester</span><span class="o">.</span><span class="n">pytorch</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">():</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="o">...</span>
+</span></code></pre></div>
+<p>These decorators perform inspection on these functions to automatically parse
+the model as well as training and validation datasets.</p>
+<h2 id="create-an-fltask">Create an <code>FLTask</code><a class="headerlink" href="#create-an-fltask" title="Permanent link">&para;</a></h2>
+<p>The final step in the federation transformation involves building an
+<a href="../../api_reference/fl_tasks/"><code>FLTask</code></a> using the decorated trainer and
+evaluation function.</p>
+<div class="language-py highlight"><span class="filename">defining the FL task</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.fl_tasks.pytorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyTorchFLTask</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># use from_trainer_tester class method</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">fl_task</span> <span class="o">=</span> <span class="n">PyTorchFLTask</span><span class="o">.</span><span class="n">from_trainer_and_tester</span><span class="p">(</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">trainer</span><span class="o">=</span><span class="n">decorated_trainer</span><span class="p">,</span> <span class="n">tester</span><span class="o">=</span><span class="n">decorated_tester</span>  <span class="c1"># (1)!</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>decorated with <code>federate.trainer.pytorch</code> and <code>federate.tester.pytorch</code>, respectively</li>
+</ol>
+<h2 id="spin-up-fl-servers-and-clients">Spin up FL servers and clients<a class="headerlink" href="#spin-up-fl-servers-and-clients" title="Permanent link">&para;</a></h2>
+<p>With an <code>FLTask</code>, we can obtain an FL server as well as clients. Starting a server
+and required number of clients will commence the federated training.</p>
+<div class="language-py highlight"><span class="filename">getting server and clients</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">flwr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fl</span>  <span class="c1"># (1)!</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># federate generator fine-tuning</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">model</span> <span class="o">=</span> <span class="n">rag_system</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">model</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># server</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">server</span> <span class="o">=</span> <span class="n">fl_task</span><span class="o">.</span><span class="n">server</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>  <span class="c1"># (2)!</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># client</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">client</span> <span class="o">=</span> <span class="n">fl_task</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>  <span class="c1"># (3)!</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1"># the below commands are blocking and would need to be run in separate processes</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">fl</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">start_server</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">server</span><span class="p">,</span> <span class="n">server_address</span><span class="o">=</span><span class="s2">&quot;[::]:8080&quot;</span><span class="p">)</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="n">fl</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">start_client</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span> <span class="n">server_address</span><span class="o">=</span><span class="s2">&quot;[::]:8080&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li><code>flwr</code> is the backend federated learning framework for FedRAG and comes included
+with the installation of <code>fed-rag</code>.</li>
+<li>Can pass in FL aggregation strategy, otherwise defaults to federated averaging.</li>
+<li>Requires the same arguments as the centralized <code>training_loop</code>.</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Under the hood, <code>FLTask.server()</code> and <code>FLTask.client()</code> build <code>~flwr.Server</code>
+and <code>~flwr.Client</code> objects, respectively.</p>
+</div>
 
 
 
