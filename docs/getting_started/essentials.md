@@ -44,5 +44,6 @@ their RAG systems on their own datasets.
 
 !!! note "Note — FedRAG also enables centralized RAG fine-tuning"
 
-    While the main premise for FedRAG is FL, that centralized fine-tuning is also
-    supported (as our readers shall see shortly in the upcoming Quick Start example).
+    While the main premise for FedRAG is FL, note that centralized fine-tuning is
+    also supported (as our readers shall see shortly in the upcoming Quick Start
+    example).
