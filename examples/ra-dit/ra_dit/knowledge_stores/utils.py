@@ -10,29 +10,32 @@ from fed_rag.retrievers.hf_sentence_transformer import (
 )
 from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
 
-DATA_PATH = Path(__file__).parents[2].absolute() / "data"
+DATA_DIR = Path(__file__).parents[2].absolute() / "data"
+ATLAS_DIR = DATA_DIR / "atlas" / "enwiki-dec2021"
 
 
 def knowledge_store_from_retriever(
     retriever: HFSentenceTransformerRetriever,
     persist: bool = False,
-    out_path: Path | None = None,
+    data_path: Path | None = None,
 ) -> InMemoryKnowledgeStore:
     knowledge_store = InMemoryKnowledgeStore()
 
     # load chunks from atlas corpus
-    filename = "mock_data.jsonl"
-    with open(DATA_PATH / filename) as f:
+    data_path = data_path if data_path else ATLAS_DIR
+    filename = "sm_sample-text-list-100-sec.jsonl"
+    with open(data_path / filename) as f:
         chunks = [json.loads(line) for line in f]
 
     # create knowledge nodes
     nodes = []
     for c in chunks:
+        text = c.pop("text")
         node = KnowledgeNode(
-            embedding=retriever.encode_context(c["text"]).tolist(),
+            embedding=retriever.encode_context(text).tolist(),
             node_type=NodeType.TEXT,
-            text_content=c["text"],
-            metadata={"title": c["title"], "id": c["id"]},
+            text_content=text,
+            metadata=c,
         )
         nodes.append(node)
 
@@ -40,11 +43,7 @@ def knowledge_store_from_retriever(
     knowledge_store.load_nodes(nodes=nodes)
 
     # persist
-    # if persist:
-    #     if out_path is None:
-    #         raise ValueError(
-    #             "`out_path` is `None` but `persist` is `True`. Must provide a valid `out_path`."
-    #         )
-    #     knowledge_store.persist(out_path)
+    if persist:
+        knowledge_store.persist()
 
     return knowledge_store
