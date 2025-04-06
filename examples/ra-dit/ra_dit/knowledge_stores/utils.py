@@ -1,7 +1,10 @@
 """Knowledge Store Utils."""
 
 import json
+import logging
 from pathlib import Path
+
+from fed_rag.exceptions import KnowledgeStoreNotFoundError
 
 # fed_rag
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
@@ -13,37 +16,81 @@ from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
 DATA_DIR = Path(__file__).parents[2].absolute() / "data"
 ATLAS_DIR = DATA_DIR / "atlas" / "enwiki-dec2021"
 
+ks_logger = logging.getLogger("ra_dit.knowledge_stores")
+
 
 def knowledge_store_from_retriever(
     retriever: HFSentenceTransformerRetriever,
+    name: str,
     persist: bool = False,
     data_path: Path | None = None,
+    overwrite: bool = False,
 ) -> InMemoryKnowledgeStore:
-    knowledge_store = InMemoryKnowledgeStore()
+    ks_logger.info(
+        f"Creating knowledge store from retriever: name='{name}', persist={persist}, "
+        f"data_path={data_path if data_path else 'default'}, overwrite={overwrite}"
+    )
 
-    # load chunks from atlas corpus
-    data_path = data_path if data_path else ATLAS_DIR
-    filename = "sm_sample-text-list-100-sec.jsonl"
-    with open(data_path / filename) as f:
-        chunks = [json.loads(line) for line in f]
+    knowledge_store = InMemoryKnowledgeStore(name=name)
+    knowledge_store_exists = False
 
-    # create knowledge nodes
-    nodes = []
-    for c in chunks:
-        text = c.pop("text")
-        node = KnowledgeNode(
-            embedding=retriever.encode_context(text).tolist(),
-            node_type=NodeType.TEXT,
-            text_content=text,
-            metadata=c,
+    # try loading from cache
+    try:
+        knowledge_store.load()
+        knowledge_store_exists = True
+        ks_logger.info(
+            f"Knowledge store successfully loaded from cache: '{name}'."
         )
-        nodes.append(node)
+    except KnowledgeStoreNotFoundError:
+        ks_logger.info(
+            f"Knowledge store cache not found for '{name}'. Building new store."
+        )
+        pass
 
-    # load into knowledge_store
-    knowledge_store.load_nodes(nodes=nodes)
+    if not knowledge_store_exists or overwrite:
+        if overwrite:
+            knowledge_store.clear()
+            ks_logger.info("Overwriting the loaded KnowledgeStore.")
 
-    # persist
-    if persist:
-        knowledge_store.persist()
+        # build the knowledge store by loading chunks from atlast corpus
+        data_path = data_path if data_path else ATLAS_DIR
+        filename = "sm_sample-text-list-100-sec.jsonl"
+        try:
+            with open(data_path / filename) as f:
+                chunks = [json.loads(line) for line in f]
+            ks_logger.info(
+                f"Succesfully loaded knowledge artifacts from file: {filename}"
+            )
+            ks_logger.debug(f"Loaded {len(chunks)} chunks from file")
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            raise RuntimeError(f"Failed to load chunks from {filename}: {e}")
+
+        # create knowledge nodes
+        nodes = []
+        for c in chunks:
+            text = c.pop("text")
+            node = KnowledgeNode(
+                embedding=retriever.encode_context(text).tolist(),
+                node_type=NodeType.TEXT,
+                text_content=text,
+                metadata=c,
+            )
+            nodes.append(node)
+        ks_logger.info("KnowledgeNode's successfully created.")
+        ks_logger.debug(f"Created {len(nodes)} knowledge nodes")
+
+        # load into knowledge_store
+        knowledge_store.load_nodes(nodes=nodes)
+        ks_logger.info("KnowledgeNode's successfully loaded.")
+        ks_logger.debug(
+            f"KnowledgeStore has {knowledge_store.count} knowledge nodes"
+        )
+
+        # persist
+        if persist:
+            knowledge_store.persist()
+            ks_logger.info(
+                f"KnowledgeStore cached to {knowledge_store.default_save_path}/{knowledge_store.name}.parquet"
+            )
 
     return knowledge_store
