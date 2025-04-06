@@ -48,7 +48,7 @@ def _get_top_k_nodes(
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
-    default_cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
+    cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
@@ -103,12 +103,12 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
 
         parquet_table = pa.Table.from_pylist(data_values)
 
-        filename = Path(self.default_cache_dir) / f"{self.name}.parquet"
+        filename = Path(self.cache_dir) / f"{self.name}.parquet"
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
         pq.write_table(parquet_table, filename)
 
     def load(self) -> None:
-        filename = Path(self.default_cache_dir) / f"{self.name}.parquet"
+        filename = Path(self.cache_dir) / f"{self.name}.parquet"
         if not filename.exists():
             msg = f"Knowledge store '{self.name}' not found at expected location: {filename}"
             raise KnowledgeStoreNotFoundError(msg)
@@ -125,9 +125,7 @@ class ManagedInMemoryKnowledgeStore(ManagedMixin, InMemoryKnowledgeStore):
 
         parquet_table = pa.Table.from_pylist(data_values)
 
-        filename = (
-            Path(self.default_cache_dir) / self.name / f"{self.ks_id}.parquet"
-        )
+        filename = Path(self.cache_dir) / self.name / f"{self.ks_id}.parquet"
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
         pq.write_table(parquet_table, filename)
 
@@ -144,7 +142,7 @@ class ManagedInMemoryKnowledgeStore(ManagedMixin, InMemoryKnowledgeStore):
         parquet_data = pq.read_table(filename).to_pylist()
         nodes = [KnowledgeNode(**data) for data in parquet_data]
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
-            nodes, name=name, default_cache_dir=cache_dir
+            nodes, name=name, cache_dir=cache_dir
         )
         # set id
         knowledge_store.ks_id = ks_id

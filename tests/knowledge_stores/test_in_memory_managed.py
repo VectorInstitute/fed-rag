@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.exceptions import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.in_memory import ManagedInMemoryKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
 
@@ -143,7 +144,7 @@ def test_persist(text_nodes: list[KnowledgeNode]) -> None:
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes
         )
-        knowledge_store.default_cache_dir = dirpath
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
         filename = (
@@ -161,7 +162,7 @@ def test_load(mock_uuid: MagicMock, text_nodes: list[KnowledgeNode]) -> None:
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes, name="test_ks"
         )
-        knowledge_store.default_cache_dir = dirpath
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
         loaded_knowledge_store = (
@@ -175,6 +176,16 @@ def test_load(mock_uuid: MagicMock, text_nodes: list[KnowledgeNode]) -> None:
 
 
 @patch("fed_rag.knowledge_stores.mixins.uuid")
+def test_load_with_missing_file_raises_error(mock_uuid: MagicMock) -> None:
+    mock_uuid.uuid4.return_value = "test_ks_id"
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = ManagedInMemoryKnowledgeStore(cache_dir=dirpath)
+
+        with pytest.raises(KnowledgeStoreNotFoundError):
+            knowledge_store.load()
+
+
+@patch("fed_rag.knowledge_stores.mixins.uuid")
 def test_persist_overwrite(
     mock_uuid: MagicMock,
     text_nodes: list[KnowledgeNode],
@@ -184,7 +195,7 @@ def test_persist_overwrite(
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes, name="test_ks"
         )
-        knowledge_store.default_cache_dir = dirpath
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
         knowledge_store.load_node(

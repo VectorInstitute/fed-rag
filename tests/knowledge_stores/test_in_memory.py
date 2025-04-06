@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.exceptions import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
 
@@ -130,7 +131,7 @@ def test_retrieve(
 def test_persist(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-        knowledge_store.default_cache_dir = dirpath
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
         filename = Path(dirpath) / f"{knowledge_store.name}.parquet"
@@ -140,23 +141,31 @@ def test_persist(text_nodes: list[KnowledgeNode]) -> None:
 def test_load(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", default_cache_dir=dirpath
+            nodes=text_nodes, name="test_ks", cache_dir=dirpath
         )
         knowledge_store.persist()
 
         # load into new empty instance
         loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", default_cache_dir=dirpath
+            name="test_ks", cache_dir=dirpath
         )
         loaded_knowledge_store.load()
 
         assert loaded_knowledge_store._data == knowledge_store._data
 
 
+def test_load_with_missing_file_raises_error() -> None:
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = InMemoryKnowledgeStore(cache_dir=dirpath)
+
+        with pytest.raises(KnowledgeStoreNotFoundError):
+            knowledge_store.load()
+
+
 def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", default_cache_dir=dirpath
+            nodes=text_nodes, name="test_ks", cache_dir=dirpath
         )
         knowledge_store.persist()
 
@@ -173,7 +182,7 @@ def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
 
         # load into new empty instance
         loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", default_cache_dir=dirpath
+            name="test_ks", cache_dir=dirpath
         )
         loaded_knowledge_store.load()
 
