@@ -38,14 +38,12 @@ def _get_top_k_nodes(
         )
         return cosine_sim
 
-    scores = [
-        (node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes
-    ]
+    scores = [(node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes]
     scores.sort(key=lambda tup: tup[1], reverse=True)
     return scores[:top_k]
 
 
-class InMemoryKnowledgeStore(BaseKnowledgeStore):
+class InMemoryKnowledgeStore(ManagedMixin, BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
