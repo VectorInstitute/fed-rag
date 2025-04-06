@@ -143,7 +143,9 @@ class ManagedInMemoryKnowledgeStore(ManagedMixin, InMemoryKnowledgeStore):
 
         parquet_data = pq.read_table(filename).to_pylist()
         nodes = [KnowledgeNode(**data) for data in parquet_data]
-        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(nodes)
+        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+            nodes, name=name, default_cache_dir=cache_dir
+        )
         # set id
         knowledge_store.ks_id = ks_id
         return knowledge_store
