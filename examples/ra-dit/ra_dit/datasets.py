@@ -4,11 +4,9 @@ import json
 from pathlib import Path
 from typing import Literal
 
-from ra_dit.generators import GENERATORS
-from ra_dit.knowledge_stores import KNOWLEDGE_STORES
-from ra_dit.retrievers import RETRIEVERS
+from ra_dit.rag_system import main as get_rag_system
 
-from fed_rag.types.rag_system import RAGConfig, RAGSystem
+from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
     HuggingfaceRAGFinetuningDataset,
@@ -32,6 +30,10 @@ finetune_example_template = """<instruction>
 """
 
 
+QA_DATA_PATH = Path(__file__).parents[2].absolute() / "data" / "qa"
+QA_DATA_REGISTRY: dict[str, str] = {}
+
+
 def _load_qa_dataset(name: str) -> list[dict[str, str]]:
     data_file_path = QA_DATA_PATH / QA_DATA_REGISTRY[name]
     examples = []
@@ -53,20 +55,14 @@ def main(
     examples = _load_qa_dataset(qa_dataset_name)
 
     # build rag system
-    retriever = RETRIEVERS[retriever_id]
-    knowledge_store = KNOWLEDGE_STORES[f"from_{retriever_id}"]
-    generator = GENERATORS[generator_id][generator_variant]
-
-    rag_config = RAGConfig(top_k=2)
-    rag_system = RAGSystem(
-        knowledge_store=knowledge_store,  # knowledge store loaded from knowledge_store.py
-        generator=generator,
-        retriever=retriever,
-        rag_config=rag_config,
+    rag_system = get_rag_system(
+        retriever_id=retriever_id,
+        generator_id=generator_id,
+        generator_variant="qlora",  # unused
     )
 
     # generate retrieval-augmented instruction tuning dataset
-    unwrapped_tokenizer = generator.tokenizer.unwrapped
+    unwrapped_tokenizer = rag_system.generator.tokenizer.unwrapped
 
     # find eos_token_id
     try:

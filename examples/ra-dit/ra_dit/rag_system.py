@@ -3,7 +3,7 @@
 from typing import Literal
 
 from ra_dit.generators import GENERATORS
-from ra_dit.knowledge_stores import KNOWLEDGE_STORES
+from ra_dit.knowledge_stores.utils import knowledge_store_from_retriever
 from ra_dit.retrievers import RETRIEVERS
 
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
@@ -17,7 +17,10 @@ def main(
     """Build RAG System."""
 
     retriever = RETRIEVERS[retriever_id]
-    knowledge_store = KNOWLEDGE_STORES[f"from_{retriever_id}"]
+    knowledge_store = knowledge_store_from_retriever(
+        retriever=retriever,
+        name=retriever_id,
+    )
     generator = GENERATORS[generator_id][generator_variant]
 
     ## assemble
