@@ -1,4 +1,5 @@
-import os
+import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -127,53 +128,53 @@ def test_retrieve(
 
 
 def test_persist(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-    knowledge_store.persist()
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+        knowledge_store.default_save_path = dirpath
+        knowledge_store.persist()
 
-    filename = InMemoryKnowledgeStore.default_save_path.format(
-        knowledge_store.ks_id
-    )
-    assert os.path.exists(filename)
-
-    # cleanup
-    os.remove(filename)
+        filename = Path(dirpath) / f"{knowledge_store.name}.parquet"
+        assert filename.exists()
 
 
 def test_load(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-    knowledge_store.persist()
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = InMemoryKnowledgeStore.from_nodes(
+            nodes=text_nodes, name="test_ks", default_save_path=dirpath
+        )
+        knowledge_store.persist()
 
-    loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
+        # load into new empty instance
+        loaded_knowledge_store = InMemoryKnowledgeStore(
+            name="test_ks", default_save_path=dirpath
+        )
+        loaded_knowledge_store.load()
 
-    assert loaded_knowledge_store.ks_id == knowledge_store.ks_id
-    assert loaded_knowledge_store._data == knowledge_store._data
-
-    # cleanup
-    filename = InMemoryKnowledgeStore.default_save_path.format(
-        knowledge_store.ks_id
-    )
-    os.remove(filename)
+        assert loaded_knowledge_store._data == knowledge_store._data
 
 
 def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-    knowledge_store.persist()
-
-    knowledge_store.load_node(
-        KnowledgeNode(
-            embedding=[1.0, 1.0, 1.0],
-            node_type="text",
-            text_content="node 4",
-            metadata={"key4": "value4"},
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = InMemoryKnowledgeStore.from_nodes(
+            nodes=text_nodes, name="test_ks", default_save_path=dirpath
         )
-    )
-    knowledge_store.persist()
+        knowledge_store.persist()
 
-    loaded_knowledge_store = InMemoryKnowledgeStore.load(knowledge_store.ks_id)
-    assert loaded_knowledge_store._data == knowledge_store._data
+        # overwrite
+        knowledge_store.load_node(
+            KnowledgeNode(
+                embedding=[1.0, 1.0, 1.0],
+                node_type="text",
+                text_content="node 4",
+                metadata={"key4": "value4"},
+            )
+        )
+        knowledge_store.persist()
 
-    # cleanup
-    filename = InMemoryKnowledgeStore.default_save_path.format(
-        knowledge_store.ks_id
-    )
-    os.remove(filename)
+        # load into new empty instance
+        loaded_knowledge_store = InMemoryKnowledgeStore(
+            name="test_ks", default_save_path=dirpath
+        )
+        loaded_knowledge_store.load()
+
+        assert loaded_knowledge_store._data == knowledge_store._data

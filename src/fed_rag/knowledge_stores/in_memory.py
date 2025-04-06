@@ -9,10 +9,7 @@ import pyarrow.parquet as pq
 from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
-from fed_rag.base.knowledge_store import (
-    DEFAULT_KNOWLEDGE_STORE_NAME,
-    BaseKnowledgeStore,
-)
+from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions.knowledge_stores import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.mixins import ManagedMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
@@ -55,10 +52,8 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
-    def from_nodes(
-        cls, nodes: list[KnowledgeNode], name: str | None = None
-    ) -> Self:
-        instance = cls(name=name if name else DEFAULT_KNOWLEDGE_STORE_NAME)
+    def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
+        instance = cls(**kwargs)
         instance.load_nodes(nodes)
         return instance
 
