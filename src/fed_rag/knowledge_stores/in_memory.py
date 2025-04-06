@@ -1,6 +1,5 @@
 """In Memory Knowledge Store"""
 
-import uuid
 from pathlib import Path
 from typing import Any, ClassVar, Dict, cast
 
@@ -11,6 +10,8 @@ from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.exceptions.knowledge_stores import KnowledgeStoreNotFoundError
+from fed_rag.knowledge_stores.mixins import ManagedMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 DEFAULT_TOP_K = 2
@@ -43,12 +44,15 @@ def _get_top_k_nodes(
     return scores[:top_k]
 
 
-class InMemoryKnowledgeStore(BaseKnowledgeStore):
+class InMemoryKnowledgeStore(ManagedMixin, BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
-    default_save_path: ClassVar[str] = ".fed_rag/data_cache/{0}.parquet"
+    default_save_path: ClassVar[str] = ".fed_rag/data_cache/"
+    name: str = Field(
+        description="Name of Knowledge Store used for caching and loading.",
+        default="default",
+    )
 
-    ks_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
@@ -103,17 +107,16 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
 
         parquet_table = pa.Table.from_pylist(data_values)
 
-        filename = self.__class__.default_save_path.format(self.ks_id)
+        filename = Path(self.default_save_path) / f"{self.name}.parquet"
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
         pq.write_table(parquet_table, filename)
 
-    @classmethod
-    def load(cls, ks_id: str) -> Self:
-        filename = cls.default_save_path.format(ks_id)
-        parquet_data = pq.read_table(filename).to_pylist()
+    def load(self) -> None:
+        filename = Path(self.default_save_path) / f"{self.name}.parquet"
+        if not filename.exists():
+            msg = f"Knowledge store '{self.name}' not found at expected location: {filename}"
+            raise KnowledgeStoreNotFoundError(msg)
 
-        knowledge_store = cls.from_nodes(
-            [KnowledgeNode(**data) for data in parquet_data]
-        )
-        knowledge_store.ks_id = ks_id
-        return knowledge_store
+        parquet_data = pq.read_table(filename).to_pylist()
+        nodes = [KnowledgeNode(**data) for data in parquet_data]
+        self.load_nodes(nodes)
