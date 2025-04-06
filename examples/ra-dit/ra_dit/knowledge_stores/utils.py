@@ -41,7 +41,6 @@ def knowledge_store_from_retriever(
 
     # load into knowledge_store
     knowledge_store.load_nodes(nodes=nodes)
-    print(knowledge_store.ks_id)
 
     # persist
     if persist:
