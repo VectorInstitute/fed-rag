@@ -130,7 +130,7 @@ def test_retrieve(
 def test_persist(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
-        knowledge_store.default_save_path = dirpath
+        knowledge_store.default_cache_dir = dirpath
         knowledge_store.persist()
 
         filename = Path(dirpath) / f"{knowledge_store.name}.parquet"
@@ -140,13 +140,13 @@ def test_persist(text_nodes: list[KnowledgeNode]) -> None:
 def test_load(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", default_save_path=dirpath
+            nodes=text_nodes, name="test_ks", default_cache_dir=dirpath
         )
         knowledge_store.persist()
 
         # load into new empty instance
         loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", default_save_path=dirpath
+            name="test_ks", default_cache_dir=dirpath
         )
         loaded_knowledge_store.load()
 
@@ -156,7 +156,7 @@ def test_load(text_nodes: list[KnowledgeNode]) -> None:
 def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
         knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", default_save_path=dirpath
+            nodes=text_nodes, name="test_ks", default_cache_dir=dirpath
         )
         knowledge_store.persist()
 
@@ -173,7 +173,7 @@ def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
 
         # load into new empty instance
         loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", default_save_path=dirpath
+            name="test_ks", default_cache_dir=dirpath
         )
         loaded_knowledge_store.load()
 

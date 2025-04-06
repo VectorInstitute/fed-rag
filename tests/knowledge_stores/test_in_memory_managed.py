@@ -143,7 +143,7 @@ def test_persist(text_nodes: list[KnowledgeNode]) -> None:
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes
         )
-        knowledge_store.default_save_path = dirpath
+        knowledge_store.default_cache_dir = dirpath
         knowledge_store.persist()
 
         filename = (
@@ -161,7 +161,7 @@ def test_load(mock_uuid: MagicMock, text_nodes: list[KnowledgeNode]) -> None:
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes, name="test_ks"
         )
-        knowledge_store.default_save_path = dirpath
+        knowledge_store.default_cache_dir = dirpath
         knowledge_store.persist()
 
         loaded_knowledge_store = (
@@ -184,7 +184,7 @@ def test_persist_overwrite(
         knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
             nodes=text_nodes, name="test_ks"
         )
-        knowledge_store.default_save_path = dirpath
+        knowledge_store.default_cache_dir = dirpath
         knowledge_store.persist()
 
         knowledge_store.load_node(
