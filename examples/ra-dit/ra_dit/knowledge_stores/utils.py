@@ -90,7 +90,7 @@ def knowledge_store_from_retriever(
         if persist:
             knowledge_store.persist()
             ks_logger.info(
-                f"KnowledgeStore cached to {knowledge_store.default_save_path}/{knowledge_store.name}.parquet"
+                f"KnowledgeStore cached to {knowledge_store.cache_dir}/{knowledge_store.name}.parquet"
             )
 
     return knowledge_store
