@@ -53,6 +53,10 @@ nav:
     - api_reference/index.md
     - Decorators:
       - api_reference/decorators/index.md
+    - Exceptions:
+      - FL Tasks: api_reference/exceptions/fl_tasks.md
+      - Inspectors: api_reference/exceptions/inspectors.md
+      - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
     - Finetuning Datasets:
       - api_reference/finetuning_datasets/index.md
       - api_reference/finetuning_datasets/pytorch.md
@@ -73,6 +77,7 @@ nav:
     - Knowledge Stores:
       - api_reference/knowledge_stores/index.md
       - InMemory: api_reference/knowledge_stores/in_memory.md
+      - Mixins: api_reference/knowledge_stores/mixins.md
     - RAGSystem:
       - api_reference/rag_system/index.md
     - Retrievers:
