@@ -59,7 +59,7 @@ def knowledge_store_from_retriever(
             with open(data_path / filename) as f:
                 chunks = [json.loads(line) for line in f]
             ks_logger.info(
-                f"Succesfully loaded knowledge artifacts from file: {filename}"
+                f"Successfully loaded knowledge artifacts from file: {filename}"
             )
             ks_logger.debug(f"Loaded {len(chunks)} chunks from file")
         except (FileNotFoundError, json.JSONDecodeError) as e:
