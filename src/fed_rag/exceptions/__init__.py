@@ -1,9 +1,12 @@
 from .fl_tasks import (
+    FLTaskError,
     MissingFLTaskConfig,
     MissingRequiredNetParam,
     NetTypeMismatch,
 )
 from .inspectors import (
+    InspectorError,
+    InspectorWarning,
     InvalidReturnType,
     MissingDataParam,
     MissingMultipleDataParams,
@@ -12,13 +15,17 @@ from .inspectors import (
     MissingTrainerSpec,
     UnequalNetParamWarning,
 )
+from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
 
 __all__ = [
     # fl_tasks
+    "FLTaskError",
     "MissingFLTaskConfig",
     "MissingRequiredNetParam",
     "NetTypeMismatch",
     # inspectors
+    "InspectorError",
+    "InspectorWarning",
     "MissingNetParam",
     "MissingMultipleDataParams",
     "MissingDataParam",
@@ -26,4 +33,7 @@ __all__ = [
     "MissingTesterSpec",
     "UnequalNetParamWarning",
     "InvalidReturnType",
+    # knowledge stores
+    "KnowledgeStoreError",
+    "KnowledgeStoreNotFoundError",
 ]
