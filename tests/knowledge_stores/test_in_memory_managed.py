@@ -175,14 +175,12 @@ def test_load(mock_uuid: MagicMock, text_nodes: list[KnowledgeNode]) -> None:
         assert loaded_knowledge_store._data == knowledge_store._data
 
 
-@patch("fed_rag.knowledge_stores.mixins.uuid")
-def test_load_with_missing_file_raises_error(mock_uuid: MagicMock) -> None:
-    mock_uuid.uuid4.return_value = "test_ks_id"
+def test_load_with_missing_file_raises_error() -> None:
     with tempfile.TemporaryDirectory() as dirpath:
-        knowledge_store = ManagedInMemoryKnowledgeStore(cache_dir=dirpath)
-
         with pytest.raises(KnowledgeStoreNotFoundError):
-            knowledge_store.load()
+            ManagedInMemoryKnowledgeStore.from_name_and_id(
+                name="test_ks", ks_id="test_ks_id", cache_dir=dirpath
+            )
 
 
 @patch("fed_rag.knowledge_stores.mixins.uuid")
