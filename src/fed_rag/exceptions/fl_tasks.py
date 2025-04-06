@@ -1,14 +1,23 @@
-class MissingFLTaskConfig(Exception):
+"""Exceptions for FL Tasks."""
+
+
+class FLTaskError(Exception):
+    """Base fl task error for all fl-task-related exceptions."""
+
     pass
 
 
-class MissingRequiredNetParam(Exception):
+class MissingFLTaskConfig(FLTaskError):
+    pass
+
+
+class MissingRequiredNetParam(FLTaskError):
     """Raised when invoking fl_task.server without passing the specified model/net param."""
 
     pass
 
 
-class NetTypeMismatch(Exception):
+class NetTypeMismatch(FLTaskError):
     """Raised when a `trainer` and `tester` spec have differing `net_parameter_class_name`.
 
     This indicates that the these methods have different types for the `net_parameter`.

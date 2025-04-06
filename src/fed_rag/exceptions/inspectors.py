@@ -1,29 +1,41 @@
 """Exceptions for inspectors"""
 
 
-class MissingNetParam(Exception):
+class InspectorError(Exception):
+    """Base inspector error for all inspector-related exceptions."""
+
     pass
 
 
-class MissingMultipleDataParams(Exception):
+class InspectorWarning(Warning):
+    """Base inspector warning for all inspector-related warnings."""
+
     pass
 
 
-class MissingDataParam(Exception):
+class MissingNetParam(InspectorError):
     pass
 
 
-class MissingTrainerSpec(Exception):
+class MissingMultipleDataParams(InspectorError):
     pass
 
 
-class MissingTesterSpec(Exception):
+class MissingDataParam(InspectorError):
     pass
 
 
-class UnequalNetParamWarning(Warning):
+class MissingTrainerSpec(InspectorError):
     pass
 
 
-class InvalidReturnType(Exception):
+class MissingTesterSpec(InspectorError):
+    pass
+
+
+class UnequalNetParamWarning(InspectorWarning):
+    pass
+
+
+class InvalidReturnType(InspectorError):
     pass
