@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.7] - 2025-04-06
+
+### Added
+
+- ManagedInMemoryKnowledgeStore and ManagedMixin for KnowledgeStore [#135]
+- Added `name` attribute to `BaseKnowledgeStore [#135]
+- Knowledge store exceptions [#135]
+
+### Changed
+
+- Persist and load uses `name` (`ks_id` only exists for managed version) [#135]
+- Exception modules have their own respective base exception [#135]
+
 ## [0.0.6] - 2025-03-26
 
 ### Post
