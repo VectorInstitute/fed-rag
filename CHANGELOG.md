@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - ManagedInMemoryKnowledgeStore and ManagedMixin for KnowledgeStore [#135]
-- Added `name` attribute to `BaseKnowledgeStore [#135]
+- Added `name` attribute to `BaseKnowledgeStore` [#135]
 - Knowledge store exceptions [#135]
 
 ### Changed
