@@ -1,11 +1,12 @@
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions import KnowledgeStoreNotFoundError
-from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
+from fed_rag.knowledge_stores.in_memory import ManagedInMemoryKnowledgeStore
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 
@@ -35,26 +36,30 @@ def text_nodes() -> list[KnowledgeNode]:
 
 def test_in_memory_knowledge_store_class() -> None:
     names_of_base_classes = [
-        b.__name__ for b in InMemoryKnowledgeStore.__mro__
+        b.__name__ for b in ManagedInMemoryKnowledgeStore.__mro__
     ]
     assert BaseKnowledgeStore.__name__ in names_of_base_classes
 
 
 def test_in_memory_knowledge_store_init() -> None:
-    knowledge_store = InMemoryKnowledgeStore()
+    knowledge_store = ManagedInMemoryKnowledgeStore()
 
     assert knowledge_store.count == 0
 
 
 def test_from_nodes(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
 
     assert knowledge_store.count == 3
     assert all(n.node_id in knowledge_store._data for n in text_nodes)
 
 
 def test_delete_node(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
 
     assert knowledge_store.count == 3
 
@@ -66,7 +71,9 @@ def test_delete_node(text_nodes: list[KnowledgeNode]) -> None:
 
 
 def test_delete_node_returns_false(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
 
     assert knowledge_store.count == 3
 
@@ -78,7 +85,7 @@ def test_delete_node_returns_false(text_nodes: list[KnowledgeNode]) -> None:
 
 
 def test_load_node(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore()
+    knowledge_store = ManagedInMemoryKnowledgeStore()
     assert knowledge_store.count == 0
 
     knowledge_store.load_node(text_nodes[-1])
@@ -88,7 +95,7 @@ def test_load_node(text_nodes: list[KnowledgeNode]) -> None:
 
 
 def test_load_nodes(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore()
+    knowledge_store = ManagedInMemoryKnowledgeStore()
     assert knowledge_store.count == 0
 
     knowledge_store.load_nodes(text_nodes)
@@ -98,7 +105,9 @@ def test_load_nodes(text_nodes: list[KnowledgeNode]) -> None:
 
 
 def test_clear(text_nodes: list[KnowledgeNode]) -> None:
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
     assert knowledge_store.count == 3
 
     knowledge_store.clear()
@@ -119,7 +128,9 @@ def test_retrieve(
     text_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange
-    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
 
     # act
     res = knowledge_store.retrieve(query_emb, top_k=top_k)
@@ -130,46 +141,61 @@ def test_retrieve(
 
 def test_persist(text_nodes: list[KnowledgeNode]) -> None:
     with tempfile.TemporaryDirectory() as dirpath:
-        knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=text_nodes)
+        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+            nodes=text_nodes
+        )
         knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
-        filename = Path(dirpath) / f"{knowledge_store.name}.parquet"
+        filename = (
+            Path(dirpath)
+            / knowledge_store.name
+            / f"{knowledge_store.ks_id}.parquet"
+        )
         assert filename.exists()
 
 
-def test_load(text_nodes: list[KnowledgeNode]) -> None:
+@patch("fed_rag.knowledge_stores.mixins.uuid")
+def test_load(mock_uuid: MagicMock, text_nodes: list[KnowledgeNode]) -> None:
+    mock_uuid.uuid4.return_value = "test_ks_id"
     with tempfile.TemporaryDirectory() as dirpath:
-        knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", cache_dir=dirpath
+        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+            nodes=text_nodes, name="test_ks"
         )
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
-        # load into new empty instance
-        loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", cache_dir=dirpath
+        loaded_knowledge_store = (
+            ManagedInMemoryKnowledgeStore.from_name_and_id(
+                name="test_ks", ks_id="test_ks_id", cache_dir=dirpath
+            )
         )
-        loaded_knowledge_store.load()
 
+        assert loaded_knowledge_store.ks_id == knowledge_store.ks_id
         assert loaded_knowledge_store._data == knowledge_store._data
 
 
 def test_load_with_missing_file_raises_error() -> None:
     with tempfile.TemporaryDirectory() as dirpath:
-        knowledge_store = InMemoryKnowledgeStore(cache_dir=dirpath)
-
         with pytest.raises(KnowledgeStoreNotFoundError):
-            knowledge_store.load()
+            ManagedInMemoryKnowledgeStore.from_name_and_id(
+                name="test_ks", ks_id="test_ks_id", cache_dir=dirpath
+            )
 
 
-def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
+@patch("fed_rag.knowledge_stores.mixins.uuid")
+def test_persist_overwrite(
+    mock_uuid: MagicMock,
+    text_nodes: list[KnowledgeNode],
+) -> None:
+    mock_uuid.uuid4.return_value = "test_ks_id"
     with tempfile.TemporaryDirectory() as dirpath:
-        knowledge_store = InMemoryKnowledgeStore.from_nodes(
-            nodes=text_nodes, name="test_ks", cache_dir=dirpath
+        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+            nodes=text_nodes, name="test_ks"
         )
+        knowledge_store.cache_dir = dirpath
         knowledge_store.persist()
 
-        # overwrite
         knowledge_store.load_node(
             KnowledgeNode(
                 embedding=[1.0, 1.0, 1.0],
@@ -180,10 +206,9 @@ def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
         )
         knowledge_store.persist()
 
-        # load into new empty instance
-        loaded_knowledge_store = InMemoryKnowledgeStore(
-            name="test_ks", cache_dir=dirpath
+        loaded_knowledge_store = (
+            ManagedInMemoryKnowledgeStore.from_name_and_id(
+                name="test_ks", ks_id="test_ks_id", cache_dir=dirpath
+            )
         )
-        loaded_knowledge_store.load()
-
         assert loaded_knowledge_store._data == knowledge_store._data
