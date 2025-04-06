@@ -1,7 +1,7 @@
 """In Memory Knowledge Store"""
 
 from pathlib import Path
-from typing import Any, ClassVar, Dict, cast
+from typing import Any, Dict, cast
 
 import numpy as np
 import pyarrow as pa
@@ -9,11 +9,15 @@ import pyarrow.parquet as pq
 from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
-from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.base.knowledge_store import (
+    DEFAULT_KNOWLEDGE_STORE_NAME,
+    BaseKnowledgeStore,
+)
 from fed_rag.exceptions.knowledge_stores import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.mixins import ManagedMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
 
+DEFAULT_CACHE_DIR = ".fed_rag/data_cache/"
 DEFAULT_TOP_K = 2
 
 
@@ -44,20 +48,17 @@ def _get_top_k_nodes(
     return scores[:top_k]
 
 
-class InMemoryKnowledgeStore(ManagedMixin, BaseKnowledgeStore):
+class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
-    default_save_path: ClassVar[str] = ".fed_rag/data_cache/"
-    name: str = Field(
-        description="Name of Knowledge Store used for caching and loading.",
-        default="default",
-    )
-
+    default_save_path: str = Field(default=DEFAULT_CACHE_DIR)
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
 
     @classmethod
-    def from_nodes(cls, nodes: list[KnowledgeNode]) -> Self:
-        instance = cls()
+    def from_nodes(
+        cls, nodes: list[KnowledgeNode], name: str | None = None
+    ) -> Self:
+        instance = cls(name=name if name else DEFAULT_KNOWLEDGE_STORE_NAME)
         instance.load_nodes(nodes)
         return instance
 
@@ -120,3 +121,34 @@ class InMemoryKnowledgeStore(ManagedMixin, BaseKnowledgeStore):
         parquet_data = pq.read_table(filename).to_pylist()
         nodes = [KnowledgeNode(**data) for data in parquet_data]
         self.load_nodes(nodes)
+
+
+class ManagedInMemoryKnowledgeStore(ManagedMixin, InMemoryKnowledgeStore):
+    def persist(self) -> None:
+        serialized_model = self.model_dump()
+        data_values = list(serialized_model["_data"].values())
+
+        parquet_table = pa.Table.from_pylist(data_values)
+
+        filename = (
+            Path(self.default_save_path) / self.name / f"{self.ks_id}.parquet"
+        )
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        pq.write_table(parquet_table, filename)
+
+    @classmethod
+    def from_name_and_id(
+        cls, name: str, ks_id: str, cache_dir: str | None = None
+    ) -> Self:
+        cache_dir = cache_dir if cache_dir else DEFAULT_CACHE_DIR
+        filename = Path(cache_dir) / name / f"{ks_id}.parquet"
+        if not filename.exists():
+            msg = f"Knowledge store '{name}/{ks_id}' not found at expected location: {filename}"
+            raise KnowledgeStoreNotFoundError(msg)
+
+        parquet_data = pq.read_table(filename).to_pylist()
+        nodes = [KnowledgeNode(**data) for data in parquet_data]
+        knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(nodes)
+        # set id
+        knowledge_store.ks_id = ks_id
+        return knowledge_store

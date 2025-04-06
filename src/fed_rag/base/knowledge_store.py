@@ -2,16 +2,21 @@
 
 from abc import ABC, abstractmethod
 
-from pydantic import BaseModel, ConfigDict
-from typing_extensions import Self
+from pydantic import BaseModel, ConfigDict, Field
 
 from fed_rag.types.knowledge_node import KnowledgeNode
+
+DEFAULT_KNOWLEDGE_STORE_NAME = "default"
 
 
 class BaseKnowledgeStore(BaseModel, ABC):
     """Base Knowledge Store Class."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+    name: str = Field(
+        description="Name of Knowledge Store used for caching and loading.",
+        default=DEFAULT_KNOWLEDGE_STORE_NAME,
+    )
 
     @abstractmethod
     def load_node(self, node: KnowledgeNode) -> None:
@@ -49,11 +54,10 @@ class BaseKnowledgeStore(BaseModel, ABC):
     def persist(self) -> None:
         """Save the KnowledgeStore nodes to a permanent storage."""
 
-    @classmethod
     @abstractmethod
-    def load(cls, ks_id: str) -> Self:
+    def load(self) -> None:
         """
-        Load the KnowledgeStore nodes from a permanent storage given an id.
+        Load the KnowledgeStore nodes from a permanent storage using `name`.
 
         Args:
             ks_id: The id of the knowledge store to load.
