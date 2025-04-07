@@ -26,13 +26,14 @@ class ColoredFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         levelname = record.levelname
         original_msg = record.getMessage()
+        logger_name = record.name
 
         # Add color to level name
         colored_levelname = (
             f"{self.COLORS.get(levelname, '')}{levelname}{Style.RESET_ALL}"
         )
 
-        return f"{colored_levelname} :      {original_msg}"
+        return f"{colored_levelname} ({logger_name}) :      {original_msg}"
 
 
 def configure_logging() -> logging.Logger:
