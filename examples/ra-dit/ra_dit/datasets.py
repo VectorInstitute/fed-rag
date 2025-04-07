@@ -13,7 +13,7 @@ from fed_rag.utils.data.finetuning_datasets.huggingface import (
     HuggingFaceRAGFinetuningDataset,
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("ra_dit.datasets")
 
 finetune_example_template = """<instruction>
 ...
@@ -54,9 +54,9 @@ def main(
 ) -> RAGSystem:
     """Build RAG Fine-Tuning Dataset."""
     logger.info(
-        f"Creating fine-tuning dataset retriever: retriever_id='{retriever_id}', "
-        f"generator_id={generator_id}, generator_variant={generator_variant} ",
-        f"qa_dataset_name={qa_dataset_name}",
+        f"Creating fine-tuning dataset: retriever_id='{retriever_id}', "
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
+        f"qa_dataset_name={qa_dataset_name}"
     )
 
     # load in QA dataset
@@ -78,6 +78,7 @@ def main(
     # find eos_token_id
     try:
         eos_token = unwrapped_tokenizer.special_tokens_map.get("eos_token")
+        logger.info(f"Successfully found tokenizer eos_token: {eos_token}")
     except KeyError:
         raise ValueError("Tokenizer doesn't have an `eos_token`.")
     eos_token_ix = unwrapped_tokenizer.all_special_tokens.index(eos_token)
