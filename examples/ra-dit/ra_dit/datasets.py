@@ -94,6 +94,7 @@ def main(
         return_dataset="hf",
     )
     logger.info("Fine-tuning dataset successfully created")
+    logger.debug(f"Dataset has {len(dataset)} fine-tuning examples")
 
     return dataset
 
@@ -101,6 +102,15 @@ def main(
 if __name__ == "__main__":
     import fire
 
-    dataset = fire.Fire(main)
-    print(len(dataset))
-    print(dataset[0])
+    def custom_serializer(obj: object) -> str:
+        """Fire has an issue in finding the __str__ method for Datasets. I've
+        logged an issue in their Github for this.
+
+        https://github.com/google/python-fire/issues/595
+        """
+        if hasattr(obj, "__str__"):
+            return str(obj)
+        else:
+            return ""
+
+    fire.Fire(main, serialize=custom_serializer)
