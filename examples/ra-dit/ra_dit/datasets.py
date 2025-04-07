@@ -1,6 +1,7 @@
 """Builds fine-tuning datasets for RA-DIT."""
 
 import json
+import logging
 from pathlib import Path
 from typing import Literal
 
@@ -9,8 +10,10 @@ from ra_dit.rag_system import main as get_rag_system
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
-    HuggingfaceRAGFinetuningDataset,
+    HuggingFaceRAGFinetuningDataset,
 )
+
+logger = logging.getLogger(__name__)
 
 finetune_example_template = """<instruction>
 ...
@@ -30,8 +33,8 @@ finetune_example_template = """<instruction>
 """
 
 
-QA_DATA_PATH = Path(__file__).parents[2].absolute() / "data" / "qa"
-QA_DATA_REGISTRY: dict[str, str] = {}
+QA_DATA_PATH = Path(__file__).parents[1].absolute() / "data" / "qa"
+QA_DATA_REGISTRY: dict[str, str] = {"mock": "mock_qa_examples.jsonl"}
 
 
 def _load_qa_dataset(name: str) -> list[dict[str, str]]:
@@ -50,9 +53,16 @@ def main(
     qa_dataset_name: str,
 ) -> RAGSystem:
     """Build RAG Fine-Tuning Dataset."""
+    logger.info(
+        f"Creating fine-tuning dataset retriever: retriever_id='{retriever_id}', "
+        f"generator_id={generator_id}, generator_variant={generator_variant} ",
+        f"qa_dataset_name={qa_dataset_name}",
+    )
 
     # load in QA dataset
     examples = _load_qa_dataset(qa_dataset_name)
+    logger.info(f"Successfully loadding QA dataset: {qa_dataset_name}")
+    logger.debug(f"Examples has {len(examples)} elements")
 
     # build rag system
     rag_system = get_rag_system(
@@ -60,6 +70,7 @@ def main(
         generator_id=generator_id,
         generator_variant="qlora",  # unused
     )
+    logger.info("RAGSystem successfully constructed")
 
     # generate retrieval-augmented instruction tuning dataset
     unwrapped_tokenizer = rag_system.generator.tokenizer.unwrapped
@@ -73,7 +84,7 @@ def main(
     eos_token_id = unwrapped_tokenizer.all_special_ids[eos_token_ix]
 
     # build dataset
-    dataset: HuggingfaceRAGFinetuningDataset = build_finetune_dataset(
+    dataset: HuggingFaceRAGFinetuningDataset = build_finetune_dataset(
         rag_system=rag_system,
         examples=examples,
         answer_key="response",
@@ -81,6 +92,7 @@ def main(
         finetune_example_template=finetune_example_template,
         return_dataset="hf",
     )
+    logger.info("Fine-tuning dataset successfully created")
 
     return dataset
 
