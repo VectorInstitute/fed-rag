@@ -2,6 +2,7 @@
 
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Literal
 
@@ -58,6 +59,7 @@ def main(
         f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
         f"qa_dataset_name={qa_dataset_name}"
     )
+    start_time = time.time()
 
     # load in QA dataset
     examples = _load_qa_dataset(qa_dataset_name)
@@ -71,9 +73,15 @@ def main(
         generator_variant="qlora",  # unused
     )
     logger.info("RAGSystem successfully constructed")
+    logger.debug(f"Using retriever: {type(rag_system.retriever).__name__}")
+    logger.debug(f"Using generator: {type(rag_system.generator).__name__}")
 
     # generate retrieval-augmented instruction tuning dataset
     unwrapped_tokenizer = rag_system.generator.tokenizer.unwrapped
+    logger.debug(f"Tokenizer vocabulary size: {len(unwrapped_tokenizer)}")
+    logger.debug(
+        f"Tokenizer model max length: {unwrapped_tokenizer.model_max_length}"
+    )
 
     # find eos_token_id
     try:
@@ -94,7 +102,14 @@ def main(
         return_dataset="hf",
     )
     logger.info("Fine-tuning dataset successfully created")
+    logger.info(
+        f"Dataset creation took {time.time() - start_time:.2f} seconds"
+    )
     logger.debug(f"Dataset has {len(dataset)} fine-tuning examples")
+    logger.info("Fine-tuning dataset successfully created")
+    logger.debug(
+        f"Started with {len(examples)} examples, finished with {len(dataset)} examples"
+    )
 
     return dataset
 
@@ -104,7 +119,8 @@ if __name__ == "__main__":
 
     def custom_serializer(obj: object) -> str:
         """Fire has an issue in finding the __str__ method for Datasets. I've
-        logged an issue in their Github for this.
+        logged an issue in their Github for this. If addressed, we can get rid
+        of this.
 
         https://github.com/google/python-fire/issues/595
         """
