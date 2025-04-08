@@ -37,13 +37,6 @@ class CommonsenseQADataPrepper(QAMixin, BaseDataPrepper):
         )
 
 
-# Set display options to show all rows and columns
-pd.set_option("display.max_rows", None)  # Show all rows
-pd.set_option("display.max_columns", None)  # Show all columns
-pd.set_option("display.width", None)  # Use full width of the terminal/notebook
-pd.set_option("display.max_colwidth", None)  # Show full content of each cell
-
-
 splits = {
     "train": "data/train-00000-of-00001.parquet",
     "validation": "data/validation-00000-of-00001.parquet",
@@ -52,3 +45,4 @@ splits = {
 df = pd.read_parquet("hf://datasets/tau/commonsense_qa/" + splits["train"])
 data_prepper = CommonsenseQADataPrepper(df=df)
 data_prepper.prep_df()
+data_prepper.to_jsons()

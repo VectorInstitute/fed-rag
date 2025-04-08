@@ -6,19 +6,25 @@ from typing import Any
 
 import pandas as pd
 import tqdm
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from ra_dit.logger import logger
 
 
-class BaseDataPrepper(ABC, BaseModel):
+class BaseDataPrepper(BaseModel, ABC):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     df: pd.DataFrame = Field(description="Underlying Dataframe.")
+    _logger: logging.Logger = PrivateAttr()
 
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        self.logger = logging.getLogger(
+        self._logger = logging.getLogger(
             f"{logger.name}.{self.__class__.__name__}"
         )
-        self.logger.info(f"Initializing {self.__class__.__name__}")
+        self._logger.info(f"Initializing {self.__class__.__name__}")
+
+    @property
+    def logger(self) -> logging.Logger:
+        return self._logger
 
     @property
     @abstractmethod
