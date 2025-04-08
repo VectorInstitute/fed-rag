@@ -1,13 +1,17 @@
 """Base Data Prepper Class"""
 
+import json
 import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import tqdm
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from ra_dit.logger import logger
+
+DEFAULT_SAVE_DIR = Path(__file__).parents[2].absolute() / "data"
 
 
 class BaseDataPrepper(BaseModel, ABC):
@@ -16,6 +20,7 @@ class BaseDataPrepper(BaseModel, ABC):
     instruction_jsons: list[dict[str, str]] = Field(
         description="Instruction jsons.", default_factory=list
     )
+    save_dir: Path
     _logger: logging.Logger = PrivateAttr()
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -24,6 +29,14 @@ class BaseDataPrepper(BaseModel, ABC):
             f"{logger.name}.{self.__class__.__name__}"
         )
         self._logger.info(f"Initializing {self.__class__.__name__}")
+
+    @property
+    @abstractmethod
+    def dataset_name(self) -> str:
+        """Name of dataset.
+
+        Used for saving jsonl file.
+        """
 
     @property
     def logger(self) -> logging.Logger:
@@ -71,5 +84,15 @@ class BaseDataPrepper(BaseModel, ABC):
         self.logger.debug(f"Created {len(examples)} instruction examples")
         self.instruction_jsons = examples
 
-    def save_instructions_jsonl_file(self) -> None:
-        ...
+    def save_instructions_to_jsonl_file(self) -> None:
+        filename = self.save_dir / f"{self.dataset_name}.jsonl"
+        self.logger.info(
+            f"Saving {len(self.instruction_jsons)} instructions to: {filename}"
+        )
+        with open(filename, "w") as outfile:
+            for entry in self.instruction_jsons:
+                json.dump(entry, outfile)
+                outfile.write("\n")
+        self.logger.info(
+            f"Successfully saved instruction jsons to: {filename}"
+        )
