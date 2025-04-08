@@ -85,6 +85,7 @@ class BaseDataPrepper(BaseModel, ABC):
 
     def save_instructions_to_jsonl_file(self) -> None:
         filename = self.save_dir / f"{self.dataset_name}.jsonl"
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
         self.logger.info(
             f"Saving {len(self.instruction_jsons)} instructions to: {filename}"
         )

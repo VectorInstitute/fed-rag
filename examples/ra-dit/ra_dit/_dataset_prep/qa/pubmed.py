@@ -1,0 +1,56 @@
+"""PubmedQA
+
+Example
+===
+{
+    "question": ...,
+    "context": {
+            "contexts": [],
+            ...
+        },
+    "long_answer": ...,
+    "final_decision": ...
+}
+"""
+
+import pandas as pd
+
+from ..base_data_prepper import DEFAULT_SAVE_DIR, BaseDataPrepper
+from .mixin import QAMixin
+
+QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
+
+
+class PubmedQADataPrepper(QAMixin, BaseDataPrepper):
+    @property
+    def dataset_name(self) -> str:
+        return "pubmed_qa"
+
+    def _format_answer(self, row: pd.Series) -> str:
+        return str(row["long_answer"] + "\n\n" + row["final_decision"])
+
+    def _format_evidence(self, row: pd.Series) -> str:
+        return "\n\n".join(row["context"]["contexts"])
+
+    def _prep_df(self) -> None:
+        self.df["answer"] = self.df.apply(
+            lambda row: self._format_answer(row), axis=1
+        )
+        self.df["evidence"] = self.df.apply(
+            lambda row: self._format_evidence(row), axis=1
+        )
+
+    def example_to_json(self, row: pd.Series) -> dict[str, str]:
+        instruction_example: PubmedQADataPrepper.InstructionExample = {
+            "answer": row["answer"],
+            "evidence": row["evidence"],
+            "question": row["question"],
+        }
+        return instruction_example  # type:ignore [return-value]
+
+
+df = pd.read_parquet(
+    "hf://datasets/qiaojin/PubMedQA/pqa_artificial/train-00000-of-00001.parquet"
+)
+data_prepper = PubmedQADataPrepper(df=df, save_dir=QA_SAVE_DIR)
+data_prepper.execute_and_save()
