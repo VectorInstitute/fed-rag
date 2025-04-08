@@ -95,3 +95,20 @@ class BaseDataPrepper(BaseModel, ABC):
         self.logger.info(
             f"Successfully saved instruction jsons to: {filename}"
         )
+
+    def execute_and_save(self) -> None:
+        """Execute the data preparation pipeline and save results to file."""
+        self.logger.info(f"Starting execution of {self.__class__.__name__}")
+
+        # Step 1: Prepare the dataframe
+        self.prep_df()
+
+        # Step 2: Create instruction JSONs
+        self.populate_instruction_jsons()
+
+        # Step 3: Save to file
+        self.save_instructions_to_jsonl_file()
+
+        self.logger.info(
+            f"Completed execution and saved results for {self.__class__.__name__}"
+        )
