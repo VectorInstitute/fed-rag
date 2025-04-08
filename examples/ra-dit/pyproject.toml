@@ -9,6 +9,7 @@ dependencies = [
   "bitsandbytes>=0.45.3",
   "fed-rag[huggingface]",
   "fire>=0.7.0",
+  "pandas>=2.2.3",
   "sentence-transformers>=3.4.1",
   "transformers>=4.49.0",
   "trl>=0.15.2"
