@@ -11,6 +11,7 @@ dependencies = [
   "fire>=0.7.0",
   "pandas>=2.2.3",
   "sentence-transformers>=3.4.1",
+  "tqdm>=4.67.1",
   "transformers>=4.49.0",
   "trl>=0.15.2"
 ]

@@ -8,8 +8,34 @@
  'answerKey': 'A'}
 """
 
+from typing import TypedDict
+
 import numpy as np
 import pandas as pd
+
+from ..base_data_prepper import BaseDataPrepper
+from .mixin import QAMixin
+
+
+class CommonsenseQADataPrepper(QAMixin, BaseDataPrepper):
+    class InstructionExample(TypedDict):
+        answer: str
+        question: str
+
+    def _get_answer(self, row: pd.Series) -> str:
+        answer_ix = np.where(row["choices"]["label"] == row["answerKey"])
+        return str(row["choices"]["text"][answer_ix][0])
+
+    def _prep_df(self) -> None:
+        self.df["answer"] = self.df.apply(
+            lambda row: self._get_answer(row), axis=1
+        )
+
+    def example_to_json(self, row: pd.Series) -> dict[str, str]:
+        return self.InstructionExample(  # type:ignore [return-value]
+            answer=row["answer"], question=row["question"]
+        )
+
 
 # Set display options to show all rows and columns
 pd.set_option("display.max_rows", None)  # Show all rows
@@ -24,15 +50,5 @@ splits = {
     "test": "data/test-00000-of-00001.parquet",
 }
 df = pd.read_parquet("hf://datasets/tau/commonsense_qa/" + splits["train"])
-
-
-def get_answer(row: pd.Series) -> str:
-    answer_ix = np.where(row["choices"]["label"] == row["answerKey"])
-    return str(row["choices"]["text"][answer_ix][0])
-
-
-df["answer"] = df.apply(lambda row: get_answer(row), axis=1)
-
-
-if __name__ == "__main__":
-    print(df[["answer", "choices", "answerKey"]].head())
+data_prepper = CommonsenseQADataPrepper(df=df)
+data_prepper.prep_df()

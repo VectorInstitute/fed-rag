@@ -1181,6 +1181,7 @@ dependencies = [
     { name = "fire" },
     { name = "pandas" },
     { name = "sentence-transformers" },
+    { name = "tqdm" },
     { name = "transformers" },
     { name = "trl" },
 ]
@@ -1193,6 +1194,7 @@ requires-dist = [
     { name = "fire", specifier = ">=0.7.0" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "sentence-transformers", specifier = ">=3.4.1" },
+    { name = "tqdm", specifier = ">=4.67.1" },
     { name = "transformers", specifier = ">=4.49.0" },
     { name = "trl", specifier = ">=0.15.2" },
 ]
