@@ -13,6 +13,9 @@ from ra_dit.logger import logger
 class BaseDataPrepper(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     df: pd.DataFrame = Field(description="Underlying Dataframe.")
+    instruction_jsons: list[dict[str, str]] = Field(
+        description="Instruction jsons.", default_factory=list
+    )
     _logger: logging.Logger = PrivateAttr()
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -67,3 +70,6 @@ class BaseDataPrepper(BaseModel, ABC):
         self.logger.info("Completed creation of instruction jsons")
         self.logger.debug(f"Created {len(examples)} instruction examples")
         return examples
+
+    def save_instructions_jsonl_file(self) -> None:
+        ...
