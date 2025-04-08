@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-import tqdm
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from ra_dit.logger import logger
 
@@ -72,7 +71,7 @@ class BaseDataPrepper(BaseModel, ABC):
         log_interval = max(
             1, total_rows // 10
         )  # Log at least at start and end
-        for ix, row in tqdm.tqdm(self.df.iterrows()):
+        for ix, row in self.df.iterrows():
             examples.append(self.example_to_json(row))
 
             if (ix + 1) % log_interval == 0:
