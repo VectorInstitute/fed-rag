@@ -48,7 +48,7 @@ class BaseDataPrepper(BaseModel, ABC):
     def example_to_json(self, row: pd.Series) -> dict[str, str]:
         """Convert an example/row from the attached to df to an instruction json."""
 
-    def to_jsons(self) -> list[dict[str, str]]:
+    def populate_instruction_jsons(self) -> None:
         self.logger.info("Starting creation of instruction jsons")
         if not all(col in self.df.columns for col in self.required_cols):
             raise ValueError(
@@ -69,7 +69,7 @@ class BaseDataPrepper(BaseModel, ABC):
 
         self.logger.info("Completed creation of instruction jsons")
         self.logger.debug(f"Created {len(examples)} instruction examples")
-        return examples
+        self.instruction_jsons = examples
 
     def save_instructions_jsonl_file(self) -> None:
         ...

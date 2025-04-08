@@ -45,4 +45,4 @@ splits = {
 df = pd.read_parquet("hf://datasets/tau/commonsense_qa/" + splits["train"])
 data_prepper = CommonsenseQADataPrepper(df=df)
 data_prepper.prep_df()
-data_prepper.to_jsons()
+data_prepper.populate_instruction_jsons()
