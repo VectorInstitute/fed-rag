@@ -17,7 +17,7 @@ from fed_rag.utils.data.finetuning_datasets.huggingface import (
 logger = logging.getLogger("ra_dit.datasets")
 
 finetune_example_template = """<instruction>
-...
+Below is a user query and some background context. Write an answer to the user query.
 </instruction>
 
 <query>
