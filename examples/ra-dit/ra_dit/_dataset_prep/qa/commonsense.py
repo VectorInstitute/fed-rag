@@ -1,5 +1,7 @@
 """CommonsenseQA
 
+Example
+===
 {'id': '075e483d21c29a511267ef62bedc0461',
  'question': 'The sanctions against the school were a punishing blow, and they seemed to what the efforts the school had made to change?',
  'question_concept': 'punishing',
@@ -7,8 +9,6 @@
   'text': ['ignore', 'enforce', 'authoritarian', 'yell at', 'avoid']},
  'answerKey': 'A'}
 """
-
-from typing import TypedDict
 
 import numpy as np
 import pandas as pd
@@ -20,10 +20,6 @@ QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
 
 
 class CommonsenseQADataPrepper(QAMixin, BaseDataPrepper):
-    class InstructionExample(TypedDict):
-        answer: str
-        question: str
-
     @property
     def dataset_name(self) -> str:
         return "commonsense_qa"
@@ -38,9 +34,12 @@ class CommonsenseQADataPrepper(QAMixin, BaseDataPrepper):
         )
 
     def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        return self.InstructionExample(  # type:ignore [return-value]
-            answer=row["answer"], question=row["question"]
-        )
+        instruction_example: CommonsenseQADataPrepper.InstructionExample = {
+            "answer": row["answer"],
+            "question": row["question"],
+            "evidence": None,
+        }
+        return instruction_example  # type:ignore [return-value]
 
 
 splits = {
