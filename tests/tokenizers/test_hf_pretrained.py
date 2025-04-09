@@ -103,13 +103,17 @@ def test_encode() -> None:
         model_name="fake_name", load_model_at_init=False
     )
     mock_tokenizer = MagicMock()
-    mock_tokenizer.return_value = [1, 2]
+    mock_tokenizer.return_value = {
+        "input_ids": [1, 2],
+        "attention_mask": [1, 1],
+    }
     tokenizer.unwrapped = mock_tokenizer
 
     # act
     result = tokenizer.encode("fake input")
 
-    assert result == [1, 2]
+    assert result["input_ids"] == [1, 2]
+    assert result["attention_mask"] == [1, 1]
     mock_tokenizer.assert_called_once()
 
 

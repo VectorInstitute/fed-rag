@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 import torch
 
+from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.types.rag_system import KnowledgeNode, SourceNode
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
@@ -60,7 +61,11 @@ def test_build_finetune_dataset_txt_return(
     mock_retrieve = MagicMock()
     mock_retrieve.side_effect = mock_source_nodes
     mock_tokenizer = MagicMock()
-    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
     mock_rag_system.retrieve = mock_retrieve
     mock_rag_system.generator.tokenizer = mock_tokenizer
 
@@ -89,7 +94,11 @@ def test_build_finetune_dataset_pt_return(
     mock_retrieve = MagicMock()
     mock_retrieve.side_effect = mock_source_nodes
     mock_tokenizer = MagicMock()
-    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
     mock_rag_system.retrieve = mock_retrieve
     mock_rag_system.generator.tokenizer = mock_tokenizer
 
@@ -116,7 +125,11 @@ def test_build_finetune_dataset_hf_return(
     mock_retrieve = MagicMock()
     mock_retrieve.side_effect = mock_source_nodes
     mock_tokenizer = MagicMock()
-    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
     mock_rag_system.retrieve = mock_retrieve
     mock_rag_system.generator.tokenizer = mock_tokenizer
 
@@ -131,7 +144,7 @@ def test_build_finetune_dataset_hf_return(
     # assert
     assert isinstance(result, HuggingFaceRAGFinetuningDataset)
     assert len(result) == 4
-    assert result.column_names == ["input_ids", "target_ids"]
+    assert result.column_names == ["input_ids", "target_ids", "attention_mask"]
     assert result[:2] == {
         "input_ids": [
             [1, 1, 1],
@@ -142,6 +155,7 @@ def test_build_finetune_dataset_hf_return(
             ],
         ],
         "target_ids": [[1, 1, 42], [1, 1, 42]],
+        "attention_mask": [None, None],
     }
 
 
@@ -153,7 +167,11 @@ def test_build_finetune_dataset_invalid_return_raises_error(
     mock_retrieve = MagicMock()
     mock_retrieve.side_effect = mock_source_nodes
     mock_tokenizer = MagicMock()
-    mock_tokenizer.encode.return_value = [1, 1, 1]
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
     mock_rag_system.retrieve = mock_retrieve
     mock_rag_system.generator.tokenizer = mock_tokenizer
 

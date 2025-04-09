@@ -18,8 +18,15 @@ class HuggingFaceRAGFinetuningDataset(Dataset):
 
     @classmethod
     def from_inputs(
-        cls, input_ids: list[list[int]], target_ids: list[list[int]]
+        cls,
+        input_ids: list[list[int]],
+        target_ids: list[list[int]],
+        attention_mask: list[list[int]],
     ) -> Self:
         return cls.from_dict(  # type: ignore[no-any-return]
-            {"input_ids": input_ids, "target_ids": target_ids}
+            {
+                "input_ids": input_ids,
+                "target_ids": target_ids,
+                "attention_mask": attention_mask,
+            }
         )
