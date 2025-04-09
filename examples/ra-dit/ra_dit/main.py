@@ -113,7 +113,7 @@ datasets = {
     },
     "generator": {
         "train_dataset": load_dataset(
-            "nerdai/fedrag-commonsense-qa", split="train[:20]"
+            "nerdai/fedrag-commonsense-qa", split="train[:10]"
         ),
         "val_dataset": load_dataset(
             "nerdai/fedrag-commonsense-qa", split="test[:10]"
@@ -176,9 +176,7 @@ def start(
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
         )
-        main_logger.info(
-            "FL server started and listening for connections on port 8080"
-        )
+        main_logger.info("FL server successfully completed training session.")
     elif component in ["client_1", "client_2"]:
         client = build_client(
             task=task,
@@ -195,7 +193,7 @@ def start(
             grpc_max_message_length=grpc_max_message_length,
         )
         main_logger.info(
-            f"FL client '{component}' has been successfully started."
+            f"FL client '{component}' has successfully completed local training."
         )
     else:
         main_logger.error(f"Got unsupported component: '{component}'")

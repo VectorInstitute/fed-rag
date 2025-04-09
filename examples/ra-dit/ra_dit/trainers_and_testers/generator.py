@@ -47,7 +47,12 @@ def generator_train_loop(
 
 @federate.tester.huggingface
 def generator_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
-    return TestResult(loss=42.0, metrics={})
+    trainer = SFTTrainer(
+        m,
+        eval_dataset=test_data,
+    )
+    eval_results = trainer.evaluate()
+    return TestResult(loss=eval_results.get("eval_loss"), metrics={})
 
 
 if __name__ == "__main__":
