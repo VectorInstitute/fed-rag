@@ -1,9 +1,14 @@
 """Base Tokenizer"""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, TypedDict
 
 from pydantic import BaseModel, ConfigDict
+
+
+class EncodeResult(TypedDict):
+    input_ids: list[int]
+    attention_mask: list[int] | None
 
 
 class BaseTokenizer(BaseModel, ABC):
@@ -12,7 +17,7 @@ class BaseTokenizer(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abstractmethod
-    def encode(self, input: str, **kwargs: dict) -> list[int]:
+    def encode(self, input: str, **kwargs: dict) -> EncodeResult:
         """Encode the input string into list of integers."""
 
     @abstractmethod

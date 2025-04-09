@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from pydantic import ConfigDict, Field, PrivateAttr
 
-from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.base.tokenizer import BaseTokenizer, EncodeResult
 
 try:
     from transformers import AutoTokenizer, PreTrainedTokenizer
@@ -66,8 +66,13 @@ class HFPretrainedTokenizer(BaseTokenizer):
     def unwrapped(self, value: "PreTrainedTokenizer") -> None:
         self._tokenizer = value
 
-    def encode(self, input: str, **kwargs: Any) -> list[int]:
-        return self.unwrapped(text=input, **kwargs)  # type: ignore[no-any-return]
+    def encode(self, input: str, **kwargs: Any) -> EncodeResult:
+        tokenizer_result = self.unwrapped(text=input, **kwargs)
+        retval: EncodeResult = {
+            "input_ids": tokenizer_result.get("input_ids"),
+            "attention_mask": tokenizer_result.get("attention_mask", None),
+        }
+        return retval
 
     def decode(self, input_ids: list[int], **kwargs: Any) -> str:
         return self.unwrapped.decode(token_ids=input_ids, **kwargs)  # type: ignore[no-any-return]

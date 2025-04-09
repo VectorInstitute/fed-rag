@@ -39,6 +39,7 @@ def build_finetune_dataset(
 
     inputs_list = []
     targets_list = []
+    attention_mask_list = []
     finetuning_instances = []
     for example in examples:
         # retrieve
@@ -58,11 +59,14 @@ def build_finetune_dataset(
 
             # tokenize to get input_ids and target_ids
             tokenizer = rag_system.generator.tokenizer
-            input_ids = tokenizer.encode(finetune_instance_text)
+            encode_result = tokenizer.encode(finetune_instance_text)
+            input_ids = encode_result["input_ids"]
+            attention_mask = encode_result["attention_mask"]
             target_ids = input_ids[1:] + [eos_token_id]
 
             inputs_list.append(input_ids)
             targets_list.append(target_ids)
+            attention_mask_list.append(attention_mask)
 
     if return_dataset == ReturnType.TEXT:
         return finetuning_instances
@@ -79,7 +83,9 @@ def build_finetune_dataset(
         )
 
         return HuggingFaceRAGFinetuningDataset.from_inputs(
-            input_ids=inputs_list, target_ids=targets_list
+            input_ids=inputs_list,
+            target_ids=targets_list,
+            attention_mask=attention_mask_list,
         )
     else:
         assert_never(return_dataset)  # pragma: no cover

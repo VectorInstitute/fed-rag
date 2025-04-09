@@ -16,13 +16,16 @@ def test_hf_rag_ft_dataset_init(
 ) -> None:
     input_ids, target_ids = input_and_target_ids
     rag_ft_dataset = HuggingFaceRAGFinetuningDataset.from_inputs(
-        input_ids=input_ids, target_ids=target_ids
+        input_ids=input_ids,
+        target_ids=target_ids,
+        attention_mask=[None] * len(target_ids),
     )
 
     assert len(rag_ft_dataset) == len(input_ids)
     assert isinstance(rag_ft_dataset, Dataset)
     assert rag_ft_dataset["input_ids"] == [t.tolist() for t in input_ids]
     assert rag_ft_dataset["target_ids"] == [t.tolist() for t in target_ids]
+    assert rag_ft_dataset["attention_mask"] == [None, None, None]
 
 
 def test_hf_rag_ft_dataset_missing_extra_raises_error(
