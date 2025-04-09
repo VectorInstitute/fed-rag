@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.8] - 2025-04-09
+
+### Added
+
+- `BaseTokenizer.encode` now retursn new type `EncoderResult` (#150)
+
 ## [0.0.7] - 2025-04-06
 
 ### Added
