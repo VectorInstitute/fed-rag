@@ -57,6 +57,7 @@ def main(
     generator_variant: Literal["plain", "lora", "qlora"],
     qa_dataset_name: str,
     push_to_hub: bool = False,
+    test_size: float = 0.2,
 ) -> RAGSystem:
     """Build RAG Fine-Tuning Dataset."""
     logger.info(
@@ -118,9 +119,13 @@ def main(
         f"finished with {len(dataset)} retrieval-augmented examples"
     )
 
+    # split dataset
+    dataset = dataset.train_test_split(test_size=test_size, shuffle=True)
+
     if push_to_hub:
         hf_dataset_name = HF_HUB_PREFIX + qa_dataset_name.replace("_", "-")
-        dataset.push_to_hub(hf_dataset_name)
+        dataset["train"].push_to_hub(hf_dataset_name, split="train")
+        dataset["test"].push_to_hub(hf_dataset_name, split="test")
         logger.info(
             f"Succesfully pushed to HF hub, dataset: {hf_dataset_name}"
         )
