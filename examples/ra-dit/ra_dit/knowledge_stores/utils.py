@@ -89,8 +89,11 @@ def knowledge_store_from_retriever(
         # persist
         if persist:
             knowledge_store.persist()
+            cached_file = Path(knowledge_store.cache_dir) / (
+                knowledge_store.name + ".parquet"
+            )
             ks_logger.info(
-                f"KnowledgeStore cached to {knowledge_store.cache_dir}/{knowledge_store.name}.parquet"
+                f"KnowledgeStore cached to {cached_file.as_posix()}"
             )
 
     return knowledge_store
