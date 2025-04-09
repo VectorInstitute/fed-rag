@@ -35,7 +35,11 @@ Below is a user query and some background context. Write an answer to the user q
 
 
 QA_DATA_PATH = Path(__file__).parents[1].absolute() / "data" / "qa"
-QA_DATA_REGISTRY: dict[str, str] = {"mock": "mock_qa_examples.jsonl"}
+QA_DATA_REGISTRY: dict[str, str] = {
+    "mock": "mock_qa_examples.jsonl",
+    "commonsense_qa": "commonsense_qa.jsonl",
+}
+HF_HUB_PREFIX = "nerdai/fedrag-"
 
 
 def _load_qa_dataset(name: str) -> list[dict[str, str]]:
@@ -52,12 +56,13 @@ def main(
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
     qa_dataset_name: str,
+    push_to_hub: bool = False,
 ) -> RAGSystem:
     """Build RAG Fine-Tuning Dataset."""
     logger.info(
         f"Creating fine-tuning dataset: retriever_id='{retriever_id}', "
         f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
-        f"qa_dataset_name={qa_dataset_name}"
+        f"qa_dataset_name={qa_dataset_name}, push_to_hub={push_to_hub}"
     )
     start_time = time.time()
 
@@ -96,7 +101,8 @@ def main(
     dataset: HuggingFaceRAGFinetuningDataset = build_finetune_dataset(
         rag_system=rag_system,
         examples=examples,
-        answer_key="response",
+        answer_key="answer",
+        query_key="question",
         eos_token_id=eos_token_id,
         finetune_example_template=finetune_example_template,
         return_dataset="hf",
@@ -108,8 +114,16 @@ def main(
     logger.debug(f"Dataset has {len(dataset)} fine-tuning examples")
     logger.info("Fine-tuning dataset successfully created")
     logger.debug(
-        f"Started with {len(examples)} examples, finished with {len(dataset)} examples"
+        f"Started with {len(examples)} qa examples, "
+        f"finished with {len(dataset)} retrieval-augmented examples"
     )
+
+    if push_to_hub:
+        hf_dataset_name = HF_HUB_PREFIX + qa_dataset_name.replace("_", "-")
+        dataset.push_to_hub(hf_dataset_name)
+        logger.info(
+            f"Succesfully pushed to HF hub, dataset: {hf_dataset_name}"
+        )
 
     return dataset
 
