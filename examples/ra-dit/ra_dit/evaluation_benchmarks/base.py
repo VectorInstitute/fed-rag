@@ -20,7 +20,6 @@ class ExamplePred(BaseModel):
 
 
 class ScoredExamplePred(ExamplePred):
-    pred: Any
     score: float
 
     @classmethod
@@ -75,7 +74,7 @@ class BaseBenchmark(BaseModel, ABC):
 
         self._update_prompt_template(rag_system=rag_system)
 
-        def process_example(example: ExamplePred) -> ScoredExamplePred:
+        def process_example(example: pd.Series) -> ScoredExamplePred:
             pred = self._predict_example(
                 example=example, rag_system=rag_system
             )
