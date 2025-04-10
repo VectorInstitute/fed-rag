@@ -47,11 +47,12 @@ def generator_train_loop(
 
 @federate.tester.huggingface
 def generator_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
-    trainer = SFTTrainer(
-        m,
-        eval_dataset=test_data,
+    training_args = SFTConfig(
+        max_seq_length=512,
+        do_train=False,
     )
-    eval_results = trainer.evaluate()
+    trainer = SFTTrainer(m, args=training_args, train_dataset=test_data)
+    eval_results = trainer.evaluate(trainer.train_dataset)
     return TestResult(loss=eval_results.get("eval_loss"), metrics={})
 
 
@@ -68,4 +69,7 @@ if __name__ == "__main__":
         val_data=val_dataset,
         peft_config=generator.model.active_peft_config,
     )
-    print(train_result)
+    test_result = generator_evaluate(generator.model, val_dataset)
+
+    print(test_result)
+    print(test_result)
