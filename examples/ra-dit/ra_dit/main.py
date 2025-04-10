@@ -1,12 +1,11 @@
 """Federate RAG via RA-DIT."""
 
 # logging
-from logging import INFO
+import logging
 from typing import Literal
 
 import torch
 from datasets import Dataset, load_dataset
-from flwr.common.logger import log
 from ra_dit.trainers_and_testers.generator import (
     generator_evaluate,
     generator_train_loop,
@@ -27,6 +26,8 @@ from .rag_system import main as get_rag_system
 
 tasks = ["retriever", "generator"]
 
+main_logger = logging.getLogger("ra_dit.main")
+
 
 # Models and Train/Test Functions
 def get_model(
@@ -36,6 +37,11 @@ def get_model(
     generator_variant: Literal["plain", "lora", "qlora"],
     server: bool = False,
 ) -> torch.nn.Module:
+    main_logger.info(
+        f"Getting model: task='{task}', retriver_id='{retriever_id}' "
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
+        f"server={server}"
+    )
     rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
 
     if task == "retriever":
@@ -49,6 +55,7 @@ def get_model(
             )
         return rag_system.generator.model
     else:
+        main_logger.error(f"Got unsupported task: '{task}'")
         raise ValueError("Unsupported task")
 
 
@@ -74,11 +81,15 @@ def build_server(
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerServer:
+    main_logger.info(
+        f"Building FL server: task='{task}', retriver_id='{retriever_id}' "
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}'"
+    )
     fl_task = fl_tasks[task]
     model = get_model(
         task, retriever_id, generator_id, generator_variant, server=True
     )
-    log(INFO, f"Server model loaded into device: {model.device}")
+    main_logger.info(f"Server model loaded into device: {model.device}")
     return fl_task.server(model=model)
 
 
@@ -101,8 +112,12 @@ datasets = {
         ),
     },
     "generator": {
-        "train_dataset": load_dataset("stanfordnlp/imdb", split="train[:20]"),
-        "val_dataset": load_dataset("stanfordnlp/imdb", split="test[:10]"),
+        "train_dataset": load_dataset(
+            "nerdai/fedrag-commonsense-qa", split="train[:10]"
+        ),
+        "val_dataset": load_dataset(
+            "nerdai/fedrag-commonsense-qa", split="test[:10]"
+        ),
     },
 }
 
@@ -114,6 +129,10 @@ def build_client(
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
 ) -> HuggingFaceFlowerClient:
+    main_logger.info(
+        f"Building client: task='{task}', retriver_id='{retriever_id}' "
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
+    )
     fl_task = fl_tasks[task]
     model = get_model(task, retriever_id, generator_id, generator_variant)
     return fl_task.client(
@@ -133,9 +152,14 @@ def start(
     generator_variant: Literal["plain", "lora", "qlora"] = "qlora",
 ) -> None:
     """For starting any of the FL Task components."""
+    main_logger.info(
+        f"Starting FL component '{component}' for: task='{task}', retriever_id='{retriever_id}', "
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}'"
+    )
     import flwr as fl
 
     if task not in ["retriever", "generator"]:
+        main_logger.error(f"Got unsupported task: '{task}'")
         raise ValueError("Unrecognized task.")
 
     grpc_max_message_length = int(512 * 1024 * 1024 * 3.75)
@@ -144,36 +168,35 @@ def start(
         server = build_server(
             task, retriever_id, generator_id, generator_variant
         )
+        main_logger.info(
+            "Successfully built FL server, commencing server start."
+        )
         fl.server.start_server(
             server=server,
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
         )
-    elif component == "client_1":
-        log(INFO, "Starting client_1")
+        main_logger.info("FL server successfully completed training session.")
+    elif component in ["client_1", "client_2"]:
+        client = build_client(
+            task=task,
+            retriever_id=retriever_id,
+            generator_id=generator_id,
+            generator_variant=generator_variant,
+        )
+        main_logger.info(
+            f"Successfully built FL client for '{component}', commencing client start."
+        )
         fl.client.start_client(
-            client=build_client(
-                task=task,
-                retriever_id=retriever_id,
-                generator_id=generator_id,
-                generator_variant=generator_variant,
-            ),
+            client=client,
             server_address="[::]:8080",
             grpc_max_message_length=grpc_max_message_length,
         )
-    elif component == "client_2":
-        log(INFO, "Starting client_2")
-        fl.client.start_client(
-            client=build_client(
-                task=task,
-                retriever_id=retriever_id,
-                generator_id=generator_id,
-                generator_variant=generator_variant,
-            ),
-            server_address="[::]:8080",
-            grpc_max_message_length=grpc_max_message_length,
+        main_logger.info(
+            f"FL client '{component}' has successfully completed local training."
         )
     else:
+        main_logger.error(f"Got unsupported component: '{component}'")
         raise ValueError("Unrecognized component.")
 
 
