@@ -1,6 +1,7 @@
 """Base Benchmark."""
 
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import pandas as pd
@@ -55,14 +56,25 @@ class BaseBenchmark(BaseModel, ABC):
         self, rag_system: RAGSystem, num_threads: int = 1
     ) -> BenchmarkResult:
         """Run the benchmark with the given rag_system."""
-        scored_examples = []
-        for _ix, example in self.examples.iterrows():
+
+        def process_example(example: ExamplePred) -> ExamplePred:
             pred = self._predict_example(
                 example=example, rag_system=rag_system
             )
-            scored_examples.append(
-                self._evaluate_prediction(example=example, pred=pred)
-            )
+            return self._evaluate_prediction(example=example, pred=pred)
+
+        if num_threads > 1:
+            with ThreadPoolExecutor(max_workers=num_threads) as executor:
+                scored_examples = list(
+                    executor.map(
+                        process_example,
+                        [e for _, e in self.examples.iterrows()],
+                    )
+                )
+        else:
+            scored_examples = []
+            for _, example in self.examples.iterrows():
+                scored_examples.append(process_example(example=example))
         agg_score = self.aggregate_example_scores(
             score_examples=scored_examples
         )
