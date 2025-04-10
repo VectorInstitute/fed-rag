@@ -3,18 +3,13 @@
 Example
 ===
 {
- 'question_id': 'Q1',
- 'question': 'how are glacier caves formed?	',
- 'document_title': 'Glacier cave',
- 'answer': 'A partly submerged glacier cave on Perito Moreno Glacier .'
- 'label': 0
-},
-{
- 'question_id': 'Q1',
- 'question': 'how are glacier caves formed?	',
- 'document_title': 'Glacier cave',
- 'answer': 'A glacier cave is a cave formed within the ice of a glacier .'
- 'label': 1
+ 'Problem': 'the banker ' s gain of a certain sum due 3 yea...',
+ 'Rationale': 'explanation : t = 3 years r = 10 % td = ( bg ...',
+ 'options': 'a ) rs . 400 , b ) rs . 300 , c ) rs . 500 , d...',
+ 'correct': 'a',
+ 'annotated_formula': 'divide(multiply(const_100, divide(multiply(36,...',
+ 'linear_formula': 'multiply(n2,const_100)|multiply(n0,n1)|divide(...	',
+ 'category' : 'gain'
 }
 """
 
@@ -56,9 +51,9 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
 
 
 splits = {
-    'test': 'data/test-00000-of-00001.parquet', 
-    'validation': 'data/validation-00000-of-00001.parquet', 
-    'train': 'data/train-00000-of-00001.parquet'
+    'test': 'test', 
+    'validation': 'valid', 
+    'train': 'train'
 }
 
 dataset = load_dataset("allenai/math_qa", trust_remote_code=True)
