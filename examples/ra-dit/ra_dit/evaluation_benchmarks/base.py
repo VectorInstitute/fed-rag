@@ -6,6 +6,7 @@ from typing import Any
 
 import pandas as pd
 from pydantic import BaseModel, ConfigDict
+from typing_extensions import Self
 
 from fed_rag.types.rag_system import RAGSystem
 
@@ -16,12 +17,21 @@ class BenchmarkResult(BaseModel):
 
 class ExamplePred(BaseModel):
     pred: Any
-    score: float | None = None
+
+
+class ScoredExamplePred(ExamplePred):
+    pred: Any
+    score: float
+
+    @classmethod
+    def from_example_pred(cls, pred: ExamplePred, score: float) -> Self:
+        return cls(pred=pred.pred, score=score)
 
 
 class BaseBenchmark(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     examples: pd.DataFrame
+    generate_prompt_template: str | None
 
     @abstractmethod
     def _predict_example(
@@ -32,12 +42,12 @@ class BaseBenchmark(BaseModel, ABC):
     @abstractmethod
     def _evaluate_prediction(
         self, example: pd.Series, pred: ExamplePred
-    ) -> ExamplePred:
+    ) -> ScoredExamplePred:
         """Evaluate a prediction."""
 
     @abstractmethod
     def _aggregate_example_scores(
-        self, score_examples: list[ExamplePred]
+        self, scored_examples: list[ScoredExamplePred]
     ) -> float:
         """Custom aggregated example scores.
 
@@ -45,19 +55,27 @@ class BaseBenchmark(BaseModel, ABC):
         """
 
     def aggregate_example_scores(
-        self, score_examples: list[ExamplePred]
+        self, scored_examples: list[ScoredExamplePred]
     ) -> float:
         """Aggregated example scores"""
-        if not all(e.score is not None for e in score_examples):
-            raise ValueError("Not all examples were scored.")
-        return self._aggregate_example_scores(score_examples=score_examples)
+        return self._aggregate_example_scores(scored_examples=scored_examples)
+
+    def _update_prompt_template(self, rag_system: RAGSystem) -> None:
+        if self.generate_prompt_template and hasattr(
+            rag_system.generator, "prompt_template"
+        ):
+            rag_system.generator.prompt_template = (
+                self.generate_prompt_template
+            )
 
     def run(
         self, rag_system: RAGSystem, num_threads: int = 1
     ) -> BenchmarkResult:
         """Run the benchmark with the given rag_system."""
 
-        def process_example(example: ExamplePred) -> ExamplePred:
+        self._update_prompt_template(rag_system=rag_system)
+
+        def process_example(example: ExamplePred) -> ScoredExamplePred:
             pred = self._predict_example(
                 example=example, rag_system=rag_system
             )
@@ -76,6 +94,6 @@ class BaseBenchmark(BaseModel, ABC):
             for _, example in self.examples.iterrows():
                 scored_examples.append(process_example(example=example))
         agg_score = self.aggregate_example_scores(
-            score_examples=scored_examples
+            scored_examples=scored_examples
         )
         return BenchmarkResult(score=agg_score)
