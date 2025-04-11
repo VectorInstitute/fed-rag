@@ -13,11 +13,10 @@ Example
 }
 """
 
-import numpy as np
-import pandas as pd
 import re
-from datasets import load_dataset
 
+import pandas as pd
+from datasets import load_dataset
 
 from ..base_data_prepper import DEFAULT_SAVE_DIR, BaseDataPrepper
 from .mixin import QAMixin
@@ -31,10 +30,11 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
         return "math_qa"
 
     def _get_answer(self, row: pd.Series) -> str:
-        options = re.findall(r'([a-z])\s*\)\s*([^,]+)', row["answer"])
+        options = re.findall(r"([a-z])\s*\)\s*([^,]+)", row["answer"])
         for label, text in options:
             if label.strip() == row["correct"].strip():
-                return text.strip()
+                answer = text.strip()
+        return str(answer)
 
     def _prep_df(self) -> None:
         self.df["answer"] = self.df.apply(
@@ -50,14 +50,10 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
         return instruction_example  # type:ignore [return-value]
 
 
-splits = {
-    'test': 'test', 
-    'validation': 'valid', 
-    'train': 'train'
-}
+splits = {"test": "test", "validation": "valid", "train": "train"}
 
 dataset = load_dataset("allenai/math_qa", trust_remote_code=True)
-df = pd.DataFrame(dataset['train'])
-df = df.rename(columns={"Problem" : "question", "options": "answer"})
+df = pd.DataFrame(dataset["train"])
+df = df.rename(columns={"Problem": "question", "options": "answer"})
 data_prepper = MathQADataPrepper(df=df, save_dir=QA_SAVE_DIR)
 data_prepper.execute_and_save()
