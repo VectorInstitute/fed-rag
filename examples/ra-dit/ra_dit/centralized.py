@@ -15,8 +15,11 @@ from ra_dit.trainers_and_testers.retriever import (
     retriever_train_loop,
 )
 
+from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TrainResult
 
+from .evaluation_benchmarks import benchmarks
+from .evaluation_benchmarks.base import BaseBenchmark
 from .rag_system import main as get_rag_system
 
 tasks = ["retriever", "generator"]
@@ -30,25 +33,17 @@ def get_model(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
-    server: bool = False,
-) -> torch.nn.Module:
+) -> tuple[torch.nn.Module, RAGSystem]:
     logger.info(
         f"Getting model: task='{task}', retriver_id='{retriever_id}' "
-        f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
-        f"server={server}"
+        f"generator_id='{generator_id}', generator_variant='{generator_variant}'"
     )
     rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
 
     if task == "retriever":
-        return rag_system.retriever.query_encoder
+        return rag_system.retriever.query_encoder, rag_system
     elif task == "generator":
-        if server:
-            # lazy load model, so we can still set device map to cpu
-            rag_system.generator.load_model_kwargs.update(device_map="cpu")
-            rag_system.generator.load_base_model_kwargs.update(
-                device_map="cpu"
-            )
-        return rag_system.generator.model
+        return rag_system.generator.model, rag_system
     else:
         logger.error(f"Got unsupported task: '{task}'")
         raise ValueError("Unsupported task")
@@ -101,7 +96,9 @@ def execute_trainer(
         f"Building client: task='{task}', retriver_id='{retriever_id}' "
         f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
     )
-    model = get_model(task, retriever_id, generator_id, generator_variant)
+    model, rag_system = get_model(
+        task, retriever_id, generator_id, generator_variant
+    )
     trainer = trainers["generator"]
     train_result = trainer(
         model=model,
@@ -109,7 +106,19 @@ def execute_trainer(
         val_data=datasets[task]["val_dataset"],
         peft_config=model.active_peft_config,
     )
-    return train_result
+    return train_result, rag_system
+
+
+# evaluate
+def evaluate(
+    rag_system: RAGSystem,
+    benchmark: BaseBenchmark,
+    num_workers: int = 1,
+) -> None:
+    logger.info(f"Running benchmark: {benchmark.name}")
+    result = benchmark.run(rag_system=rag_system, num_threads=num_workers)
+    logger.info("Successfully completed benchmark evaluation.")
+    logger.debug(f"Benchmark {benchmark.name} result: {result.score}")
 
 
 # NOTE: The code below is merely for building a quick CLI to start server, and clients.
@@ -129,13 +138,18 @@ def start(
         logger.error(f"Got unsupported task: '{task}'")
         raise ValueError("Unrecognized task.")
 
-    train_result = execute_trainer(
+    train_result, rag_system = execute_trainer(
         task=task,
         retriever_id=retriever_id,
         generator_id=generator_id,
         generator_variant=generator_variant,
     )
     logger.info("Successfully executed trainer.")
+    logger.debug(f"Train result: {train_result}")
+
+    # benchmark evaluation
+    evaluate(rag_system, benchmarks["MMLU"])
+
     return train_result
 
 

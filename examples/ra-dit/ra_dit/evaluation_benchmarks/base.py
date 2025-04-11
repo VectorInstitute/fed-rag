@@ -1,7 +1,9 @@
 """Base Benchmark."""
 
+import logging
 from abc import ABC, abstractmethod
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
+from threading import Lock
 from typing import Any
 
 import pandas as pd
@@ -31,6 +33,12 @@ class BaseBenchmark(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     examples: pd.DataFrame
     generate_prompt_template: str | None
+    logger: logging.Logger = logging.getLogger("ra_dit.benchmark")
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Name of benchmark."""
 
     @abstractmethod
     def _predict_example(
@@ -71,6 +79,9 @@ class BaseBenchmark(BaseModel, ABC):
         self, rag_system: RAGSystem, num_threads: int = 1
     ) -> BenchmarkResult:
         """Run the benchmark with the given rag_system."""
+        logger.info(
+            f"Running benchmark {self.name} with num_threads: {num_threads}"
+        )
 
         self._update_prompt_template(rag_system=rag_system)
 
@@ -80,7 +91,18 @@ class BaseBenchmark(BaseModel, ABC):
             )
             return self._evaluate_prediction(example=example, pred=pred)
 
+        def progress_indicator(future: Future):
+            global lock, tasks_total, tasks_completed
+            with lock:
+                tasks_completed += 1
+                self.logger.debug(
+                    f"{tasks_completed}/{tasks_total} completed, {tasks_total-tasks_completed} remain."
+                )
+
+        tasks_total = len(self.examples)
         if num_threads > 1:
+            lock = Lock()
+            tasks_completed = 0
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
                 scored_examples = list(
                     executor.map(
@@ -88,10 +110,18 @@ class BaseBenchmark(BaseModel, ABC):
                         [e for _, e in self.examples.iterrows()],
                     )
                 )
+                for future in scored_examples:
+                    future.add_done_callback(progress_indicator)
         else:
+            log_interval = max(1, tasks_total // 10)
             scored_examples = []
-            for _, example in self.examples.iterrows():
+            for ix, example in self.examples.iterrows():
                 scored_examples.append(process_example(example=example))
+                if (ix + 1) % log_interval == 0:
+                    self.logger.debug(
+                        f"Processed {ix + 1} / {tasks_total} examples"
+                    )
+
         agg_score = self.aggregate_example_scores(
             scored_examples=scored_examples
         )
