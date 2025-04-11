@@ -20,6 +20,9 @@ class BenchmarkResult(BaseModel):
 class ExamplePred(BaseModel):
     pred: Any
 
+    def __str__(self):
+        return str(self.pred)
+
 
 class ScoredExamplePred(ExamplePred):
     score: float
@@ -71,24 +74,18 @@ class BaseBenchmark(BaseModel, ABC):
         if self.generate_prompt_template and hasattr(
             rag_system.generator, "prompt_template"
         ):
-            rag_system.generator.prompt_template = (
-                self.generate_prompt_template
-            )
+            rag_system.generator.prompt_template = self.generate_prompt_template
 
-    def run(
-        self, rag_system: RAGSystem, num_threads: int = 1
-    ) -> BenchmarkResult:
+    def run(self, rag_system: RAGSystem, num_threads: int = 1) -> BenchmarkResult:
         """Run the benchmark with the given rag_system."""
-        logger.info(
+        self.logger.info(
             f"Running benchmark {self.name} with num_threads: {num_threads}"
         )
 
         self._update_prompt_template(rag_system=rag_system)
 
         def process_example(example: pd.Series) -> ScoredExamplePred:
-            pred = self._predict_example(
-                example=example, rag_system=rag_system
-            )
+            pred = self._predict_example(example=example, rag_system=rag_system)
             return self._evaluate_prediction(example=example, pred=pred)
 
         def progress_indicator(future: Future):
@@ -118,11 +115,7 @@ class BaseBenchmark(BaseModel, ABC):
             for ix, example in self.examples.iterrows():
                 scored_examples.append(process_example(example=example))
                 if (ix + 1) % log_interval == 0:
-                    self.logger.debug(
-                        f"Processed {ix + 1} / {tasks_total} examples"
-                    )
+                    self.logger.debug(f"Processed {ix + 1} / {tasks_total} examples")
 
-        agg_score = self.aggregate_example_scores(
-            scored_examples=scored_examples
-        )
+        agg_score = self.aggregate_example_scores(scored_examples=scored_examples)
         return BenchmarkResult(score=agg_score)
