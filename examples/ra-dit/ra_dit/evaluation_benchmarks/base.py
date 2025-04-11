@@ -20,7 +20,7 @@ class BenchmarkResult(BaseModel):
 class ExamplePred(BaseModel):
     pred: Any
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.pred)
 
 
@@ -74,48 +74,57 @@ class BaseBenchmark(BaseModel, ABC):
         if self.generate_prompt_template and hasattr(
             rag_system.generator, "prompt_template"
         ):
-            rag_system.generator.prompt_template = self.generate_prompt_template
+            rag_system.generator.prompt_template = (
+                self.generate_prompt_template
+            )
 
-    def run(self, rag_system: RAGSystem, num_threads: int = 1) -> BenchmarkResult:
+    def run(
+        self, rag_system: RAGSystem, num_threads: int = 1
+    ) -> BenchmarkResult:
         """Run the benchmark with the given rag_system."""
         self.logger.info(
             f"Running benchmark {self.name} with num_threads: {num_threads}"
         )
 
         self._update_prompt_template(rag_system=rag_system)
+        tasks_total = len(self.examples)
+        tasks_completed = 0
+        lock = Lock()
 
         def process_example(example: pd.Series) -> ScoredExamplePred:
-            pred = self._predict_example(example=example, rag_system=rag_system)
+            pred = self._predict_example(
+                example=example, rag_system=rag_system
+            )
             return self._evaluate_prediction(example=example, pred=pred)
 
-        def progress_indicator(future: Future):
-            global lock, tasks_total, tasks_completed
+        def progress_indicator(future: Future) -> None:
+            nonlocal tasks_completed
             with lock:
                 tasks_completed += 1
                 self.logger.debug(
                     f"{tasks_completed}/{tasks_total} completed, {tasks_total-tasks_completed} remain."
                 )
 
-        tasks_total = len(self.examples)
         if num_threads > 1:
-            lock = Lock()
-            tasks_completed = 0
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                scored_examples = list(
-                    executor.map(
-                        process_example,
-                        [e for _, e in self.examples.iterrows()],
-                    )
-                )
-                for future in scored_examples:
+                futures = [
+                    executor.submit(process_example, e)
+                    for _, e in self.examples.iterrows()
+                ]
+                for future in futures:
                     future.add_done_callback(progress_indicator)
+                scored_examples = [f.result() for f in futures]
         else:
             log_interval = max(1, tasks_total // 10)
             scored_examples = []
             for ix, example in self.examples.iterrows():
                 scored_examples.append(process_example(example=example))
                 if (ix + 1) % log_interval == 0:
-                    self.logger.debug(f"Processed {ix + 1} / {tasks_total} examples")
+                    self.logger.debug(
+                        f"Processed {ix + 1} / {tasks_total} examples"
+                    )
 
-        agg_score = self.aggregate_example_scores(scored_examples=scored_examples)
+        agg_score = self.aggregate_example_scores(
+            scored_examples=scored_examples
+        )
         return BenchmarkResult(score=agg_score)

@@ -3,6 +3,7 @@
 import pandas as pd
 from pydantic import PrivateAttr
 
+from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 from fed_rag.types.rag_system import RAGSystem
 
 from .base import BaseBenchmark, ExamplePred, ScoredExamplePred
@@ -98,8 +99,13 @@ if __name__ == "__main__":
     rag_system = get_rag_system(
         retriever_id="dragon",
         generator_id="llama2_7b",
-        generator_variant="lora",
+        generator_variant="qlora",
     )
+
+    if isinstance(rag_system.generator, HFPeftModelGenerator):
+        rag_system.generator.model = (
+            rag_system.generator.model.merge_and_unload()
+        )
     pred = mmlu_benchmark._predict_example(
         example=example, rag_system=rag_system
     )
