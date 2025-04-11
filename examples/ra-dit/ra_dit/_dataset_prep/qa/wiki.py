@@ -18,7 +18,6 @@ Example
 }
 """
 
-import numpy as np
 import pandas as pd
 
 from ..base_data_prepper import DEFAULT_SAVE_DIR, BaseDataPrepper
@@ -50,9 +49,9 @@ class WikiQADataPrepper(QAMixin, BaseDataPrepper):
 
 
 splits = {
-    'test': 'data/test-00000-of-00001.parquet', 
-    'validation': 'data/validation-00000-of-00001.parquet', 
-    'train': 'data/train-00000-of-00001.parquet'
+    "test": "data/test-00000-of-00001.parquet",
+    "validation": "data/validation-00000-of-00001.parquet",
+    "train": "data/train-00000-of-00001.parquet",
 }
 
 df = pd.read_parquet("hf://datasets/microsoft/wiki_qa/" + splits["test"])
