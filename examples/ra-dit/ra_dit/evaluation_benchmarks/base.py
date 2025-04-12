@@ -1,13 +1,14 @@
 """Base Benchmark."""
 
 import logging
+import time
 from abc import ABC, abstractmethod
 from concurrent.futures import Future, ThreadPoolExecutor
 from threading import Lock
 from typing import Any
 
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.types.rag_system import RAGSystem
@@ -18,10 +19,7 @@ class BenchmarkResult(BaseModel):
 
 
 class ExamplePred(BaseModel):
-    pred: Any
-
-    def __str__(self) -> str:
-        return str(self.pred)
+    pred: str
 
 
 class ScoredExamplePred(ExamplePred):
@@ -36,7 +34,17 @@ class BaseBenchmark(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     examples: pd.DataFrame
     generate_prompt_template: str | None
-    logger: logging.Logger = logging.getLogger("ra_dit.benchmark")
+    _logger: logging.Logger = PrivateAttr()
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self._logger = logging.getLogger(
+            f"ra_dit.benchmark.{self.__class__.__name__}"
+        )
+
+    @property
+    def logger(self) -> logging.Logger:
+        return self._logger
 
     @property
     @abstractmethod
@@ -85,25 +93,29 @@ class BaseBenchmark(BaseModel, ABC):
         self.logger.info(
             f"Running benchmark {self.name} with num_threads: {num_threads}"
         )
-
+        start_time = time.time()
         self._update_prompt_template(rag_system=rag_system)
         tasks_total = len(self.examples)
+        log_interval = max(1, tasks_total // 10)
         tasks_completed = 0
         lock = Lock()
+        rag_system_lock = Lock()
 
         def process_example(example: pd.Series) -> ScoredExamplePred:
-            pred = self._predict_example(
-                example=example, rag_system=rag_system
-            )
+            with rag_system_lock:
+                pred = self._predict_example(
+                    example=example, rag_system=rag_system
+                )
             return self._evaluate_prediction(example=example, pred=pred)
 
         def progress_indicator(future: Future) -> None:
             nonlocal tasks_completed
             with lock:
                 tasks_completed += 1
-                self.logger.debug(
-                    f"{tasks_completed}/{tasks_total} completed, {tasks_total-tasks_completed} remain."
-                )
+                if (tasks_completed) % log_interval == 0:
+                    self.logger.debug(
+                        f"{tasks_completed}/{tasks_total} completed, {tasks_total-tasks_completed} remain."
+                    )
 
         if num_threads > 1:
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
@@ -115,7 +127,6 @@ class BaseBenchmark(BaseModel, ABC):
                     future.add_done_callback(progress_indicator)
                 scored_examples = [f.result() for f in futures]
         else:
-            log_interval = max(1, tasks_total // 10)
             scored_examples = []
             for ix, example in self.examples.iterrows():
                 scored_examples.append(process_example(example=example))
@@ -127,4 +138,9 @@ class BaseBenchmark(BaseModel, ABC):
         agg_score = self.aggregate_example_scores(
             scored_examples=scored_examples
         )
+        self.logger.info("Successfully ran benchmark.")
+        self.logger.info(
+            f"Benchmark took {time.time() - start_time:.2f} seconds"
+        )
+
         return BenchmarkResult(score=agg_score)
