@@ -1,4 +1,4 @@
-"""CommonsenseQA
+"""WikiQA
 
 Example
 ===
@@ -55,6 +55,7 @@ splits = {
 }
 
 df = pd.read_parquet("hf://datasets/microsoft/wiki_qa/" + splits["test"])
+# Each question has multiple rows with different answers, and the label is set to 1 if the answer is correct, or 0 if the answer is incorrect.
 df = df[df["label"] == 1]
 data_prepper = WikiQADataPrepper(df=df, save_dir=QA_SAVE_DIR)
 data_prepper.execute_and_save()

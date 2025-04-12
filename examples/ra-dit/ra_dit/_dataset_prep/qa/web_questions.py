@@ -1,4 +1,4 @@
-"""CommonsenseQA
+"""WebQA
 
 Example
 ===
@@ -19,20 +19,24 @@ QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
 
 class WebQuestionsDataPrepper(QAMixin, BaseDataPrepper):
     @property
+    def required_cols(self) -> list[str]:
+        return ["question", "answers"]
+
+    @property
     def dataset_name(self) -> str:
         return "web_questions_qa"
 
     def _get_answer(self, row: pd.Series) -> str:
-        return str(", ".join(row["answer"]))
+        return str(", ".join(row["answers"]))
 
     def _prep_df(self) -> None:
-        self.df["answer"] = self.df.apply(
+        self.df["answers"] = self.df.apply(
             lambda row: self._get_answer(row), axis=1
         )
 
     def example_to_json(self, row: pd.Series) -> dict[str, str]:
         instruction_example: WebQuestionsDataPrepper.InstructionExample = {
-            "answer": row["answer"],
+            "answer": row["answers"],
             "question": row["question"],
             "evidence": None,
         }
@@ -45,6 +49,5 @@ splits = {
 }
 
 df = pd.read_parquet("hf://datasets/Stanford/web_questions/" + splits["train"])
-df = df.rename(columns={"answers": "answer"})
 data_prepper = WebQuestionsDataPrepper(df=df, save_dir=QA_SAVE_DIR)
 data_prepper.execute_and_save()

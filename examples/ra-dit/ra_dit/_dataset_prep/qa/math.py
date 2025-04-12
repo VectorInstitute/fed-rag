@@ -1,4 +1,4 @@
-"""CommonsenseQA
+"""MathQA
 
 Example
 ===
@@ -26,14 +26,18 @@ QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
 
 class MathQADataPrepper(QAMixin, BaseDataPrepper):
     @property
+    def required_cols(self) -> list[str]:
+        return ["Problem", "options"]
+
+    @property
     def dataset_name(self) -> str:
         return "math_qa"
 
     def _get_answer(self, row: pd.Series) -> str:
-        options = re.findall(r"([a-z])\s*\)\s*([^,]+)", row["answer"])
+        options = re.findall(r"([a-z])\s*\)\s*([^,]+)", row["options"])
         for label, text in options:
             if label.strip() == row["correct"].strip():
-                answer = text.strip()
+                answer = row["Rationale"] + "\n\n" + text.strip()
         return str(answer)
 
     def _prep_df(self) -> None:
@@ -44,7 +48,7 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
     def example_to_json(self, row: pd.Series) -> dict[str, str]:
         instruction_example: MathQADataPrepper.InstructionExample = {
             "answer": row["answer"],
-            "question": row["question"],
+            "question": row["Problem"],
             "evidence": None,
         }
         return instruction_example  # type:ignore [return-value]
@@ -54,6 +58,5 @@ splits = {"test": "test", "validation": "valid", "train": "train"}
 
 dataset = load_dataset("allenai/math_qa", trust_remote_code=True)
 df = pd.DataFrame(dataset["train"])
-df = df.rename(columns={"Problem": "question", "options": "answer"})
 data_prepper = MathQADataPrepper(df=df, save_dir=QA_SAVE_DIR)
 data_prepper.execute_and_save()
