@@ -19,10 +19,6 @@ QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
 
 class WebQuestionsDataPrepper(QAMixin, BaseDataPrepper):
     @property
-    def required_cols(self) -> list[str]:
-        return ["question", "answers"]
-
-    @property
     def dataset_name(self) -> str:
         return "web_questions_qa"
 
@@ -30,17 +26,15 @@ class WebQuestionsDataPrepper(QAMixin, BaseDataPrepper):
         return str(", ".join(row["answers"]))
 
     def _prep_df(self) -> None:
-        self.df["answers"] = self.df.apply(
+        self.df["answer"] = self.df.apply(
             lambda row: self._get_answer(row), axis=1
         )
 
-    def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        instruction_example: WebQuestionsDataPrepper.InstructionExample = {
-            "answer": row["answers"],
-            "question": row["question"],
-            "evidence": None,
-        }
-        return instruction_example  # type:ignore [return-value]
+    def _get_evidence(self, row: pd.Series) -> str:
+        return "\n\n".join(row["context"]["contexts"])
+
+    def _get_question(self, row: pd.Series) -> str:
+        return str(row["question"])
 
 
 splits = {

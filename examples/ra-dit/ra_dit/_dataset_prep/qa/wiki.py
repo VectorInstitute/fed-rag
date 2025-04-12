@@ -34,18 +34,11 @@ class WikiQADataPrepper(QAMixin, BaseDataPrepper):
     def _get_answer(self, row: pd.Series) -> str:
         return str(row["answer"])
 
-    def _prep_df(self) -> None:
-        self.df["answer"] = self.df.apply(
-            lambda row: self._get_answer(row), axis=1
-        )
+    def _get_question(self, row: pd.Series) -> str:
+        return str(row["question"])
 
-    def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        instruction_example: WikiQADataPrepper.InstructionExample = {
-            "answer": row["answer"],
-            "question": row["question"],
-            "evidence": None,
-        }
-        return instruction_example  # type:ignore [return-value]
+    def _get_evidence(self, row: pd.Series) -> str | None:
+        return None
 
 
 splits = {
@@ -55,8 +48,7 @@ splits = {
 }
 
 df = pd.read_parquet("hf://datasets/microsoft/wiki_qa/" + splits["test"])
-# Each question has multiple rows with different answers, and the label is set to
-# 1 if # the answer is correct, or 0 if the answer is incorrect.
+# Keeping only the entries with the correct answer (i.e., label=1) because that's all we need.
 df = df[df["label"] == 1]
 data_prepper = WikiQADataPrepper(df=df, save_dir=QA_SAVE_DIR)
 data_prepper.execute_and_save()

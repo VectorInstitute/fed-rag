@@ -26,10 +26,6 @@ QA_SAVE_DIR = DEFAULT_SAVE_DIR / "qa"
 
 class MathQADataPrepper(QAMixin, BaseDataPrepper):
     @property
-    def required_cols(self) -> list[str]:
-        return ["Problem", "options"]
-
-    @property
     def dataset_name(self) -> str:
         return "math_qa"
 
@@ -41,17 +37,18 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
         return str(answer)
 
     def _prep_df(self) -> None:
+        self.df["question"] = self.df.apply(
+            lambda row: self._get_question(row), axis=1
+        )
         self.df["answer"] = self.df.apply(
             lambda row: self._get_answer(row), axis=1
         )
 
-    def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        instruction_example: MathQADataPrepper.InstructionExample = {
-            "answer": row["answer"],
-            "question": row["Problem"],
-            "evidence": None,
-        }
-        return instruction_example  # type:ignore [return-value]
+    def _get_question(self, row: pd.Series) -> str:
+        return str(row["Problem"])
+
+    def _get_evidence(self, row: pd.Series) -> str | None:
+        return None
 
 
 splits = {"test": "test", "validation": "valid", "train": "train"}
