@@ -28,18 +28,11 @@ class CommonsenseQADataPrepper(QAMixin, BaseDataPrepper):
         answer_ix = np.where(row["choices"]["label"] == row["answerKey"])
         return str(row["choices"]["text"][answer_ix][0])
 
-    def _prep_df(self) -> None:
-        self.df["answer"] = self.df.apply(
-            lambda row: self._get_answer(row), axis=1
-        )
+    def _get_question(self, row: pd.Series) -> str:
+        return str(row["question"])
 
-    def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        instruction_example: CommonsenseQADataPrepper.InstructionExample = {
-            "answer": row["answer"],
-            "question": row["question"],
-            "evidence": None,
-        }
-        return instruction_example  # type:ignore [return-value]
+    def _get_evidence(self, row: pd.Series) -> str | None:
+        return None
 
 
 splits = {
