@@ -1,5 +1,7 @@
 """MMLU Benchmark."""
 
+import re
+
 import pandas as pd
 from pydantic import PrivateAttr
 
@@ -14,7 +16,7 @@ You are a helpful assistant.
 </role>
 
 <instruction>
-You are given a question along with 4 choices as a potential answer. Additionally,
+You are given a question along with 4 choices as a potential answer. Additionglobal_factsy,
 you are given some background context that may or may not be helpful. Respond
 with the best choice to the question.
 </instruction>
@@ -58,34 +60,45 @@ class MMLUBenchmark(BaseBenchmark):
             + "\n</choices>"
         )
 
+    def _format_response(self, response: str) -> str:
+        if match := re.search(
+            r"<response>(.*?)</response>", response, re.DOTALL
+        ):
+            return match.group(1)
+        else:
+            self.logger.debug("Unable to parse answer from response.")
+            return ""
+
     def _predict_example(
         self, example: pd.Series, rag_system: RAGSystem
     ) -> ExamplePred:
         query = self._format_question(example)
-        self.logger.debug(f"_predict_example created query:\n{query}")
         response = rag_system.query(query)
+        pred = self._format_response(str(response))
 
-        return ExamplePred(pred=response.response)
+        return ExamplePred(pred=pred)
 
     def _evaluate_prediction(
         self, example: pd.Series, pred: ExamplePred
     ) -> ScoredExamplePred:
-        score = int(pred.pred == self._class_labels[example["answer"]])
+        score = int(
+            pred.pred.lower() == self._class_labels[example["answer"]].lower()
+        )
         return ScoredExamplePred.from_example_pred(pred=pred, score=score)
 
     def _aggregate_example_scores(
-        self, score_examples: list[ScoredExamplePred]
+        self, scored_examples: list[ScoredExamplePred]
     ) -> float:
-        return sum(ex.score for ex in score_examples) / len(score_examples)
+        return sum(ex.score for ex in scored_examples) / len(scored_examples)
 
 
 splits = {
-    "test": "abstract_algebra/test-00000-of-00001.parquet",
-    "validation": "abstract_algebra/validation-00000-of-00001.parquet",
-    "dev": "abstract_algebra/dev-00000-of-00001.parquet",
+    "test": "global_facts/test-00000-of-00001.parquet",
+    "validation": "global_facts/validation-00000-of-00001.parquet",
+    "dev": "global_facts/dev-00000-of-00001.parquet",
 }
 df = pd.read_parquet("hf://datasets/cais/mmlu/" + splits["test"])
-mmlu_benchmark = MMLUBenchmark(examples=df.head(n=5))
+mmlu_benchmark = MMLUBenchmark(examples=df.head(20))
 
 
 if __name__ == "__main__":
@@ -109,4 +122,5 @@ if __name__ == "__main__":
     pred = mmlu_benchmark._predict_example(
         example=example, rag_system=rag_system
     )
-    print(pred)
+    score = mmlu_benchmark._evaluate_prediction(example=example, pred=pred)
+    print(score)
