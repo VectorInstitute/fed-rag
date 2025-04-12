@@ -36,14 +36,6 @@ class MathQADataPrepper(QAMixin, BaseDataPrepper):
                 answer = row["Rationale"] + "\n\n" + text.strip()
         return str(answer)
 
-    def _prep_df(self) -> None:
-        self.df["question"] = self.df.apply(
-            lambda row: self._get_question(row), axis=1
-        )
-        self.df["answer"] = self.df.apply(
-            lambda row: self._get_answer(row), axis=1
-        )
-
     def _get_question(self, row: pd.Series) -> str:
         return str(row["Problem"])
 

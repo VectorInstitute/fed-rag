@@ -25,13 +25,8 @@ class WebQuestionsDataPrepper(QAMixin, BaseDataPrepper):
     def _get_answer(self, row: pd.Series) -> str:
         return str(", ".join(row["answers"]))
 
-    def _prep_df(self) -> None:
-        self.df["answer"] = self.df.apply(
-            lambda row: self._get_answer(row), axis=1
-        )
-
-    def _get_evidence(self, row: pd.Series) -> str:
-        return "\n\n".join(row["context"]["contexts"])
+    def _get_evidence(self, row: pd.Series) -> str | None:
+        return None
 
     def _get_question(self, row: pd.Series) -> str:
         return str(row["question"])
