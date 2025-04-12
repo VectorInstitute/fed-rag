@@ -26,27 +26,14 @@ class PubmedQADataPrepper(QAMixin, BaseDataPrepper):
     def dataset_name(self) -> str:
         return "pubmed_qa"
 
-    def _format_answer(self, row: pd.Series) -> str:
+    def _get_answer(self, row: pd.Series) -> str:
         return str(row["long_answer"] + "\n\n" + row["final_decision"])
 
-    def _format_evidence(self, row: pd.Series) -> str:
+    def _get_evidence(self, row: pd.Series) -> str:
         return "\n\n".join(row["context"]["contexts"])
 
-    def _prep_df(self) -> None:
-        self.df["answer"] = self.df.apply(
-            lambda row: self._format_answer(row), axis=1
-        )
-        self.df["evidence"] = self.df.apply(
-            lambda row: self._format_evidence(row), axis=1
-        )
-
-    def example_to_json(self, row: pd.Series) -> dict[str, str]:
-        instruction_example: PubmedQADataPrepper.InstructionExample = {
-            "answer": row["answer"],
-            "evidence": row["evidence"],
-            "question": row["question"],
-        }
-        return instruction_example  # type:ignore [return-value]
+    def _get_question(self, row: pd.Series) -> str:
+        return str(row["question"])
 
 
 df = pd.read_parquet(

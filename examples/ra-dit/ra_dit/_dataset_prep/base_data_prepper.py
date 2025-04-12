@@ -68,9 +68,7 @@ class BaseDataPrepper(BaseModel, ABC):
             )
         examples = []
         total_rows = len(self.df)
-        log_interval = max(
-            1, total_rows // 10
-        )  # Log at least at start and end
+        log_interval = max(1, total_rows // 10)
         for ix, row in self.df.iterrows():
             examples.append(self.example_to_json(row))
 
