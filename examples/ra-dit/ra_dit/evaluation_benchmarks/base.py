@@ -90,11 +90,13 @@ class BaseBenchmark(BaseModel, ABC):
         tasks_total = len(self.examples)
         tasks_completed = 0
         lock = Lock()
+        rag_system_lock = Lock()
 
         def process_example(example: pd.Series) -> ScoredExamplePred:
-            pred = self._predict_example(
-                example=example, rag_system=rag_system
-            )
+            with rag_system_lock:
+                pred = self._predict_example(
+                    example=example, rag_system=rag_system
+                )
             return self._evaluate_prediction(example=example, pred=pred)
 
         def progress_indicator(future: Future) -> None:
