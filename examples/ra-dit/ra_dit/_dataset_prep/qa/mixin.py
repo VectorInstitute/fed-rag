@@ -26,6 +26,10 @@ class QAMixin(ABC):
     def _prep_df(self) -> None:
         if not hasattr(self, "df"):
             raise ValueError("Missing 'df' property.")
+        if not isinstance(self.df, pd.DataFrame):
+            raise ValueError(
+                "Invalid type for 'df' property. Should be a ~pd.DataFrame."
+            )
         self.df["answer"] = self.df.apply(
             lambda row: self._get_answer(row), axis=1
         )
