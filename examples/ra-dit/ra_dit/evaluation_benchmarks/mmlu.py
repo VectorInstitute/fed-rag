@@ -53,17 +53,13 @@ class MMLUBenchmark(BaseBenchmark):
             + "\n\n<choices>\n"
             + "\n".join(
                 f"{choice_id}: {choice}"
-                for choice_id, choice in zip(
-                    ["A", "B", "C", "D"], example["choices"]
-                )
+                for choice_id, choice in zip(["A", "B", "C", "D"], example["choices"])
             )
             + "\n</choices>"
         )
 
     def _format_response(self, response: str) -> str:
-        if match := re.search(
-            r"<response>(.*?)</response>", response, re.DOTALL
-        ):
+        if match := re.search(r"<response>(.*?)</response>", response, re.DOTALL):
             return match.group(1)
         else:
             self.logger.debug("Unable to parse answer from response.")
@@ -81,9 +77,7 @@ class MMLUBenchmark(BaseBenchmark):
     def _evaluate_prediction(
         self, example: pd.Series, pred: ExamplePred
     ) -> ScoredExamplePred:
-        score = int(
-            pred.pred.lower() == self._class_labels[example["answer"]].lower()
-        )
+        score = int(pred.pred.lower() == self._class_labels[example["answer"]].lower())
         return ScoredExamplePred.from_example_pred(pred=pred, score=score)
 
     def _aggregate_example_scores(
@@ -98,7 +92,7 @@ splits = {
     "dev": "global_facts/dev-00000-of-00001.parquet",
 }
 df = pd.read_parquet("hf://datasets/cais/mmlu/" + splits["test"])
-mmlu_benchmark = MMLUBenchmark(examples=df.head(20))
+mmlu_benchmark = MMLUBenchmark(examples=df.head(5))
 
 
 if __name__ == "__main__":
@@ -116,11 +110,7 @@ if __name__ == "__main__":
     )
 
     if isinstance(rag_system.generator, HFPeftModelGenerator):
-        rag_system.generator.model = (
-            rag_system.generator.model.merge_and_unload()
-        )
-    pred = mmlu_benchmark._predict_example(
-        example=example, rag_system=rag_system
-    )
+        rag_system.generator.model = rag_system.generator.model.merge_and_unload()
+    pred = mmlu_benchmark._predict_example(example=example, rag_system=rag_system)
     score = mmlu_benchmark._evaluate_prediction(example=example, pred=pred)
     print(score)
