@@ -3,11 +3,11 @@
 import logging
 import time
 from abc import ABC, abstractmethod
-from concurrent.futures import Future, ThreadPoolExecutor
-from threading import Lock
 from typing import Any
 
 import pandas as pd
+from accelerate import PartialState
+from accelerate.utils import gather_object
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from typing_extensions import Self
 
@@ -86,61 +86,61 @@ class BaseBenchmark(BaseModel, ABC):
                 self.generate_prompt_template
             )
 
-    def run(
-        self, rag_system: RAGSystem, num_threads: int = 1
-    ) -> BenchmarkResult:
+    def run(self, rag_system: RAGSystem) -> BenchmarkResult | None:
         """Run the benchmark with the given rag_system."""
-        self.logger.info(
-            f"Running benchmark {self.name} with num_threads: {num_threads}"
-        )
+        self.logger.info(f"Running benchmark {self.name}")
         start_time = time.time()
+        distributed_state = PartialState()
         self._update_prompt_template(rag_system=rag_system)
         tasks_total = len(self.examples)
         log_interval = max(1, tasks_total // 10)
-        tasks_completed = 0
-        lock = Lock()
-        rag_system_lock = Lock()
+
+        # Calculate chunk for this process
+        chunk_size = tasks_total // distributed_state.num_processes
+        start_idx = distributed_state.process_index * chunk_size
+        end_idx = start_idx + chunk_size
+        # Last process takes any remainder
+        if (
+            distributed_state.process_index
+            == distributed_state.num_processes - 1
+        ):
+            end_idx = tasks_total
+
+        self.logger.info(
+            f"Process {distributed_state.process_index} handling rows {start_idx} to {end_idx-1}"
+        )
+
+        examples_list = [e for _, e in self.examples.iterrows()]
 
         def process_example(example: pd.Series) -> ScoredExamplePred:
-            with rag_system_lock:
-                pred = self._predict_example(
-                    example=example, rag_system=rag_system
-                )
+            pred = self._predict_example(
+                example=example, rag_system=rag_system
+            )
             return self._evaluate_prediction(example=example, pred=pred)
 
-        def progress_indicator(future: Future) -> None:
-            nonlocal tasks_completed
-            with lock:
-                tasks_completed += 1
-                if (tasks_completed) % log_interval == 0:
-                    self.logger.debug(
-                        f"{tasks_completed}/{tasks_total} completed, {tasks_total-tasks_completed} remain."
-                    )
-
-        if num_threads > 1:
-            with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                futures = [
-                    executor.submit(process_example, e)
-                    for _, e in self.examples.iterrows()
-                ]
-                for future in futures:
-                    future.add_done_callback(progress_indicator)
-                scored_examples = [f.result() for f in futures]
-        else:
-            scored_examples = []
-            for ix, example in self.examples.iterrows():
-                scored_examples.append(process_example(example=example))
+        with distributed_state.split_between_processes(
+            examples_list
+        ) as local_examples:
+            local_scored_examples = []
+            for ix, example in enumerate(local_examples):
+                scored_example = process_example(example=example)
+                local_scored_examples.append(scored_example)
                 if (ix + 1) % log_interval == 0:
                     self.logger.debug(
-                        f"Processed {ix + 1} / {tasks_total} examples"
+                        f"Process {distributed_state.process_index}: Processed {ix + 1} / {len(local_examples)} examples"
                     )
 
-        agg_score = self.aggregate_example_scores(
-            scored_examples=scored_examples
-        )
-        self.logger.info("Successfully ran benchmark.")
-        self.logger.info(
-            f"Benchmark took {time.time() - start_time:.2f} seconds"
-        )
+        distributed_state.wait_for_everyone()
+        scored_examples = gather_object(local_scored_examples)
 
-        return BenchmarkResult(score=agg_score)
+        if distributed_state.is_main_process:
+            agg_score = self.aggregate_example_scores(
+                scored_examples=scored_examples
+            )
+            self.logger.info("Successfully ran benchmark.")
+            self.logger.info(
+                f"Benchmark took {time.time() - start_time:.2f} seconds"
+            )
+            return BenchmarkResult(score=agg_score)
+        else:
+            return None

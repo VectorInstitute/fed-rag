@@ -98,7 +98,7 @@ splits = {
     "dev": "global_facts/dev-00000-of-00001.parquet",
 }
 df = pd.read_parquet("hf://datasets/cais/mmlu/" + splits["test"])
-mmlu_benchmark = MMLUBenchmark(examples=df.head(20))
+mmlu_benchmark = MMLUBenchmark(examples=df.head(5))
 
 
 if __name__ == "__main__":
