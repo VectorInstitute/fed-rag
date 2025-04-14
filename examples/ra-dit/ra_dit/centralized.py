@@ -17,6 +17,7 @@ from ra_dit.trainers_and_testers.retriever import (
 
 from fed_rag.types.results import TrainResult
 
+from . import CHECKPOINT_DIR_TEMPLATES
 from .rag_system import main as get_rag_system
 
 tasks = ["retriever", "generator"]
@@ -100,6 +101,11 @@ def execute_trainer(
         train_data=datasets[task]["train_dataset"],
         val_data=datasets[task]["val_dataset"],
         peft_config=model.active_peft_config,
+        checkpoint_dir=CHECKPOINT_DIR_TEMPLATES["generator"].format(
+            retriever_id=retriever_id,
+            generator_id=generator_id,
+            generator_variant=generator_variant,
+        ),
     )
     return train_result
 

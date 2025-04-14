@@ -27,3 +27,6 @@ tmp_trainer/
 
 # example benchmark results
 .benchmark_results
+
+# example checkpoints
+.checkpoints

@@ -1,6 +1,5 @@
 """Benchmarker."""
 
-import datetime
 import json
 import logging
 from pathlib import Path
@@ -12,14 +11,11 @@ from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 
 from .evaluation_benchmarks import benchmarks
 from .rag_system import main as get_rag_system
+from .utils import generate_timestamp
 
 tasks = ["retriever", "generator"]
 
 logger = logging.getLogger("ra_dit.benchmarker")
-
-
-def generate_timestamp() -> str:
-    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
 
 def main(
@@ -27,6 +23,8 @@ def main(
     retriever_id: str = "dragon",
     generator_id: str = "llama2_7b",
     generator_variant: Literal["plain", "lora", "qlora"] = "qlora",
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
     benchmark_result_dir: str | None = None,
 ) -> None:
     """Execute benchmark.
@@ -62,10 +60,17 @@ def main(
     if accelerator.is_main_process:
         logger.info(
             f"Running benchmarker for benchmark='{benchmark_id}' and with: retriver_id='{retriever_id}' "
-            f"generator_id='{generator_id}', generator_variant='{generator_variant}'"
+            f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
+            f"retriever_checkpoint_path='{retriever_checkpoint_path}' generator_checkpoint_path='{generator_checkpoint_path}"
         )
     benchmark = benchmarks[benchmark_id]
-    rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
+    rag_system = get_rag_system(
+        retriever_id,
+        generator_id,
+        generator_variant,
+        retriever_checkpoint_path,
+        generator_checkpoint_path,
+    )
 
     # merge model weights if using lora
     if isinstance(rag_system.generator, HFPeftModelGenerator):
