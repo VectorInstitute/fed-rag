@@ -10,6 +10,8 @@ from trl import SFTConfig, SFTTrainer
 from fed_rag.decorators import federate
 from fed_rag.types import TestResult, TrainResult
 
+from ..utils import generate_timestamp
+
 # Dataset
 train_dataset = load_dataset("stanfordnlp/imdb", split="train[:20]")
 val_dataset = load_dataset("stanfordnlp/imdb", split="test[:10]")
@@ -22,6 +24,7 @@ def generator_train_loop(
     val_data: Dataset,
     device: Device | None = None,
     peft_config: PeftConfig | None = None,
+    checkpoint_dir: str | None = ".checkpoints/generator",
 ) -> TrainResult:
     """RA-DIT training loop for generator."""
 
@@ -30,7 +33,8 @@ def generator_train_loop(
 
     training_args = SFTConfig(
         max_seq_length=512,
-        output_dir="~/scratch/tmp",
+        output_dir=checkpoint_dir,
+        run_name=generate_timestamp(),
     )
     trainer = SFTTrainer(
         model,

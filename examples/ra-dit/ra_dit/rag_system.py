@@ -13,15 +13,25 @@ def main(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
 ) -> RAGSystem:
     """Build RAG System."""
 
     retriever = RETRIEVERS[retriever_id]
+    if retriever_checkpoint_path:
+        # update model name to checkpoint path
+        retriever.model_name = retriever_checkpoint_path
+
     knowledge_store = knowledge_store_from_retriever(
         retriever=retriever,
         name=retriever_id,
     )
+
     generator = GENERATORS[generator_id][generator_variant]
+    if generator_checkpoint_path:
+        # update model name to checkpoint path
+        generator.model_name = generator_checkpoint_path
 
     ## assemble
     rag_config = RAGConfig(top_k=1)

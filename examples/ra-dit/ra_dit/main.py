@@ -35,6 +35,8 @@ def get_model(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
     server: bool = False,
 ) -> torch.nn.Module:
     main_logger.info(
@@ -42,7 +44,13 @@ def get_model(
         f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
         f"server={server}"
     )
-    rag_system = get_rag_system(retriever_id, generator_id, generator_variant)
+    rag_system = get_rag_system(
+        retriever_id,
+        generator_id,
+        generator_variant,
+        retriever_checkpoint_path,
+        generator_checkpoint_path,
+    )
 
     if task == "retriever":
         return rag_system.retriever.query_encoder
@@ -80,6 +88,8 @@ def build_server(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
 ) -> HuggingFaceFlowerServer:
     main_logger.info(
         f"Building FL server: task='{task}', retriver_id='{retriever_id}' "
@@ -87,7 +97,13 @@ def build_server(
     )
     fl_task = fl_tasks[task]
     model = get_model(
-        task, retriever_id, generator_id, generator_variant, server=True
+        task,
+        retriever_id,
+        generator_id,
+        generator_variant,
+        retriever_checkpoint_path,
+        generator_checkpoint_path,
+        True,
     )
     main_logger.info(f"Server model loaded into device: {model.device}")
     return fl_task.server(model=model)
@@ -128,13 +144,22 @@ def build_client(
     retriever_id: str,
     generator_id: str,
     generator_variant: Literal["plain", "lora", "qlora"],
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
 ) -> HuggingFaceFlowerClient:
     main_logger.info(
         f"Building client: task='{task}', retriver_id='{retriever_id}' "
         f"generator_id='{generator_id}', generator_variant='{generator_variant}' "
     )
     fl_task = fl_tasks[task]
-    model = get_model(task, retriever_id, generator_id, generator_variant)
+    model = get_model(
+        task,
+        retriever_id,
+        generator_id,
+        generator_variant,
+        retriever_checkpoint_path,
+        generator_checkpoint_path,
+    )
     return fl_task.client(
         model=model,
         train_data=datasets[task]["train_dataset"],
@@ -150,6 +175,8 @@ def start(
     retriever_id: str = "dragon",
     generator_id: str = "llama2_7b",
     generator_variant: Literal["plain", "lora", "qlora"] = "qlora",
+    retriever_checkpoint_path: str | None = None,
+    generator_checkpoint_path: str | None = None,
 ) -> None:
     """For starting any of the FL Task components."""
     main_logger.info(
@@ -166,7 +193,12 @@ def start(
 
     if component == "server":
         server = build_server(
-            task, retriever_id, generator_id, generator_variant
+            task,
+            retriever_id,
+            generator_id,
+            generator_variant,
+            retriever_checkpoint_path,
+            generator_checkpoint_path,
         )
         main_logger.info(
             "Successfully built FL server, commencing server start."
@@ -183,6 +215,8 @@ def start(
             retriever_id=retriever_id,
             generator_id=generator_id,
             generator_variant=generator_variant,
+            retriever_checkpoint_path=retriever_checkpoint_path,
+            generator_checkpoint_path=generator_checkpoint_path,
         )
         main_logger.info(
             f"Successfully built FL client for '{component}', commencing client start."

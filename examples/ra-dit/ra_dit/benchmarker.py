@@ -1,6 +1,5 @@
 """Benchmarker."""
 
-import datetime
 import json
 import logging
 from pathlib import Path
@@ -12,14 +11,11 @@ from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 
 from .evaluation_benchmarks import benchmarks
 from .rag_system import main as get_rag_system
+from .utils import generate_timestamp
 
 tasks = ["retriever", "generator"]
 
 logger = logging.getLogger("ra_dit.benchmarker")
-
-
-def generate_timestamp() -> str:
-    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
 
 def main(
