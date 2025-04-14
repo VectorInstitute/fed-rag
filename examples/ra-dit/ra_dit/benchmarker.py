@@ -18,7 +18,7 @@ tasks = ["retriever", "generator"]
 logger = logging.getLogger("ra_dit.benchmarker")
 
 
-def generate_precise_timestamp_id() -> str:
+def generate_timestamp() -> str:
     return datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
 
@@ -84,16 +84,20 @@ def main(
 
     if res := benchmark.run(rag_system=rag_system):
         if accelerator.is_main_process:
-            if benchmark_result_dir is None:
-                timestamp = generate_precise_timestamp_id()
-                filename = Path(
-                    Path.cwd()
-                    / ".benchmark_results"
-                    / benchmark_id
-                    / f"{retriever_id}-{generator_id}-{generator_variant}"
-                    / f"{timestamp}.json"
-                )
-                filename.parent.mkdir(parents=True, exist_ok=True)
+            benchmark_result_dir = (
+                benchmark_result_dir
+                if benchmark_result_dir
+                else Path.cwd().as_posix()
+            )
+            timestamp = generate_timestamp()
+            filename = (
+                Path(benchmark_result_dir)
+                / ".benchmark_results"
+                / benchmark_id
+                / f"{retriever_id}-{generator_id}-{generator_variant}"
+                / f"{timestamp}.json"
+            )
+            filename.parent.mkdir(parents=True, exist_ok=True)
             res_json = res.model_dump()
             logger.debug(f"Result: {res_json}")
             with open(filename, "w") as f:
