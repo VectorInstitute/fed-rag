@@ -24,3 +24,6 @@ data/
 
 # HF training artifacts
 tmp_trainer/
+
+# example benchmark results
+.benchmark_results
