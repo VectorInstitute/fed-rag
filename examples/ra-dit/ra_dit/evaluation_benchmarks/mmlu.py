@@ -76,7 +76,7 @@ class MMLUBenchmark(BaseBenchmark):
         response = rag_system.query(query)
         pred = self._format_response(str(response))
 
-        return ExamplePred(pred=pred)
+        return ExamplePred(pred=pred, raw_pred=str(response))
 
     def _evaluate_prediction(
         self, example: pd.Series, pred: ExamplePred

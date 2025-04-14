@@ -20,6 +20,7 @@ class BenchmarkResult(BaseModel):
 
 class ExamplePred(BaseModel):
     pred: str
+    raw_pred: str
 
 
 class ScoredExamplePred(ExamplePred):
@@ -27,7 +28,7 @@ class ScoredExamplePred(ExamplePred):
 
     @classmethod
     def from_example_pred(cls, pred: ExamplePred, score: float) -> Self:
-        return cls(pred=pred.pred, score=score)
+        return cls(pred=pred.pred, raw_pred=pred.raw_pred, score=score)
 
 
 class BaseBenchmark(BaseModel, ABC):
