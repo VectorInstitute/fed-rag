@@ -24,19 +24,19 @@ generation_cfg = GenerationConfig(
 quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 
 generator_variants = {
-    f"{ModelVariants.PLAIN}": HFPretrainedModelGenerator(
+    ModelVariants.PLAIN: HFPretrainedModelGenerator(
         model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
         load_model_kwargs={"device_map": "auto"},
     ),
-    f"{ModelVariants.Q4BIT}": HFPretrainedModelGenerator(
+    ModelVariants.Q4BIT: HFPretrainedModelGenerator(
         model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
         load_model_kwargs={"device_map": "auto"},
     ),
-    f"{ModelVariants.LORA}": HFPeftModelGenerator(
+    ModelVariants.LORA: HFPeftModelGenerator(
         model_name=PEFT_MODEL_NAME,
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
@@ -46,7 +46,7 @@ generator_variants = {
             "device_map": "auto",
         },
     ),
-    f"{ModelVariants.QLORA}": HFPeftModelGenerator(
+    ModelVariants.QLORA: HFPeftModelGenerator(
         model_name=PEFT_MODEL_NAME,
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
@@ -59,7 +59,9 @@ generator_variants = {
     ),
 }
 
-generator_registry = ModelRegistry(**generator_variants)
+generator_registry = ModelRegistry(
+    **{k.value: v for k, v in generator_variants.items()}
+)
 
 if __name__ == "__main__":
     # use qlora
