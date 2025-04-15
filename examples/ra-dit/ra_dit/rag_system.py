@@ -62,7 +62,12 @@ def main(
 if __name__ == "__main__":
     import fire
 
+    from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
+
     rag_system: RAGSystem = fire.Fire(main)
+
+    if isinstance(rag_system.generator, HFPeftModelGenerator):
+        rag_system.generator.model.merge_and_unload()
 
     ## use the rag_system
     source_nodes = rag_system.retrieve("What is a Tulip?")

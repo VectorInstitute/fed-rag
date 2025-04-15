@@ -6,7 +6,7 @@ from transformers.utils.quantization_config import BitsAndBytesConfig
 from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
 
-from .utils import ModelVariants
+from .utils import ModelRegistry, ModelVariants
 
 PEFT_MODEL_NAME = "Styxxxx/llama2_7b_lora-quac"
 BASE_MODEL_NAME = "meta-llama/Llama-2-7b-hf"
@@ -23,14 +23,20 @@ generation_cfg = GenerationConfig(
 )
 quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 
-generators: ModelVariants = {
-    "plain": HFPretrainedModelGenerator(
+generator_variants = {
+    ModelVariants.PLAIN: HFPretrainedModelGenerator(
         model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
         load_model_at_init=False,
         load_model_kwargs={"device_map": "auto"},
     ),
-    "lora": HFPeftModelGenerator(
+    ModelVariants.Q4BIT: HFPretrainedModelGenerator(
+        model_name=BASE_MODEL_NAME,
+        generation_config=generation_cfg,
+        load_model_at_init=False,
+        load_model_kwargs={"device_map": "auto"},
+    ),
+    ModelVariants.LORA: HFPeftModelGenerator(
         model_name=PEFT_MODEL_NAME,
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
@@ -40,7 +46,7 @@ generators: ModelVariants = {
             "device_map": "auto",
         },
     ),
-    "qlora": HFPeftModelGenerator(
+    ModelVariants.QLORA: HFPeftModelGenerator(
         model_name=PEFT_MODEL_NAME,
         base_model_name=BASE_MODEL_NAME,
         generation_config=generation_cfg,
@@ -53,9 +59,13 @@ generators: ModelVariants = {
     ),
 }
 
+generator_registry = ModelRegistry(
+    **{k.value: v for k, v in generator_variants.items()}
+)
+
 if __name__ == "__main__":
     # use qlora
-    generator = generators["qlora"]
+    generator = generator_registry["qlora"]
 
     # print trainable params
     print(generator.model.print_trainable_parameters())
