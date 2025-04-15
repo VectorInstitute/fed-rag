@@ -61,11 +61,11 @@ def generator_evaluate(m: PreTrainedModel, test_data: Dataset) -> TestResult:
 
 
 if __name__ == "__main__":
-    from ra_dit.generators.llama2_7b import generators
+    from ra_dit.generators.llama2_7b import generator_registry
 
     # by default we load generator to cpu since fine-tuning just one generator
     # we instead set `device_map` to `auto`
-    generator = generators["qlora"]
+    generator = generator_registry["qlora"]
 
     train_result = generator_train_loop(
         model=generator.model,
