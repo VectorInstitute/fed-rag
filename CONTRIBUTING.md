@@ -85,6 +85,51 @@ If you've used FedRAG in interesting ways, consider contributing:
 - Benchmarks
 - Integration examples
 
+## Making Contributions
+
+Once you've decided on what contribution you'd like to make, you can follow the
+listed steps below to create a development branch and submit your pull request.
+
+> [!NOTE]
+> Make sure to have followed the instructions listed in the [Getting Started](#getting-started)
+> section in order to get your development environment set up properly.
+
+### Developing your Contribution and Creating a Pull Request
+
+1. __Create a new branch__
+
+```sh
+git checkout -b feature/your-feature-name
+```
+
+2. __Make your changes__ following our [Development Guidelines](#development-guidelines).
+
+3. __Commit your changes__ with a clear message
+
+```sh
+git commit -m "Add feature: description of changes"
+```
+
+4. __Push to your fork__
+
+```sh
+git push origin feature/your-feature-name
+```
+
+5. __Open a pull request__ against the `main` branch
+
+### Code Review Process
+
+Below, we loosely describe the process of having your code reviewed and eventually
+merged into `main`.
+
+- At least one maintainer will review your PR
+- Address any requested changes or feedback
+- Once approved, a maintainer will merge your PR
+- For significant changes, multiple reviewers may be required
+
+## Development Guidelines
+
 ## License
 
 By contributing to FedRAG, you agree that your contributions will be licensed
