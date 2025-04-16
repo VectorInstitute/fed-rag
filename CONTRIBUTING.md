@@ -50,6 +50,42 @@ pre-commit install
 
 ## What Contributions Can You Make?
 
-You can contribute to the FedRAG project in a variety of ways.
+Everyone can contribute to FedRAG! Whether you're a seasoned ML engineer, new to
+federated learning and RAG/LLMs, or somewhere in between—your input is valuable.
+Here are several ways to get involved:
 
-1. Submit
+### 1. 🐛 Fix Bugs & Issues
+
+Fixing bugs is a great way to get started. Check our
+[GitHub Issues](https://github.com/VectorInstitute/fed-rag/issues) page and look
+for issues labeled `good first issue` to begin with.
+
+### 2. 📝 Improve Documentation
+
+Help make our documentation more comprehensive and accessible. This includes:
+
+- API documentation
+- Usage guides
+- Glossary
+- Tutorials
+- Architecture explanations
+
+### 3. ✨ Add New Features
+
+Extend FedRAG's capabilities by contributing new features that enhance both centralized
+and federated fine-tuning of RAG systems. Share your ideas by opening an issue
+first to discuss implementation details.
+
+### 4. 📊 Share Examples
+
+If you've used FedRAG in interesting ways, consider contributing:
+
+- Example notebooks
+- Case studies
+- Benchmarks
+- Integration examples
+
+## License
+
+By contributing to FedRAG, you agree that your contributions will be licensed
+under the project's [LICENSE](./LICENSE) file.
