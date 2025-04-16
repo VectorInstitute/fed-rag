@@ -29,8 +29,12 @@ cd fed-rag
 
 2. Setup the project's virtual environment with `uv`
 
+You must have the `uv` Python package manager installed on your machine. For installation
+instructions, you can visit uv's [official documentation](https://docs.astral.sh/uv/getting-started/installation/)
+or its Github [repo](https://github.com/astral-sh/uv?tab=readme-ov-file#installation).
+
 ```sh
-uv sync --all-extras --groups dev --group docs
+uv sync --all-extras --group dev --group docs
 ```
 
 3. Activate the project's virtual environment
