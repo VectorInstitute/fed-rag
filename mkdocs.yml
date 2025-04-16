@@ -95,7 +95,7 @@ nav:
       - Submitting an Issue: community/contributing/submit_issue.md
       - Submitting a Pull Request: community/contributing/submit_pr.md
     - Changelog: ../CHANGELOG.md
-    - Resources:
+    - Other Vector Projects:
       - AI Pocket References: community/resources/pocket_references.md
 plugins:
   - search
