@@ -118,6 +118,20 @@ git push origin feature/your-feature-name
 
 5. __Open a pull request__ against the `main` branch
 
+### When Contributing to Docs
+
+If you are making a contribution to the docs, then in addition to the previously
+listed steps, during development you may find it helpful to watch the docs as you
+make changes locally.
+
+```sh
+# in the root of the project
+mkdocs serve
+```
+
+This will launch a development server on `http://127.0.0.1:8000/`. You can enter
+this address in your web browser of choice to watch your changes live as they happen.
+
 ### Code Review Process
 
 Below, we loosely describe the process of having your code reviewed and eventually
@@ -130,7 +144,56 @@ merged into `main`.
 
 ## Development Guidelines
 
+### Coding Style
+
+We follow established Python conventions and use tools to maintain code quality:
+
+- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/) for Python code style
+- Use [Black](https://github.com/psf/black) for automatic code formatting
+- Apply [isort](https://pycqa.github.io/isort/) for organizing imports
+- Run [Ruff](https://github.com/astral-sh/ruff) for linting
+
+The pre-commit hooks you installed will automatically check and fix many style issues.
+
+### Documentation
+
+Good documentation is crucial for our project:
+
+- Document all public functions, classes, and methods using [Google docstring format](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+- Keep documentation updated when changing code
+- Include examples where appropriate to show usage
+
+### Testing
+
+We prioritize testing to maintain code quality:
+
+- Write tests for all new features and bug fixes
+- Maintain or improve test coverage
+- We use [pytest](https://docs.pytest.org/) for our test framework
+- Run all tests before submitting your PR:
+
+```sh
+# while in root of project and with project's virtual env active
+make test
+```
+
+## Communication
+
+We have several channels for project communication:
+
+- For bug reports and feature requests, use [GitHub Issues](https://github.com/VectorInstitute/fed-rag/issues)
+- For longer discussions, use [GitHub Discussions](https://github.com/VectorInstitute/fed-rag/discussions)
+
 ## License
 
 By contributing to FedRAG, you agree that your contributions will be licensed
 under the project's [LICENSE](./LICENSE) file.
+
+## ✨ Final Words
+
+We're excited to see what you'll bring to the FedRAG community! Remember that
+contributions of all sizes matter - from fixing a typo to implementing complex
+federated learning algorithms. Your involvement helps push the boundaries of what's
+possible with federated fine-tuning of RAG.
+
+We look forward to your pull requests!
