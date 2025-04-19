@@ -46,3 +46,16 @@ def test_lsr_forward(
     mock_torch_functional.softmax.assert_has_calls(calls)
     mock_torch_functional.kl_div.assert_called_once()
     assert out == torch.Tensor([expected])
+
+
+def test_lsr_forward_2(
+    retrieved_chunks: torch.Tensor, context: torch.Tensor
+) -> None:
+    scores = retrieved_chunks * context
+    scores = scores.sum(dim=-1).unsqueeze(-1)
+
+    print(f"scores: {scores}")
+    print(f"scores dim: {scores.shape}")
+
+    pytest.fail()
+    assert retrieved_chunks.shape == (2, 3, 10)
