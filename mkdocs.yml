@@ -57,6 +57,7 @@ nav:
       - FL Tasks: api_reference/exceptions/fl_tasks.md
       - Inspectors: api_reference/exceptions/inspectors.md
       - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
+      - Loss: api_reference/exceptions/loss.md
     - Finetuning Datasets:
       - api_reference/finetuning_datasets/index.md
       - api_reference/finetuning_datasets/pytorch.md
@@ -78,6 +79,8 @@ nav:
       - api_reference/knowledge_stores/index.md
       - InMemory: api_reference/knowledge_stores/in_memory.md
       - Mixins: api_reference/knowledge_stores/mixins.md
+    - Loss:
+      - api_reference/loss/pytorch.md
     - RAGSystem:
       - api_reference/rag_system/index.md
     - Retrievers:
