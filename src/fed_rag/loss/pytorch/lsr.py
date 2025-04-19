@@ -59,5 +59,5 @@ class LSRLoss(nn.Module):
                 return kl_div.mean()
             case ReductionMode.SUM:
                 return kl_div.sum()
-            case _:
+            case _:  # pragma: no cover
                 assert_never(self.reduction)  # pragma: no cover
