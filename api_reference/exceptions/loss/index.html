@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../knowledge_stores/">
       
       
-        <link rel="next" href="../exceptions/fl_tasks/">
+        <link rel="next" href="../../finetuning_datasets/">
       
       
-      <link rel="icon" href="../../assets/favicon-48x48.svg">
+      <link rel="icon" href="../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>Trainer and Tester Decorators - FedRAG</title>
+        <title>Loss - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +46,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#trainer-and-tester-decorators" class="md-skip">
+        <a href="#src.fed_rag.exceptions.loss.LossError" class="md-skip">
           Skip to content
         </a>
       
@@ -90,15 +90,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Trainer and Tester Decorators
+              Loss
             
           </span>
         </div>
@@ -226,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting_started/essentials/" class="md-tabs__link">
+        <a href="../../../getting_started/essentials/" class="md-tabs__link">
           
   
   
@@ -269,7 +269,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/" class="md-tabs__link">
+        <a href="../../../examples/" class="md-tabs__link">
           
   
   
@@ -293,7 +293,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../glossary/" class="md-tabs__link">
+      <a href="../../../glossary/" class="md-tabs__link">
         
   
   
@@ -334,7 +334,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../community/" class="md-tabs__link">
+        <a href="../../../community/" class="md-tabs__link">
           
   
   
@@ -370,15 +370,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -485,7 +485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/essentials/" class="md-nav__link">
+      <a href="../../../getting_started/essentials/" class="md-nav__link">
         
   
   
@@ -533,7 +533,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting_started/quick_starts/" class="md-nav__link ">
+            <a href="../../../getting_started/quick_starts/" class="md-nav__link ">
               
   
   
@@ -568,7 +568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/federated/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/federated/" class="md-nav__link">
         
   
   
@@ -591,7 +591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
         
   
   
@@ -622,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/installation/" class="md-nav__link">
+      <a href="../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -645,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/standard_usage/" class="md-nav__link">
+      <a href="../../../getting_started/standard_usage/" class="md-nav__link">
         
   
   
@@ -668,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/advanced_usage/" class="md-nav__link">
+      <a href="../../../getting_started/advanced_usage/" class="md-nav__link">
         
   
   
@@ -716,7 +716,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting_started/how_to/" class="md-nav__link ">
+            <a href="../../../getting_started/how_to/" class="md-nav__link ">
               
   
   
@@ -751,7 +751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/how_to/creating_finetuning_datasets/" class="md-nav__link">
+      <a href="../../../getting_started/how_to/creating_finetuning_datasets/" class="md-nav__link">
         
   
   
@@ -774,7 +774,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/how_to/rag_finetuning/" class="md-nav__link">
+      <a href="../../../getting_started/how_to/rag_finetuning/" class="md-nav__link">
         
   
   
@@ -805,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/integrations/" class="md-nav__link">
+      <a href="../../../getting_started/integrations/" class="md-nav__link">
         
   
   
@@ -858,7 +858,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../examples/" class="md-nav__link ">
+            <a href="../../../examples/" class="md-nav__link ">
               
   
   
@@ -893,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/ra_dit/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/" class="md-nav__link">
         
   
   
@@ -973,7 +973,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -1005,8 +1005,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1023,15 +1021,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../../decorators/" class="md-nav__link ">
               
   
   
@@ -1045,7 +1043,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4_2">
             <span class="md-nav__icon md-icon"></span>
             Decorators
@@ -1066,8 +1064,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1086,11 +1086,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
         
           
           <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
@@ -1106,7 +1106,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_3">
             <span class="md-nav__icon md-icon"></span>
             Exceptions
@@ -1120,7 +1120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exceptions/fl_tasks/" class="md-nav__link">
+      <a href="../fl_tasks/" class="md-nav__link">
         
   
   
@@ -1143,7 +1143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exceptions/inspectors/" class="md-nav__link">
+      <a href="../inspectors/" class="md-nav__link">
         
   
   
@@ -1166,7 +1166,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exceptions/knowledge_stores/" class="md-nav__link">
+      <a href="../knowledge_stores/" class="md-nav__link">
         
   
   
@@ -1186,10 +1186,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../exceptions/loss/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Loss
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1200,6 +1220,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.loss.LossError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LossError
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1245,7 +1292,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../finetuning_datasets/" class="md-nav__link ">
+            <a href="../../finetuning_datasets/" class="md-nav__link ">
               
   
   
@@ -1280,7 +1327,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../finetuning_datasets/pytorch/" class="md-nav__link">
+      <a href="../../finetuning_datasets/pytorch/" class="md-nav__link">
         
   
   
@@ -1303,7 +1350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../finetuning_datasets/huggingface/" class="md-nav__link">
+      <a href="../../finetuning_datasets/huggingface/" class="md-nav__link">
         
   
   
@@ -1359,7 +1406,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../fl_tasks/" class="md-nav__link ">
+            <a href="../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -1394,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -1417,7 +1464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -1471,7 +1518,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../generators/" class="md-nav__link ">
+            <a href="../../generators/" class="md-nav__link ">
               
   
   
@@ -1506,7 +1553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../generators/huggingface/" class="md-nav__link">
+      <a href="../../generators/huggingface/" class="md-nav__link">
         
   
   
@@ -1562,7 +1609,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../inspectors/" class="md-nav__link ">
+            <a href="../../inspectors/" class="md-nav__link ">
               
   
   
@@ -1597,7 +1644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inspectors/pytorch/" class="md-nav__link">
+      <a href="../../inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -1620,7 +1667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inspectors/huggingface/" class="md-nav__link">
+      <a href="../../inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -1672,7 +1719,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../knowledge_nodes/" class="md-nav__link ">
+            <a href="../../knowledge_nodes/" class="md-nav__link ">
               
   
   
@@ -1735,7 +1782,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../knowledge_stores/" class="md-nav__link ">
+            <a href="../../knowledge_stores/" class="md-nav__link ">
               
   
   
@@ -1770,7 +1817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="../../knowledge_stores/in_memory/" class="md-nav__link">
         
   
   
@@ -1793,7 +1840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../knowledge_stores/mixins/" class="md-nav__link">
+      <a href="../../knowledge_stores/mixins/" class="md-nav__link">
         
   
   
@@ -1869,7 +1916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../loss/pytorch/" class="md-nav__link">
+      <a href="../../loss/pytorch/" class="md-nav__link">
         
   
   
@@ -1921,7 +1968,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../rag_system/" class="md-nav__link ">
+            <a href="../../rag_system/" class="md-nav__link ">
               
   
   
@@ -1982,7 +2029,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../retrievers/" class="md-nav__link ">
+            <a href="../../retrievers/" class="md-nav__link ">
               
   
   
@@ -2017,7 +2064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../retrievers/huggingface/" class="md-nav__link">
+      <a href="../../retrievers/huggingface/" class="md-nav__link">
         
   
   
@@ -2071,7 +2118,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../tokenizers/" class="md-nav__link ">
+            <a href="../../tokenizers/" class="md-nav__link ">
               
   
   
@@ -2106,7 +2153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tokenizers/huggingface/" class="md-nav__link">
+      <a href="../../tokenizers/huggingface/" class="md-nav__link">
         
   
   
@@ -2144,7 +2191,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../glossary/" class="md-nav__link">
+      <a href="../../../glossary/" class="md-nav__link">
         
   
   
@@ -2193,7 +2240,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../community/" class="md-nav__link ">
+            <a href="../../../community/" class="md-nav__link ">
               
   
   
@@ -2255,7 +2302,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../community/contributing/" class="md-nav__link ">
+            <a href="../../../community/contributing/" class="md-nav__link ">
               
   
   
@@ -2290,7 +2337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/ask_question/" class="md-nav__link">
+      <a href="../../../community/contributing/ask_question/" class="md-nav__link">
         
   
   
@@ -2313,7 +2360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/submit_issue/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_issue/" class="md-nav__link">
         
   
   
@@ -2336,7 +2383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/submit_pr/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_pr/" class="md-nav__link">
         
   
   
@@ -2367,7 +2414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../CHANGELOG.md" class="md-nav__link">
+      <a href="../../../../CHANGELOG.md" class="md-nav__link">
         
   
   
@@ -2435,7 +2482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/resources/pocket_references/" class="md-nav__link">
+      <a href="../../../community/resources/pocket_references/" class="md-nav__link">
         
   
   
@@ -2483,8 +2530,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -2493,18 +2538,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.decorators.trainer.TrainerDecorators" class="md-nav__link">
+  <a href="#src.fed_rag.exceptions.loss.LossError" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TrainerDecorators
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.decorators.tester.TesterDecorators" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TesterDecorators
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LossError
     </span>
   </a>
   
@@ -2529,7 +2565,10 @@
   
 
 
-<h1 id="trainer-and-tester-decorators">Trainer and Tester Decorators<a class="headerlink" href="#trainer-and-tester-decorators" title="Permanent link">&para;</a></h1>
+  <h1>Loss</h1>
+
+<!-- markdownlint-disable-file MD041 -->
+
 
 
 <div class="doc doc-object doc-module">
@@ -2539,7 +2578,7 @@
 
     <div class="doc doc-contents first">
 
-        <p>Trainer Decorators</p>
+        <p>Exceptions for loss.</p>
 
 
 
@@ -2562,15 +2601,19 @@
 
 
 
-<h2 id="src.fed_rag.decorators.trainer.TrainerDecorators" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TrainerDecorators</span>
+<h2 id="src.fed_rag.exceptions.loss.LossError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">LossError</span>
 
 
-<a href="#src.fed_rag.decorators.trainer.TrainerDecorators" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.exceptions.loss.LossError" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
 
+
+        <p>Base loss errors for all loss-related exceptions.</p>
 
 
 
@@ -2579,231 +2622,16 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/decorators/trainer.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainerDecorators</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">pytorch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.inspectors.pytorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_trainer_signature</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>            <span class="c1"># inspect func sig</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>            <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect_trainer_signature</span><span class="p">(</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>                <span class="n">func</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>            <span class="p">)</span>  <span class="c1"># may need to create a cfg for this if decorater accepts params</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>            <span class="c1"># store fl_task config</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>            <span class="n">func</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;__fl_task_trainer_config&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>            <span class="k">return</span> <span class="n">func</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">huggingface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.inspectors.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_trainer_signature</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>            <span class="c1"># inspect func sig</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>            <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect_trainer_signature</span><span class="p">(</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>                <span class="n">func</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>            <span class="p">)</span>  <span class="c1"># may need to create a cfg for this if decorater accepts params</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>            <span class="c1"># store fl_task config</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>            <span class="n">func</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;__fl_task_trainer_config&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>            <span class="k">return</span> <span class="n">func</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+                <summary>Source code in <code>src/fed_rag/exceptions/loss.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">LossError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base loss errors for all loss-related exceptions.&quot;&quot;&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="k">pass</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-module">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Tester Decorators</p>
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="src.fed_rag.decorators.tester.TesterDecorators" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TesterDecorators</span>
-
-
-<a href="#src.fed_rag.decorators.tester.TesterDecorators" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>src/fed_rag/decorators/tester.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">TesterDecorators</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">pytorch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.inspectors.pytorch</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_tester_signature</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>            <span class="c1"># inspect func sig</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>            <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect_tester_signature</span><span class="p">(</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>                <span class="n">func</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>            <span class="p">)</span>  <span class="c1"># may need to create a cfg for this if decorater accepts params</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>            <span class="c1"># store fl_task config</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>            <span class="n">func</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;__fl_task_tester_config&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>            <span class="k">return</span> <span class="n">func</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">huggingface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.inspectors.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="n">inspect_tester_signature</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>            <span class="c1"># inspect func sig</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>            <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect_tester_signature</span><span class="p">(</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>                <span class="n">func</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>            <span class="p">)</span>  <span class="c1"># may need to create a cfg for this if decorater accepts params</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>            <span class="c1"># store fl_task config</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>            <span class="n">func</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;__fl_task_tester_config&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>            <span class="k">return</span> <span class="n">func</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span></code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
 
     </div>
 
@@ -2854,7 +2682,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Reference">
+          <a href="../knowledge_stores/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Knowledge Stores">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2864,20 +2692,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                API Reference
+                Knowledge Stores
               </div>
             </div>
           </a>
         
         
           
-          <a href="../exceptions/fl_tasks/" class="md-footer__link md-footer__link--next" aria-label="Next: FL Tasks">
+          <a href="../../finetuning_datasets/" class="md-footer__link md-footer__link--next" aria-label="Next: Finetuning Datasets">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                FL Tasks
+                Finetuning Datasets
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2895,7 +2723,7 @@
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="../../assets/vector-logo.svg"
+        src="../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -2961,10 +2789,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>
