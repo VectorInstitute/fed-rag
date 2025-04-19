@@ -7,10 +7,16 @@ import torch.functional as F
 import torch.nn as nn
 from typing_extensions import assert_never
 
+from fed_rag.exceptions.loss import InvalidReductionParam
+
 
 class ReductionMode(str, Enum):
     MEAN = "mean"
     SUM = "sum"
+
+    @classmethod
+    def members_list(cls) -> list[str]:
+        return [member for member in cls]
 
 
 class LSRLoss(nn.Module):
@@ -26,6 +32,13 @@ class LSRLoss(nn.Module):
     """
 
     def __init__(self, reduction: ReductionMode = ReductionMode.MEAN):
+        if reduction not in ReductionMode.members_list():
+            msg = (
+                f"Invalid reduction {reduction}. "
+                f"Valid reductions are: {', '.join(ReductionMode.members_list())}"
+            )
+            raise InvalidReductionParam(msg)
+
         self.reduction = reduction
 
     def forward(
