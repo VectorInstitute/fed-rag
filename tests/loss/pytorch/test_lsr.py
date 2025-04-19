@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, _Call, patch
 
 import pytest
 import torch
+import torch.nn.functional as F
 from torch.testing import assert_close
 
 from fed_rag.exceptions.loss import InvalidReductionParam
@@ -50,20 +51,43 @@ def test_lsr_forward(
 
 
 def test_lsr_forward_2(
-    retrieved_chunks: torch.Tensor, context: torch.Tensor
+    retrieved_chunks: torch.Tensor,
+    context: torch.Tensor,
+    lm_scores: torch.Tensor,
 ) -> None:
-    scores = retrieved_chunks * context
-    scores = scores.sum(dim=-1)
+    # retriever chunks probas
+    scores = (retrieved_chunks * context).sum(dim=-1)
+    retriever_scale = 1.0
+    scores /= retriever_scale
+    retriever_probas = torch.softmax(scores, dim=-1)
 
-    probas = torch.softmax(scores, dim=-1)
+    # lm chunks probas
+    lm_scale = 1.0
+    lm_scores /= lm_scale
+    lm_probas = torch.softmax(lm_scores, dim=-1)
+
+    # kl divergence
+    kl_div = F.kl_div(retriever_probas, lm_probas, reduction="none").sum(
+        dim=-1
+    )
 
     print(f"scores: {scores}")
     print(f"scores dim: {scores.shape}")
 
-    print(f"probas: {probas}")
-    print(f"probas dim: {probas.shape}")
+    print(f"probas: {retriever_probas}")
+    print(f"probas dim: {retriever_probas.shape}")
+
+    print(f"lm_probas: {lm_probas}")
+    print(f"lm_probas dim: {lm_probas.shape}")
+
+    print(f"kl_div: {kl_div}")
+    print(f"kl_div mean: {kl_div.mean()}")
 
     assert retrieved_chunks.shape == (2, 3, 10)
     assert_close(
-        probas.sum(dim=-1, keepdim=True), torch.Tensor([[1.0], [1.0]])
+        retriever_probas.sum(dim=-1, keepdim=True),
+        torch.Tensor([[1.0], [1.0]]),
+    )
+    assert_close(
+        lm_probas.sum(dim=-1, keepdim=True), torch.Tensor([[1.0], [1.0]])
     )

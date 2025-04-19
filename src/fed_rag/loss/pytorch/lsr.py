@@ -3,8 +3,8 @@
 from enum import Enum
 
 import torch
-import torch.functional as F
 import torch.nn as nn
+import torch.nn.functional as F
 from typing_extensions import assert_never
 
 from fed_rag.exceptions.loss import InvalidReductionParam
