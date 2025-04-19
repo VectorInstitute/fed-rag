@@ -1,4 +1,7 @@
+from unittest.mock import MagicMock, _Call, patch
+
 import pytest
+import torch
 
 from fed_rag.exceptions.loss import InvalidReductionParam
 from fed_rag.loss.pytorch.lsr import LSRLoss, ReductionMode
@@ -13,3 +16,26 @@ def test_lsr_loss_init() -> None:
 def test_invalid_reduction_raises_error() -> None:
     with pytest.raises(InvalidReductionParam):
         LSRLoss(reduction="invalid_reduction")
+
+
+@patch("fed_rag.loss.pytorch.lsr.F")
+def test_lsr_forward(mock_torch_functional: MagicMock) -> None:
+    # arrange mocks
+    mock_torch_functional.softmax.side_effect = iter(
+        [torch.Tensor([1, 2, 3]), torch.Tensor([4, 5, 6])]
+    )
+    mock_torch_functional.kl_div.return_value = torch.Tensor([1, 2, 3])
+
+    loss = LSRLoss(reduction="sum")
+    retrieval_logits = torch.zeros(3)
+    lm_logits = torch.zeros(3)
+    out = loss(retrieval_logits, lm_logits)
+
+    # assert
+    calls = [
+        _Call(((retrieval_logits,), {"dim": 1})),
+        _Call(((lm_logits,), {"dim": 1})),
+    ]
+    mock_torch_functional.softmax.assert_has_calls(calls)
+    mock_torch_functional.kl_div.assert_called_once()
+    assert out == torch.Tensor([6])

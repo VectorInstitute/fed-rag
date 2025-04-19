@@ -32,6 +32,9 @@ class LSRLoss(nn.Module):
     """
 
     def __init__(self, reduction: ReductionMode = ReductionMode.MEAN):
+        # This line is critical - it initializes all the Module machinery
+        super(LSRLoss, self).__init__()
+
         if reduction not in ReductionMode.members_list():
             msg = (
                 f"Invalid reduction {reduction}. "
@@ -48,7 +51,7 @@ class LSRLoss(nn.Module):
         lm_probs = F.softmax(lm_logits, dim=1)
 
         kl_div = F.kl_div(retrieval_probs, lm_probs, reduction="none").sum(
-            dim=1
+            dim=-1
         )
 
         match self.reduction:
