@@ -1,4 +1,4 @@
-"""Exceptions for inspectors"""
+"""Exceptions for inspectors."""
 
 
 class InspectorError(Exception):

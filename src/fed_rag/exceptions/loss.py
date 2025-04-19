@@ -1,4 +1,4 @@
-"""Exceptions for Loss"""
+"""Exceptions for loss."""
 
 
 class LossError(Exception):

@@ -11,6 +11,8 @@ from fed_rag.exceptions.loss import InvalidReductionParam
 
 
 class ReductionMode(str, Enum):
+    """Reduction mode enum."""
+
     MEAN = "mean"
     SUM = "sum"
 
