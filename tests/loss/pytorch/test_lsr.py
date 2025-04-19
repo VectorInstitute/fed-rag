@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, _Call, patch
 
 import pytest
 import torch
+from torch.testing import assert_close
 
 from fed_rag.exceptions.loss import InvalidReductionParam
 from fed_rag.loss.pytorch.lsr import LSRLoss, ReductionMode
@@ -52,10 +53,17 @@ def test_lsr_forward_2(
     retrieved_chunks: torch.Tensor, context: torch.Tensor
 ) -> None:
     scores = retrieved_chunks * context
-    scores = scores.sum(dim=-1).unsqueeze(-1)
+    scores = scores.sum(dim=-1)
+
+    probas = torch.softmax(scores, dim=-1)
 
     print(f"scores: {scores}")
     print(f"scores dim: {scores.shape}")
 
-    pytest.fail()
+    print(f"probas: {probas}")
+    print(f"probas dim: {probas.shape}")
+
     assert retrieved_chunks.shape == (2, 3, 10)
+    assert_close(
+        probas.sum(dim=-1, keepdim=True), torch.Tensor([[1.0], [1.0]])
+    )
