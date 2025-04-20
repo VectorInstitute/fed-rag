@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, _Call, patch
 
 import pytest
 import torch
-import torch.nn.functional as F
 from torch.testing import assert_close
 
 from fed_rag.exceptions.loss import InvalidReductionParam
@@ -24,7 +23,7 @@ def test_invalid_reduction_raises_error() -> None:
     ("reduction", "expected"), [("mean", 10.5), ("sum", 21)]
 )
 @patch("fed_rag.loss.pytorch.lsr.F")
-def test_lsr_forward(
+def test_lsr_forward_with_mocks(
     mock_torch_functional: MagicMock, reduction: str, expected: float
 ) -> None:
     # arrange mocks
@@ -36,13 +35,13 @@ def test_lsr_forward(
     )
 
     loss = LSRLoss(reduction=reduction)
-    retrieval_logits = torch.zeros(3)
+    retrieval_scores = torch.zeros(3)
     lm_logits = torch.zeros(3)
-    out = loss(retrieval_logits, lm_logits)
+    out = loss(retrieval_scores, lm_logits)
 
     # assert
     calls = [
-        _Call(((retrieval_logits,), {"dim": 1})),
+        _Call(((retrieval_scores,), {"dim": 1})),
         _Call(((lm_logits,), {"dim": 1})),
     ]
     mock_torch_functional.softmax.assert_has_calls(calls)
@@ -50,44 +49,23 @@ def test_lsr_forward(
     assert out == torch.Tensor([expected])
 
 
-def test_lsr_forward_2(
+def test_lsr_expected_output_with_sample_data(
     retrieved_chunks: torch.Tensor,
-    context: torch.Tensor,
+    contexts: torch.Tensor,
     lm_scores: torch.Tensor,
 ) -> None:
     # retriever chunks probas
-    scores = (retrieved_chunks * context).sum(dim=-1)
+    retriever_scores = (retrieved_chunks * contexts).sum(dim=-1)
     retriever_scale = 1.0
-    scores /= retriever_scale
-    retriever_probas = torch.softmax(scores, dim=-1)
+    retriever_scores /= retriever_scale
 
     # lm chunks probas
     lm_scale = 1.0
     lm_scores /= lm_scale
-    lm_probas = torch.softmax(lm_scores, dim=-1)
 
-    # kl divergence
-    kl_div = F.kl_div(retriever_probas, lm_probas, reduction="none").sum(
-        dim=-1
-    )
-
-    print(f"scores: {scores}")
-    print(f"scores dim: {scores.shape}")
-
-    print(f"probas: {retriever_probas}")
-    print(f"probas dim: {retriever_probas.shape}")
-
-    print(f"lm_probas: {lm_probas}")
-    print(f"lm_probas dim: {lm_probas.shape}")
-
-    print(f"kl_div: {kl_div}")
-    print(f"kl_div mean: {kl_div.mean()}")
+    # lsr loss
+    loss = LSRLoss(reduction="mean")
+    out = loss(retriever_scores, lm_scores)
 
     assert retrieved_chunks.shape == (2, 3, 10)
-    assert_close(
-        retriever_probas.sum(dim=-1, keepdim=True),
-        torch.Tensor([[1.0], [1.0]]),
-    )
-    assert_close(
-        lm_probas.sum(dim=-1, keepdim=True), torch.Tensor([[1.0], [1.0]])
-    )
+    assert_close(out, torch.tensor(-1.3212032318115234))

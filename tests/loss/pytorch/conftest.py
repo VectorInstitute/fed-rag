@@ -22,7 +22,7 @@ def retrieved_chunks() -> torch.Tensor:
 
 
 @pytest.fixture()
-def context() -> torch.Tensor:
+def contexts() -> torch.Tensor:
     batch = []
     for ix in range(1, BATCH_SIZE):
         batch.append(torch.ones(EMB_DIM) * ix)
