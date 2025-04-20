@@ -3,8 +3,8 @@
 from enum import Enum
 
 import torch
-import torch.functional as F
 import torch.nn as nn
+import torch.nn.functional as F
 from typing_extensions import assert_never
 
 from fed_rag.exceptions.loss import InvalidReductionParam
@@ -47,11 +47,10 @@ class LSRLoss(nn.Module):
         self.reduction = reduction
 
     def forward(
-        self, retrieval_logits: torch.Tensor, lm_logits: torch.Tensor
+        self, retrieval_scores: torch.Tensor, lm_scores: torch.Tensor
     ) -> torch.Tensor:
-        retrieval_probs = F.softmax(retrieval_logits, dim=1)
-        lm_probs = F.softmax(lm_logits, dim=1)
-
+        retrieval_probs = F.softmax(retrieval_scores, dim=1)
+        lm_probs = F.softmax(lm_scores, dim=1)
         kl_div = F.kl_div(retrieval_probs, lm_probs, reduction="none").sum(
             dim=-1
         )
