@@ -238,3 +238,31 @@ def test_huggingface_extra_missing() -> None:
 
     # restore module so to not affect other tests
     sys.modules[module_to_import] = original_module
+
+
+def test_huggingface_extra_missing_imported_from_parent() -> None:
+    """Test extra is not installed."""
+
+    modules = {"transformers": None}
+    module_to_import = "fed_rag.generators.huggingface"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`fed_rag.generators.huggingface` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            ValueError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.generators.huggingface import (
+                HFPretrainedModelGenerator,
+            )
+
+            HFPretrainedModelGenerator("fake_name")
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
