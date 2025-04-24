@@ -142,6 +142,10 @@ class HFPeftModelGenerator(BaseGenerator):
     def tokenizer(self) -> HFPretrainedTokenizer:
         return self._tokenizer
 
+    @tokenizer.setter
+    def tokenizer(self, value: HFPretrainedTokenizer) -> None:
+        self._tokenizer = value
+
     # generate
     def generate(self, query: str, context: str, **kwargs: Any) -> str:
         formatted_query = self.prompt_template.format(
@@ -183,23 +187,19 @@ class HFPeftModelGenerator(BaseGenerator):
             proba (torch.Tensor): The probability of target sequence given a prompt.
                 i.e., P_{LLM}(target | sequence)
         """
-        # get model
-        model = self.model
-        tokenizer = self.tokenizer
-
         # Combine prompt and target for teacher forcing
         input_text = prompt + target
-        encode_result = tokenizer.encode(input_text)
+        encode_result = self.tokenizer.encode(input_text)
         input_ids = encode_result["input_ids"]
 
         # Get the token IDs for just the target portion
-        prompt_only_encode_result = tokenizer.encode(prompt)
+        prompt_only_encode_result = self.tokenizer.encode(prompt)
         target_start_idx = len(prompt_only_encode_result["input_ids"])
         target_ids = input_ids[target_start_idx:]
 
         # Get the logits from the model
         with torch.no_grad():
-            outputs = model(torch.tensor(input_ids).unsqueeze(0))
+            outputs = self.model(torch.tensor(input_ids).unsqueeze(0))
             logits = outputs.logits
 
         # Calculate probability of each target token given the previous tokens

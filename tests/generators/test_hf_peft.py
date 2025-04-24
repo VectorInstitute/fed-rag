@@ -192,6 +192,28 @@ def test_generate() -> None:
     mock_model.generate.assert_called_once()
 
 
+def test_compute_target_seequence_proba() -> None:
+    # arrange
+    generator = HFPeftModelGenerator(
+        model_name="fake_name",
+        base_model_name="fake_base_name",
+        load_model_at_init=False,
+    )
+    mock_tokenizer = MagicMock()
+    mock_model = MagicMock()
+    generator.model = mock_model
+    generator.tokenizer = mock_tokenizer
+
+    # act
+    _ = generator.compute_target_sequence_proba(
+        prompt="fake prompt", target=" fake target"
+    )
+
+    mock_tokenizer.encode.assert_any_call("fake prompt fake target")
+    mock_tokenizer.encode.assert_any_call("fake prompt")
+    mock_model.assert_called_once()
+
+
 def test_huggingface_extra_missing() -> None:
     """Test extra is not installed."""
 
