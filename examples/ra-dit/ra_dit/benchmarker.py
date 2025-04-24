@@ -7,7 +7,7 @@ from typing import Literal
 
 from accelerate import Accelerator
 
-from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
+from fed_rag.generators.huggingface import HFPeftModelGenerator
 
 from .evaluation_benchmarks import benchmarks
 from .rag_system import main as get_rag_system

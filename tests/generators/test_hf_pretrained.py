@@ -14,7 +14,7 @@ from transformers import (
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.tokenizer import EncodeResult
-from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
+from fed_rag.generators.huggingface import HFPretrainedModelGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -179,7 +179,7 @@ def test_generate() -> None:
     mock_model.generate.assert_called_once()
 
 
-@patch("fed_rag.generators.hf_pretrained_model.F")
+@patch("fed_rag.generators.huggingface.hf_pretrained_model.F")
 def test_compute_target_sequence_proba(
     mock_torch_functional: MagicMock,
 ) -> None:
@@ -216,7 +216,7 @@ def test_huggingface_extra_missing() -> None:
     """Test extra is not installed."""
 
     modules = {"transformers": None}
-    module_to_import = "fed_rag.generators.hf_pretrained_model"
+    module_to_import = "fed_rag.generators.huggingface.hf_pretrained_model"
 
     if module_to_import in sys.modules:
         original_module = sys.modules.pop(module_to_import)
@@ -230,7 +230,7 @@ def test_huggingface_extra_missing() -> None:
             ValueError,
             match=re.escape(msg),
         ):
-            from fed_rag.generators.hf_pretrained_model import (
+            from fed_rag.generators.huggingface.hf_pretrained_model import (
                 HFPretrainedModelGenerator,
             )
 
