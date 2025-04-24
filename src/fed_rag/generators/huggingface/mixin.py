@@ -1,17 +1,24 @@
 """HuggingFace Generator Mixin."""
 
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 import torch
 import torch.nn.functional as F
 
+if TYPE_CHECKING:  # pragma: no cover
+    from peft import PeftModel
+    from transformers import PreTrainedModel
+    from transformers.generation.utils import GenerationConfig
+
+from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
+
 
 @runtime_checkable
 class HFGeneratorProtocol(Protocol):
-    prompt_template: Any
-    tokenizer: Any
-    model: Any
-    generation_config: Any
+    prompt_template: str
+    tokenizer: HFPretrainedTokenizer
+    model: PreTrainedModel | PeftModel
+    generation_config: GenerationConfig
 
 
 class HuggingFaceGeneratorMixin:
