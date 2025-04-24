@@ -4,8 +4,10 @@ from enum import Enum
 
 from pydantic import BaseModel, PrivateAttr
 
-from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
-from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
+from fed_rag.generators.huggingface import (
+    HFPeftModelGenerator,
+    HFPretrainedModelGenerator,
+)
 
 
 class ModelVariants(str, Enum):

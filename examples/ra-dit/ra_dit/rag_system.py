@@ -62,7 +62,7 @@ def main(
 if __name__ == "__main__":
     import fire
 
-    from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
+    from fed_rag.generators.huggingface import HFPeftModelGenerator
 
     rag_system: RAGSystem = fire.Fire(main)
 

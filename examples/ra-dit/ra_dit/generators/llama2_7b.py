@@ -3,8 +3,10 @@
 from transformers.generation.utils import GenerationConfig
 from transformers.utils.quantization_config import BitsAndBytesConfig
 
-from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
-from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
+from fed_rag.generators.huggingface import (
+    HFPeftModelGenerator,
+    HFPretrainedModelGenerator,
+)
 
 from .utils import ModelRegistry, ModelVariants
 

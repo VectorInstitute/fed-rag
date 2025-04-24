@@ -107,7 +107,7 @@ as well as any `~peft.PeftModel`. For this example, we use the latter and define
 a [HFPeftModelGenerator](../../api_reference/generators/huggingface.md).
 
 ``` py title="generator"
-from fed_rag.generators.hf_peft_model import HFPeftModelGenerator
+from fed_rag.generators.huggingface import HFPeftModelGenerator
 from transformers.generation.utils import GenerationConfig
 from transformers.utils.quantization_config import BitsAndBytesConfig
 
