@@ -111,6 +111,9 @@ class MockGenerator(BaseGenerator):
     def generate(self, input: str) -> str:
         return f"mock output from '{input}'."
 
+    def compute_target_sequence_proba(self, prompt: str, target: str) -> float:
+        return 0.42
+
     @property
     def model(self) -> torch.nn.Module:
         return self._model
