@@ -9,8 +9,8 @@ _has_huggingface = (importlib.util.find_spec("transformers") is not None) and (
 )
 if not _has_huggingface:
     msg = (
-        f"`{__name__}` requires `huggingface` extra to be installed. "
-        "To fix please run `pip install fed-rag[huggingface]`."
+        f"`{__name__}` requires `huggingface` extra to be installed."
+        " To fix please run `pip install fed-rag[huggingface]`."
     )
     raise ValueError(msg)
 
