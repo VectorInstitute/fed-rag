@@ -94,9 +94,7 @@ class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
         self.load_model_kwargs = load_kwargs
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, **load_kwargs
-        )
+        model = AutoModelForCausalLM.from_pretrained(self.model_name, **load_kwargs)
         return model
 
     @property
