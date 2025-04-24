@@ -196,7 +196,7 @@ def test_generate() -> None:
     mock_model.generate.assert_called_once()
 
 
-@patch("fed_rag.generators.huggingface.hf_peft_model.F")
+@patch("fed_rag.generators.huggingface.mixin.F")
 def test_compute_target_sequence_proba(
     mock_torch_functional: MagicMock,
 ) -> None:
