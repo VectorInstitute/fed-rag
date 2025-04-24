@@ -206,7 +206,7 @@ class HFPeftModelGenerator(BaseGenerator):
         log_probs = []
         for i, target_id in enumerate(target_ids):
             # get log prob of next target token in the sequence
-            next_token_pos = target_start_idx + i - 1
+            next_token_pos = target_start_idx + i
             next_token_logits = logits[0, next_token_pos, :]
             probs = F.softmax(next_token_logits, dim=-1)
             log_prob = torch.log(probs[target_id]).item()
