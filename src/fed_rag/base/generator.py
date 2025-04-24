@@ -28,7 +28,9 @@ class BaseGenerator(BaseModel, ABC):
         """Tokenizer associated with this generator."""
 
     @abstractmethod
-    def compute_target_sequence_proba(self, prompt: str, target: str) -> float:
+    def compute_target_sequence_proba(
+        self, prompt: str, target: str
+    ) -> torch.Tensor:
         """Compute P(target | prompt).
 
         NOTE: this is used in LM Supervised Retriever fine-tuning.

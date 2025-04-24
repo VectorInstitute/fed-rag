@@ -215,6 +215,6 @@ class HFPeftModelGenerator(BaseGenerator):
         # Sum log probabilities to get sequence log probability
         sequence_log_prob = sum(log_probs)
         # Convert to probability
-        sequence_prob = torch.exp(torch.tensor(sequence_log_prob)).item()
+        sequence_prob = torch.exp(torch.tensor(sequence_log_prob))
 
         return sequence_prob
