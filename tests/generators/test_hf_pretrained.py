@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
+from torch.testing import assert_close
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -12,6 +13,7 @@ from transformers import (
 )
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.generators.hf_pretrained_model import HFPretrainedModelGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
@@ -175,6 +177,39 @@ def test_generate() -> None:
     assert result == "Mock output"
     mock_tokenizer.assert_called_once()
     mock_model.generate.assert_called_once()
+
+
+@patch("fed_rag.generators.hf_pretrained_model.F")
+def test_compute_target_sequence_proba(
+    mock_torch_functional: MagicMock,
+) -> None:
+    # arrange
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name",
+        load_model_at_init=False,
+    )
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.encode.side_effect = [
+        EncodeResult(input_ids=[0, 1, 2, 3, 4]),
+        EncodeResult(input_ids=[0, 1, 2]),
+    ]
+    mock_torch_functional.softmax.return_value = torch.tensor(
+        [0.2, 0.2, 0.2, 0.2, 0.2]
+    )
+    mock_model = MagicMock()
+    generator.model = mock_model
+    generator.tokenizer = mock_tokenizer
+
+    # act
+    result = generator.compute_target_sequence_proba(
+        prompt="fake prompt", target=" fake target"
+    )
+
+    mock_tokenizer.encode.assert_any_call("fake prompt fake target")
+    mock_tokenizer.encode.assert_any_call("fake prompt")
+    assert mock_torch_functional.softmax.call_count == 2
+    mock_model.assert_called_once()
+    assert_close(result, torch.tensor(0.2**2))
 
 
 def test_huggingface_extra_missing() -> None:

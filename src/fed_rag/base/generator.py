@@ -26,3 +26,12 @@ class BaseGenerator(BaseModel, ABC):
     @abstractmethod
     def tokenizer(self) -> BaseTokenizer:
         """Tokenizer associated with this generator."""
+
+    @abstractmethod
+    def compute_target_sequence_proba(
+        self, prompt: str, target: str
+    ) -> torch.Tensor:
+        """Compute P(target | prompt).
+
+        NOTE: this is used in LM Supervised Retriever fine-tuning.
+        """
