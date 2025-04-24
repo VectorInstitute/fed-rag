@@ -1,6 +1,6 @@
 """HuggingFace Generator Mixin."""
 
-from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, Union, runtime_checkable
 
 import torch
 import torch.nn.functional as F
@@ -17,8 +17,8 @@ from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 class HFGeneratorProtocol(Protocol):
     prompt_template: str
     tokenizer: HFPretrainedTokenizer
-    model: PreTrainedModel | PeftModel
-    generation_config: GenerationConfig
+    model: Union["PreTrainedModel", "PeftModel"]
+    generation_config: "GenerationConfig"
 
 
 class HuggingFaceGeneratorMixin:
