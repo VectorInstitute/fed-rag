@@ -76,3 +76,10 @@ if __name__ == "__main__":
         query="Tell me a funny joke.", context="I find math very funny."
     )
     print(response)
+
+    # target proba
+    prompt = "The capital of France is"
+    target = " Toronto"  # Note the space at the beginning
+
+    probability = generator.compute_target_sequence_proba(prompt, target)
+    print(f"Probability of '{target}' given '{prompt}': {probability:.6f}")
