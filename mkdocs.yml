@@ -96,7 +96,8 @@ nav:
       - Submitting a Pull Request: community/contributing/submit_pr.md
     - Changelog: ../CHANGELOG.md
     - Other Vector Projects:
-      - AI Pocket References: community/resources/pocket_references.md
+      - Index: community/Other Vector Projects/index.md
+      - AI Pocket References: community/Other Vector Projects/pocket_references.md
 plugins:
   - search
   - mkdocstrings:
