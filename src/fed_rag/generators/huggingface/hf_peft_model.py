@@ -124,7 +124,9 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
             # https://huggingface.co/docs/peft/developer_guides/quantization
             base_model = prepare_model_for_kbit_training(base_model)
 
-        return PeftModel.from_pretrained(base_model, self.model_name, **load_kwargs)
+        return PeftModel.from_pretrained(
+            base_model, self.model_name, **load_kwargs
+        )
 
     @property
     def model(self) -> "PeftModel":
