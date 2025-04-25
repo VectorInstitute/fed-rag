@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.9] - 2025-04-25
+
+### Added
+
+- [Feature] Add abstract method BaseGenerator.compute_target_sequence_proba (cherry picked) (#201)
+- [Feature] Add LM Supervised Retriever Loss LSRLoss (#182)
+
+### Changed
+
+- Make huggingface generators more dry (#202)
+- Improve/validate LSRLoss forward interface (#185)
+
 ## [0.0.8] - 2025-04-09
 
 ### Added
