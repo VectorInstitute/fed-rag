@@ -6,6 +6,7 @@ import pytest
 
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
+from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.types.rag_system import RAGSystem
 
 
@@ -43,11 +44,30 @@ def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
 def test_invalid_rag_system_due_to_generators(
     mock_rag_system: RAGSystem,
 ) -> None:
-    """Test extra is not installed."""
-
     with pytest.raises(
         FedRAGError,
         match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
+    ):
+        from fed_rag.utils.data.data_collators.huggingface import (
+            DataCollatorForLSR,
+        )
+
+        DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
+
+
+def test_invalid_rag_system_due_to_retriever(
+    mock_rag_system: RAGSystem,
+) -> None:
+    generator = HFPeftModelGenerator(
+        model_name="fake_name",
+        base_model_name="fake_base_name",
+        load_model_at_init=False,
+    )
+    mock_rag_system.generator = generator
+
+    with pytest.raises(
+        FedRAGError,
+        match="Retriever must be a HFSentenceTransformerRetriever",
     ):
         from fed_rag.utils.data.data_collators.huggingface import (
             DataCollatorForLSR,
