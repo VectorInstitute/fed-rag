@@ -1,7 +1,9 @@
 """Exceptions for Knowledge Stores."""
 
+from .core import FedRAGError
 
-class KnowledgeStoreError(Exception):
+
+class KnowledgeStoreError(FedRAGError):
     """Base knowledge store error for all knowledge-store-related exceptions."""
 
     pass

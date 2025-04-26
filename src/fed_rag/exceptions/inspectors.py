@@ -1,13 +1,15 @@
 """Exceptions for inspectors."""
 
+from .core import FedRAGError, FedRAGWarning
 
-class InspectorError(Exception):
+
+class InspectorError(FedRAGError):
     """Base inspector error for all inspector-related exceptions."""
 
     pass
 
 
-class InspectorWarning(Warning):
+class InspectorWarning(FedRAGWarning):
     """Base inspector warning for all inspector-related warnings."""
 
     pass
