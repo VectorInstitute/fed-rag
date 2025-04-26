@@ -7,7 +7,11 @@ import pytest
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.generators.huggingface import HFPeftModelGenerator
+from fed_rag.retrievers.hf_sentence_transformer import (
+    HFSentenceTransformerRetriever,
+)
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
@@ -74,3 +78,26 @@ def test_invalid_rag_system_due_to_retriever(
         )
 
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
+
+
+def test_init(
+    mock_rag_system: RAGSystem,
+) -> None:
+    generator = HFPeftModelGenerator(
+        model_name="fake_name",
+        base_model_name="fake_base_name",
+        load_model_at_init=False,
+    )
+    retriever = HFSentenceTransformerRetriever(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_rag_system.generator = generator
+    mock_rag_system.retriever = retriever
+
+    collator = DataCollatorForLSR(
+        rag_system=mock_rag_system, prompt_template=""
+    )
+
+    assert collator.rag_system == mock_rag_system
+    assert collator.prompt_template == ""
+    assert collator.default_return_tensors == "pt"
