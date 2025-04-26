@@ -6,6 +6,7 @@ import pytest
 import torch
 from datasets import Dataset
 
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
     HuggingFaceRAGFinetuningDataset,
 )
@@ -45,7 +46,7 @@ def test_hf_rag_ft_dataset_missing_extra_raises_error(
         )
 
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.utils.data.finetuning_datasets.huggingface import (

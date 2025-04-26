@@ -1,5 +1,7 @@
 import importlib.util
 
+from fed_rag.exceptions.common import MissingExtraError
+
 from .hf_peft_model import HFPeftModelGenerator
 from .hf_pretrained_model import HFPretrainedModelGenerator
 
@@ -12,6 +14,6 @@ if not _has_huggingface:
         f"`{__name__}` requires `huggingface` extra to be installed."
         " To fix please run `pip install fed-rag[huggingface]`."
     )
-    raise ValueError(msg)
+    raise MissingExtraError(msg)
 
 __all__ = ["HFPeftModelGenerator", "HFPretrainedModelGenerator"]

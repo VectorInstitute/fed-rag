@@ -2,6 +2,8 @@
 
 from typing_extensions import Self
 
+from fed_rag.exceptions.common import MissingExtraError
+
 # check if huggingface extra was installed
 try:
     from datasets import Dataset
@@ -10,7 +12,7 @@ except ModuleNotFoundError:
         "`HuggingFaceRAGFinetuningDataset` requires the `huggingface` extra to be installed. "
         "To fix please run `pip install fed-rag[huggingface]`."
     )
-    raise ValueError(msg)
+    raise MissingExtraError(msg)
 
 
 class HuggingFaceRAGFinetuningDataset(Dataset):

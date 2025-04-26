@@ -14,6 +14,7 @@ from transformers import (
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.tokenizer import EncodeResult
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.generators.huggingface import HFPretrainedModelGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
@@ -227,7 +228,7 @@ def test_huggingface_extra_missing() -> None:
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.generators.huggingface.hf_pretrained_model import (
@@ -255,7 +256,7 @@ def test_huggingface_extra_missing_imported_from_parent() -> None:
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.generators.huggingface import (

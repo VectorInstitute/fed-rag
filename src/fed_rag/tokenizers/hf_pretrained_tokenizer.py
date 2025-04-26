@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from pydantic import ConfigDict, Field, PrivateAttr
 
 from fed_rag.base.tokenizer import BaseTokenizer, EncodeResult
+from fed_rag.exceptions.common import MissingExtraError
 
 try:
     from transformers import AutoTokenizer, PreTrainedTokenizer
@@ -40,7 +41,7 @@ class HFPretrainedTokenizer(BaseTokenizer):
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
-            raise ValueError(msg)
+            raise MissingExtraError(msg)
         super().__init__(
             model_name=model_name,
             load_model_kwargs=load_model_kwargs if load_model_kwargs else {},

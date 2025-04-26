@@ -25,6 +25,8 @@ from flwr.server.server import Server
 from flwr.server.strategy import FedAvg, Strategy
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
+from fed_rag.exceptions.common import MissingExtraError
+
 # check if huggingface extra was installed
 try:
     from datasets import Dataset
@@ -80,7 +82,7 @@ class BaseFLTaskBundle(BaseModel):
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
-            raise ValueError(msg)
+            raise MissingExtraError(msg)
 
         super().__init__(**kwargs)
 
@@ -189,7 +191,7 @@ class HuggingFaceFLTask(BaseFLTask):
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
-            raise ValueError(msg)
+            raise MissingExtraError(msg)
 
         if (
             trainer_spec.net_parameter_class_name

@@ -1,3 +1,4 @@
+from .common import MissingExtraError
 from .fl_tasks import (
     FLTaskError,
     MissingFLTaskConfig,
@@ -18,6 +19,8 @@ from .inspectors import (
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
 
 __all__ = [
+    # common
+    "MissingExtraError",
     # fl_tasks
     "FLTaskError",
     "MissingFLTaskConfig",
