@@ -6,6 +6,7 @@ import pytest
 from transformers import AutoTokenizer, PreTrainedTokenizer
 
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -148,7 +149,7 @@ def test_huggingface_extra_missing() -> None:
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.tokenizers.hf_pretrained_tokenizer import (

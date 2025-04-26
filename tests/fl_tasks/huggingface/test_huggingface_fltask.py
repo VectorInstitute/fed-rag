@@ -16,7 +16,11 @@ from peft.utils import get_peft_model_state_dict
 from torch.nn import Module
 from transformers import PreTrainedModel
 
-from fed_rag.exceptions import MissingRequiredNetParam, NetTypeMismatch
+from fed_rag.exceptions import (
+    MissingExtraError,
+    MissingRequiredNetParam,
+    NetTypeMismatch,
+)
 from fed_rag.fl_tasks.huggingface import (
     BaseFLTaskBundle,
     HuggingFaceFlowerClient,
@@ -325,7 +329,7 @@ def test_huggingface_extra_missing_fltask(
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
@@ -360,7 +364,7 @@ def test_huggingface_extra_missing_fltask_bundle(
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
-            ValueError,
+            MissingExtraError,
             match=re.escape(msg),
         ):
             from fed_rag.fl_tasks.huggingface import BaseFLTaskBundle

@@ -19,6 +19,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers.generation.utils import GenerationConfig
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.exceptions.common import MissingExtraError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 from .mixin import HuggingFaceGeneratorMixin
@@ -85,7 +86,7 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
-            raise ValueError(msg)
+            raise MissingExtraError(msg)
 
         generation_config = (
             generation_config if generation_config else GenerationConfig()

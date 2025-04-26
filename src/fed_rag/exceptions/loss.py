@@ -1,7 +1,9 @@
 """Exceptions for loss."""
 
+from .core import FedRAGError
 
-class LossError(Exception):
+
+class LossError(FedRAGError):
     """Base loss errors for all loss-related exceptions."""
 
     pass

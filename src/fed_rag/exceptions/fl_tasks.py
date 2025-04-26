@@ -1,7 +1,9 @@
 """Exceptions for FL Tasks."""
 
+from .core import FedRAGError
 
-class FLTaskError(Exception):
+
+class FLTaskError(FedRAGError):
     """Base fl task error for all fl-task-related exceptions."""
 
     pass
