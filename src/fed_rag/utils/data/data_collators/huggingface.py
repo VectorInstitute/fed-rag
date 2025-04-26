@@ -5,6 +5,7 @@ from typing import Any
 import torch
 
 from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
 
 try:
@@ -35,12 +36,12 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
     if not isinstance(
         rag_system.generator, HFPretrainedModelGenerator
     ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
-        raise ValueError(
+        raise FedRAGError(
             "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator"
         )
 
     if not isinstance(rag_system.retriever, HFSentenceTransformerRetriever):
-        raise ValueError("Retriever must be a HFSentenceTransformerRetriever")
+        raise FedRAGError("Retriever must be a HFSentenceTransformerRetriever")
 
 
 class DataCollatorForLSR(DataCollatorMixin):

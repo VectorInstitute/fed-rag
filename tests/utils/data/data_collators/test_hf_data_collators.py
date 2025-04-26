@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
 
 
@@ -37,3 +38,19 @@ def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
     # restore module so to not affect other tests
     if original_module:
         sys.modules[module_to_import] = original_module
+
+
+def test_invalid_rag_system_due_to_generators(
+    mock_rag_system: RAGSystem,
+) -> None:
+    """Test extra is not installed."""
+
+    with pytest.raises(
+        FedRAGError,
+        match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
+    ):
+        from fed_rag.utils.data.data_collators.huggingface import (
+            DataCollatorForLSR,
+        )
+
+        DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
