@@ -5,19 +5,10 @@ from typing import Any
 import torch
 
 from fed_rag.exceptions import MissingExtraError
-from fed_rag.retrievers.hf_sentence_transformer import (
-    HFSentenceTransformerRetriever,
-)
 from fed_rag.types.rag_system import RAGSystem
 
 try:
     from transformers.data.data_collator import DataCollatorMixin
-
-    # check for huggingface happens here also
-    from fed_rag.generators.huggingface import (
-        HFPeftModelGenerator,
-        HFPretrainedModelGenerator,
-    )
 
     _has_huggingface = True
 except (ModuleNotFoundError, MissingExtraError):
@@ -32,7 +23,24 @@ except (ModuleNotFoundError, MissingExtraError):
     DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
 
 
-print(f"_has_huggingface: {_has_huggingface}")
+def _validate_rag_system(rag_system: RAGSystem) -> None:
+    from fed_rag.generators.huggingface import (
+        HFPeftModelGenerator,
+        HFPretrainedModelGenerator,
+    )
+    from fed_rag.retrievers.hf_sentence_transformer import (
+        HFSentenceTransformerRetriever,
+    )
+
+    if not isinstance(
+        rag_system.generator, HFPretrainedModelGenerator
+    ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
+        raise ValueError(
+            "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator."
+        )
+
+    if not isinstance(rag_system.retriever, HFSentenceTransformerRetriever):
+        raise ValueError("Retriever must be a HFSentenceTransformerRetriever.")
 
 
 class DataCollatorForLSR(DataCollatorMixin):
@@ -46,19 +54,7 @@ class DataCollatorForLSR(DataCollatorMixin):
             )
             raise MissingExtraError(msg)
 
-        if not isinstance(
-            rag_system.generator, HFPretrainedModelGenerator
-        ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
-            raise ValueError(
-                "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator."
-            )
-
-        if not isinstance(
-            rag_system.retriever, HFSentenceTransformerRetriever
-        ):
-            raise ValueError(
-                "Retriever must be a HFSentenceTransformerRetriever."
-            )
+        _validate_rag_system(rag_system)
 
         super().__init__()
         self.default_return_tensors = "pt"
