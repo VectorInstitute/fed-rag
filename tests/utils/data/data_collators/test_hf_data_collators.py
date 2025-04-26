@@ -106,11 +106,10 @@ def test_init(
     assert collator.default_return_tensors == "pt"
 
 
-@patch(
-    "fed_rag.utils.data.data_collators.huggingface._validate_rag_system",
-)
-def test_lsr_collator_with_mocks(mock_validate: MagicMock) -> None:
-    mock_validate.return_value = True
+def test_lsr_collator_with_mocks(monkeypatch) -> None:  # type: ignore [no-untyped-def]
+    # Set environment variable for the duration of this test only
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     mock_generator = MagicMock()
     mock_generator.compute_target_sequence_proba.side_effect = [
         torch.tensor(0.01),
@@ -139,6 +138,7 @@ def test_lsr_collator_with_mocks(mock_validate: MagicMock) -> None:
             ),
         ),
     ]
+
     collator = DataCollatorForLSR(
         rag_system=rag_system, prompt_template="{query} {context}"
     )

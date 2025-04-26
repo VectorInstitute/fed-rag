@@ -25,6 +25,12 @@ except (ModuleNotFoundError, MissingExtraError):
 
 
 def _validate_rag_system(rag_system: RAGSystem) -> None:
+    # Skip validation if environment variable is set
+    import os
+
+    if os.environ.get("FEDRAG_SKIP_VALIDATION") == "1":
+        return
+
     from fed_rag.generators.huggingface import (
         HFPeftModelGenerator,
         HFPretrainedModelGenerator,
