@@ -123,7 +123,7 @@ def test_init(
     assert collator.default_return_tensors == "pt"
 
 
-def test_lsr_collator_with_mocks(monkeypatch) -> None:  # type: ignore [no-untyped-def]
+def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
     # Set environment variable for the duration of this test only
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
