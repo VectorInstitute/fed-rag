@@ -1,8 +1,10 @@
 import re
 import sys
-from unittest.mock import patch
+from unittest.mock import MagicMock, _Call, patch
 
 import pytest
+import torch
+from torch.testing import assert_close
 
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
@@ -10,7 +12,8 @@ from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types.rag_system import RAGSystem, SourceNode
 from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 
@@ -101,3 +104,84 @@ def test_init(
     assert collator.rag_system == mock_rag_system
     assert collator.prompt_template == ""
     assert collator.default_return_tensors == "pt"
+
+
+@patch(
+    "fed_rag.utils.data.data_collators.huggingface._validate_rag_system",
+)
+def test_lsr_collator_with_mocks(mock_validate: MagicMock) -> None:
+    mock_validate.return_value = True
+    mock_generator = MagicMock()
+    mock_generator.compute_target_sequence_proba.side_effect = [
+        torch.tensor(0.01),
+        torch.tensor(0.02),
+        torch.tensor(0.03),
+    ]
+    rag_system = MagicMock()
+    rag_system.generator = mock_generator
+    rag_system.retrieve.return_value = [
+        SourceNode(
+            score=0.1,
+            node=KnowledgeNode(
+                embedding=[0.1], node_type="text", text_content="node 1"
+            ),
+        ),
+        SourceNode(
+            score=0.2,
+            node=KnowledgeNode(
+                embedding=[0.2], node_type="text", text_content="node 2"
+            ),
+        ),
+        SourceNode(
+            score=0.3,
+            node=KnowledgeNode(
+                embedding=[0.3], node_type="text", text_content="node 3"
+            ),
+        ),
+    ]
+    collator = DataCollatorForLSR(
+        rag_system=rag_system, prompt_template="{query} {context}"
+    )
+
+    # act
+    features = [{"query": "mock query", "response": "mock response"}]
+    batch = collator(features)
+
+    assert_close(
+        batch["retrieval_scores"], torch.tensor([0.1, 0.2, 0.3]).unsqueeze(0)
+    )
+    assert_close(
+        batch["lm_scores"], torch.tensor([0.01, 0.02, 0.03]).unsqueeze(0)
+    )
+    rag_system.retrieve.assert_called_once_with("mock query")
+    mock_generator.compute_target_sequence_proba.assert_has_calls(
+        [
+            _Call(
+                (
+                    (),
+                    {
+                        "prompt": "mock query node 1",
+                        "target": "\nmock response\n</response>",
+                    },
+                )
+            ),
+            _Call(
+                (
+                    (),
+                    {
+                        "prompt": "mock query node 2",
+                        "target": "\nmock response\n</response>",
+                    },
+                )
+            ),
+            _Call(
+                (
+                    (),
+                    {
+                        "prompt": "mock query node 3",
+                        "target": "\nmock response\n</response>",
+                    },
+                )
+            ),
+        ]
+    )
