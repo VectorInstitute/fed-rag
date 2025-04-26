@@ -36,11 +36,11 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
         rag_system.generator, HFPretrainedModelGenerator
     ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
         raise ValueError(
-            "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator."
+            "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator"
         )
 
     if not isinstance(rag_system.retriever, HFSentenceTransformerRetriever):
-        raise ValueError("Retriever must be a HFSentenceTransformerRetriever.")
+        raise ValueError("Retriever must be a HFSentenceTransformerRetriever")
 
 
 class DataCollatorForLSR(DataCollatorMixin):
