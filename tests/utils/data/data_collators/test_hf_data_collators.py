@@ -83,6 +83,22 @@ def test_invalid_rag_system_due_to_retriever(
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 
 
+def test_invalid_return_tensors(  # type: ignore [no-untyped-def]
+    mock_rag_system: RAGSystem,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+    return_tensors = "af"
+    with pytest.raises(
+        FedRAGError,
+        match=f"Framework '{return_tensors}' not recognized!",
+    ):
+        collator = DataCollatorForLSR(
+            rag_system=mock_rag_system, prompt_template=""
+        )
+        collator([], return_tensors)
+
+
 def test_init(
     mock_rag_system: RAGSystem,
 ) -> None:

@@ -87,7 +87,7 @@ class DataCollatorForLSR(DataCollatorMixin):
             return_tensors if return_tensors else self.default_return_tensors
         )
         if return_tensors != "pt":
-            raise ValueError(f"Framework '{return_tensors}' not recognized!")
+            raise FedRAGError(f"Framework '{return_tensors}' not recognized!")
 
         # use rag system to get scores
         batch_retriever_scores = []
