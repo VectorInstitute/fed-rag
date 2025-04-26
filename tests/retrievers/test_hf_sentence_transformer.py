@@ -1,9 +1,12 @@
+import re
+import sys
 from unittest.mock import MagicMock, _Call, patch
 
 import pytest
 from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
     InvalidLoadType,
@@ -198,3 +201,33 @@ def test_encode_query(
     # assert
     assert context_emb == [1, 2, 3]
     assert query_emb == [4, 5, 6]
+
+
+def test_huggingface_extra_missing() -> None:
+    """Test extra is not installed."""
+
+    modules = {"transformers": None, "sentence_transformers": None}
+    module_to_import = "fed_rag.retrievers.hf_sentence_transformer"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`HFSentenceTransformerRetriever` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            MissingExtraError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.retrievers.hf_sentence_transformer import (
+                HFSentenceTransformerRetriever,
+            )
+
+            HFSentenceTransformerRetriever(
+                model_name="query_fake_name",
+            )
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
