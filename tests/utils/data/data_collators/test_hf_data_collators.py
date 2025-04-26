@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, _Call, patch
 
 import pytest
 import torch
+from pytest import MonkeyPatch
 from torch.testing import assert_close
 
 from fed_rag.exceptions import MissingExtraError
@@ -83,9 +84,9 @@ def test_invalid_rag_system_due_to_retriever(
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 
 
-def test_invalid_return_tensors(  # type: ignore [no-untyped-def]
+def test_invalid_return_tensors(
     mock_rag_system: RAGSystem,
-    monkeypatch,
+    monkeypatch: MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
     return_tensors = "af"
