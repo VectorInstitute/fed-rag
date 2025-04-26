@@ -1,13 +1,10 @@
 """HuggingFace PeftModel Generator"""
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import torch
 
-from fed_rag.generators.huggingface import (
-    HFPeftModelGenerator,
-    HFPretrainedModelGenerator,
-)
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.retrievers.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
@@ -16,13 +13,26 @@ from fed_rag.types.rag_system import RAGSystem
 try:
     from transformers.data.data_collator import DataCollatorMixin
 
+    # check for huggingface happens here also
+    from fed_rag.generators.huggingface import (
+        HFPeftModelGenerator,
+        HFPretrainedModelGenerator,
+    )
+
     _has_huggingface = True
-except ModuleNotFoundError:
+except (ModuleNotFoundError, MissingExtraError):
     _has_huggingface = False
 
+    # Create a dummy class with a different name to avoid the redefinition
+    class _DummyDataCollatorMixin:
+        """Dummy placeholder when transformers is not available."""
 
-if TYPE_CHECKING:  # pragma: no cover
-    from transformers.data.data_collator import DataCollatorMixin
+        pass
+
+    DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
+
+
+print(f"_has_huggingface: {_has_huggingface}")
 
 
 class DataCollatorForLSR(DataCollatorMixin):
@@ -34,11 +44,11 @@ class DataCollatorForLSR(DataCollatorMixin):
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
-            raise ValueError(msg)
+            raise MissingExtraError(msg)
 
         if not isinstance(
             rag_system.generator, HFPretrainedModelGenerator
-        ) and isinstance(rag_system.generator, HFPeftModelGenerator):
+        ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
             raise ValueError(
                 "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator."
             )

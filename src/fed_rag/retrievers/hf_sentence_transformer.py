@@ -1,12 +1,22 @@
 """HuggingFace SentenceTransformer Retriever"""
 
-from typing import Any, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, Optional, cast
 
 import torch
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
-from sentence_transformers import SentenceTransformer
+
+try:
+    from sentence_transformers import SentenceTransformer
+
+    _has_huggingface = True
+except ModuleNotFoundError:
+    _has_huggingface = False
+
+if TYPE_CHECKING:  # pragma: no cover
+    from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.exceptions import MissingExtraError
 
 
 class LoadKwargs(BaseModel):
@@ -37,9 +47,11 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         description="Optional kwargs dict for loading models from HF. Defaults to None.",
         default_factory=LoadKwargs,
     )
-    _encoder: SentenceTransformer | None = PrivateAttr(default=None)
-    _query_encoder: SentenceTransformer | None = PrivateAttr(default=None)
-    _context_encoder: SentenceTransformer | None = PrivateAttr(default=None)
+    _encoder: Optional["SentenceTransformer"] = PrivateAttr(default=None)
+    _query_encoder: Optional["SentenceTransformer"] = PrivateAttr(default=None)
+    _context_encoder: Optional["SentenceTransformer"] = PrivateAttr(
+        default=None
+    )
 
     def __init__(
         self,
@@ -49,6 +61,13 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         load_model_kwargs: LoadKwargs | dict | None = None,
         load_model_at_init: bool = True,
     ):
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise MissingExtraError(msg)
+
         if isinstance(load_model_kwargs, dict):
             # use same dict for all
             load_model_kwargs = LoadKwargs(
@@ -82,7 +101,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         self,
         load_type: Literal["encoder", "query_encoder", "context_encoder"],
         **kwargs: Any,
-    ) -> SentenceTransformer:
+    ) -> "SentenceTransformer":
         if load_type == "encoder":
             load_kwargs = self.load_model_kwargs.encoder
             load_kwargs.update(kwargs)
@@ -117,13 +136,13 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         return encoder.encode(query)
 
     @property
-    def encoder(self) -> SentenceTransformer | None:
+    def encoder(self) -> Optional["SentenceTransformer"]:
         if self.model_name and self._encoder is None:
             self._encoder = self._load_model_from_hf(load_type="encoder")
         return self._encoder
 
     @property
-    def query_encoder(self) -> SentenceTransformer | None:
+    def query_encoder(self) -> Optional["SentenceTransformer"]:
         if self.query_model_name and self._query_encoder is None:
             self._query_encoder = self._load_model_from_hf(
                 load_type="query_encoder"
@@ -131,7 +150,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         return self._query_encoder
 
     @property
-    def context_encoder(self) -> SentenceTransformer | None:
+    def context_encoder(self) -> Optional["SentenceTransformer"]:
         if self.context_model_name and self._context_encoder is None:
             self._context_encoder = self._load_model_from_hf(
                 load_type="context_encoder"
