@@ -71,3 +71,21 @@ def test_init_with_trainer_args_dict(
 
     assert trainer.generator_training_args == generator_trainer_args
     assert trainer.retriever_training_args == retriever_trainer_args
+
+
+def test_init_with_no_trainer_args(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+        retriever_train_fn=retriever_trainer_fn,
+        generator_train_fn=generator_trainer_fn,
+    )
+
+    assert trainer.generator_training_args == TrainingArgs()
+    assert trainer.retriever_training_args == TrainingArgs()
