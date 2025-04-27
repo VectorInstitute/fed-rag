@@ -15,7 +15,9 @@ from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
 
 
 def test_hf_sentence_transformer_retriever_class() -> None:
-    names_of_base_classes = [b.__name__ for b in HFSentenceTransformerRetriever.__mro__]
+    names_of_base_classes = [
+        b.__name__ for b in HFSentenceTransformerRetriever.__mro__
+    ]
     assert BaseRetriever.__name__ in names_of_base_classes
 
 
@@ -126,7 +128,9 @@ def test_hf_sentence_transformer_retriever_class_init_encoder(
     assert retriever.context_encoder is None
 
 
-@patch("fed_rag.retrievers.huggingface.hf_sentence_transformer.SentenceTransformer")
+@patch(
+    "fed_rag.retrievers.huggingface.hf_sentence_transformer.SentenceTransformer"
+)
 def test_load_model_from_hf_constructs_sentence_transformer_obj(
     mock_sentence_transformer: MagicMock,
 ) -> None:
@@ -137,12 +141,16 @@ def test_load_model_from_hf_constructs_sentence_transformer_obj(
     )
 
     # assert
-    mock_sentence_transformer.assert_called_once_with("fake_name", device="cpu")
+    mock_sentence_transformer.assert_called_once_with(
+        "fake_name", device="cpu"
+    )
     assert retriever.query_encoder is None
     assert retriever.context_encoder is None
 
 
-@patch("fed_rag.retrievers.huggingface.hf_sentence_transformer.SentenceTransformer")
+@patch(
+    "fed_rag.retrievers.huggingface.hf_sentence_transformer.SentenceTransformer"
+)
 def test_load_model_from_hf_constructs_sentence_transformer_obj_dual(
     mock_sentence_transformer: MagicMock,
 ) -> None:
@@ -203,7 +211,7 @@ def test_huggingface_extra_missing() -> None:
     """Test extra is not installed."""
 
     modules = {"transformers": None, "sentence_transformers": None}
-    module_to_import = "fed_rag.retrievers.hf_sentence_transformer"
+    module_to_import = "fed_rag.retrievers.huggingface.hf_sentence_transformer"
 
     if module_to_import in sys.modules:
         original_module = sys.modules.pop(module_to_import)
@@ -217,7 +225,7 @@ def test_huggingface_extra_missing() -> None:
             MissingExtraError,
             match=re.escape(msg),
         ):
-            from fed_rag.retrievers.hf_sentence_transformer import (
+            from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
                 HFSentenceTransformerRetriever,
             )
 
