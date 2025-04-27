@@ -51,6 +51,8 @@ nav:
     - RA-DIT: examples/ra_dit.md
   - API Reference:
     - api_reference/index.md
+    - Data Collators:
+      - api_reference/data_collators/huggingface.md
     - Decorators:
       - api_reference/decorators/index.md
     - Exceptions:
