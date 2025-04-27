@@ -4,6 +4,7 @@ import pytest
 import torch
 from pydantic import PrivateAttr
 
+from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.base.retriever import BaseRetriever
@@ -114,3 +115,6 @@ class MockRAGTrainer(BaseRAGTrainer):
 
     def train(self, **kwargs: Any) -> str:
         return "rag system trained"
+
+    def get_federated_task(self) -> BaseFLTask:
+        raise NotImplementedError()
