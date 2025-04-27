@@ -10,7 +10,7 @@ from torch.testing import assert_close
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.generators.huggingface import HFPeftModelGenerator
-from fed_rag.retrievers.hf_sentence_transformer import (
+from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
 from fed_rag.types.knowledge_node import KnowledgeNode

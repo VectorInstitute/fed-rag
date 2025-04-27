@@ -8,7 +8,7 @@ from fed_rag.exceptions import KnowledgeStoreNotFoundError
 
 # fed_rag
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.retrievers.hf_sentence_transformer import (
+from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
 from fed_rag.types.knowledge_node import KnowledgeNode, NodeType

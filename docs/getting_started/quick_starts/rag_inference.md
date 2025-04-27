@@ -48,7 +48,7 @@ HuggingFace encoder is used to define a
 [`HFSentenceTransformerRetriever`](../../api_reference/retrievers/huggingface.md).
 
 ``` py title="retriever"
-from fed_rag.retrievers.hf_sentence_transformer import (
+from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
 

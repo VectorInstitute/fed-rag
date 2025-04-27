@@ -35,7 +35,7 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
         HFPeftModelGenerator,
         HFPretrainedModelGenerator,
     )
-    from fed_rag.retrievers.hf_sentence_transformer import (
+    from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
         HFSentenceTransformerRetriever,
     )
 
