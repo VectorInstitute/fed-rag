@@ -337,10 +337,12 @@ def test_get_federated_task_retriever(
     )
 
     # act
+    retriever_trainer, _ = trainer._get_federated_trainer()
     fl_task = trainer.get_federated_task()
 
     # assert
     assert isinstance(fl_task, PyTorchFLTask)
+    assert fl_task._trainer_spec == retriever_trainer.__fl_task_trainer_config
 
 
 def test_get_federated_task_retriever_query_encoder(
@@ -380,10 +382,12 @@ def test_get_federated_task_generator(
     )
 
     # act
+    generator_trainer, _ = trainer._get_federated_trainer()
     fl_task = trainer.get_federated_task()
 
     # assert
     assert isinstance(fl_task, PyTorchFLTask)
+    assert fl_task._trainer_spec == generator_trainer.__fl_task_trainer_config
 
 
 def test_get_federated_task_raises_unspecified_trainer_retriever(
