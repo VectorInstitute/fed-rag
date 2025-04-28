@@ -217,3 +217,46 @@ def test_train_with_invalid_mode_raises_error(
         UnsupportedTrainerMode, match="Unsupported trainer mode: 'both'"
     ):
         trainer.train()
+
+
+def test_prepare_generator_for_training_mono_encoder(
+    mock_rag_system: RAGSystem,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataloader=train_dataloader,
+        generator_train_fn=generator_trainer_fn,
+    )
+    mock_rag_system = MagicMock()
+    mock_rag_system.retriever.encoder.return_value = True
+    trainer.rag_system = mock_rag_system
+
+    trainer._prepare_generator_for_training()
+
+    mock_rag_system.generator.model.train.assert_called_once()
+    mock_rag_system.retriever.encoder.eval.assert_called_once()
+
+
+def test_prepare_generator_for_training_dual_encoder(
+    mock_rag_system: RAGSystem,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataloader=train_dataloader,
+        generator_train_fn=generator_trainer_fn,
+    )
+    mock_rag_system = MagicMock()
+    mock_rag_system.retriever.encoder.return_value = False
+    trainer.rag_system = mock_rag_system
+
+    trainer._prepare_generator_for_training()
+
+    mock_rag_system.generator.model.train.assert_called_once()
+    mock_rag_system.retriever.query_encoder.eval.assert_called_once()
+    mock_rag_system.retriever.context_encoder.eval.assert_called_once()

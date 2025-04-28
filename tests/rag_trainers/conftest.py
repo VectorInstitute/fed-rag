@@ -57,6 +57,10 @@ class MockRetriever(BaseRetriever):
     def encoder(self) -> torch.nn.Module:
         return self._encoder
 
+    @encoder.setter
+    def encoder(self, value: torch.nn.Module) -> None:
+        self._encoder = value
+
     @property
     def query_encoder(self) -> torch.nn.Module | None:
         return None
@@ -69,6 +73,46 @@ class MockRetriever(BaseRetriever):
 @pytest.fixture
 def mock_retriever() -> MockRetriever:
     return MockRetriever()
+
+
+class MockDualRetriever(BaseRetriever):
+    _query_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+    _context_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+
+    def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.ones(2))
+
+    def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.zeros(2))
+
+    @property
+    def encoder(self) -> torch.nn.Module | None:
+        return None
+
+    @property
+    def query_encoder(self) -> torch.nn.Module | None:
+        return self._query_encoder
+
+    @query_encoder.setter
+    def query_encoder(self, value: torch.nn.Module) -> None:
+        self._query_encoder = value
+
+    @property
+    def context_encoder(self) -> torch.nn.Module | None:
+        return self._context_encoder
+
+    @context_encoder.setter
+    def context_encoder(self, value: torch.nn.Module) -> None:
+        self._context_encoder = value
+
+
+@pytest.fixture
+def mock_dual_retriever() -> MockRetriever:
+    return MockDualRetriever()
 
 
 class MockTokenizer(BaseTokenizer):
@@ -101,6 +145,10 @@ class MockGenerator(BaseGenerator):
     @property
     def model(self) -> torch.nn.Module:
         return self._model
+
+    @model.setter
+    def model(self, value: torch.nn.Module) -> None:
+        self._model = value
 
     @property
     def tokenizer(self) -> MockTokenizer:
