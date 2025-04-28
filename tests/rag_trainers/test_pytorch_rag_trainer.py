@@ -323,7 +323,7 @@ def test_prepare_retriever_for_training_dual_encoder(
     mock_rag_system.retriever.context_encoder.train.call_count == context_encoder_train_count
 
 
-def test_get_federated_task(
+def test_get_federated_task_retriever(
     mock_rag_system: RAGSystem,
     retriever_trainer_fn: RetrieverTrainFn,
     train_dataloader: DataLoader,
@@ -341,3 +341,76 @@ def test_get_federated_task(
 
     # assert
     assert isinstance(fl_task, PyTorchFLTask)
+
+
+def test_get_federated_task_generator(
+    mock_rag_system: RAGSystem,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataloader=train_dataloader,
+        generator_train_fn=generator_trainer_fn,
+    )
+
+    # act
+    fl_task = trainer.get_federated_task()
+
+    # assert
+    assert isinstance(fl_task, PyTorchFLTask)
+
+
+def test_get_federated_task_raises_unspecified_trainer_retriever(
+    mock_rag_system: RAGSystem,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+    )
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Cannot federate an unspecified retriever trainer function.",
+    ):
+        trainer.get_federated_task()
+
+
+def test_get_federated_task_raises_unspecified_trainer_generator(
+    mock_rag_system: RAGSystem,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataloader=train_dataloader,
+    )
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Cannot federate an unspecified generator trainer function.",
+    ):
+        trainer.get_federated_task()
+
+
+def test_get_federated_task_raises_unsupported_trainer_mode(
+    mock_rag_system: RAGSystem,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="both",
+        train_dataloader=train_dataloader,
+    )
+
+    with pytest.raises(
+        UnsupportedTrainerMode, match="Unsupported trainer mode: 'both'"
+    ):
+        trainer.get_federated_task()

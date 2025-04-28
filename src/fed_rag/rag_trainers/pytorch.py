@@ -197,7 +197,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
             return federate.trainer.pytorch(train_wrapper), generator_module
         else:
             raise UnsupportedTrainerMode(
-                f"Unsupported trainer mode: {self.mode}"
+                f"Unsupported trainer mode: '{self.mode}'"
             )
 
     def get_federated_task(self) -> PyTorchFLTask:
