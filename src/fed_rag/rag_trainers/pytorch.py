@@ -122,7 +122,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
         elif self.mode == "generator":
             self._train_generator()
         else:
-            assert_never(self.mode)
+            assert_never(self.mode)  # pragma: no cover
 
     def _get_federated_trainer(self) -> tuple[Callable, nn.Module]:
         if self.mode == "retriever":
@@ -178,7 +178,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
 
             return federate.trainer.pytorch(train_wrapper), generator_module
         else:
-            assert_never(self.mode)
+            assert_never(self.mode)  # pragma: no cover
 
     def get_federated_task(self) -> PyTorchFLTask:
         federated_trainer, _module = self._get_federated_trainer()
