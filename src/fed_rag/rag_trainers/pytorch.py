@@ -1,17 +1,16 @@
 """PyTorch RAG Trainer"""
 
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, assert_never, cast
 
 import torch.nn as nn
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from torch.utils.data import DataLoader
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
+from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.decorators import federate
 from fed_rag.exceptions.rag_trainer import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
-    UnsupportedTrainerMode,
 )
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 from fed_rag.types.rag_system import RAGSystem
@@ -35,45 +34,30 @@ GeneratorTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
 
 
 class PyTorchRAGTrainer(BaseRAGTrainer):
-    def __init__(
-        self,
-        rag_system: RAGSystem,
-        mode: RAGTrainMode,
-        train_dataloader: DataLoader,
-        retriever_training_args: Optional[
-            Union[TrainingArgs, dict[str, Any]]
-        ] = None,
-        generator_training_args: Optional[
-            Union[TrainingArgs, dict[str, Any]]
-        ] = None,
-        retriever_train_fn: RetrieverTrainFn | None = None,
-        generator_train_fn: GeneratorTrainFn | None = None,
-        **kwargs: Any,
-    ):
-        super().__init__(rag_system=rag_system, mode=mode, **kwargs)
+    train_dataloader: DataLoader
+    retriever_training_args: "TrainingArgs" = Field(
+        default_factory=lambda: TrainingArgs()
+    )
+    generator_training_args: "TrainingArgs" = Field(
+        default_factory=lambda: TrainingArgs()
+    )
+    retriever_train_fn: Optional[RetrieverTrainFn] = None
+    generator_train_fn: Optional[GeneratorTrainFn] = None
+
+    @model_validator(mode="after")
+    def validate_training_args(self) -> "PyTorchRAGTrainer":
         # Convert dict args to Pydantic models if needed
-        if retriever_training_args is None:
-            self.retriever_training_args = TrainingArgs()
-        elif isinstance(retriever_training_args, dict):
+        if isinstance(self.retriever_training_args, dict):
             self.retriever_training_args = TrainingArgs.model_validate(
-                retriever_training_args
+                self.retriever_training_args
             )
-        else:
-            self.retriever_training_args = retriever_training_args
 
-        if generator_training_args is None:
-            self.generator_training_args = TrainingArgs()
-        elif isinstance(generator_training_args, dict):
+        if isinstance(self.generator_training_args, dict):
             self.generator_training_args = TrainingArgs.model_validate(
-                generator_training_args
+                self.generator_training_args
             )
-        else:
-            self.generator_training_args = generator_training_args
 
-        # Custom training functions
-        self.retriever_train_fn = retriever_train_fn
-        self.generator_train_fn = generator_train_fn
-        self.train_dataloader = train_dataloader
+        return self
 
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
         self.rag_system.generator.model.train()
@@ -138,9 +122,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
         elif self.mode == "generator":
             self._train_generator()
         else:
-            raise UnsupportedTrainerMode(
-                f"Unsupported trainer mode: '{self.mode}'"
-            )
+            assert_never(self.mode)
 
     def _get_federated_trainer(self) -> tuple[Callable, nn.Module]:
         if self.mode == "retriever":
@@ -196,9 +178,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
 
             return federate.trainer.pytorch(train_wrapper), generator_module
         else:
-            raise UnsupportedTrainerMode(
-                f"Unsupported trainer mode: '{self.mode}'"
-            )
+            assert_never(self.mode)
 
     def get_federated_task(self) -> PyTorchFLTask:
         federated_trainer, _module = self._get_federated_trainer()

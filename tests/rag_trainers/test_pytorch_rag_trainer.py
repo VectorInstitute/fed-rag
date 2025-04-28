@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from torch.utils.data import DataLoader
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer
+from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
@@ -199,26 +199,6 @@ def test_train_generator_raises_unspecified_generator_trainer_error(
     ):
         trainer.train()
         mock_prepare_generator_for_training.assert_called_once()
-
-
-def test_train_with_invalid_mode_raises_error(
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
-) -> None:
-    generator_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    trainer = PyTorchRAGTrainer(
-        rag_system=mock_rag_system,
-        mode="both",
-        train_dataloader=train_dataloader,
-        generator_training_args=generator_trainer_args,
-    )
-
-    with pytest.raises(
-        UnsupportedTrainerMode, match="Unsupported trainer mode: 'both'"
-    ):
-        trainer.train()
 
 
 def test_prepare_generator_for_training_mono_encoder(
@@ -433,18 +413,17 @@ def test_get_federated_task_raises_unspecified_trainer_generator(
         trainer.get_federated_task()
 
 
-def test_get_federated_task_raises_unsupported_trainer_mode(
+def test_invalid_mode_raises_error(
     mock_rag_system: RAGSystem,
     train_dataloader: DataLoader,
 ) -> None:
-    # arrange
-    trainer = PyTorchRAGTrainer(
-        rag_system=mock_rag_system,
-        mode="both",
-        train_dataloader=train_dataloader,
+    msg = (
+        f"Unsupported RAG train mode: both. "
+        f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
     )
-
-    with pytest.raises(
-        UnsupportedTrainerMode, match="Unsupported trainer mode: 'both'"
-    ):
-        trainer.get_federated_task()
+    with pytest.raises(UnsupportedTrainerMode, match=msg):
+        PyTorchRAGTrainer(
+            rag_system=mock_rag_system,
+            mode="both",
+            train_dataloader=train_dataloader,
+        )

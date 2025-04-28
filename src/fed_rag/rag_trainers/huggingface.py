@@ -46,7 +46,7 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
         raise FedRAGError("Retriever must be a HFSentenceTransformerRetriever")
 
 
-class HFRAGTrainer(Trainer, BaseRAGTrainer):
+class HFRAGTrainer(BaseRAGTrainer):
     """HuggingFace RAG Trainer"""
 
     def __init__(
