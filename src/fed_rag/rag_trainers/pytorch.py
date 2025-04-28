@@ -138,7 +138,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
             self._train_generator()
         else:
             raise UnsupportedTrainerMode(
-                f"Unsupported trainer mode: {self.mode}"
+                f"Unsupported trainer mode: '{self.mode}'"
             )
 
     def _get_federated_trainer(self) -> tuple[Callable, nn.Module]:

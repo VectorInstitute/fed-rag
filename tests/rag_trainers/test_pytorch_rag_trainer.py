@@ -7,6 +7,7 @@ from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
+    UnsupportedTrainerMode,
 )
 from fed_rag.rag_trainers.pytorch import (
     GeneratorTrainFn,
@@ -196,3 +197,23 @@ def test_train_generator_raises_unspecified_generator_trainer_error(
     ):
         trainer.train()
         mock_prepare_generator_for_training.assert_called_once()
+
+
+def test_train_with_invalid_mode_raises_error(
+    mock_rag_system: RAGSystem,
+    train_dataloader: DataLoader,
+) -> None:
+    generator_trainer_args = TrainingArgs(
+        learning_rate=0.42, custom_kwargs={"param": True}
+    )
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="both",
+        train_dataloader=train_dataloader,
+        generator_training_args=generator_trainer_args,
+    )
+
+    with pytest.raises(
+        UnsupportedTrainerMode, match="Unsupported trainer mode: 'both'"
+    ):
+        trainer.train()
