@@ -343,6 +343,29 @@ def test_get_federated_task_retriever(
     assert isinstance(fl_task, PyTorchFLTask)
 
 
+def test_get_federated_task_retriever_query_encoder(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+    mock_rag_system = MagicMock()
+    mock_rag_system.retriever.encoder.return_value = False
+    trainer.rag_system = mock_rag_system
+
+    # act
+    fl_task = trainer.get_federated_task()
+
+    # assert
+    assert isinstance(fl_task, PyTorchFLTask)
+
+
 def test_get_federated_task_generator(
     mock_rag_system: RAGSystem,
     generator_trainer_fn: GeneratorTrainFn,
