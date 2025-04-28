@@ -15,6 +15,7 @@ from fed_rag.exceptions.rag_trainer import (
 )
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
 
 
 class TrainingArgs(BaseModel):
@@ -156,12 +157,17 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
                 retriever_module = cast(nn.Module, retriever_module)
 
             # Create a standalone function for federation
-            def train_wrapper(_mdl: nn.Module, _dataloader: DataLoader) -> Any:
-                return retriever_train_fn(
+            def train_wrapper(
+                _mdl: nn.Module,
+                _train_dataloader: DataLoader,
+                _val_dataloader: DataLoader,
+            ) -> TrainResult:
+                _ = retriever_train_fn(
                     self.rag_system,
                     self.train_dataloader,
                     self.retriever_training_args,
                 )
+                return TrainResult(loss=0)
 
             return federate.trainer.pytorch(train_wrapper), retriever_module
 
@@ -175,12 +181,18 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
             generator_module = self.rag_system.generator.model
 
             # Create a standalone function for federation
-            def train_wrapper(_mdl: nn.Module, _dataloader: DataLoader) -> Any:
-                return generator_train_fn(
+            def train_wrapper(
+                _mdl: nn.Module,
+                _train_dataloader: DataLoader,
+                _val_dataloader: DataLoader,
+            ) -> TrainResult:
+                _ = generator_train_fn(
                     self.rag_system,
                     self.train_dataloader,
                     self.generator_training_args,
                 )
+                # TODO get loss from out
+                return TrainResult(loss=0)
 
             return federate.trainer.pytorch(train_wrapper), generator_module
         else:
@@ -194,9 +206,9 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
         # TODO: add logic for getting evaluator/tester and then federate it as well
         # federated_tester = self.get_federated_tester(tester_decorator)
         # For now, using a simple placeholder test function
-        def test_fn(_mdl: nn.Module, _dataloader: DataLoader) -> Any:
+        def test_fn(_mdl: nn.Module, _dataloader: DataLoader) -> TestResult:
             # Implement simple testing or return a placeholder
-            return {"accuracy": 0.0}
+            return TestResult(loss=0.42, metrics={})
 
         federated_tester = federate.tester.pytorch(test_fn)
 

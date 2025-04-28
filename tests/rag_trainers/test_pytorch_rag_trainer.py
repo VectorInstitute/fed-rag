@@ -9,6 +9,7 @@ from fed_rag.exceptions import (
     UnspecifiedRetrieverTrainer,
     UnsupportedTrainerMode,
 )
+from fed_rag.fl_tasks.pytorch import PyTorchFLTask
 from fed_rag.rag_trainers.pytorch import (
     GeneratorTrainFn,
     PyTorchRAGTrainer,
@@ -320,3 +321,23 @@ def test_prepare_retriever_for_training_dual_encoder(
     mock_rag_system.retriever.query_encoder.train.assert_called_once()
     mock_rag_system.retriever.context_encoder.eval.call_count == context_encoder_eval_count
     mock_rag_system.retriever.context_encoder.train.call_count == context_encoder_train_count
+
+
+def test_get_federated_task(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+
+    # act
+    fl_task = trainer.get_federated_task()
+
+    # assert
+    assert isinstance(fl_task, PyTorchFLTask)
