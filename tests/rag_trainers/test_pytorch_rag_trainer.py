@@ -260,3 +260,63 @@ def test_prepare_generator_for_training_dual_encoder(
     mock_rag_system.generator.model.train.assert_called_once()
     mock_rag_system.retriever.query_encoder.eval.assert_called_once()
     mock_rag_system.retriever.context_encoder.eval.assert_called_once()
+
+
+def test_prepare_retriever_for_training_mono_encoder(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+    mock_rag_system = MagicMock()
+    mock_rag_system.retriever.encoder.return_value = True
+    trainer.rag_system = mock_rag_system
+
+    trainer._prepare_retriever_for_training()
+
+    mock_rag_system.generator.model.eval.assert_called_once()
+    mock_rag_system.retriever.encoder.train.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    (
+        "context_encoder_frozen",
+        "context_encoder_train_count",
+        "context_encoder_eval_count",
+    ),
+    [(True, 0, 1), (False, 1, 0)],
+)
+def test_prepare_retriever_for_training_dual_encoder(
+    context_encoder_frozen: bool,
+    context_encoder_train_count: int,
+    context_encoder_eval_count: int,
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataloader: DataLoader,
+) -> None:
+    # arrange
+    trainer = PyTorchRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataloader=train_dataloader,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+    mock_rag_system = MagicMock()
+    mock_rag_system.retriever.encoder.return_value = False
+    trainer.rag_system = mock_rag_system
+
+    # act
+    trainer._prepare_retriever_for_training(
+        freeze_context_encoder=context_encoder_frozen
+    )
+
+    # assert
+    mock_rag_system.generator.model.eval.assert_called_once()
+    mock_rag_system.retriever.query_encoder.train.assert_called_once()
+    mock_rag_system.retriever.context_encoder.eval.call_count == context_encoder_eval_count
+    mock_rag_system.retriever.context_encoder.train.call_count == context_encoder_train_count
