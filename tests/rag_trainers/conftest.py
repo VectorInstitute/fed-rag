@@ -111,7 +111,7 @@ class MockDualRetriever(BaseRetriever):
 
 
 @pytest.fixture
-def mock_dual_retriever() -> MockRetriever:
+def mock_dual_retriever() -> MockDualRetriever:
     return MockDualRetriever()
 
 

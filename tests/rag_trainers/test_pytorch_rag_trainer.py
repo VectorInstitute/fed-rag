@@ -4,6 +4,7 @@ import pytest
 from torch.utils.data import DataLoader
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer
+from fed_rag.base.retriever import BaseRetriever
 from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
@@ -351,6 +352,7 @@ def test_get_federated_task_retriever_query_encoder(
     mock_rag_system: RAGSystem,
     retriever_trainer_fn: RetrieverTrainFn,
     train_dataloader: DataLoader,
+    mock_dual_retriever: BaseRetriever,
 ) -> None:
     # arrange
     trainer = PyTorchRAGTrainer(
@@ -359,15 +361,16 @@ def test_get_federated_task_retriever_query_encoder(
         train_dataloader=train_dataloader,
         retriever_train_fn=retriever_trainer_fn,
     )
-    mock_rag_system = MagicMock()
-    mock_rag_system.retriever.encoder.return_value = False
+    mock_rag_system.retriever = mock_dual_retriever
     trainer.rag_system = mock_rag_system
 
     # act
     fl_task = trainer.get_federated_task()
+    retriever_trainer, module = trainer._get_federated_trainer()
 
     # assert
     assert isinstance(fl_task, PyTorchFLTask)
+    assert module == mock_dual_retriever.query_encoder
 
 
 def test_get_federated_task_generator(
