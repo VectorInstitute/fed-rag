@@ -6,6 +6,8 @@ from typing import Any
 
 from fed_rag.types.rag_system import RAGSystem
 
+from .fl_task import BaseFLTask
+
 
 class RAGTrainMode(str, Enum):
     RETRIEVER = "retriever"
@@ -24,7 +26,7 @@ class BaseRAGTrainer(ABC):
 
     @abstractmethod
     def _prepare_retriever_for_training(
-        self, decoder: bool = False, **kwargs: Any
+        self, freeze_context_encoder: bool = True, **kwargs: Any
     ) -> None:
         """Prepare retriever model for training."""
 
@@ -43,3 +45,7 @@ class BaseRAGTrainer(ABC):
     @abstractmethod
     def train(self, **kwargs: Any) -> Any:
         """Train loop for rag system."""
+
+    @abstractmethod
+    def get_federated_task(self) -> BaseFLTask:
+        """Get the federated task."""

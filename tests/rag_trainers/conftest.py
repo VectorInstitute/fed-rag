@@ -1,15 +1,47 @@
 from typing import Any
 
+import numpy as np
 import pytest
 import torch
 from pydantic import PrivateAttr
+from torch.utils.data import DataLoader, Dataset
 
+from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
+from fed_rag.rag_trainers.pytorch import (
+    GeneratorTrainFn,
+    RetrieverTrainFn,
+    TrainingArgs,
+)
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
+
+
+class _TestDataset(Dataset):
+    def __init__(self, size: int) -> None:
+        self.features = np.random.rand(size, 2)
+        self.labels = np.random.choice(2, size=size)
+
+    def __len__(self) -> int:
+        return len(self.labels)
+
+    def __getitem__(self, index: int) -> tuple[np.ndarray, Any]:
+        return self.features[index], self.labels[index]
+
+
+@pytest.fixture()
+def train_dataloader() -> DataLoader:
+    dataset = _TestDataset(size=10)
+    return DataLoader(dataset, batch_size=2, shuffle=True)
+
+
+@pytest.fixture()
+def val_dataloader() -> DataLoader:
+    dataset = _TestDataset(size=4)
+    return DataLoader(dataset, batch_size=2, shuffle=True)
 
 
 class MockRetriever(BaseRetriever):
@@ -25,6 +57,10 @@ class MockRetriever(BaseRetriever):
     def encoder(self) -> torch.nn.Module:
         return self._encoder
 
+    @encoder.setter
+    def encoder(self, value: torch.nn.Module) -> None:
+        self._encoder = value
+
     @property
     def query_encoder(self) -> torch.nn.Module | None:
         return None
@@ -37,6 +73,46 @@ class MockRetriever(BaseRetriever):
 @pytest.fixture
 def mock_retriever() -> MockRetriever:
     return MockRetriever()
+
+
+class MockDualRetriever(BaseRetriever):
+    _query_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+    _context_encoder: torch.nn.Module = PrivateAttr(
+        default=torch.nn.Linear(2, 1)
+    )
+
+    def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.ones(2))
+
+    def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
+        return self._encoder.forward(torch.zeros(2))
+
+    @property
+    def encoder(self) -> torch.nn.Module | None:
+        return None
+
+    @property
+    def query_encoder(self) -> torch.nn.Module | None:
+        return self._query_encoder
+
+    @query_encoder.setter
+    def query_encoder(self, value: torch.nn.Module) -> None:
+        self._query_encoder = value
+
+    @property
+    def context_encoder(self) -> torch.nn.Module | None:
+        return self._context_encoder
+
+    @context_encoder.setter
+    def context_encoder(self, value: torch.nn.Module) -> None:
+        self._context_encoder = value
+
+
+@pytest.fixture
+def mock_dual_retriever() -> MockDualRetriever:
+    return MockDualRetriever()
 
 
 class MockTokenizer(BaseTokenizer):
@@ -69,6 +145,10 @@ class MockGenerator(BaseGenerator):
     @property
     def model(self) -> torch.nn.Module:
         return self._model
+
+    @model.setter
+    def model(self, value: torch.nn.Module) -> None:
+        self._model = value
 
     @property
     def tokenizer(self) -> MockTokenizer:
@@ -114,3 +194,30 @@ class MockRAGTrainer(BaseRAGTrainer):
 
     def train(self, **kwargs: Any) -> str:
         return "rag system trained"
+
+    def get_federated_task(self) -> BaseFLTask:
+        raise NotImplementedError()
+
+
+@pytest.fixture()
+def retriever_trainer_fn() -> RetrieverTrainFn:
+    def fn(
+        rag_system: RAGSystem,
+        train_loader: DataLoader,
+        trainer_args: TrainingArgs,
+    ) -> Any:
+        return {"retriever_loss": 0.42}
+
+    return fn  # type: ignore
+
+
+@pytest.fixture()
+def generator_trainer_fn() -> GeneratorTrainFn:
+    def fn(
+        rag_system: RAGSystem,
+        train_loader: DataLoader,
+        trainer_args: TrainingArgs,
+    ) -> Any:
+        return {"generator_loss": 0.42}
+
+    return fn  # type: ignore
