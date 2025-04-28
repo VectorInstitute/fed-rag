@@ -208,7 +208,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
         # For now, using a simple placeholder test function
         def test_fn(_mdl: nn.Module, _dataloader: DataLoader) -> TestResult:
             # Implement simple testing or return a placeholder
-            return TestResult(loss=0.42, metrics={})
+            return TestResult(loss=0.42, metrics={})  # pragma: no cover
 
         federated_tester = federate.tester.pytorch(test_fn)
 
