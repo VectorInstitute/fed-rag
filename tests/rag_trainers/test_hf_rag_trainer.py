@@ -397,5 +397,35 @@ def test_invalid_mode_raises_error(
         HuggingFaceRAGTrainer(
             rag_system=mock_rag_system,
             mode="both",
-            train_dataloader=train_dataset,
+            train_dataset=train_dataset,
         )
+
+
+def test_get_federated_task_raises_unspecified_trainers(
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataset=train_dataset,
+    )
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Cannot federate an unspecified generator trainer function.",
+    ):
+        trainer.get_federated_task()
+
+    # change mode to retriever
+    trainer.mode = "retriever"
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Cannot federate an unspecified retriever trainer function.",
+    ):
+        trainer.get_federated_task()
