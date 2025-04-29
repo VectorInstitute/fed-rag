@@ -25,9 +25,10 @@ except ModuleNotFoundError:
     _has_huggingface = False
 
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
     from sentence_transformers import SentenceTransformer
+    from transformers import TrainingArguments
 
     from fed_rag.fl_tasks.huggingface import HFModelType, HuggingFaceFLTask
 
@@ -59,16 +60,20 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
 
 
 # Define trainer function type hints
-RetrieverTrainFn = Callable[[RAGSystem, Dataset, TrainingArguments], Any]
-GeneratorTrainFn = Callable[[RAGSystem, Dataset, TrainingArguments], Any]
+RetrieverTrainFn = Callable[
+    [RAGSystem, "Dataset", Optional["TrainingArguments"]], Any
+]
+GeneratorTrainFn = Callable[
+    [RAGSystem, "Dataset", Optional["TrainingArguments"]], Any
+]
 
 
 class HuggingFaceRAGTrainer(BaseRAGTrainer):
     """HuggingFace RAG Trainer"""
 
-    train_dataset: Dataset
-    retriever_training_args: TrainingArguments
-    generator_training_args: TrainingArguments
+    train_dataset: "Dataset"
+    retriever_training_args: Optional["TrainingArguments"] = None
+    generator_training_args: Optional["TrainingArguments"] = None
     retriever_train_fn: Optional[RetrieverTrainFn] = None
     generator_train_fn: Optional[GeneratorTrainFn] = None
 
@@ -77,13 +82,13 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
         *args: Any,
         **kwargs: Any,
     ):
-        super().__init__(*args, **kwargs)
         if not _has_huggingface:
             msg = (
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
             raise MissingExtraError(msg)
+        super().__init__(*args, **kwargs)
 
     @model_validator(mode="after")
     def validate_training_args(self) -> "HuggingFaceRAGTrainer":
