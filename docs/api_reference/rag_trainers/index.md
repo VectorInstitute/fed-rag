@@ -1,7 +1,7 @@
 # Base RAG Trainer
 
-::: src.fed_rag.base.rag_trainer
+::: src.fed_rag.base.trainer_manager
     options:
       members:
-        - BaseRAGTrainer
+        - BaseRAGTrainerManager
         - RAGTrainMode

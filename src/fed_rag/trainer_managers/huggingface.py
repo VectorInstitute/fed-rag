@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional, cast
 from pydantic import model_validator
 from typing_extensions import assert_never
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer
+from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.decorators import federate
 from fed_rag.exceptions import (
     MissingExtraError,
@@ -68,7 +68,7 @@ GeneratorTrainFn = Callable[
 ]
 
 
-class HuggingFaceRAGTrainer(BaseRAGTrainer):
+class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
     """HuggingFace RAG Trainer"""
 
     train_dataset: "Dataset"
@@ -91,7 +91,7 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
         super().__init__(*args, **kwargs)
 
     @model_validator(mode="after")
-    def validate_training_args(self) -> "HuggingFaceRAGTrainer":
+    def validate_training_args(self) -> "HuggingFaceRAGTrainerManager":
         _validate_rag_system(self.rag_system)
 
         return self

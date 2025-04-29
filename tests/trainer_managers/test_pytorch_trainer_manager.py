@@ -3,17 +3,17 @@ from unittest.mock import MagicMock, patch
 import pytest
 from torch.utils.data import DataLoader
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.base.trainer_manager import BaseRAGTrainerManager, RAGTrainMode
 from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
     UnsupportedTrainerMode,
 )
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
-from fed_rag.rag_trainers.pytorch import (
+from fed_rag.trainer_managers.pytorch import (
     GeneratorTrainFn,
-    PyTorchRAGTrainer,
+    PyTorchRAGTrainerManager,
     RetrieverTrainFn,
     TrainingArgs,
 )
@@ -21,8 +21,10 @@ from fed_rag.types.rag_system import RAGSystem
 
 
 def test_pt_rag_trainer_class() -> None:
-    names_of_base_classes = [b.__name__ for b in PyTorchRAGTrainer.__mro__]
-    assert BaseRAGTrainer.__name__ in names_of_base_classes
+    names_of_base_classes = [
+        b.__name__ for b in PyTorchRAGTrainerManager.__mro__
+    ]
+    assert BaseRAGTrainerManager.__name__ in names_of_base_classes
 
 
 def test_init(
@@ -38,7 +40,7 @@ def test_init(
         learning_rate=0.42, custom_kwargs={"param": False}
     )
 
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -69,7 +71,7 @@ def test_init_with_trainer_args_dict(
         learning_rate=0.42, custom_kwargs={"param": False}
     )
 
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -89,7 +91,7 @@ def test_init_with_no_trainer_args(
     generator_trainer_fn: GeneratorTrainFn,
     train_dataloader: DataLoader,
 ) -> None:
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -101,7 +103,7 @@ def test_init_with_no_trainer_args(
     assert trainer.retriever_training_args == TrainingArgs()
 
 
-@patch.object(PyTorchRAGTrainer, "_prepare_retriever_for_training")
+@patch.object(PyTorchRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever(
     mock_prepare_retriever_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -111,7 +113,7 @@ def test_train_retriever(
     retriever_trainer_args = TrainingArgs(
         learning_rate=0.42, custom_kwargs={"param": True}
     )
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -127,7 +129,7 @@ def test_train_retriever(
     )
 
 
-@patch.object(PyTorchRAGTrainer, "_prepare_retriever_for_training")
+@patch.object(PyTorchRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever_raises_unspecified_retriever_trainer_error(
     mock_prepare_retriever_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -136,7 +138,7 @@ def test_train_retriever_raises_unspecified_retriever_trainer_error(
     retriever_trainer_args = TrainingArgs(
         learning_rate=0.42, custom_kwargs={"param": True}
     )
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -151,7 +153,7 @@ def test_train_retriever_raises_unspecified_retriever_trainer_error(
         mock_prepare_retriever_for_training.assert_called_once()
 
 
-@patch.object(PyTorchRAGTrainer, "_prepare_generator_for_training")
+@patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator(
     mock_prepare_generator_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -161,7 +163,7 @@ def test_train_generator(
     generator_trainer_args = TrainingArgs(
         learning_rate=0.42, custom_kwargs={"param": True}
     )
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -177,7 +179,7 @@ def test_train_generator(
     )
 
 
-@patch.object(PyTorchRAGTrainer, "_prepare_generator_for_training")
+@patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator_raises_unspecified_generator_trainer_error(
     mock_prepare_generator_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -186,7 +188,7 @@ def test_train_generator_raises_unspecified_generator_trainer_error(
     generator_trainer_args = TrainingArgs(
         learning_rate=0.42, custom_kwargs={"param": True}
     )
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -206,7 +208,7 @@ def test_prepare_generator_for_training_mono_encoder(
     generator_trainer_fn: GeneratorTrainFn,
     train_dataloader: DataLoader,
 ) -> None:
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -227,7 +229,7 @@ def test_prepare_generator_for_training_dual_encoder(
     generator_trainer_fn: GeneratorTrainFn,
     train_dataloader: DataLoader,
 ) -> None:
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -249,7 +251,7 @@ def test_prepare_retriever_for_training_mono_encoder(
     retriever_trainer_fn: RetrieverTrainFn,
     train_dataloader: DataLoader,
 ) -> None:
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -282,7 +284,7 @@ def test_prepare_retriever_for_training_dual_encoder(
     train_dataloader: DataLoader,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -310,7 +312,7 @@ def test_get_federated_task_retriever(
     train_dataloader: DataLoader,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -335,7 +337,7 @@ def test_get_federated_task_retriever_query_encoder(
     mock_dual_retriever: BaseRetriever,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -359,7 +361,7 @@ def test_get_federated_task_generator(
     train_dataloader: DataLoader,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -382,7 +384,7 @@ def test_get_federated_task_raises_unspecified_trainer_retriever(
     train_dataloader: DataLoader,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataloader=train_dataloader,
@@ -400,7 +402,7 @@ def test_get_federated_task_raises_unspecified_trainer_generator(
     train_dataloader: DataLoader,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainer(
+    trainer = PyTorchRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataloader=train_dataloader,
@@ -422,7 +424,7 @@ def test_invalid_mode_raises_error(
         f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
     )
     with pytest.raises(UnsupportedTrainerMode, match=msg):
-        PyTorchRAGTrainer(
+        PyTorchRAGTrainerManager(
             rag_system=mock_rag_system,
             mode="both",
             train_dataloader=train_dataloader,

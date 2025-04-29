@@ -8,11 +8,11 @@ from torch.utils.data import DataLoader, Dataset
 
 from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
-from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.rag_trainers.pytorch import (
+from fed_rag.trainer_managers.pytorch import (
     GeneratorTrainFn,
     RetrieverTrainFn,
     TrainingArgs,
@@ -177,7 +177,7 @@ def mock_rag_system(
     )
 
 
-class MockRAGTrainer(BaseRAGTrainer):
+class MockRAGTrainerManager(BaseRAGTrainerManager):
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
         return None
 

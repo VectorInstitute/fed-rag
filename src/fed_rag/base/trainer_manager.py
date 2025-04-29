@@ -18,7 +18,7 @@ class RAGTrainMode(str, Enum):
     INTERLEAVED = "interleaved"
 
 
-class BaseRAGTrainer(BaseModel, ABC):
+class BaseRAGTrainerManager(BaseModel, ABC):
     """Base RAG Trainer Class."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True)

@@ -9,8 +9,8 @@ from datasets import Dataset
 from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.base.trainer_manager import BaseRAGTrainerManager, RAGTrainMode
 from fed_rag.exceptions import (
     FedRAGError,
     MissingExtraError,
@@ -20,9 +20,9 @@ from fed_rag.exceptions import (
 )
 from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
 from fed_rag.generators.huggingface import HFPeftModelGenerator
-from fed_rag.rag_trainers.huggingface import (
+from fed_rag.trainer_managers.huggingface import (
     GeneratorTrainFn,
-    HuggingFaceRAGTrainer,
+    HuggingFaceRAGTrainerManager,
     RetrieverTrainFn,
 )
 from fed_rag.types.rag_system import RAGSystem
@@ -64,8 +64,10 @@ def generator_training_fn() -> GeneratorTrainFn:
 
 
 def test_pt_rag_trainer_class() -> None:
-    names_of_base_classes = [b.__name__ for b in HuggingFaceRAGTrainer.__mro__]
-    assert BaseRAGTrainer.__name__ in names_of_base_classes
+    names_of_base_classes = [
+        b.__name__ for b in HuggingFaceRAGTrainerManager.__mro__
+    ]
+    assert BaseRAGTrainerManager.__name__ in names_of_base_classes
 
 
 def test_init(
@@ -79,7 +81,7 @@ def test_init(
     retriever_training_args = TrainingArguments()
     generator_training_args = TrainingArguments()
 
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
@@ -107,21 +109,23 @@ def test_huggingface_extra_missing(
     modules = {
         "transformers": None,
     }
-    module_to_import = "fed_rag.rag_trainers.huggingface"
+    module_to_import = "fed_rag.trainer_managers.huggingface"
     original_module = sys.modules.pop(module_to_import, None)
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "`HuggingFaceRAGTrainer` requires `huggingface` extra to be installed. "
+            "`HuggingFaceRAGTrainerManager` requires `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
             MissingExtraError,
             match=re.escape(msg),
         ):
-            from fed_rag.rag_trainers.huggingface import HuggingFaceRAGTrainer
+            from fed_rag.trainer_managers.huggingface import (
+                HuggingFaceRAGTrainerManager,
+            )
 
-            HuggingFaceRAGTrainer(
+            HuggingFaceRAGTrainerManager(
                 rag_system=mock_rag_system,
                 mode="retriever",
                 train_dataset=train_dataset,
@@ -147,7 +151,7 @@ def test_invalid_rag_system_due_to_generators(
         FedRAGError,
         match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
     ):
-        HuggingFaceRAGTrainer(
+        HuggingFaceRAGTrainerManager(
             rag_system=mock_rag_system,
             mode="retriever",
             train_dataset=train_dataset,
@@ -178,7 +182,7 @@ def test_invalid_rag_system_due_to_retriever(
         FedRAGError,
         match="Retriever must be a HFSentenceTransformerRetriever",
     ):
-        HuggingFaceRAGTrainer(
+        HuggingFaceRAGTrainerManager(
             rag_system=mock_rag_system,
             mode="retriever",
             train_dataset=train_dataset,
@@ -189,7 +193,7 @@ def test_invalid_rag_system_due_to_retriever(
         )
 
 
-@patch.object(HuggingFaceRAGTrainer, "_prepare_retriever_for_training")
+@patch.object(HuggingFaceRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever(
     mock_prepare_retriever_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -201,7 +205,7 @@ def test_train_retriever(
 
     mock_retriever_trainer_fn = MagicMock()
     retriever_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
@@ -217,7 +221,7 @@ def test_train_retriever(
     )
 
 
-@patch.object(HuggingFaceRAGTrainer, "_prepare_retriever_for_training")
+@patch.object(HuggingFaceRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever_raises_unspecified_retriever_trainer_error(
     mock_prepare_retriever_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -228,7 +232,7 @@ def test_train_retriever_raises_unspecified_retriever_trainer_error(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     retriever_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
@@ -243,7 +247,7 @@ def test_train_retriever_raises_unspecified_retriever_trainer_error(
         mock_prepare_retriever_for_training.assert_called_once()
 
 
-@patch.object(HuggingFaceRAGTrainer, "_prepare_generator_for_training")
+@patch.object(HuggingFaceRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator(
     mock_prepare_generator_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -255,7 +259,7 @@ def test_train_generator(
 
     mock_generator_trainer_fn = MagicMock()
     generator_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataset=train_dataset,
@@ -271,7 +275,7 @@ def test_train_generator(
     )
 
 
-@patch.object(HuggingFaceRAGTrainer, "_prepare_generator_for_training")
+@patch.object(HuggingFaceRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator_raises_unspecified_generator_trainer_error(
     mock_prepare_generator_for_training: MagicMock,
     mock_rag_system: RAGSystem,
@@ -282,7 +286,7 @@ def test_train_generator_raises_unspecified_generator_trainer_error(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     generator_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataset=train_dataset,
@@ -307,7 +311,7 @@ def test_get_federated_task_retriever(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     # arrange
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
@@ -336,7 +340,7 @@ def test_get_federated_task_retriever_query_encoder(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     # arrange
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
@@ -364,7 +368,7 @@ def test_get_federated_task_generator(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     # arrange
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataset=train_dataset,
@@ -395,7 +399,7 @@ def test_invalid_mode_raises_error(
         f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
     )
     with pytest.raises(UnsupportedTrainerMode, match=msg):
-        HuggingFaceRAGTrainer(
+        HuggingFaceRAGTrainerManager(
             rag_system=mock_rag_system,
             mode="both",
             train_dataset=train_dataset,
@@ -411,7 +415,7 @@ def test_get_federated_task_raises_unspecified_trainers(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     # arrange
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataset=train_dataset,
@@ -441,7 +445,7 @@ def test_prepare_generator_for_training(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     generator_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="generator",
         train_dataset=train_dataset,
@@ -461,7 +465,7 @@ def test_prepare_retriever_for_training(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     generator_trainer_args = TrainingArguments()
-    trainer = HuggingFaceRAGTrainer(
+    trainer = HuggingFaceRAGTrainerManager(
         rag_system=mock_rag_system,
         mode="retriever",
         train_dataset=train_dataset,
