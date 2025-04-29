@@ -1,3 +1,3 @@
 <!-- markdownlint-disable-file MD041 -->
 
-::: src.fed_rag.exceptions.rag_trainer
+::: src.fed_rag.exceptions.trainer_manager
