@@ -2712,17 +2712,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer" class="md-nav__link">
+  <a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BaseRAGTrainer
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BaseRAGTrainerManager
     </span>
   </a>
   
-    <nav class="md-nav" aria-label=" BaseRAGTrainer">
+    <nav class="md-nav" aria-label=" BaseRAGTrainerManager">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer.train" class="md-nav__link">
+  <a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.train" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;train
     </span>
@@ -2731,7 +2731,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer.get_federated_task" class="md-nav__link">
+  <a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.get_federated_task" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_federated_task
     </span>
@@ -2745,7 +2745,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.base.rag_trainer.RAGTrainMode" class="md-nav__link">
+  <a href="#src.fed_rag.base.trainer_manager.RAGTrainMode" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RAGTrainMode
     </span>
@@ -2805,11 +2805,11 @@
 
 
 
-<h2 id="src.fed_rag.base.rag_trainer.BaseRAGTrainer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">BaseRAGTrainer</span>
+<h2 id="src.fed_rag.base.trainer_manager.BaseRAGTrainerManager" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">BaseRAGTrainerManager</span>
 
 
-<a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
@@ -2826,7 +2826,7 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/base/rag_trainer.py</code></summary>
+                <summary>Source code in <code>src/fed_rag/base/trainer_manager.py</code></summary>
                 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-21">21</a></span>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span>
 <span class="normal"><a href="#__codelineno-0-23">23</a></span>
@@ -2872,7 +2872,7 @@
 <span class="normal"><a href="#__codelineno-0-63">63</a></span>
 <span class="normal"><a href="#__codelineno-0-64">64</a></span>
 <span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseRAGTrainer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseRAGTrainerManager</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 </span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base RAG Trainer Class.&quot;&quot;&quot;</span>
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -2936,7 +2936,7 @@
 <div class="doc doc-object doc-function">
 
 
-<h3 id="src.fed_rag.base.rag_trainer.BaseRAGTrainer.train" class="doc doc-heading">
+<h3 id="src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.train" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">train</span>
 
 
@@ -2944,7 +2944,7 @@
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
-<a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer.train" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.train" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">train</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></code></pre></div>
 
@@ -2954,7 +2954,7 @@
 
 
             <details class="quote">
-              <summary>Source code in <code>src/fed_rag/base/rag_trainer.py</code></summary>
+              <summary>Source code in <code>src/fed_rag/base/trainer_manager.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-60">60</a></span>
 <span class="normal"><a href="#__codelineno-0-61">61</a></span>
 <span class="normal"><a href="#__codelineno-0-62">62</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="nd">@abstractmethod</span>
@@ -2969,7 +2969,7 @@
 <div class="doc doc-object doc-function">
 
 
-<h3 id="src.fed_rag.base.rag_trainer.BaseRAGTrainer.get_federated_task" class="doc doc-heading">
+<h3 id="src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.get_federated_task" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_federated_task</span>
 
 
@@ -2977,7 +2977,7 @@
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
-<a href="#src.fed_rag.base.rag_trainer.BaseRAGTrainer.get_federated_task" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#src.fed_rag.base.trainer_manager.BaseRAGTrainerManager.get_federated_task" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_federated_task</span><span class="p">()</span>
 </span></code></pre></div>
 
@@ -2987,7 +2987,7 @@
 
 
             <details class="quote">
-              <summary>Source code in <code>src/fed_rag/base/rag_trainer.py</code></summary>
+              <summary>Source code in <code>src/fed_rag/base/trainer_manager.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-64">64</a></span>
 <span class="normal"><a href="#__codelineno-0-65">65</a></span>
 <span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="nd">@abstractmethod</span>
@@ -3011,11 +3011,11 @@
 
 
 
-<h2 id="src.fed_rag.base.rag_trainer.RAGTrainMode" class="doc doc-heading">
+<h2 id="src.fed_rag.base.trainer_manager.RAGTrainMode" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">RAGTrainMode</span>
 
 
-<a href="#src.fed_rag.base.rag_trainer.RAGTrainMode" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.base.trainer_manager.RAGTrainMode" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
@@ -3030,7 +3030,7 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/base/rag_trainer.py</code></summary>
+                <summary>Source code in <code>src/fed_rag/base/trainer_manager.py</code></summary>
                 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-15">15</a></span>
 <span class="normal"><a href="#__codelineno-0-16">16</a></span>
 <span class="normal"><a href="#__codelineno-0-17">17</a></span>

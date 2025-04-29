@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#src.fed_rag.rag_trainers.pytorch.PyTorchRAGTrainer" class="md-skip">
+        <a href="#src.fed_rag.trainer_managers.pytorch.PyTorchRAGTrainerManager" class="md-skip">
           Skip to content
         </a>
       
@@ -2710,9 +2710,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.rag_trainers.pytorch.PyTorchRAGTrainer" class="md-nav__link">
+  <a href="#src.fed_rag.trainer_managers.pytorch.PyTorchRAGTrainerManager" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PyTorchRAGTrainer
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;PyTorchRAGTrainerManager
     </span>
   </a>
   
@@ -2773,16 +2773,16 @@
 
 
 
-<h2 id="src.fed_rag.rag_trainers.pytorch.PyTorchRAGTrainer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PyTorchRAGTrainer</span>
+<h2 id="src.fed_rag.trainer_managers.pytorch.PyTorchRAGTrainerManager" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PyTorchRAGTrainerManager</span>
 
 
-<a href="#src.fed_rag.rag_trainers.pytorch.PyTorchRAGTrainer" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.trainer_managers.pytorch.PyTorchRAGTrainerManager" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="fed_rag.base.rag_trainer.BaseRAGTrainer">BaseRAGTrainer</span></code></p>
+              Bases: <code><span title="fed_rag.base.trainer_manager.BaseRAGTrainerManager">BaseRAGTrainerManager</span></code></p>
 
 
 
@@ -2792,7 +2792,7 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/rag_trainers/pytorch.py</code></summary>
+                <summary>Source code in <code>src/fed_rag/trainer_managers/pytorch.py</code></summary>
                 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-37"> 37</a></span>
 <span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
 <span class="normal"><a href="#__codelineno-0-39"> 39</a></span>
@@ -2955,7 +2955,7 @@
 <span class="normal"><a href="#__codelineno-0-196">196</a></span>
 <span class="normal"><a href="#__codelineno-0-197">197</a></span>
 <span class="normal"><a href="#__codelineno-0-198">198</a></span>
-<span class="normal"><a href="#__codelineno-0-199">199</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="k">class</span><span class="w"> </span><span class="nc">PyTorchRAGTrainer</span><span class="p">(</span><span class="n">BaseRAGTrainer</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-199">199</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="k">class</span><span class="w"> </span><span class="nc">PyTorchRAGTrainerManager</span><span class="p">(</span><span class="n">BaseRAGTrainerManager</span><span class="p">):</span>
 </span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">train_dataloader</span><span class="p">:</span> <span class="n">DataLoader</span>
 </span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">retriever_training_args</span><span class="p">:</span> <span class="n">TrainingArgs</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
 </span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">TrainingArgs</span><span class="p">()</span>
@@ -2967,7 +2967,7 @@
 </span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">generator_train_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GeneratorTrainFn</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a>
 </span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_training_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PyTorchRAGTrainer&quot;</span><span class="p">:</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_training_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PyTorchRAGTrainerManager&quot;</span><span class="p">:</span>
 </span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="c1"># Convert dict args to Pydantic models if needed</span>
 </span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">retriever_training_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">retriever_training_args</span> <span class="o">=</span> <span class="n">TrainingArgs</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span>
