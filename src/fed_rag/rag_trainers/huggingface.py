@@ -1,11 +1,12 @@
 """HuggingFace RAG Trainer"""
 
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, cast
 
 from pydantic import model_validator
 from typing_extensions import assert_never
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer
+from fed_rag.decorators import federate
 from fed_rag.exceptions import (
     MissingExtraError,
     UnspecifiedGeneratorTrainer,
@@ -13,6 +14,7 @@ from fed_rag.exceptions import (
 )
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
 
 try:
     from datasets import Dataset
@@ -25,6 +27,9 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:
     from datasets import Dataset
+    from sentence_transformers import SentenceTransformer
+
+    from fed_rag.fl_tasks.huggingface import HFModelType, HuggingFaceFLTask
 
 
 def _validate_rag_system(rag_system: RAGSystem) -> None:
@@ -117,3 +122,78 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
             self._train_generator()
         else:
             assert_never(self.mode)  # pragma: no cover
+
+    def _get_federated_trainer(self) -> tuple[Callable, "HFModelType"]:
+        if self.mode == "retriever":
+            if self.retriever_train_fn is None:
+                raise UnspecifiedRetrieverTrainer(
+                    "Cannot federate an unspecified retriever trainer function."
+                )
+            retriever_train_fn = self.retriever_train_fn
+
+            if self.rag_system.retriever.encoder:
+                retriever_module = self.rag_system.retriever.encoder
+            else:
+                retriever_module = self.rag_system.retriever.query_encoder
+            retriever_module = cast("SentenceTransformer", retriever_module)
+
+            # Create a standalone function for federation
+            def train_wrapper(
+                _mdl: HFModelType,
+                _train_dataset: Dataset,
+                _val_dataloader: Dataset,
+            ) -> TrainResult:
+                _ = retriever_train_fn(
+                    self.rag_system,
+                    self.train_dataset,
+                    self.retriever_training_args,
+                )
+                return TrainResult(loss=0)
+
+            return federate.trainer.pytorch(train_wrapper), retriever_module
+
+        elif self.mode == "generator":
+            if self.generator_train_fn is None:
+                raise UnspecifiedGeneratorTrainer(
+                    "Cannot federate an unspecified generator trainer function."
+                )
+            generator_train_fn = self.generator_train_fn
+
+            generator_module = self.rag_system.generator.model
+
+            # Create a standalone function for federation
+            def train_wrapper(
+                _mdl: HFModelType,
+                _train_dataset: Dataset,
+                _val_dataloader: Dataset,
+            ) -> TrainResult:
+                _ = generator_train_fn(
+                    self.rag_system,
+                    self.train_dataloader,
+                    self.generator_training_args,
+                )
+                # TODO get loss from out
+                return TrainResult(loss=0)
+
+            return federate.trainer.pytorch(train_wrapper), generator_module
+        else:
+            assert_never(self.mode)  # pragma: no cover
+
+    def get_federated_task(self) -> "HuggingFaceFLTask":
+        from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
+
+        federated_trainer, _module = self._get_federated_trainer()
+
+        # TODO: add logic for getting evaluator/tester and then federate it as well
+        # federated_tester = self.get_federated_tester(tester_decorator)
+        # For now, using a simple placeholder test function
+        def test_fn(_mdl: "HFModelType", _dataset: Dataset) -> TestResult:
+            # Implement simple testing or return a placeholder
+            return TestResult(loss=0.42, metrics={})  # pragma: no cover
+
+        federated_tester = federate.tester.pytorch(test_fn)
+
+        return HuggingFaceFLTask.from_trainer_and_tester(
+            trainer=federated_trainer,
+            tester=federated_tester,
+        )
