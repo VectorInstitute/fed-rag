@@ -61,6 +61,7 @@ nav:
       - Inspectors: api_reference/exceptions/inspectors.md
       - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
       - Loss: api_reference/exceptions/loss.md
+      - RAG Trainer: api_reference/exceptions/rag_trainer.md
     - Finetuning Datasets:
       - api_reference/finetuning_datasets/index.md
       - api_reference/finetuning_datasets/pytorch.md
@@ -86,6 +87,10 @@ nav:
       - api_reference/loss/pytorch.md
     - RAGSystem:
       - api_reference/rag_system/index.md
+    - RAG Trainers:
+      - api_reference/fl_tasks/index.md
+      - api_reference/fl_tasks/pytorch.md
+      - api_reference/fl_tasks/huggingface.md
     - Retrievers:
       - api_reference/retrievers/index.md
       - api_reference/retrievers/huggingface.md
