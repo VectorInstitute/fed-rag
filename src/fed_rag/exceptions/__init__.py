@@ -1,4 +1,5 @@
 from .common import MissingExtraError
+from .core import FedRAGError
 from .fl_tasks import (
     FLTaskError,
     MissingFLTaskConfig,
@@ -25,6 +26,8 @@ from .rag_trainer import (
 )
 
 __all__ = [
+    # core
+    "FedRAGError",
     # common
     "MissingExtraError",
     # fl_tasks

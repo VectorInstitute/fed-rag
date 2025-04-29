@@ -9,7 +9,8 @@ from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import FedRAGError, MissingExtraError
+from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.rag_trainers.huggingface import (
     GeneratorTrainFn,
     HuggingFaceRAGTrainer,
@@ -122,3 +123,58 @@ def test_huggingface_extra_missing(
     # restore module so to not affect other tests
     if original_module:
         sys.modules[module_to_import] = original_module
+
+
+def test_invalid_rag_system_due_to_generators(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataset: Dataset,
+) -> None:
+    retriever_training_args = TrainingArguments()
+    generator_training_args = TrainingArguments()
+
+    with pytest.raises(
+        FedRAGError,
+        match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
+    ):
+        HuggingFaceRAGTrainer(
+            rag_system=mock_rag_system,
+            mode="retriever",
+            train_dataset=train_dataset,
+            retriever_training_args=retriever_training_args,
+            generator_training_args=generator_training_args,
+            retriever_train_fn=retriever_trainer_fn,
+            generator_train_fn=generator_trainer_fn,
+        )
+
+
+def test_invalid_rag_system_due_to_retriever(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    generator_trainer_fn: GeneratorTrainFn,
+    train_dataset: Dataset,
+) -> None:
+    retriever_training_args = TrainingArguments()
+    generator_training_args = TrainingArguments()
+
+    generator = HFPeftModelGenerator(
+        model_name="fake_name",
+        base_model_name="fake_base_name",
+        load_model_at_init=False,
+    )
+    mock_rag_system.generator = generator
+
+    with pytest.raises(
+        FedRAGError,
+        match="Retriever must be a HFSentenceTransformerRetriever",
+    ):
+        HuggingFaceRAGTrainer(
+            rag_system=mock_rag_system,
+            mode="retriever",
+            train_dataset=train_dataset,
+            retriever_training_args=retriever_training_args,
+            generator_training_args=generator_training_args,
+            retriever_train_fn=retriever_trainer_fn,
+            generator_train_fn=generator_trainer_fn,
+        )
