@@ -12,9 +12,9 @@ from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
 )
-from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
+from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from datasets import Dataset
@@ -31,32 +31,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers import TrainingArguments
 
     from fed_rag.fl_tasks.huggingface import HFModelType, HuggingFaceFLTask
-
-
-def _validate_rag_system(rag_system: RAGSystem) -> None:
-    # Skip validation if environment variable is set
-    import os
-
-    if os.environ.get("FEDRAG_SKIP_VALIDATION") == "1":
-        return
-
-    from fed_rag.generators.huggingface import (
-        HFPeftModelGenerator,
-        HFPretrainedModelGenerator,
-    )
-    from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
-        HFSentenceTransformerRetriever,
-    )
-
-    if not isinstance(
-        rag_system.generator, HFPretrainedModelGenerator
-    ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
-        raise FedRAGError(
-            "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator"
-        )
-
-    if not isinstance(rag_system.retriever, HFSentenceTransformerRetriever):
-        raise FedRAGError("Retriever must be a HFSentenceTransformerRetriever")
 
 
 # Define trainer function type hints

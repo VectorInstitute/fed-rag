@@ -1,0 +1,38 @@
+import pytest
+import torch
+from datasets import Dataset
+from sentence_transformers import SentenceTransformer
+
+from fed_rag.base.trainer import BaseTrainer
+from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
+from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
+
+
+class TestHFTrainer(HuggingFaceTrainerMixin, BaseTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
+
+
+@pytest.fixture()
+def train_dataset() -> Dataset:
+    return Dataset.from_dict(
+        {
+            "query": ["first query", "second query"],
+            "response": ["first response", "second response"],
+        }
+    )
+
+
+@pytest.fixture()
+def hf_rag_system(mock_rag_system: RAGSystem) -> RAGSystem:
+    encoder = SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
+    mock_rag_system.retriever.encoder = encoder
+    return mock_rag_system
