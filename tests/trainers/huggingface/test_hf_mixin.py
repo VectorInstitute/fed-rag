@@ -8,7 +8,8 @@ from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
 from fed_rag.base.trainer import BaseTrainer
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import FedRAGError, MissingExtraError
+from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerProtocol
 from fed_rag.types.rag_system import RAGSystem
 
@@ -85,3 +86,46 @@ def test_huggingface_extra_missing(
     # restore module so to not affect other tests
     if original_module:
         sys.modules[module_to_import] = original_module
+
+
+def test_hf_trainer_init_raises_invalid_generator(
+    train_dataset: Dataset,
+    hf_rag_system: RAGSystem,
+) -> None:
+    with pytest.raises(
+        FedRAGError,
+        match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
+    ):
+        # arrange
+        training_args = TrainingArguments()
+        TestHFTrainer(
+            rag_system=hf_rag_system,
+            model=hf_rag_system.retriever.encoder,
+            train_dataset=train_dataset,
+            training_arguments=training_args,
+        )
+
+
+def test_hf_trainer_init_raises_invalid_retriever(
+    train_dataset: Dataset,
+    hf_rag_system: RAGSystem,
+) -> None:
+    generator = HFPeftModelGenerator(
+        model_name="fake_name",
+        base_model_name="fake_base_name",
+        load_model_at_init=False,
+    )
+    hf_rag_system.generator = generator
+
+    with pytest.raises(
+        FedRAGError,
+        match="Retriever must be a HFSentenceTransformerRetriever",
+    ):
+        # arrange
+        training_args = TrainingArguments()
+        TestHFTrainer(
+            rag_system=hf_rag_system,
+            model=hf_rag_system.retriever.encoder,
+            train_dataset=train_dataset,
+            training_arguments=training_args,
+        )
