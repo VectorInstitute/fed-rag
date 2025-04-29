@@ -1,10 +1,11 @@
 """PyTorch RAG Trainer"""
 
-from typing import Any, Callable, Optional, assert_never, cast
+from typing import Any, Callable, Optional, cast
 
 import torch.nn as nn
 from pydantic import BaseModel, Field, model_validator
 from torch.utils.data import DataLoader
+from typing_extensions import assert_never
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.decorators import federate

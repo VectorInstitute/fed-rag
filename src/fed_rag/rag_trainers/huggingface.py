@@ -1,8 +1,9 @@
 """HuggingFace RAG Trainer"""
 
-from typing import TYPE_CHECKING, Any, Callable, Optional, assert_never
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from pydantic import model_validator
+from typing_extensions import assert_never
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.exceptions import (
