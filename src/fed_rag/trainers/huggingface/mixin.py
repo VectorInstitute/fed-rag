@@ -24,7 +24,7 @@ try:
 except ModuleNotFoundError:
     _has_huggingface = False
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
     from transformers import TrainingArguments
 
