@@ -1,9 +1,9 @@
 from fed_rag.base.rag_trainer import BaseRAGTrainer
-from fed_rag.rag_trainers.huggingface import HFRAGTrainer
+from fed_rag.rag_trainers.huggingface import HuggingFaceRAGTrainer
 
 
 def test_pt_rag_trainer_class() -> None:
-    names_of_base_classes = [b.__name__ for b in HFRAGTrainer.__mro__]
+    names_of_base_classes = [b.__name__ for b in HuggingFaceRAGTrainer.__mro__]
     assert BaseRAGTrainer.__name__ in names_of_base_classes
 
 
