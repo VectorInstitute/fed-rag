@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, model_validator
 from torch.utils.data import DataLoader
 from typing_extensions import assert_never
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer
+from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.decorators import federate
 from fed_rag.exceptions.rag_trainer import (
     UnspecifiedGeneratorTrainer,
@@ -34,7 +34,7 @@ RetrieverTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
 GeneratorTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
 
 
-class PyTorchRAGTrainer(BaseRAGTrainer):
+class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
     train_dataloader: DataLoader
     retriever_training_args: TrainingArgs = Field(
         default_factory=lambda: TrainingArgs()
@@ -46,7 +46,7 @@ class PyTorchRAGTrainer(BaseRAGTrainer):
     generator_train_fn: Optional[GeneratorTrainFn] = None
 
     @model_validator(mode="after")
-    def validate_training_args(self) -> "PyTorchRAGTrainer":
+    def validate_training_args(self) -> "PyTorchRAGTrainerManager":
         # Convert dict args to Pydantic models if needed
         if isinstance(self.retriever_training_args, dict):
             self.retriever_training_args = TrainingArgs.model_validate(

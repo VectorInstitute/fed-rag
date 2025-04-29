@@ -1,19 +1,19 @@
 from .core import FedRAGError
 
 
-class RAGTrainerError(FedRAGError):
+class RAGTrainerManagerError(FedRAGError):
     """Base errors for all rag trainer relevant exceptions."""
 
     pass
 
 
-class UnspecifiedRetrieverTrainer(RAGTrainerError):
+class UnspecifiedRetrieverTrainer(RAGTrainerManagerError):
     pass
 
 
-class UnspecifiedGeneratorTrainer(RAGTrainerError):
+class UnspecifiedGeneratorTrainer(RAGTrainerManagerError):
     pass
 
 
-class UnsupportedTrainerMode(RAGTrainerError):
+class UnsupportedTrainerMode(RAGTrainerManagerError):
     pass

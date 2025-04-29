@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-::: src.fed_rag.rag_trainers.pytorch
+::: src.fed_rag.trainer_managers.pytorch
     options:
       members:
-        - PyTorchRAGTrainer
+        - PyTorchRAGTrainerManager

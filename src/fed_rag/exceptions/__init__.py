@@ -19,7 +19,7 @@ from .inspectors import (
 )
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
 from .rag_trainer import (
-    RAGTrainerError,
+    RAGTrainerManagerError,
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
     UnsupportedTrainerMode,
@@ -49,7 +49,7 @@ __all__ = [
     "KnowledgeStoreError",
     "KnowledgeStoreNotFoundError",
     # rag trainer
-    "RAGTrainerError",
+    "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",

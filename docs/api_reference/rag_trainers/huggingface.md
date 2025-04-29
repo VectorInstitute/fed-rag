@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-::: src.fed_rag.rag_trainers.huggingface
+::: src.fed_rag.trainer_managers.huggingface
     options:
       members:
-        - HuggingFaceRAGTrainer
+        - HuggingFaceRAGTrainerManager
