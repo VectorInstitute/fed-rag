@@ -1,4 +1,4 @@
-"""Base RAG Trainer"""
+"""Base RAG Trainer Manager"""
 
 from abc import ABC, abstractmethod
 from enum import Enum
