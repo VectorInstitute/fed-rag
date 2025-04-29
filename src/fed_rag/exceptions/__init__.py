@@ -18,7 +18,7 @@ from .inspectors import (
     UnequalNetParamWarning,
 )
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
-from .rag_trainer import (
+from .trainer_manager import (
     RAGTrainerManagerError,
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,

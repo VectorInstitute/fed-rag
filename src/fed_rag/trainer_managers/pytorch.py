@@ -9,7 +9,7 @@ from typing_extensions import assert_never
 
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.decorators import federate
-from fed_rag.exceptions.rag_trainer import (
+from fed_rag.exceptions.trainer_manager import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
 )

@@ -87,10 +87,10 @@ nav:
       - api_reference/loss/pytorch.md
     - RAGSystem:
       - api_reference/rag_system/index.md
-    - RAG Trainers:
-      - api_reference/fl_tasks/index.md
-      - api_reference/fl_tasks/pytorch.md
-      - api_reference/fl_tasks/huggingface.md
+    - RAG Trainer Managers:
+      - api_reference/trainer_managers/index.md
+      - api_reference/trainer_managers/pytorch.md
+      - api_reference/trainer_managers/huggingface.md
     - Retrievers:
       - api_reference/retrievers/index.md
       - api_reference/retrievers/huggingface.md
