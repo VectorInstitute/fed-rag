@@ -15,6 +15,7 @@ from fed_rag.exceptions import (
     MissingExtraError,
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
+    UnsupportedTrainerMode,
 )
 from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
 from fed_rag.generators.huggingface import HFPeftModelGenerator
@@ -378,3 +379,23 @@ def test_get_federated_task_generator(
     assert out.loss == 0
     assert isinstance(fl_task, HuggingFaceFLTask)
     assert fl_task._trainer_spec == generator_trainer.__fl_task_trainer_config
+
+
+def test_invalid_mode_raises_error(
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    msg = (
+        f"Unsupported RAG train mode: both. "
+        f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
+    )
+    with pytest.raises(UnsupportedTrainerMode, match=msg):
+        HuggingFaceRAGTrainer(
+            rag_system=mock_rag_system,
+            mode="both",
+            train_dataloader=train_dataset,
+        )
