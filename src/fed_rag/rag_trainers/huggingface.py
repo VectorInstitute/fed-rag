@@ -154,9 +154,9 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: HFModelType,
-                _train_dataset: Dataset,
-                _val_dataloader: Dataset,
+                _mdl: "HFModelType",
+                _train_dataset: "Dataset",
+                _val_dataloader: "Dataset",
             ) -> TrainResult:
                 _ = retriever_train_fn(
                     self.rag_system,
@@ -165,7 +165,10 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
                 )
                 return TrainResult(loss=0)
 
-            return federate.trainer.pytorch(train_wrapper), retriever_module
+            return (
+                federate.trainer.huggingface(train_wrapper),
+                retriever_module,
+            )
 
         elif self.mode == "generator":
             if self.generator_train_fn is None:
@@ -178,19 +181,22 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: HFModelType,
-                _train_dataset: Dataset,
-                _val_dataloader: Dataset,
+                _mdl: "HFModelType",  # TODO: handle union types in inspector
+                _train_dataset: "Dataset",
+                _val_dataloader: "Dataset",
             ) -> TrainResult:
                 _ = generator_train_fn(
                     self.rag_system,
-                    self.train_dataloader,
+                    self.train_dataset,
                     self.generator_training_args,
                 )
                 # TODO get loss from out
                 return TrainResult(loss=0)
 
-            return federate.trainer.pytorch(train_wrapper), generator_module
+            return (
+                federate.trainer.huggingface(train_wrapper),
+                generator_module,
+            )
         else:
             assert_never(self.mode)  # pragma: no cover
 
@@ -202,11 +208,11 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
         # TODO: add logic for getting evaluator/tester and then federate it as well
         # federated_tester = self.get_federated_tester(tester_decorator)
         # For now, using a simple placeholder test function
-        def test_fn(_mdl: "HFModelType", _dataset: Dataset) -> TestResult:
+        def test_fn(_mdl: "HFModelType", _dataset: "Dataset") -> TestResult:
             # Implement simple testing or return a placeholder
             return TestResult(loss=0.42, metrics={})  # pragma: no cover
 
-        federated_tester = federate.tester.pytorch(test_fn)
+        federated_tester = federate.tester.huggingface(test_fn)
 
         return HuggingFaceFLTask.from_trainer_and_tester(
             trainer=federated_trainer,

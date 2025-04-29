@@ -15,6 +15,7 @@ from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
 )
+from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
 from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.rag_trainers.huggingface import (
     GeneratorTrainFn,
@@ -291,3 +292,31 @@ def test_train_generator_raises_unspecified_generator_trainer_error(
     ):
         trainer.train()
         mock_prepare_generator_for_training.assert_called_once()
+
+
+def test_get_federated_task_retriever(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataset=train_dataset,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+
+    # act
+    retriever_trainer, _ = trainer._get_federated_trainer()
+    out = retriever_trainer(MagicMock(), MagicMock(), MagicMock())
+    fl_task = trainer.get_federated_task()
+
+    # assert
+    assert out.loss == 0
+    assert isinstance(fl_task, HuggingFaceFLTask)
+    assert fl_task._trainer_spec == retriever_trainer.__fl_task_trainer_config

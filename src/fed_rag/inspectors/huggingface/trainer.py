@@ -10,6 +10,7 @@ from fed_rag.exceptions import (
     MissingNetParam,
 )
 from fed_rag.inspectors.common import TrainerSignatureSpec
+from fed_rag.inspectors.huggingface.utils import get_type_name
 from fed_rag.types import TrainResult
 
 
@@ -33,13 +34,14 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
         if name in ("self", "cls"):
             continue
 
-        if type_name := getattr(t.annotation, "__name__", None):
+        if type_name := get_type_name(t):
             if (
                 type_name
                 in [
                     "SentenceTransformer",
                     "PreTrainedModel",
                     "PeftModel",
+                    "HFModelType",
                 ]  # TODO: should accept union types involving these two
                 and net_param is None
             ):
