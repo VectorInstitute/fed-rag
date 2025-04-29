@@ -8,7 +8,7 @@ from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import TrainerError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 
-if TYPE_CHECKING:  # pragma: no-cover
+if TYPE_CHECKING:  # pragma: no cover
     from sentence_transformers import SentenceTransformer
 
 
