@@ -2,6 +2,8 @@
 
 from typing import TYPE_CHECKING, Any
 
+from pydantic import field_validator
+
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import TrainerError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
@@ -13,14 +15,20 @@ if TYPE_CHECKING:  # pragma: no-cover
 class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
     """HuggingFace LM-Supervised Retriever Trainer."""
 
-    model: "SentenceTransformer"
+    @field_validator("model", mode="before")
+    @classmethod
+    def validate_mode(cls, v: Any) -> "SentenceTransformer":
+        from sentence_transformers import SentenceTransformer
 
-    def __init__(self, model: SentenceTransformer, **kwargs: Any):
-        # check that the model is a `SentenceTransformer`
-        if not isinstance(model, SentenceTransformer):
+        if not isinstance(v, SentenceTransformer):
             raise TrainerError(
                 "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
                 "`~sentence_transformers.SentenceTransformer`."
             )
+        return v
 
-        super().__init__(model=model, **kwargs)
+    def train(self) -> None:
+        pass
+
+    def evaluate(self) -> None:
+        pass
