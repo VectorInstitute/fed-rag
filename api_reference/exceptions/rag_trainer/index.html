@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../examples/ra_dit/">
+        <link rel="prev" href="../loss/">
       
       
-        <link rel="next" href="data_collators/huggingface/">
+        <link rel="next" href="../../finetuning_datasets/">
       
       
-      <link rel="icon" href="../assets/favicon-48x48.svg">
+      <link rel="icon" href="../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>API Reference - FedRAG</title>
+        <title>RAG Trainer - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +46,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-reference" class="md-skip">
+        <a href="#src.fed_rag.exceptions.rag_trainer.RAGTrainerError" class="md-skip">
           Skip to content
         </a>
       
@@ -90,15 +90,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Reference
+              RAG Trainer
             
           </span>
         </div>
@@ -226,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../getting_started/essentials/" class="md-tabs__link">
+        <a href="../../../getting_started/essentials/" class="md-tabs__link">
           
   
   
@@ -269,7 +269,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../examples/" class="md-tabs__link">
+        <a href="../../../examples/" class="md-tabs__link">
           
   
   
@@ -293,7 +293,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -313,7 +313,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../glossary/" class="md-tabs__link">
+      <a href="../../../glossary/" class="md-tabs__link">
         
   
   
@@ -334,7 +334,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../community/" class="md-tabs__link">
+        <a href="../../../community/" class="md-tabs__link">
           
   
   
@@ -370,15 +370,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -485,7 +485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/essentials/" class="md-nav__link">
+      <a href="../../../getting_started/essentials/" class="md-nav__link">
         
   
   
@@ -533,7 +533,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../getting_started/quick_starts/" class="md-nav__link ">
+            <a href="../../../getting_started/quick_starts/" class="md-nav__link ">
               
   
   
@@ -568,7 +568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/quick_starts/federated/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/federated/" class="md-nav__link">
         
   
   
@@ -591,7 +591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/quick_starts/rag_inference/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
         
   
   
@@ -622,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/installation/" class="md-nav__link">
+      <a href="../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -645,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/standard_usage/" class="md-nav__link">
+      <a href="../../../getting_started/standard_usage/" class="md-nav__link">
         
   
   
@@ -668,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/advanced_usage/" class="md-nav__link">
+      <a href="../../../getting_started/advanced_usage/" class="md-nav__link">
         
   
   
@@ -716,7 +716,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../getting_started/how_to/" class="md-nav__link ">
+            <a href="../../../getting_started/how_to/" class="md-nav__link ">
               
   
   
@@ -751,7 +751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/how_to/creating_finetuning_datasets/" class="md-nav__link">
+      <a href="../../../getting_started/how_to/creating_finetuning_datasets/" class="md-nav__link">
         
   
   
@@ -774,7 +774,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/how_to/rag_finetuning/" class="md-nav__link">
+      <a href="../../../getting_started/how_to/rag_finetuning/" class="md-nav__link">
         
   
   
@@ -805,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/integrations/" class="md-nav__link">
+      <a href="../../../getting_started/integrations/" class="md-nav__link">
         
   
   
@@ -858,7 +858,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../examples/" class="md-nav__link ">
+            <a href="../../../examples/" class="md-nav__link ">
               
   
   
@@ -893,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/ra_dit/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/" class="md-nav__link">
         
   
   
@@ -977,7 +977,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -990,7 +990,7 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1057,7 +1057,7 @@
   
   
     <li class="md-nav__item">
-      <a href="data_collators/huggingface/" class="md-nav__link">
+      <a href="../../data_collators/huggingface/" class="md-nav__link">
         
   
   
@@ -1109,7 +1109,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="decorators/" class="md-nav__link ">
+            <a href="../../decorators/" class="md-nav__link ">
               
   
   
@@ -1144,6 +1144,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1170,15 +1172,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="exceptions/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1197,7 +1199,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_4">
             <span class="md-nav__icon md-icon"></span>
             Exceptions
@@ -1213,7 +1215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="exceptions/fl_tasks/" class="md-nav__link">
+      <a href="../fl_tasks/" class="md-nav__link">
         
   
   
@@ -1236,7 +1238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="exceptions/inspectors/" class="md-nav__link">
+      <a href="../inspectors/" class="md-nav__link">
         
   
   
@@ -1259,7 +1261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="exceptions/knowledge_stores/" class="md-nav__link">
+      <a href="../knowledge_stores/" class="md-nav__link">
         
   
   
@@ -1282,7 +1284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="exceptions/loss/" class="md-nav__link">
+      <a href="../loss/" class="md-nav__link">
         
   
   
@@ -1302,10 +1304,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="exceptions/rag_trainer/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    RAG Trainer
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1316,6 +1338,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.rag_trainer.RAGTrainerError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RAGTrainerError
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1361,7 +1410,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="finetuning_datasets/" class="md-nav__link ">
+            <a href="../../finetuning_datasets/" class="md-nav__link ">
               
   
   
@@ -1396,7 +1445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="finetuning_datasets/pytorch/" class="md-nav__link">
+      <a href="../../finetuning_datasets/pytorch/" class="md-nav__link">
         
   
   
@@ -1419,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="finetuning_datasets/huggingface/" class="md-nav__link">
+      <a href="../../finetuning_datasets/huggingface/" class="md-nav__link">
         
   
   
@@ -1475,7 +1524,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="fl_tasks/" class="md-nav__link ">
+            <a href="../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -1510,7 +1559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -1533,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -1587,7 +1636,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="generators/" class="md-nav__link ">
+            <a href="../../generators/" class="md-nav__link ">
               
   
   
@@ -1622,7 +1671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="generators/huggingface/" class="md-nav__link">
+      <a href="../../generators/huggingface/" class="md-nav__link">
         
   
   
@@ -1678,7 +1727,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="inspectors/" class="md-nav__link ">
+            <a href="../../inspectors/" class="md-nav__link ">
               
   
   
@@ -1713,7 +1762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="inspectors/pytorch/" class="md-nav__link">
+      <a href="../../inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -1736,7 +1785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="inspectors/huggingface/" class="md-nav__link">
+      <a href="../../inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -1788,7 +1837,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="knowledge_nodes/" class="md-nav__link ">
+            <a href="../../knowledge_nodes/" class="md-nav__link ">
               
   
   
@@ -1851,7 +1900,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="knowledge_stores/" class="md-nav__link ">
+            <a href="../../knowledge_stores/" class="md-nav__link ">
               
   
   
@@ -1886,7 +1935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="../../knowledge_stores/in_memory/" class="md-nav__link">
         
   
   
@@ -1909,7 +1958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="knowledge_stores/mixins/" class="md-nav__link">
+      <a href="../../knowledge_stores/mixins/" class="md-nav__link">
         
   
   
@@ -1985,7 +2034,7 @@
   
   
     <li class="md-nav__item">
-      <a href="loss/pytorch/" class="md-nav__link">
+      <a href="../../loss/pytorch/" class="md-nav__link">
         
   
   
@@ -2037,7 +2086,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="rag_system/" class="md-nav__link ">
+            <a href="../../rag_system/" class="md-nav__link ">
               
   
   
@@ -2100,7 +2149,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="fl_tasks/" class="md-nav__link ">
+            <a href="../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -2135,7 +2184,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -2158,7 +2207,7 @@
   
   
     <li class="md-nav__item">
-      <a href="fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -2212,7 +2261,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="retrievers/" class="md-nav__link ">
+            <a href="../../retrievers/" class="md-nav__link ">
               
   
   
@@ -2247,7 +2296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="retrievers/huggingface/" class="md-nav__link">
+      <a href="../../retrievers/huggingface/" class="md-nav__link">
         
   
   
@@ -2301,7 +2350,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="tokenizers/" class="md-nav__link ">
+            <a href="../../tokenizers/" class="md-nav__link ">
               
   
   
@@ -2336,7 +2385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tokenizers/huggingface/" class="md-nav__link">
+      <a href="../../tokenizers/huggingface/" class="md-nav__link">
         
   
   
@@ -2374,7 +2423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../glossary/" class="md-nav__link">
+      <a href="../../../glossary/" class="md-nav__link">
         
   
   
@@ -2423,7 +2472,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../community/" class="md-nav__link ">
+            <a href="../../../community/" class="md-nav__link ">
               
   
   
@@ -2485,7 +2534,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../community/contributing/" class="md-nav__link ">
+            <a href="../../../community/contributing/" class="md-nav__link ">
               
   
   
@@ -2520,7 +2569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../community/contributing/ask_question/" class="md-nav__link">
+      <a href="../../../community/contributing/ask_question/" class="md-nav__link">
         
   
   
@@ -2543,7 +2592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../community/contributing/submit_issue/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_issue/" class="md-nav__link">
         
   
   
@@ -2566,7 +2615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../community/contributing/submit_pr/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_pr/" class="md-nav__link">
         
   
   
@@ -2597,7 +2646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../CHANGELOG.md" class="md-nav__link">
+      <a href="../../../../CHANGELOG.md" class="md-nav__link">
         
   
   
@@ -2665,7 +2714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../community/resources/pocket_references/" class="md-nav__link">
+      <a href="../../../community/resources/pocket_references/" class="md-nav__link">
         
   
   
@@ -2713,8 +2762,23 @@
   
   
   
-    
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.rag_trainer.RAGTrainerError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RAGTrainerError
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2733,7 +2797,84 @@
   
 
 
-<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
+  <h1>RAG Trainer</h1>
+
+<!-- markdownlint-disable-file MD041 -->
+
+
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.exceptions.rag_trainer.RAGTrainerError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">RAGTrainerError</span>
+
+
+<a href="#src.fed_rag.exceptions.rag_trainer.RAGTrainerError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            FedRAGError (src.fed_rag.exceptions.core.FedRAGError)" href="../#src.fed_rag.exceptions.core.FedRAGError">FedRAGError</a></code></p>
+
+
+        <p>Base errors for all rag trainer relevant exceptions.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/exceptions/rag_trainer.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">RAGTrainerError</span><span class="p">(</span><span class="n">FedRAGError</span><span class="p">):</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base errors for all rag trainer relevant exceptions.&quot;&quot;&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="k">pass</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -2771,7 +2912,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../examples/ra_dit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: RA-DIT">
+          <a href="../loss/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Loss">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2781,20 +2922,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                RA-DIT
+                Loss
               </div>
             </div>
           </a>
         
         
           
-          <a href="data_collators/huggingface/" class="md-footer__link md-footer__link--next" aria-label="Next: Huggingface">
+          <a href="../../finetuning_datasets/" class="md-footer__link md-footer__link--next" aria-label="Next: Finetuning Datasets">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Huggingface
+                Finetuning Datasets
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2812,7 +2953,7 @@
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="../assets/vector-logo.svg"
+        src="../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -2878,10 +3019,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>
