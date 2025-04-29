@@ -74,8 +74,10 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
 
     def __init__(
         self,
+        *args: Any,
         **kwargs: Any,
     ):
+        super().__init__(*args, **kwargs)
         if not _has_huggingface:
             msg = (
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
@@ -88,6 +90,14 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
         _validate_rag_system(self.rag_system)
 
         return self
+
+    def _prepare_generator_for_training(self, **kwargs: Any) -> None:
+        pass  # no-op
+
+    def _prepare_retriever_for_training(
+        self, freeze_context_encoder: bool = True, **kwargs: Any
+    ) -> None:
+        pass  # no-op
 
     def _train_retriever(self, **kwargs: Any) -> None:
         self._prepare_retriever_for_training()

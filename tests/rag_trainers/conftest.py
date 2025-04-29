@@ -3,10 +3,8 @@ from typing import Any
 import numpy as np
 import pytest
 import torch
-from datasets import Dataset as HFDataset
 from pydantic import PrivateAttr
 from torch.utils.data import DataLoader, Dataset
-from transformers import Trainer
 
 from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
@@ -223,21 +221,3 @@ def generator_trainer_fn() -> GeneratorTrainFn:
         return {"generator_loss": 0.42}
 
     return fn  # type: ignore
-
-
-# HuggingFace fixtures
-
-
-@pytest.fixture
-def train_dataset() -> HFDataset:
-    return HFDataset.from_dict(
-        {
-            "query": ["first query", "second query"],
-            "response": ["first response", "second response"],
-        }
-    )
-
-
-@pytest.fixture
-def retriever_trainer() -> Trainer:
-    return Trainer()
