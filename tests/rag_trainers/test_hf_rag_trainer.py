@@ -350,3 +350,31 @@ def test_get_federated_task_retriever_query_encoder(
     # assert
     assert isinstance(fl_task, HuggingFaceFLTask)
     assert module == mock_dual_retriever.query_encoder
+
+
+def test_get_federated_task_generator(
+    mock_rag_system: RAGSystem,
+    generator_trainer_fn: RetrieverTrainFn,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataset=train_dataset,
+        generator_train_fn=generator_trainer_fn,
+    )
+
+    # act
+    generator_trainer, _ = trainer._get_federated_trainer()
+    out = generator_trainer(MagicMock(), MagicMock(), MagicMock())
+    fl_task = trainer.get_federated_task()
+
+    # assert
+    assert out.loss == 0
+    assert isinstance(fl_task, HuggingFaceFLTask)
+    assert fl_task._trainer_spec == generator_trainer.__fl_task_trainer_config
