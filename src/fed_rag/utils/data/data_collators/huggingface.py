@@ -7,6 +7,7 @@ import torch
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from transformers.data.data_collator import DataCollatorMixin
@@ -22,32 +23,6 @@ except ModuleNotFoundError:
         pass
 
     DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
-
-
-def _validate_rag_system(rag_system: RAGSystem) -> None:
-    # Skip validation if environment variable is set
-    import os
-
-    if os.environ.get("FEDRAG_SKIP_VALIDATION") == "1":
-        return
-
-    from fed_rag.generators.huggingface import (
-        HFPeftModelGenerator,
-        HFPretrainedModelGenerator,
-    )
-    from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
-        HFSentenceTransformerRetriever,
-    )
-
-    if not isinstance(
-        rag_system.generator, HFPretrainedModelGenerator
-    ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
-        raise FedRAGError(
-            "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator"
-        )
-
-    if not isinstance(rag_system.retriever, HFSentenceTransformerRetriever):
-        raise FedRAGError("Retriever must be a HFSentenceTransformerRetriever")
 
 
 class DataCollatorForLSR(DataCollatorMixin):
