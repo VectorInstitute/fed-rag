@@ -1,11 +1,15 @@
 """HuggingFace RAG Trainer"""
 
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, assert_never
 
 from pydantic import model_validator
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import (
+    MissingExtraError,
+    UnspecifiedGeneratorTrainer,
+    UnspecifiedRetrieverTrainer,
+)
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
 
@@ -78,3 +82,37 @@ class HuggingFaceRAGTrainer(BaseRAGTrainer):
         _validate_rag_system(self.rag_system)
 
         return self
+
+    def _train_retriever(self, **kwargs: Any) -> None:
+        self._prepare_retriever_for_training()
+        if self.retriever_train_fn:
+            self.retriever_train_fn(
+                self.rag_system,
+                self.train_dataset,
+                self.retriever_training_args,
+            )
+        else:
+            raise UnspecifiedRetrieverTrainer(
+                "Attempted to perform retriever trainer with an unspecified trainer function."
+            )
+
+    def _train_generator(self, **kwargs: Any) -> None:
+        self._prepare_generator_for_training()
+        if self.generator_train_fn:
+            self.generator_train_fn(
+                self.rag_system,
+                self.train_dataset,
+                self.generator_training_args,
+            )
+        else:
+            raise UnspecifiedGeneratorTrainer(
+                "Attempted to perform generator trainer with an unspecified trainer function."
+            )
+
+    def train(self, **kwargs: Any) -> None:
+        if self.mode == "retriever":
+            self._train_retriever()
+        elif self.mode == "generator":
+            self._train_generator()
+        else:
+            assert_never(self.mode)  # pragma: no cover
