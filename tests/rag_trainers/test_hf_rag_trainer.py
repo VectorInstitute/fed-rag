@@ -1,5 +1,6 @@
 import re
 import sys
+from contextlib import nullcontext as does_not_raise
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -429,3 +430,43 @@ def test_get_federated_task_raises_unspecified_trainers(
         match="Cannot federate an unspecified retriever trainer function.",
     ):
         trainer.get_federated_task()
+
+
+def test_prepare_generator_for_training(
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    generator_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataset=train_dataset,
+        generator_training_args=generator_trainer_args,
+    )
+
+    with does_not_raise():
+        trainer._prepare_generator_for_training()
+
+
+def test_prepare_retriever_for_training(
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    generator_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataset=train_dataset,
+        generator_training_args=generator_trainer_args,
+    )
+
+    with does_not_raise():
+        trainer._prepare_retriever_for_training()
