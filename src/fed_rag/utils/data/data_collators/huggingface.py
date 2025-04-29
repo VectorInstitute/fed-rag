@@ -12,7 +12,7 @@ try:
     from transformers.data.data_collator import DataCollatorMixin
 
     _has_huggingface = True
-except (ModuleNotFoundError, MissingExtraError):
+except ModuleNotFoundError:
     _has_huggingface = False
 
     # Create a dummy class with a different name to avoid the redefinition

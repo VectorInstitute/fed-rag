@@ -4,6 +4,9 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any
 
+from pydantic import BaseModel, ConfigDict, field_validator
+
+from fed_rag.exceptions import UnsupportedTrainerMode
 from fed_rag.types.rag_system import RAGSystem
 
 from .fl_task import BaseFLTask
@@ -15,14 +18,26 @@ class RAGTrainMode(str, Enum):
     INTERLEAVED = "interleaved"
 
 
-class BaseRAGTrainer(ABC):
+class BaseRAGTrainer(BaseModel, ABC):
     """Base RAG Trainer Class."""
 
-    def __init__(
-        self, rag_system: RAGSystem, mode: RAGTrainMode, **kwargs: Any
-    ):
-        self.rag_system = rag_system
-        self.mode = mode
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    rag_system: RAGSystem
+    mode: RAGTrainMode
+
+    @field_validator("mode", mode="before")
+    @classmethod
+    def validate_mode(cls, v: str) -> str:
+        try:
+            # Try to convert to enum
+            mode = RAGTrainMode(v)
+            return mode
+        except ValueError:
+            # Catch the ValueError from enum conversion and raise your custom error
+            raise UnsupportedTrainerMode(
+                f"Unsupported RAG train mode: {v}. "
+                f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
+            )
 
     @abstractmethod
     def _prepare_retriever_for_training(

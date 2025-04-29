@@ -9,6 +9,7 @@ from fed_rag.exceptions import (
     MissingNetParam,
 )
 from fed_rag.inspectors.common import TesterSignatureSpec
+from fed_rag.inspectors.huggingface.utils import get_type_name
 from fed_rag.types import TestResult
 
 
@@ -31,10 +32,15 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
         if name in ("self", "cls"):
             continue
 
-        if type_name := getattr(t.annotation, "__name__", None):
+        if type_name := get_type_name(t):
             if (
                 type_name
-                in ["PreTrainedModel", "SentenceTransformer", "PeftModel"]
+                in [
+                    "PreTrainedModel",
+                    "SentenceTransformer",
+                    "PeftModel",
+                    "HFModelType",
+                ]
                 and net_param is None
             ):
                 net_param = name
