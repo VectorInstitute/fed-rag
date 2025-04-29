@@ -35,10 +35,10 @@ GeneratorTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
 
 class PyTorchRAGTrainer(BaseRAGTrainer):
     train_dataloader: DataLoader
-    retriever_training_args: "TrainingArgs" = Field(
+    retriever_training_args: TrainingArgs = Field(
         default_factory=lambda: TrainingArgs()
     )
-    generator_training_args: "TrainingArgs" = Field(
+    generator_training_args: TrainingArgs = Field(
         default_factory=lambda: TrainingArgs()
     )
     retriever_train_fn: Optional[RetrieverTrainFn] = None

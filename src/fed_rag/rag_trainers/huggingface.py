@@ -1,15 +1,17 @@
 """HuggingFace RAG Trainer"""
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
+from pydantic import model_validator
+
+from fed_rag.base.rag_trainer import BaseRAGTrainer
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
 
 try:
     from datasets import Dataset
-    from transformers import Trainer, TrainingArguments
+    from transformers import TrainingArguments
 
     _has_huggingface = True
 except ModuleNotFoundError:
@@ -46,18 +48,22 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
         raise FedRAGError("Retriever must be a HFSentenceTransformerRetriever")
 
 
-class HFRAGTrainer(BaseRAGTrainer):
+# Define trainer function type hints
+RetrieverTrainFn = Callable[[RAGSystem, Dataset, TrainingArguments], Any]
+GeneratorTrainFn = Callable[[RAGSystem, Dataset, TrainingArguments], Any]
+
+
+class HuggingFaceRAGTrainer(BaseRAGTrainer):
     """HuggingFace RAG Trainer"""
+
+    train_dataset: Dataset
+    retriever_training_args: TrainingArguments
+    generator_training_args: TrainingArguments
+    retriever_train_fn: Optional[RetrieverTrainFn] = None
+    generator_train_fn: Optional[GeneratorTrainFn] = None
 
     def __init__(
         self,
-        rag_system: RAGSystem,
-        mode: RAGTrainMode,
-        train_dataset: "Dataset",
-        retriever_trainer: Optional["Trainer"] = None,
-        retriever_training_args: Optional["TrainingArguments"] = None,
-        generator_trainer: Optional["Trainer"] = None,
-        generator_training_args: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
         if not _has_huggingface:
@@ -67,16 +73,8 @@ class HFRAGTrainer(BaseRAGTrainer):
             )
             raise MissingExtraError(msg)
 
-        Trainer.__init__(self, **kwargs)  # Pass appropriate params to Trainer
-        BaseRAGTrainer.__init__(
-            self, rag_system=rag_system, mode=mode, **kwargs
-        )
+    @model_validator(mode="after")
+    def validate_training_args(self) -> "HuggingFaceRAGTrainer":
+        _validate_rag_system(self.rag_system)
 
-        _validate_rag_system(rag_system)
-
-        # Custom training functions
-        self.retriever_training_args = retriever_training_args
-        self.retriever_trainer = retriever_trainer
-        self.generator_training_args = generator_training_args
-        self.generator_trainer = generator_trainer
-        self.train_dataset = train_dataset
+        return self
