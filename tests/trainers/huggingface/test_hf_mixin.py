@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 from datasets import Dataset
+from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
 from fed_rag.base.trainer import BaseTrainer
@@ -15,8 +16,11 @@ from .conftest import TestHFTrainer
 
 
 def test_hf_trainer_init(
-    train_dataset: Dataset, hf_rag_system: RAGSystem
+    train_dataset: Dataset, hf_rag_system: RAGSystem, monkeypatch: MonkeyPatch
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     # arrange
     training_args = TrainingArguments()
     trainer = TestHFTrainer(
@@ -35,8 +39,11 @@ def test_hf_trainer_init(
 
 
 def test_huggingface_extra_missing(
-    train_dataset: Dataset, hf_rag_system: RAGSystem
+    train_dataset: Dataset, hf_rag_system: RAGSystem, monkeypatch: MonkeyPatch
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     modules = {
         "transformers": None,
     }

@@ -10,9 +10,10 @@ from typing import (
     runtime_checkable,
 )
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from fed_rag.exceptions import MissingExtraError
+from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from datasets import Dataset
@@ -59,3 +60,10 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
             )
             raise MissingExtraError(msg)
         super().__init__(*args, **kwargs)
+
+    @model_validator(mode="after")
+    def validate_training_args(self) -> "HuggingFaceTrainerMixin":
+        if hasattr(self, "rag_system"):
+            _validate_rag_system(self.rag_system)
+
+        return self
