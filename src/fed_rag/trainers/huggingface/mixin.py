@@ -10,7 +10,7 @@ from typing import (
     runtime_checkable,
 )
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from fed_rag.exceptions import MissingExtraError
 
@@ -41,6 +41,9 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
     """HuggingFace Trainer Mixin."""
 
     model: Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
     train_dataset: "Dataset"
     training_arguments: Optional["TrainingArguments"] = None
 
