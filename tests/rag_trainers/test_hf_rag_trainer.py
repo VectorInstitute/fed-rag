@@ -1,7 +1,7 @@
 import re
 import sys
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from datasets import Dataset
@@ -9,7 +9,12 @@ from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
-from fed_rag.exceptions import FedRAGError, MissingExtraError
+from fed_rag.exceptions import (
+    FedRAGError,
+    MissingExtraError,
+    UnspecifiedGeneratorTrainer,
+    UnspecifiedRetrieverTrainer,
+)
 from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.rag_trainers.huggingface import (
     GeneratorTrainFn,
@@ -178,3 +183,111 @@ def test_invalid_rag_system_due_to_retriever(
             retriever_train_fn=retriever_trainer_fn,
             generator_train_fn=generator_trainer_fn,
         )
+
+
+@patch.object(HuggingFaceRAGTrainer, "_prepare_retriever_for_training")
+def test_train_retriever(
+    mock_prepare_retriever_for_training: MagicMock,
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    mock_retriever_trainer_fn = MagicMock()
+    retriever_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataset=train_dataset,
+        retriever_train_fn=mock_retriever_trainer_fn,
+        retriever_training_args=retriever_trainer_args,
+    )
+
+    trainer.train()
+
+    mock_prepare_retriever_for_training.assert_called_once()
+    mock_retriever_trainer_fn.assert_called_once_with(
+        mock_rag_system, train_dataset, retriever_trainer_args
+    )
+
+
+@patch.object(HuggingFaceRAGTrainer, "_prepare_retriever_for_training")
+def test_train_retriever_raises_unspecified_retriever_trainer_error(
+    mock_prepare_retriever_for_training: MagicMock,
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    retriever_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataset=train_dataset,
+        retriever_training_args=retriever_trainer_args,
+    )
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Attempted to perform retriever trainer with an unspecified trainer function.",
+    ):
+        trainer.train()
+        mock_prepare_retriever_for_training.assert_called_once()
+
+
+@patch.object(HuggingFaceRAGTrainer, "_prepare_generator_for_training")
+def test_train_generator(
+    mock_prepare_generator_for_training: MagicMock,
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    mock_generator_trainer_fn = MagicMock()
+    generator_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataset=train_dataset,
+        generator_train_fn=mock_generator_trainer_fn,
+        generator_training_args=generator_trainer_args,
+    )
+
+    trainer.train()
+
+    mock_prepare_generator_for_training.assert_called_once()
+    mock_generator_trainer_fn.assert_called_once_with(
+        mock_rag_system, train_dataset, generator_trainer_args
+    )
+
+
+@patch.object(HuggingFaceRAGTrainer, "_prepare_generator_for_training")
+def test_train_generator_raises_unspecified_generator_trainer_error(
+    mock_prepare_generator_for_training: MagicMock,
+    mock_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    generator_trainer_args = TrainingArguments()
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="generator",
+        train_dataset=train_dataset,
+        generator_training_args=generator_trainer_args,
+    )
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Attempted to perform generator trainer with an unspecified trainer function.",
+    ):
+        trainer.train()
+        mock_prepare_generator_for_training.assert_called_once()
