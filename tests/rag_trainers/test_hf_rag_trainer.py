@@ -9,6 +9,7 @@ from pytest import MonkeyPatch
 from transformers import TrainingArguments
 
 from fed_rag.base.rag_trainer import BaseRAGTrainer, RAGTrainMode
+from fed_rag.base.retriever import BaseRetriever
 from fed_rag.exceptions import (
     FedRAGError,
     MissingExtraError,
@@ -320,3 +321,32 @@ def test_get_federated_task_retriever(
     assert out.loss == 0
     assert isinstance(fl_task, HuggingFaceFLTask)
     assert fl_task._trainer_spec == retriever_trainer.__fl_task_trainer_config
+
+
+def test_get_federated_task_retriever_query_encoder(
+    mock_rag_system: RAGSystem,
+    retriever_trainer_fn: RetrieverTrainFn,
+    train_dataset: Dataset,
+    mock_dual_retriever: BaseRetriever,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange
+    trainer = HuggingFaceRAGTrainer(
+        rag_system=mock_rag_system,
+        mode="retriever",
+        train_dataset=train_dataset,
+        retriever_train_fn=retriever_trainer_fn,
+    )
+    mock_rag_system.retriever = mock_dual_retriever
+    trainer.rag_system = mock_rag_system
+
+    # act
+    fl_task = trainer.get_federated_task()
+    _, module = trainer._get_federated_trainer()
+
+    # assert
+    assert isinstance(fl_task, HuggingFaceFLTask)
+    assert module == mock_dual_retriever.query_encoder
