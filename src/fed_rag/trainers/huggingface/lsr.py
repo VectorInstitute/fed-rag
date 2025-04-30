@@ -18,6 +18,14 @@ try:
 except ModuleNotFoundError:
     _has_huggingface = False
 
+    # Create a dummy class with a different name to avoid the redefinition
+    class _SentenceTransformerTrainer:
+        """Dummy placeholder when sentence transformers is not available."""
+
+        pass
+
+    SentenceTransformerTrainer = _SentenceTransformerTrainer  # type: ignore
+
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
     from sentence_transformers import (

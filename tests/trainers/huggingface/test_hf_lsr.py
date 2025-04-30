@@ -127,3 +127,38 @@ def test_evaluate(
 
     with pytest.raises(NotImplementedError):
         trainer.evaluate()
+
+
+# test LSRSentenceTransformerTrainer
+def test_lsr_sentence_transformer_training_missing_extra_error(
+    hf_rag_system: RAGSystem,
+) -> None:
+    modules = {
+        "sentence_transformers": None,
+    }
+    modules_to_import = [
+        "fed_rag.trainers.huggingface.lsr",
+    ]
+    original_modules = [sys.modules.pop(m, None) for m in modules_to_import]
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`LSRSentenceTransformerTrainer` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            MissingExtraError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.trainers.huggingface.lsr import (
+                LSRSentenceTransformerTrainer,
+            )
+
+            LSRSentenceTransformerTrainer(
+                model=hf_rag_system.retriever.encoder
+            )
+
+    # restore module so to not affect other tests
+    for ix, original_module in enumerate(original_modules):
+        if original_module:
+            sys.modules[modules_to_import[ix]] = original_module
