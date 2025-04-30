@@ -10,6 +10,7 @@ from torch.testing import assert_close
 from transformers.trainer_utils import TrainOutput
 
 from fed_rag.exceptions import (
+    InvalidDataCollatorError,
     InvalidLossError,
     MissingExtraError,
     MissingInputTensor,
@@ -20,6 +21,7 @@ from fed_rag.trainers.huggingface.lsr import (
     LSRSentenceTransformerTrainer,
 )
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 
 def test_init(
@@ -143,7 +145,11 @@ def test_evaluate(
 # test LSRSentenceTransformerTrainer
 def test_lsr_sentence_transformer_training_missing_extra_error(
     hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     modules = {
         "sentence_transformers": None,
     }
@@ -167,6 +173,7 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
 
             LSRSentenceTransformerTrainer(
                 model=hf_rag_system.retriever.encoder,
+                data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
             )
 
     # restore module so to not affect other tests
@@ -177,14 +184,36 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
 
 def test_lsr_sentence_transformer_raises_invalid_loss_error(
     hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     with pytest.raises(
         InvalidLossError,
         match="`LSRSentenceTransformerTrainer` must use ~fed_rag.loss.LSRLoss`.",
     ):
         LSRSentenceTransformerTrainer(
             model=hf_rag_system.retriever.encoder,
+            data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
             loss="loss",
+        )
+
+
+def test_lsr_sentence_transformer_raises_invalid_collator_error(
+    hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    with pytest.raises(
+        InvalidDataCollatorError,
+        match="`LSRSentenceTransformerTrainer` must use ~fed_rag.data_collators.DataCollatorForLSR`.",
+    ):
+        LSRSentenceTransformerTrainer(
+            model=hf_rag_system.retriever.encoder,
+            data_collator="DataCollatorForLSR",
         )
 
 
@@ -192,9 +221,14 @@ def test_lsr_sentence_transformer_raises_invalid_loss_error(
 def test_lsr_sentence_transformer_compute_loss(
     mock_collect_scores: MagicMock,
     hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     hf_trainer = LSRSentenceTransformerTrainer(
         model=hf_rag_system.retriever.encoder,
+        data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
     )
     mock_loss = MagicMock()
     hf_trainer.loss = mock_loss
@@ -212,9 +246,14 @@ def test_lsr_sentence_transformer_compute_loss(
 
 def test_lsr_sentence_transformer_collect_scores(
     hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     hf_trainer = LSRSentenceTransformerTrainer(
         model=hf_rag_system.retriever.encoder,
+        data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
     )
 
     ret, lm = hf_trainer.collect_scores(
@@ -227,9 +266,14 @@ def test_lsr_sentence_transformer_collect_scores(
 
 def test_lsr_sentence_transformer_collect_scores_raises_missing_input_tensor_error(
     hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
 ) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
     hf_trainer = LSRSentenceTransformerTrainer(
         model=hf_rag_system.retriever.encoder,
+        data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
     )
 
     with pytest.raises(

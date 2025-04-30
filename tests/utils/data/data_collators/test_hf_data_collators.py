@@ -115,11 +115,11 @@ def test_init(
     mock_rag_system.retriever = retriever
 
     collator = DataCollatorForLSR(
-        rag_system=mock_rag_system, prompt_template=""
+        rag_system=mock_rag_system, prompt_template="{query} and {context}"
     )
 
     assert collator.rag_system == mock_rag_system
-    assert collator.prompt_template == ""
+    assert collator.prompt_template == "{query} and {context}"
     assert collator.default_return_tensors == "pt"
 
 
@@ -178,7 +178,7 @@ def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
                     (),
                     {
                         "prompt": "mock query node 1",
-                        "target": "\nmock response\n</response>",
+                        "target": "\n<response>\nmock response\n</response>\n",
                     },
                 )
             ),
@@ -187,7 +187,7 @@ def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
                     (),
                     {
                         "prompt": "mock query node 2",
-                        "target": "\nmock response\n</response>",
+                        "target": "\n<response>\nmock response\n</response>\n",
                     },
                 )
             ),
@@ -196,7 +196,7 @@ def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
                     (),
                     {
                         "prompt": "mock query node 3",
-                        "target": "\nmock response\n</response>",
+                        "target": "\n<response>\nmock response\n</response>\n",
                     },
                 )
             ),

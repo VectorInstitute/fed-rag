@@ -7,6 +7,7 @@ from pydantic import PrivateAttr, field_validator, model_validator
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import (
+    InvalidDataCollatorError,
     InvalidLossError,
     MissingExtraError,
     MissingInputTensor,
@@ -16,6 +17,7 @@ from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
+from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 try:
     from sentence_transformers import SentenceTransformerTrainer
@@ -44,6 +46,7 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
     def __init__(
         self,
         *args: Any,
+        data_collator: DataCollatorForLSR,
         loss: Optional[LSRLoss] = None,
         **kwargs: Any,
     ):
@@ -63,7 +66,14 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
                     "`LSRSentenceTransformerTrainer` must use ~fed_rag.loss.LSRLoss`."
                 )
 
-        super().__init__(*args, loss=loss, **kwargs)
+        if not isinstance(data_collator, DataCollatorForLSR):
+            raise InvalidDataCollatorError(
+                "`LSRSentenceTransformerTrainer` must use ~fed_rag.data_collators.DataCollatorForLSR`."
+            )
+
+        super().__init__(
+            *args, loss=loss, data_collator=data_collator, **kwargs
+        )
 
     def collect_scores(
         self, inputs: dict[str, torch.Tensor | Any]
@@ -141,6 +151,7 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
         self._hf_trainer = LSRSentenceTransformerTrainer(
             model=self.model,
             args=self.training_arguments,
+            data_collator=DataCollatorForLSR(rag_system=self.rag_system),
         )
 
         return self
