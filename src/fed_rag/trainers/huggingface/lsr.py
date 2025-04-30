@@ -51,9 +51,8 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         return_outputs: bool = False,
         num_items_in_batch: Any | None = None,
     ) -> torch.Tensor | tuple[torch.Tensor, dict[str, Any]]:
-        return super().compute_loss(
-            model, inputs, return_outputs, num_items_in_batch
-        )
+        # TODO: implement this
+        raise NotImplementedError
 
 
 class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):

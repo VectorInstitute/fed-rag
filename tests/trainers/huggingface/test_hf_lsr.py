@@ -166,3 +166,17 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
     for ix, original_module in enumerate(original_modules):
         if original_module:
             sys.modules[modules_to_import[ix]] = original_module
+
+
+def test_lsr_sentence_transformer_compute_loss(
+    hf_rag_system: RAGSystem,
+) -> None:
+    hf_trainer = LSRSentenceTransformerTrainer(
+        model=hf_rag_system.retriever.encoder
+    )
+
+    with pytest.raises(NotImplementedError):
+        # act
+        hf_trainer.compute_loss(
+            model=hf_trainer.model, inputs={}, return_outputs=True
+        )
