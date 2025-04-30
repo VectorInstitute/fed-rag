@@ -10,6 +10,7 @@ from fed_rag.exceptions import MissingExtraError, TrainerError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
+from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from sentence_transformers import SentenceTransformerTrainer
@@ -35,7 +36,13 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
-    def __init__(self, *args: Any, **kwargs: Any):
+    def __init__(
+        self,
+        *args: Any,
+        rag_system: RAGSystem,
+        validate_rag_system: bool = False,
+        **kwargs: Any,
+    ):
         if not _has_huggingface:
             msg = (
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
@@ -43,6 +50,10 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
             )
             raise MissingExtraError(msg)
         super().__init__(*args, **kwargs)
+
+        if validate_rag_system:
+            _validate_rag_system(rag_system)
+        self.rag_system = rag_system
 
     def compute_loss(
         self,
@@ -81,7 +92,10 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
     @model_validator(mode="after")
     def set_hf_trainer(self) -> "HuggingFaceLSRTrainer":
         self._hf_trainer = LSRSentenceTransformerTrainer(
-            self.model, args=self.training_arguments
+            model=self.model,
+            args=self.training_arguments,
+            rag_system=self.rag_system,
+            validate_rag_system=False,  # already validated in the Mixin
         )
 
         return self
