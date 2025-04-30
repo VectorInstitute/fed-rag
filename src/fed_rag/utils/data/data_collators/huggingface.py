@@ -25,10 +25,37 @@ except ModuleNotFoundError:
     DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
 
 
+DEFAULT_PROMPT_TEMPLATE = """
+You are a helpful assistant. Given the user's question, provide a succinct
+and accurate response. If context is provided, use it in your answer if it helps
+you to create the most accurate response.
+
+<question>
+{query}
+</question>
+
+<context>
+{context}
+</context>
+
+"""
+
+DEFAULT_TARGET_TEMPLATE = """
+<response>
+{response}
+</response>
+"""
+
+
 class DataCollatorForLSR(DataCollatorMixin):
     """A HuggingFace DataCollator for LM-Supervised Retrieval."""
 
-    def __init__(self, rag_system: RAGSystem, prompt_template: str):
+    def __init__(
+        self,
+        rag_system: RAGSystem,
+        prompt_template: str | None = None,
+        target_template: str | None = None,
+    ):
         if not _has_huggingface:
             msg = (
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
@@ -39,9 +66,14 @@ class DataCollatorForLSR(DataCollatorMixin):
         _validate_rag_system(rag_system)
 
         super().__init__()
+
+        prompt_template = prompt_template or DEFAULT_PROMPT_TEMPLATE
+        target_template = target_template or DEFAULT_TARGET_TEMPLATE
+
         self.default_return_tensors = "pt"
         self.rag_system = rag_system
         self.prompt_template = prompt_template
+        self.target_template = target_template
 
     def __call__(
         self, features: list[dict[str, Any]], return_tensors: str | None = None
@@ -82,7 +114,7 @@ class DataCollatorForLSR(DataCollatorMixin):
                     query=query,
                     context=chunk.node.get_content()["text_content"],
                 )
-                target = f"\n{response}\n</response>"
+                target = self.target_template.format(response=response)
                 lm_score = (
                     self.rag_system.generator.compute_target_sequence_proba(
                         prompt=prompt, target=target

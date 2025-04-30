@@ -11,5 +11,9 @@ class InvalidLossError(TrainerError):
     pass
 
 
+class InvalidDataCollatorError(TrainerError):
+    pass
+
+
 class MissingInputTensor(TrainerError):
     pass
