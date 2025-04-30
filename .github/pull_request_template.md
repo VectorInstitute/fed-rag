@@ -13,12 +13,15 @@ What does this PR do? Please provide a brief summary of the changes introduced.
 - [ ] Code quality / linting
 - [ ] Other (please describe):
 
+## Description
+Any information reviewers should be aware of:
+
 ## Testing
 
 Describe how you tested your changes. Include the steps to reproduce, commands run, and any relevant outputs.
 
 - [ ] Unit tests added or updated
-- [ ] All tests pass locally (`pytest`)
+- [ ] All tests pass locally (`make test`)
 - [ ] Code coverage maintained or improved
 
 ## Checklist
@@ -26,7 +29,7 @@ Describe how you tested your changes. Include the steps to reproduce, commands r
 Before submitting your PR, please check off the following:
 
 - [ ] My code follows the existing style and conventions
-- [ ] I’ve run linting (`ruff` or `pre-commit run --all-files`)
+- [ ] I’ve run linting (`make lint`)
 - [ ] I’ve added/updated relevant documentation
 - [ ] I’ve added/updated tests as needed
 - [ ] I’ve verified integration with existing tools (HuggingFace, LlamaIndex, LangChain, etc. if applicable)
@@ -38,8 +41,3 @@ If this PR addresses or relates to existing issues or pull requests, link them h
 
 - Closes #
 - Related to #
-
-## Additional Context
-Any additional information reviewers should be aware of:
-
-<!-- Add any other context about the PR here -->
