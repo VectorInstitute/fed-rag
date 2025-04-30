@@ -10,6 +10,7 @@ from torch.testing import assert_close
 from transformers.trainer_utils import TrainOutput
 
 from fed_rag.exceptions import (
+    InvalidDataCollatorError,
     InvalidLossError,
     MissingExtraError,
     MissingInputTensor,
@@ -196,6 +197,23 @@ def test_lsr_sentence_transformer_raises_invalid_loss_error(
             model=hf_rag_system.retriever.encoder,
             data_collator=DataCollatorForLSR(rag_system=hf_rag_system),
             loss="loss",
+        )
+
+
+def test_lsr_sentence_transformer_raises_invalid_collator_error(
+    hf_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    with pytest.raises(
+        InvalidDataCollatorError,
+        match="`LSRSentenceTransformerTrainer` must use ~fed_rag.data_collators.DataCollatorForLSR`.",
+    ):
+        LSRSentenceTransformerTrainer(
+            model=hf_rag_system.retriever.encoder,
+            data_collator="DataCollatorForLSR",
         )
 
 
