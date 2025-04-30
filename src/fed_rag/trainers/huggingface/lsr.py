@@ -6,7 +6,11 @@ import torch
 from pydantic import PrivateAttr, field_validator, model_validator
 
 from fed_rag.base.trainer import BaseTrainer
-from fed_rag.exceptions import MissingExtraError, TrainerError
+from fed_rag.exceptions import (
+    InvalidLossError,
+    MissingExtraError,
+    TrainerError,
+)
 from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
@@ -52,6 +56,11 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         # set loss
         if loss is None:
             loss = LSRLoss()
+        else:
+            if not isinstance(loss, LSRLoss):
+                raise InvalidLossError(
+                    "`LSRSentenceTransformerTrainer` must use ~fed_rag.loss.LSRLoss`."
+                )
 
         super().__init__(*args, loss=loss, **kwargs)
 

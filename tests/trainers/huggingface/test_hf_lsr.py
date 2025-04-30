@@ -7,7 +7,11 @@ from datasets import Dataset
 from pytest import MonkeyPatch
 from transformers.trainer_utils import TrainOutput
 
-from fed_rag.exceptions import MissingExtraError, TrainerError
+from fed_rag.exceptions import (
+    InvalidLossError,
+    MissingExtraError,
+    TrainerError,
+)
 from fed_rag.trainers.huggingface.lsr import (
     HuggingFaceLSRTrainer,
     LSRSentenceTransformerTrainer,
@@ -168,16 +172,29 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
             sys.modules[modules_to_import[ix]] = original_module
 
 
+def test_lsr_sentence_transformer_raises_invalid_loss_error(
+    hf_rag_system: RAGSystem,
+) -> None:
+    with pytest.raises(
+        InvalidLossError,
+        match="`LSRSentenceTransformerTrainer` must use ~fed_rag.loss.LSRLoss`.",
+    ):
+        LSRSentenceTransformerTrainer(
+            model=hf_rag_system.retriever.encoder,
+            loss="loss",
+        )
+
+
 @patch.object(LSRSentenceTransformerTrainer, "collect_scores")
 def test_lsr_sentence_transformer_compute_loss(
     mock_collect_scores: MagicMock,
     hf_rag_system: RAGSystem,
 ) -> None:
-    mock_loss = MagicMock()
     hf_trainer = LSRSentenceTransformerTrainer(
         model=hf_rag_system.retriever.encoder,
-        loss=mock_loss,
     )
+    mock_loss = MagicMock()
+    hf_trainer.loss = mock_loss
     mock_collect_scores.return_value = 0, 0
 
     # act
