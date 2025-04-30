@@ -8,7 +8,10 @@ from pytest import MonkeyPatch
 from transformers.trainer_utils import TrainOutput
 
 from fed_rag.exceptions import MissingExtraError, TrainerError
-from fed_rag.trainers.huggingface.lsr import HuggingFaceLSRTrainer
+from fed_rag.trainers.huggingface.lsr import (
+    HuggingFaceLSRTrainer,
+    LSRSentenceTransformerTrainer,
+)
 from fed_rag.types.rag_system import RAGSystem
 
 
@@ -27,6 +30,7 @@ def test_init(
     assert trainer.train_dataset == train_dataset
     assert trainer.model == hf_rag_system.retriever.encoder
     assert trainer.rag_system == hf_rag_system
+    assert isinstance(trainer.hf_trainer_obj, LSRSentenceTransformerTrainer)
 
 
 def test_invalid_retriever_raises_error(
