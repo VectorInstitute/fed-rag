@@ -109,3 +109,21 @@ def test_train(
 
     mock_hf_trainer.train.assert_called_once()
     assert out.loss == 0.42
+
+
+def test_evaluate(
+    hf_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    trainer = HuggingFaceLSRTrainer(
+        model=hf_rag_system.retriever.encoder,
+        rag_system=hf_rag_system,
+        train_dataset=train_dataset,
+    )
+
+    with pytest.raises(NotImplementedError):
+        trainer.evaluate()
