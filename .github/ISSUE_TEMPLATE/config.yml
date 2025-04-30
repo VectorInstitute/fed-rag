@@ -1,0 +1,31 @@
+blank_issues_enabled: false
+contact_links:
+  - name: General Questions or Support
+    url: https://github.com/VectorInstitute/fed-rag/discussions
+    about: Please ask questions, request help, or start a conversation here.
+
+issue_templates:
+  - name: Bug Report
+    description: Report an unexpected error or broken behavior in FedRAG.
+    labels: ["bug"]
+    file: bug_report.md
+
+  - name: Feature Request
+    description: Suggest a new feature or improvement for FedRAG.
+    labels: ["enhancement"]
+    file: feature_request.md
+
+  - name: Documentation Improvement
+    description: Propose improvements or updates to the FedRAG documentation.
+    labels: ["documentation"]
+    file: documentation_improvement.md
+
+  - name: Integration Request
+    description: Request support for new frameworks or tools with FedRAG.
+    labels: ["integration"]
+    file: integration_request.md
+
+  - name: General Question
+    description: Ask a question about using or developing with FedRAG.
+    labels: ["question"]
+    file: question.md
