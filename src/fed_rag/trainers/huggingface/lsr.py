@@ -7,10 +7,10 @@ from pydantic import PrivateAttr, field_validator, model_validator
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import MissingExtraError, TrainerError
+from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
-from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from sentence_transformers import SentenceTransformerTrainer
@@ -39,8 +39,7 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
     def __init__(
         self,
         *args: Any,
-        rag_system: RAGSystem,
-        validate_rag_system: bool = False,
+        loss: Optional[LSRLoss] = None,
         **kwargs: Any,
     ):
         if not _has_huggingface:
@@ -49,11 +48,19 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
             raise MissingExtraError(msg)
-        super().__init__(*args, **kwargs)
 
-        if validate_rag_system:
-            _validate_rag_system(rag_system)
-        self.rag_system = rag_system
+        # set loss
+        if loss is None:
+            loss = LSRLoss()
+
+        super().__init__(*args, loss=loss, **kwargs)
+
+    def collect_scores(
+        self, inputs: dict[str, torch.Tensor | Any]
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        retrieval_scores = inputs.get("retrieval_scores")
+        lm_scores = inputs.get("lm_scores")
+        return retrieval_scores, lm_scores
 
     def compute_loss(
         self,
@@ -62,8 +69,27 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         return_outputs: bool = False,
         num_items_in_batch: Any | None = None,
     ) -> torch.Tensor | tuple[torch.Tensor, dict[str, Any]]:
-        # TODO: implement this
-        raise NotImplementedError
+        """Compute LSR loss.
+
+        NOTE: the forward pass of the model is taken care of in the DataCollatorForLSR.
+
+        Args:
+            model (SentenceTransformer): _description_
+            inputs (dict[str, torch.Tensor  |  Any]): _description_
+            return_outputs (bool, optional): _description_. Defaults to False.
+            num_items_in_batch (Any | None, optional): _description_. Defaults to None.
+
+        Raises:
+            NotImplementedError: _description_
+
+        Returns:
+            torch.Tensor | tuple[torch.Tensor, dict[str, Any]]: _description_
+        """
+        retrieval_scores, lm_scores = self.collect_scores(inputs)
+        loss = self.loss(retrieval_scores, lm_scores)
+
+        # inputs are actually the outputs of RAGSystem's "forward" pass
+        return (loss, inputs) if return_outputs else loss
 
 
 class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
@@ -94,8 +120,6 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
         self._hf_trainer = LSRSentenceTransformerTrainer(
             model=self.model,
             args=self.training_arguments,
-            rag_system=self.rag_system,
-            validate_rag_system=False,  # already validated in the Mixin
         )
 
         return self

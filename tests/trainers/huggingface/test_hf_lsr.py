@@ -125,8 +125,8 @@ def test_evaluate(
 
     trainer = HuggingFaceLSRTrainer(
         model=hf_rag_system.retriever.encoder,
-        rag_system=hf_rag_system,
         train_dataset=train_dataset,
+        rag_system=hf_rag_system,
     )
 
     with pytest.raises(NotImplementedError):
@@ -159,7 +159,7 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
             )
 
             LSRSentenceTransformerTrainer(
-                model=hf_rag_system.retriever.encoder, rag_system=hf_rag_system
+                model=hf_rag_system.retriever.encoder,
             )
 
     # restore module so to not affect other tests
@@ -168,15 +168,23 @@ def test_lsr_sentence_transformer_training_missing_extra_error(
             sys.modules[modules_to_import[ix]] = original_module
 
 
+@patch.object(LSRSentenceTransformerTrainer, "collect_scores")
 def test_lsr_sentence_transformer_compute_loss(
+    mock_collect_scores: MagicMock,
     hf_rag_system: RAGSystem,
 ) -> None:
+    mock_loss = MagicMock()
     hf_trainer = LSRSentenceTransformerTrainer(
-        model=hf_rag_system.retriever.encoder, rag_system=hf_rag_system
+        model=hf_rag_system.retriever.encoder,
+        loss=mock_loss,
+    )
+    mock_collect_scores.return_value = 0, 0
+
+    # act
+    hf_trainer.compute_loss(
+        model=hf_trainer.model, inputs={}, return_outputs=True
     )
 
-    with pytest.raises(NotImplementedError):
-        # act
-        hf_trainer.compute_loss(
-            model=hf_trainer.model, inputs={}, return_outputs=True
-        )
+    # assert
+    mock_collect_scores.assert_called_once()
+    mock_loss.assert_called_once()
