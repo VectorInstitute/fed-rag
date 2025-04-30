@@ -9,3 +9,7 @@ class TrainerError(FedRAGError):
 
 class InvalidLossError(TrainerError):
     pass
+
+
+class MissingInputTensor(TrainerError):
+    pass

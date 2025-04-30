@@ -9,6 +9,7 @@ from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import (
     InvalidLossError,
     MissingExtraError,
+    MissingInputTensor,
     TrainerError,
 )
 from fed_rag.loss.pytorch.lsr import LSRLoss
@@ -67,8 +68,19 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
     def collect_scores(
         self, inputs: dict[str, torch.Tensor | Any]
     ) -> tuple[torch.Tensor, torch.Tensor]:
+        if "retrieval_scores" not in inputs:
+            raise MissingInputTensor(
+                "Collated `inputs` are missing key `retrieval_scores`"
+            )
+
+        if "lm_scores" not in inputs:
+            raise MissingInputTensor(
+                "Collated `inputs` are missing key `lm_scores`"
+            )
+
         retrieval_scores = inputs.get("retrieval_scores")
         lm_scores = inputs.get("lm_scores")
+
         return retrieval_scores, lm_scores
 
     def compute_loss(

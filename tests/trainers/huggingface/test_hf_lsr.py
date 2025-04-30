@@ -3,13 +3,16 @@ import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
+import torch
 from datasets import Dataset
 from pytest import MonkeyPatch
+from torch.testing import assert_close
 from transformers.trainer_utils import TrainOutput
 
 from fed_rag.exceptions import (
     InvalidLossError,
     MissingExtraError,
+    MissingInputTensor,
     TrainerError,
 )
 from fed_rag.trainers.huggingface.lsr import (
@@ -205,3 +208,38 @@ def test_lsr_sentence_transformer_compute_loss(
     # assert
     mock_collect_scores.assert_called_once()
     mock_loss.assert_called_once()
+
+
+def test_lsr_sentence_transformer_collect_scores(
+    hf_rag_system: RAGSystem,
+) -> None:
+    hf_trainer = LSRSentenceTransformerTrainer(
+        model=hf_rag_system.retriever.encoder,
+    )
+
+    ret, lm = hf_trainer.collect_scores(
+        inputs={"lm_scores": torch.ones(5), "retrieval_scores": torch.zeros(5)}
+    )
+
+    assert_close(lm, torch.ones(5))
+    assert_close(ret, torch.zeros(5))
+
+
+def test_lsr_sentence_transformer_collect_scores_raises_missing_input_tensor_error(
+    hf_rag_system: RAGSystem,
+) -> None:
+    hf_trainer = LSRSentenceTransformerTrainer(
+        model=hf_rag_system.retriever.encoder,
+    )
+
+    with pytest.raises(
+        MissingInputTensor,
+        match="Collated `inputs` are missing key `retrieval_scores`",
+    ):
+        hf_trainer.collect_scores(inputs={"lm_scores": torch.ones(5)})
+
+    with pytest.raises(
+        MissingInputTensor,
+        match="Collated `inputs` are missing key `lm_scores`",
+    ):
+        hf_trainer.collect_scores(inputs={"retrieval_scores": torch.ones(5)})
