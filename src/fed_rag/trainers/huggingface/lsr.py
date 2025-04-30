@@ -8,6 +8,7 @@ from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import TrainerError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
@@ -16,6 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
         SentenceTransformerTrainer,
     )
     from transformers import TrainingArguments
+    from transformers.trainer_utils import TrainOutput
 
 
 class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
@@ -53,11 +55,13 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
             )
         return v
 
-    def train(self) -> None:
-        pass
+    def train(self) -> TrainResult:
+        output: TrainOutput = self.hf_trainer_obj.train()
+        return TrainResult(loss=output.training_loss)
 
-    def evaluate(self) -> None:
-        pass
+    def evaluate(self) -> TestResult:
+        # TODO: implement this
+        raise NotImplementedError
 
     @property
     def hf_trainer_obj(self) -> "SentenceTransformerTrainer":

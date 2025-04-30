@@ -1,10 +1,11 @@
 import re
 import sys
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from datasets import Dataset
 from pytest import MonkeyPatch
+from transformers.trainer_utils import TrainOutput
 
 from fed_rag.exceptions import MissingExtraError, TrainerError
 from fed_rag.trainers.huggingface.lsr import HuggingFaceLSRTrainer
@@ -83,3 +84,28 @@ def test_huggingface_extra_missing(
     for ix, original_module in enumerate(original_modules):
         if original_module:
             sys.modules[modules_to_import[ix]] = original_module
+
+
+@patch.object(HuggingFaceLSRTrainer, "hf_trainer_obj")
+def test_train(
+    mock_hf_trainer: MagicMock,
+    hf_rag_system: RAGSystem,
+    train_dataset: Dataset,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    trainer = HuggingFaceLSRTrainer(
+        model=hf_rag_system.retriever.encoder,
+        rag_system=hf_rag_system,
+        train_dataset=train_dataset,
+    )
+    mock_hf_trainer.train.return_value = TrainOutput(
+        global_step=42, training_loss=0.42, metrics={}
+    )
+
+    out = trainer.train()
+
+    mock_hf_trainer.train.assert_called_once()
+    assert out.loss == 0.42
