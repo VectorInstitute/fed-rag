@@ -2,6 +2,7 @@ import pytest
 import torch
 from datasets import Dataset
 from sentence_transformers import SentenceTransformer
+from transformers import Trainer
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
@@ -19,6 +20,9 @@ class TestHFTrainer(HuggingFaceTrainerMixin, BaseTrainer):
 
     def evaluate(self) -> TestResult:
         return TestResult(loss=0.42)
+
+    def hf_trainer_obj(self) -> Trainer:
+        return Trainer()
 
 
 @pytest.fixture()

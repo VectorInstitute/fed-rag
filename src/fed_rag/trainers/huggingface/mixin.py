@@ -1,6 +1,6 @@
 """HuggingFace Trainer Mixin"""
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -19,11 +19,13 @@ try:
     from datasets import Dataset
     from peft import PeftModel
     from sentence_transformers import SentenceTransformer
-    from transformers import PreTrainedModel, TrainingArguments
+    from transformers import PreTrainedModel, Trainer, TrainingArguments
 
     _has_huggingface = True
 except ModuleNotFoundError:
     _has_huggingface = False
+
+print(f"_has_huggingface: {_has_huggingface}")
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
@@ -67,3 +69,8 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
             _validate_rag_system(self.rag_system)
 
         return self
+
+    @property
+    @abstractmethod
+    def hf_trainer_obj(self) -> "Trainer":
+        """A ~transformers.Trainer object."""
