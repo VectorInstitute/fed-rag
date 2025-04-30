@@ -2,7 +2,7 @@ from .core import FedRAGError
 
 
 class RAGTrainerManagerError(FedRAGError):
-    """Base errors for all rag trainer relevant exceptions."""
+    """Base errors for all rag trainer manager relevant exceptions."""
 
     pass
 

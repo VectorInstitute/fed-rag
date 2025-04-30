@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from datasets import Dataset
 from pytest import MonkeyPatch
-from transformers import TrainingArguments
+from transformers import Trainer, TrainingArguments
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import FedRAGError, MissingExtraError
@@ -74,6 +74,9 @@ def test_huggingface_extra_missing(
 
                 def evaluate(self) -> TestResult:
                     return TestResult(loss=0.42)
+
+                def hf_trainer_obj(self) -> Trainer:
+                    return Trainer()
 
             training_args = TrainingArguments()
             TestHFTrainer(

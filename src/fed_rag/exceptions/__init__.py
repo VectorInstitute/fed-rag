@@ -18,6 +18,7 @@ from .inspectors import (
     UnequalNetParamWarning,
 )
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
+from .trainer import TrainerError
 from .trainer_manager import (
     RAGTrainerManagerError,
     UnspecifiedGeneratorTrainer,
@@ -48,9 +49,11 @@ __all__ = [
     # knowledge stores
     "KnowledgeStoreError",
     "KnowledgeStoreNotFoundError",
-    # rag trainer
+    # rag trainer manager
     "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",
+    # trainer
+    "TrainerError",
 ]

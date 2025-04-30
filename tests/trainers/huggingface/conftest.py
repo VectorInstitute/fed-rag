@@ -2,6 +2,7 @@ import pytest
 import torch
 from datasets import Dataset
 from sentence_transformers import SentenceTransformer
+from transformers import Trainer
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
@@ -20,6 +21,9 @@ class TestHFTrainer(HuggingFaceTrainerMixin, BaseTrainer):
     def evaluate(self) -> TestResult:
         return TestResult(loss=0.42)
 
+    def hf_trainer_obj(self) -> Trainer:
+        return Trainer()
+
 
 @pytest.fixture()
 def train_dataset() -> Dataset:
@@ -34,5 +38,6 @@ def train_dataset() -> Dataset:
 @pytest.fixture()
 def hf_rag_system(mock_rag_system: RAGSystem) -> RAGSystem:
     encoder = SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
+    encoder.tokenizer = None
     mock_rag_system.retriever.encoder = encoder
     return mock_rag_system
