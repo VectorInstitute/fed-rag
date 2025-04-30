@@ -38,5 +38,6 @@ def train_dataset() -> Dataset:
 @pytest.fixture()
 def hf_rag_system(mock_rag_system: RAGSystem) -> RAGSystem:
     encoder = SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
+    encoder.tokenizer = None
     mock_rag_system.retriever.encoder = encoder
     return mock_rag_system
