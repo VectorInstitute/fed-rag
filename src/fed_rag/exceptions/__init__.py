@@ -18,7 +18,7 @@ from .inspectors import (
     UnequalNetParamWarning,
 )
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
-from .trainer import TrainerError
+from .trainer import InvalidLossError, MissingInputTensor, TrainerError
 from .trainer_manager import (
     RAGTrainerManagerError,
     UnspecifiedGeneratorTrainer,
@@ -56,4 +56,6 @@ __all__ = [
     "UnsupportedTrainerMode",
     # trainer
     "TrainerError",
+    "InvalidLossError",
+    "MissingInputTensor",
 ]

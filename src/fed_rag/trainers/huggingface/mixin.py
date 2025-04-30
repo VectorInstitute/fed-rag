@@ -25,7 +25,6 @@ try:
 except ModuleNotFoundError:
     _has_huggingface = False
 
-print(f"_has_huggingface: {_has_huggingface}")
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
