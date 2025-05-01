@@ -52,6 +52,7 @@ nav:
   - API Reference:
     - api_reference/index.md
     - Data Collators:
+      - api_reference/data_collators/index.md
       - api_reference/data_collators/huggingface.md
     - Decorators:
       - api_reference/decorators/index.md
@@ -85,7 +86,7 @@ nav:
       - Mixins: api_reference/knowledge_stores/mixins.md
     - Loss:
       - api_reference/loss/pytorch.md
-    - RAGSystem:
+    - RAG System:
       - api_reference/rag_system/index.md
     - RAG Trainer Managers:
       - api_reference/trainer_managers/index.md
@@ -97,6 +98,9 @@ nav:
     - Tokenizers:
       - api_reference/tokenizers/index.md
       - api_reference/tokenizers/huggingface.md
+    - Trainers:
+      - api_reference/trainers/index.md
+      - api_reference/trainers/huggingface.md
   - Glossary: glossary.md
   - Community:
     - community/index.md
