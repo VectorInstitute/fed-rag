@@ -23,3 +23,11 @@ class BaseTrainer(BaseModel, ABC):
     @abstractmethod
     def evaluate(self) -> TestResult:
         """Evaluation"""
+
+    @property
+    @abstractmethod
+    def model(self) -> Any:
+        """Return the model to be trained.
+
+        NOTE: this should be a component of the RAG System.
+        """

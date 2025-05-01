@@ -59,6 +59,7 @@ __all__ = [
     "UnspecifiedGeneratorTrainer",
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",
+    "InconsistentRAGSystem",
     # trainer
     "TrainerError",
     "InvalidLossError",
