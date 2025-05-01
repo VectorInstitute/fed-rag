@@ -35,7 +35,8 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
         self.generator_trainer.model.train()
 
         # freeze retriever
-        self.retriever_trainer.model.eval()
+        if self.retriever_trainer:
+            self.retriever_trainer.model.eval()
 
     def _prepare_retriever_for_training(
         self, freeze_context_encoder: bool = True, **kwargs: Any
@@ -43,7 +44,8 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
         self.retriever_trainer.model.train()
 
         # freeze generator
-        self.generator_trainer.model.eval()
+        if self.generator_trainer:
+            self.generator_trainer.model.eval()
 
     def _train_retriever(self, **kwargs: Any) -> None:
         self._prepare_retriever_for_training()

@@ -179,3 +179,26 @@ def test_invalid_mode_raises_error() -> None:
         PyTorchRAGTrainerManager(
             mode="both",
         )
+
+
+def test_prepare_generator_for_training(
+    generator_trainer: BaseGeneratorTrainer,
+    retriever_trainer: BaseRetrieverTrainer,
+) -> None:
+    manager = PyTorchRAGTrainerManager(
+        mode="generator",
+        generator_trainer=generator_trainer,
+        retriever_trainer=retriever_trainer,
+    )
+
+    # add mocks
+    mock_generator_model = MagicMock()
+    mock_retriever_model = MagicMock()
+    manager.generator_trainer.model = mock_generator_model
+    manager.retriever_trainer.model = mock_retriever_model
+
+    # act
+    manager._prepare_generator_for_training()
+
+    mock_generator_model.train.assert_called_once()
+    mock_retriever_model.eval.assert_called_once()
