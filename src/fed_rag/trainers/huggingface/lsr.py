@@ -5,13 +5,14 @@ from typing import TYPE_CHECKING, Any, Optional
 import torch
 from pydantic import PrivateAttr, model_validator
 
-from fed_rag.base.trainer import BaseTrainer
+from fed_rag.base.trainer import BaseRetrieverTrainer
 from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import (
     InvalidDataCollatorError,
     InvalidLossError,
     MissingExtraError,
     MissingInputTensor,
+    TrainerError,
 )
 from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
@@ -123,7 +124,7 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         return (loss, inputs) if return_outputs else loss
 
 
-class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
+class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
     """HuggingFace LM-Supervised Retriever Trainer."""
 
     _hf_trainer: Optional["SentenceTransformerTrainer"] = PrivateAttr(
@@ -146,13 +147,18 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
 
     @model_validator(mode="after")
     def set_private_attributes(self) -> "HuggingFaceLSRTrainer":
+        # if made it to here, then this import is available
+        from sentence_transformers import SentenceTransformer
+
+        # validate rag system
         _validate_rag_system(self.rag_system)
 
-        # set model
-        if self.rag_system.retriever.encoder:
-            self._model = self.rag_system.retriever.encoder
-        else:
-            self._model = self.rag_system.retriever.query_encoder
+        # validate model
+        if not isinstance(self.model, SentenceTransformer):
+            raise TrainerError(
+                "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
+                "`~sentence_transformers.SentenceTransformer`."
+            )
 
         self._hf_trainer = LSRSentenceTransformerTrainer(
             model=self.model,

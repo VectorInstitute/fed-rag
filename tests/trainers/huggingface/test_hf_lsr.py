@@ -58,7 +58,6 @@ def test_invalid_retriever_raises_error(
         ),
     ):
         HuggingFaceLSRTrainer(
-            model=mock_rag_system.retriever.encoder,
             rag_system=mock_rag_system,
             train_dataset=train_dataset,
         )
