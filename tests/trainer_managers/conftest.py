@@ -10,10 +10,11 @@ from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
-from fed_rag.base.trainer import BaseTrainer
+from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
 
 
 class _TestDataset(Dataset):
@@ -195,11 +196,41 @@ class MockRAGTrainerManager(BaseRAGTrainerManager):
         raise NotImplementedError()
 
 
-@pytest.fixture
-def retriever_trainer() -> BaseTrainer:
-    ...
+class TestRetrieverTrainer(BaseRetrieverTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
+
+
+class TestGeneratorTrainer(BaseGeneratorTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
 
 
 @pytest.fixture
-def generator_trainer() -> BaseTrainer:
-    ...
+def retriever_trainer(mock_rag_system: RAGSystem) -> BaseRetrieverTrainer:
+    return TestRetrieverTrainer(
+        rag_system=mock_rag_system,
+        train_dataset=[{"query": "mock query", "response": "mock response"}],
+    )
+
+
+@pytest.fixture
+def generator_trainer(mock_rag_system: RAGSystem) -> BaseGeneratorTrainer:
+    return TestGeneratorTrainer(
+        rag_system=mock_rag_system,
+        train_dataset=[{"query": "mock query", "response": "mock response"}],
+    )
