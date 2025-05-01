@@ -7,7 +7,7 @@ from pydantic import PrivateAttr
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
-from fed_rag.base.trainer import BaseTrainer
+from fed_rag.base.trainer import BaseRetrieverTrainer, BaseTrainer
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
@@ -146,6 +146,23 @@ def mock_rag_system(
     )
 
 
+@pytest.fixture
+def mock_rag_system_dual_encoder(
+    mock_generator: BaseGenerator,
+    mock_dual_retriever: BaseRetriever,
+) -> RAGSystem:
+    knowledge_store = InMemoryKnowledgeStore()
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    return RAGSystem(
+        generator=mock_generator,
+        retriever=mock_dual_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+
 class MockTrainer(BaseTrainer):
     def train(self) -> TrainResult:
         return TrainResult(loss=0.42)
@@ -156,3 +173,15 @@ class MockTrainer(BaseTrainer):
     @property
     def model(self) -> str:
         return "mock model"
+
+
+class MockRetrieverTrainer(BaseRetrieverTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
