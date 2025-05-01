@@ -170,9 +170,8 @@ class MockTrainer(BaseTrainer):
     def evaluate(self) -> TestResult:
         return TestResult(loss=0.42, metrics={"metric_1": 42})
 
-    @property
-    def model(self) -> str:
-        return "mock model"
+    def _get_model_from_rag_system(self) -> Any:
+        return self.rag_system.generator.model
 
 
 class MockRetrieverTrainer(BaseRetrieverTrainer):

@@ -15,6 +15,7 @@ class BaseTrainer(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     rag_system: RAGSystem
     train_dataset: Any
+    _model = PrivateAttr()
 
     @abstractmethod
     def train(self) -> TrainResult:
@@ -24,62 +25,40 @@ class BaseTrainer(BaseModel, ABC):
     def evaluate(self) -> TestResult:
         """Evaluation"""
 
-    @property
     @abstractmethod
-    def model(self) -> Any:
-        """Return the model to be trained.
+    def _get_model_from_rag_system(self) -> Any:
+        """Get the model from the RAG system."""
 
-        NOTE: this should be a component of the RAG System.
-        """
+    @model_validator(mode="after")
+    def set_model(self) -> "BaseTrainer":
+        self._model = self._get_model_from_rag_system()
+        return self
+
+    @property
+    def model(self) -> Any:
+        """Return the model to be trained."""
+        return self._model
 
     @model.setter
-    @abstractmethod
     def model(self, v: Any) -> None:
         """Set the model to be trained."""
-        raise NotImplementedError("Setting model not supported by default")
+        self._model = v
 
 
 class BaseRetrieverTrainer(BaseTrainer, ABC):
     """Base Retriever Trainer Class."""
 
-    _model = PrivateAttr()
-
-    @model_validator(mode="after")
-    def set_model(self) -> "BaseRetrieverTrainer":
+    def _get_model_from_rag_system(self) -> Any:
         if self.rag_system.retriever.encoder:
-            self._model = self.rag_system.retriever.encoder
+            return self.rag_system.retriever.encoder
         else:
-            self._model = (
+            return (
                 self.rag_system.retriever.query_encoder
             )  # only update query encoder
-
-        return self
-
-    @property
-    def model(self) -> Any:
-        """Return the model to be trained."""
-        return self._model
-
-    @model.setter
-    def model(self, v: Any) -> None:
-        self._model = v
 
 
 class BaseGeneratorTrainer(BaseTrainer, ABC):
     """Base Retriever Trainer Class."""
 
-    _model = PrivateAttr()
-
-    @model_validator(mode="after")
-    def set_model(self) -> "BaseGeneratorTrainer":
-        self._model = self.rag_system.generator.model
-        return self
-
-    @property
-    def model(self) -> Any:
-        """Return the model to be trained."""
-        return self._model
-
-    @model.setter
-    def model(self, v: Any) -> None:
-        self._model = v
+    def _get_model_from_rag_system(self) -> Any:
+        return self.rag_system.generator.model
