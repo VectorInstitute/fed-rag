@@ -93,9 +93,7 @@ def test_invalid_rag_system_due_to_generators(
         FedRAGError,
         match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
     ):
-        from fed_rag.utils.data.data_collators.huggingface import (
-            DataCollatorForLSR,
-        )
+        from fed_rag.data_collators.huggingface import DataCollatorForLSR
 
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 
@@ -114,9 +112,7 @@ def test_invalid_rag_system_due_to_retriever(
         FedRAGError,
         match="Retriever must be a HFSentenceTransformerRetriever",
     ):
-        from fed_rag.utils.data.data_collators.huggingface import (
-            DataCollatorForLSR,
-        )
+        from fed_rag.data_collators.huggingface import DataCollatorForLSR
 
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 

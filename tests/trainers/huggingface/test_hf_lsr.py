@@ -9,6 +9,7 @@ from pytest import MonkeyPatch
 from torch.testing import assert_close
 from transformers.trainer_utils import TrainOutput
 
+from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import (
     InvalidDataCollatorError,
     InvalidLossError,
@@ -21,7 +22,6 @@ from fed_rag.trainers.huggingface.lsr import (
     LSRSentenceTransformerTrainer,
 )
 from fed_rag.types.rag_system import RAGSystem
-from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 
 def test_init(
