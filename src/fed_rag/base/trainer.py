@@ -31,3 +31,26 @@ class BaseTrainer(BaseModel, ABC):
 
         NOTE: this should be a component of the RAG System.
         """
+
+
+class BaseRetrieverTrainer(BaseTrainer, ABC):
+    """Base Retriever Trainer Class."""
+
+    @property
+    def model(self) -> Any:
+        """Return the model to be trained."""
+        if self.rag_system.retriever.encoder:
+            return self.rag_system.retriever.encoder
+        else:
+            return (
+                self.rag_system.retriever.query_encoder
+            )  # only update query encoder
+
+
+class BaseGeneratorTrainer(BaseTrainer, ABC):
+    """Base Retriever Trainer Class."""
+
+    @property
+    def model(self) -> Any:
+        """Return the model to be trained."""
+        return self.rag_system.generator.model

@@ -10,13 +10,9 @@ from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.base.trainer import BaseTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.trainer_managers.pytorch import (
-    GeneratorTrainFn,
-    RetrieverTrainFn,
-    TrainingArgs,
-)
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 
@@ -199,25 +195,11 @@ class MockRAGTrainerManager(BaseRAGTrainerManager):
         raise NotImplementedError()
 
 
-@pytest.fixture()
-def retriever_trainer_fn() -> RetrieverTrainFn:
-    def fn(
-        rag_system: RAGSystem,
-        train_loader: DataLoader,
-        trainer_args: TrainingArgs,
-    ) -> Any:
-        return {"retriever_loss": 0.42}
-
-    return fn  # type: ignore
+@pytest.fixture
+def retriever_trainer() -> BaseTrainer:
+    ...
 
 
-@pytest.fixture()
-def generator_trainer_fn() -> GeneratorTrainFn:
-    def fn(
-        rag_system: RAGSystem,
-        train_loader: DataLoader,
-        trainer_args: TrainingArgs,
-    ) -> Any:
-        return {"generator_loss": 0.42}
-
-    return fn  # type: ignore
+@pytest.fixture
+def generator_trainer() -> BaseTrainer:
+    ...

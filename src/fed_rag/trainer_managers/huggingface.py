@@ -72,7 +72,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
     def _train_generator(self, **kwargs: Any) -> None:
         self._prepare_generator_for_training()
         if self.generator_trainer:
-            self.retriever_trainer.train()
+            self.generator_trainer.train()
         else:
             raise UnspecifiedGeneratorTrainer(
                 "Attempted to perform generator trainer with an unspecified trainer function."

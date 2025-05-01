@@ -10,7 +10,7 @@ from typing import (
     runtime_checkable,
 )
 
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from pydantic import BaseModel, ConfigDict
 
 from fed_rag.exceptions import MissingExtraError
 
@@ -45,9 +45,6 @@ class HuggingFaceTrainerProtocol(Protocol):
 class HuggingFaceTrainerMixin(BaseModel, ABC):
     """HuggingFace Trainer Mixin."""
 
-    _model: Union[
-        "SentenceTransformer", "PreTrainedModel", "PeftModel"
-    ] = PrivateAttr()
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
     )
@@ -56,7 +53,8 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
 
     def __init__(
         self,
-        *args: Any,
+        train_dataset: "Dataset",
+        training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
         if not _has_huggingface:
@@ -65,15 +63,13 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
             raise MissingExtraError(msg)
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            train_dataset=train_dataset,
+            training_arguments=training_arguments,
+            **kwargs,
+        )
 
     @property
     @abstractmethod
     def hf_trainer_obj(self) -> "Trainer":
         """A ~transformers.Trainer object."""
-
-    @property
-    def model(
-        self,
-    ) -> Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]:
-        return self._model
