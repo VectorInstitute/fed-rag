@@ -6,6 +6,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
+from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import UnsupportedTrainerMode
 from fed_rag.types.rag_system import RAGSystem
 
@@ -24,6 +25,8 @@ class BaseRAGTrainerManager(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     rag_system: RAGSystem
     mode: RAGTrainMode
+    retriever_trainer: BaseTrainer | None = None
+    generator_trainer: BaseTrainer | None = None
 
     @field_validator("mode", mode="before")
     @classmethod
