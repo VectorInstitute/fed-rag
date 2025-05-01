@@ -3,7 +3,9 @@
 from typing import Any
 
 import torch
+from pydantic import Field
 
+from fed_rag.base.data_collator import BaseDataCollator
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.types.rag_system import RAGSystem
@@ -47,14 +49,20 @@ DEFAULT_TARGET_TEMPLATE = """
 """
 
 
-class DataCollatorForLSR(DataCollatorMixin):
+class DataCollatorForLSR(DataCollatorMixin, BaseDataCollator):
     """A HuggingFace DataCollator for LM-Supervised Retrieval."""
+
+    prompt_template: str = Field(default=DEFAULT_PROMPT_TEMPLATE)
+    target_template: str = Field(default=DEFAULT_TARGET_TEMPLATE)
+    default_return_tensors: str = Field(default="pt")
 
     def __init__(
         self,
         rag_system: RAGSystem,
         prompt_template: str | None = None,
         target_template: str | None = None,
+        default_return_tensors: str = "pt",
+        **kwargs: Any,
     ):
         if not _has_huggingface:
             msg = (
@@ -65,15 +73,16 @@ class DataCollatorForLSR(DataCollatorMixin):
 
         _validate_rag_system(rag_system)
 
-        super().__init__()
-
         prompt_template = prompt_template or DEFAULT_PROMPT_TEMPLATE
         target_template = target_template or DEFAULT_TARGET_TEMPLATE
 
-        self.default_return_tensors = "pt"
-        self.rag_system = rag_system
-        self.prompt_template = prompt_template
-        self.target_template = target_template
+        super().__init__(
+            rag_system=rag_system,
+            prompt_template=prompt_template,
+            target_template=target_template,
+            default_return_tensors=default_return_tensors,
+            **kwargs,
+        )
 
     def __call__(
         self, features: list[dict[str, Any]], return_tensors: str | None = None

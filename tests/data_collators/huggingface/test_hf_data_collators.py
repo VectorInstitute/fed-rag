@@ -7,6 +7,7 @@ import torch
 from pytest import MonkeyPatch
 from torch.testing import assert_close
 
+from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.generators.huggingface import HFPeftModelGenerator
@@ -15,7 +16,6 @@ from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
 )
 from fed_rag.types.knowledge_node import KnowledgeNode
 from fed_rag.types.rag_system import RAGSystem, SourceNode
-from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
@@ -26,7 +26,7 @@ def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
         "transformers.data": None,
         "transformers.data.data_collator": None,
     }
-    module_to_import = "fed_rag.utils.data.data_collators.huggingface"
+    module_to_import = "fed_rag.data_collators.huggingface.lsr"
     original_module = sys.modules.pop(module_to_import, None)
 
     with patch.dict("sys.modules", modules):
@@ -38,11 +38,48 @@ def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
             MissingExtraError,
             match=re.escape(msg),
         ):
-            from fed_rag.utils.data.data_collators.huggingface import (
+            from fed_rag.data_collators.huggingface.lsr import (
                 DataCollatorForLSR,
             )
 
-            DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
+            DataCollatorForLSR(
+                rag_system=mock_rag_system,
+                prompt_template="{query} and {context}",
+            )
+
+    # restore module so to not affect other tests
+    if original_module:
+        sys.modules[module_to_import] = original_module
+
+
+def test_huggingface_extra_missing_from_parent(
+    mock_rag_system: RAGSystem,
+) -> None:
+    """Test extra is not installed."""
+
+    modules = {
+        "transformers": None,
+        "transformers.data": None,
+        "transformers.data.data_collator": None,
+    }
+    module_to_import = "fed_rag.data_collators.huggingface"
+    original_module = sys.modules.pop(module_to_import, None)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "`fed_rag.data_collators.huggingface` requires `huggingface` extra to be installed. "
+            "To fix please run `pip install fed-rag[huggingface]`."
+        )
+        with pytest.raises(
+            MissingExtraError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.data_collators.huggingface import DataCollatorForLSR
+
+            DataCollatorForLSR(
+                rag_system=mock_rag_system,
+                prompt_template="{query} and {context}",
+            )
 
     # restore module so to not affect other tests
     if original_module:
@@ -56,9 +93,7 @@ def test_invalid_rag_system_due_to_generators(
         FedRAGError,
         match="Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator",
     ):
-        from fed_rag.utils.data.data_collators.huggingface import (
-            DataCollatorForLSR,
-        )
+        from fed_rag.data_collators.huggingface import DataCollatorForLSR
 
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 
@@ -77,9 +112,7 @@ def test_invalid_rag_system_due_to_retriever(
         FedRAGError,
         match="Retriever must be a HFSentenceTransformerRetriever",
     ):
-        from fed_rag.utils.data.data_collators.huggingface import (
-            DataCollatorForLSR,
-        )
+        from fed_rag.data_collators.huggingface import DataCollatorForLSR
 
         DataCollatorForLSR(rag_system=mock_rag_system, prompt_template="")
 
@@ -123,19 +156,32 @@ def test_init(
     assert collator.default_return_tensors == "pt"
 
 
-def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
+@patch.object(RAGSystem, "retrieve")
+def test_lsr_collator_with_mocks(
+    mock_retrieve: MagicMock,
+    mock_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
+) -> None:
     # Set environment variable for the duration of this test only
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
+    rag_system = RAGSystem(
+        generator=mock_rag_system.generator,
+        retriever=mock_rag_system.retriever,
+        knowledge_store=mock_rag_system.knowledge_store,
+        rag_config=mock_rag_system.rag_config,
+    )
+
+    # use mocks
     mock_generator = MagicMock()
     mock_generator.compute_target_sequence_proba.side_effect = [
         torch.tensor(0.01),
         torch.tensor(0.02),
         torch.tensor(0.03),
     ]
-    rag_system = MagicMock()
     rag_system.generator = mock_generator
-    rag_system.retrieve.return_value = [
+
+    mock_retrieve.return_value = [
         SourceNode(
             score=0.1,
             node=KnowledgeNode(
@@ -170,7 +216,7 @@ def test_lsr_collator_with_mocks(monkeypatch: MonkeyPatch) -> None:
     assert_close(
         batch["lm_scores"], torch.tensor([0.01, 0.02, 0.03]).unsqueeze(0)
     )
-    rag_system.retrieve.assert_called_once_with("mock query")
+    mock_retrieve.assert_called_once_with("mock query")
     mock_generator.compute_target_sequence_proba.assert_has_calls(
         [
             _Call(

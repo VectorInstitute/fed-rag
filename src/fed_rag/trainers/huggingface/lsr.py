@@ -6,6 +6,7 @@ import torch
 from pydantic import PrivateAttr, field_validator, model_validator
 
 from fed_rag.base.trainer import BaseTrainer
+from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import (
     InvalidDataCollatorError,
     InvalidLossError,
@@ -17,7 +18,6 @@ from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
-from fed_rag.utils.data.data_collators.huggingface import DataCollatorForLSR
 
 try:
     from sentence_transformers import SentenceTransformerTrainer
