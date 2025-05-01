@@ -39,7 +39,7 @@ class HuggingFaceTrainerProtocol(Protocol):
     def model(
         self,
     ) -> Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]:
-        pass
+        pass  # pragma: no cover
 
 
 class HuggingFaceTrainerMixin(BaseModel, ABC):
