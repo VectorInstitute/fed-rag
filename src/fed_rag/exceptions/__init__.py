@@ -25,6 +25,7 @@ from .trainer import (
     TrainerError,
 )
 from .trainer_manager import (
+    InconsistentRAGSystems,
     RAGTrainerManagerError,
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
@@ -59,7 +60,7 @@ __all__ = [
     "UnspecifiedGeneratorTrainer",
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",
-    "InconsistentRAGSystem",
+    "InconsistentRAGSystems",
     # trainer
     "TrainerError",
     "InvalidLossError",
