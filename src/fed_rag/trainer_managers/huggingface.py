@@ -30,7 +30,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
-    """HuggingFace RAG Trainer"""
+    """HuggingFace RAG Trainer Manager"""
 
     def __init__(
         self,

@@ -1,9 +1,9 @@
 """PyTorch RAG Trainer"""
 
-from typing import Any, Callable, Optional, cast
+from typing import Any, Callable
 
 import torch.nn as nn
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 from torch.utils.data import DataLoader
 from typing_extensions import assert_never
 
@@ -14,7 +14,6 @@ from fed_rag.exceptions.trainer_manager import (
     UnspecifiedRetrieverTrainer,
 )
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
-from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 
 
@@ -29,76 +28,27 @@ class TrainingArgs(BaseModel):
     custom_kwargs: dict[str, Any] = Field(default_factory=dict)
 
 
-# Define trainer function type hints
-RetrieverTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
-GeneratorTrainFn = Callable[[RAGSystem, DataLoader, TrainingArgs], Any]
-
-
 class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
-    train_dataloader: DataLoader
-    retriever_training_args: TrainingArgs = Field(
-        default_factory=lambda: TrainingArgs()
-    )
-    generator_training_args: TrainingArgs = Field(
-        default_factory=lambda: TrainingArgs()
-    )
-    retriever_train_fn: Optional[RetrieverTrainFn] = None
-    generator_train_fn: Optional[GeneratorTrainFn] = None
-
-    @model_validator(mode="after")
-    def validate_training_args(self) -> "PyTorchRAGTrainerManager":
-        # Convert dict args to Pydantic models if needed
-        if isinstance(self.retriever_training_args, dict):
-            self.retriever_training_args = TrainingArgs.model_validate(
-                self.retriever_training_args
-            )
-
-        if isinstance(self.generator_training_args, dict):
-            self.generator_training_args = TrainingArgs.model_validate(
-                self.generator_training_args
-            )
-
-        return self
+    """PyTorch native RAG Trainer Manager"""
 
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
-        self.rag_system.generator.model.train()
+        self.generator_trainer.model.train()
 
         # freeze retriever
-        if self.rag_system.retriever.encoder:
-            self.rag_system.retriever.encoder.eval()
-
-        if self.rag_system.retriever.context_encoder:
-            self.rag_system.retriever.context_encoder.eval()
-
-        if self.rag_system.retriever.query_encoder:
-            self.rag_system.retriever.query_encoder.eval()
+        self.retriever_trainer.model.eval()
 
     def _prepare_retriever_for_training(
         self, freeze_context_encoder: bool = True, **kwargs: Any
     ) -> None:
-        if self.rag_system.retriever.encoder:
-            self.rag_system.retriever.encoder.train()
-
-        if self.rag_system.retriever.query_encoder:
-            self.rag_system.retriever.query_encoder.train()
-
-        if self.rag_system.retriever.context_encoder:
-            if freeze_context_encoder:
-                self.rag_system.retriever.context_encoder.eval()
-            else:
-                self.rag_system.retriever.context_encoder.train()
+        self.retriever_trainer.model.train()
 
         # freeze generator
-        self.rag_system.generator.model.eval()
+        self.generator_trainer.model.eval()
 
     def _train_retriever(self, **kwargs: Any) -> None:
         self._prepare_retriever_for_training()
-        if self.retriever_train_fn:
-            self.retriever_train_fn(
-                self.rag_system,
-                self.train_dataloader,
-                self.retriever_training_args,
-            )
+        if self.retriever_trainer:
+            self.retriever_trainer.train()
         else:
             raise UnspecifiedRetrieverTrainer(
                 "Attempted to perform retriever trainer with an unspecified trainer function."
@@ -106,12 +56,8 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
 
     def _train_generator(self, **kwargs: Any) -> None:
         self._prepare_generator_for_training()
-        if self.generator_train_fn:
-            self.generator_train_fn(
-                self.rag_system,
-                self.train_dataloader,
-                self.generator_training_args,
-            )
+        if self.generator_trainer:
+            self.generator_trainer.train()
         else:
             raise UnspecifiedGeneratorTrainer(
                 "Attempted to perform generator trainer with an unspecified trainer function."
@@ -127,17 +73,12 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
 
     def _get_federated_trainer(self) -> tuple[Callable, nn.Module]:
         if self.mode == "retriever":
-            if self.retriever_train_fn is None:
+            if self.retriever_trainer is None:
                 raise UnspecifiedRetrieverTrainer(
                     "Cannot federate an unspecified retriever trainer function."
                 )
-            retriever_train_fn = self.retriever_train_fn
-
-            if self.rag_system.retriever.encoder:
-                retriever_module = self.rag_system.retriever.encoder
-            else:
-                retriever_module = self.rag_system.retriever.query_encoder
-                retriever_module = cast(nn.Module, retriever_module)
+            retriever_train_fn = self.retriever_trainer.train
+            retriever_module = self.retriever_trainer.model
 
             # Create a standalone function for federation
             def train_wrapper(
@@ -145,23 +86,18 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
                 _train_dataloader: DataLoader,
                 _val_dataloader: DataLoader,
             ) -> TrainResult:
-                _ = retriever_train_fn(
-                    self.rag_system,
-                    self.train_dataloader,
-                    self.retriever_training_args,
-                )
+                _ = retriever_train_fn()
                 return TrainResult(loss=0)
 
             return federate.trainer.pytorch(train_wrapper), retriever_module
 
         elif self.mode == "generator":
-            if self.generator_train_fn is None:
+            if self.generator_trainer is None:
                 raise UnspecifiedGeneratorTrainer(
                     "Cannot federate an unspecified generator trainer function."
                 )
-            generator_train_fn = self.generator_train_fn
-
-            generator_module = self.rag_system.generator.model
+            generator_train_fn = self.generator_trainer.train
+            generator_module = self.generator_trainer.model
 
             # Create a standalone function for federation
             def train_wrapper(
@@ -169,11 +105,7 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
                 _train_dataloader: DataLoader,
                 _val_dataloader: DataLoader,
             ) -> TrainResult:
-                _ = generator_train_fn(
-                    self.rag_system,
-                    self.train_dataloader,
-                    self.generator_training_args,
-                )
+                _ = generator_train_fn()
                 # TODO get loss from out
                 return TrainResult(loss=0)
 

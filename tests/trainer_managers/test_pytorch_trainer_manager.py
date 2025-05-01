@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from torch.utils.data import DataLoader
 
-from fed_rag.base.retriever import BaseRetriever
+from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager, RAGTrainMode
 from fed_rag.exceptions import (
     UnspecifiedGeneratorTrainer,
@@ -11,13 +10,7 @@ from fed_rag.exceptions import (
     UnsupportedTrainerMode,
 )
 from fed_rag.fl_tasks.pytorch import PyTorchFLTask
-from fed_rag.trainer_managers.pytorch import (
-    GeneratorTrainFn,
-    PyTorchRAGTrainerManager,
-    RetrieverTrainFn,
-    TrainingArgs,
-)
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.trainer_managers.pytorch import PyTorchRAGTrainerManager
 
 
 def test_pt_rag_trainer_class() -> None:
@@ -28,301 +21,102 @@ def test_pt_rag_trainer_class() -> None:
 
 
 def test_init(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
+    retriever_trainer: BaseRetrieverTrainer,
+    generator_trainer: BaseGeneratorTrainer,
 ) -> None:
-    retriever_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    generator_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": False}
-    )
-
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_training_args=retriever_trainer_args,
-        generator_training_args=generator_trainer_args,
-        retriever_train_fn=retriever_trainer_fn,
-        generator_train_fn=generator_trainer_fn,
+        retriever_trainer=retriever_trainer,
+        generator_trainer=generator_trainer,
     )
 
-    assert trainer.rag_system == mock_rag_system
-    assert trainer.generator_train_fn == generator_trainer_fn
-    assert trainer.retriever_train_fn == retriever_trainer_fn
-    assert trainer.generator_training_args == generator_trainer_args
-    assert trainer.retriever_training_args == retriever_trainer_args
-    assert trainer.train_dataloader == train_dataloader
-
-
-def test_init_with_trainer_args_dict(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    retriever_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    generator_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": False}
-    )
-
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_training_args=retriever_trainer_args.model_dump(),
-        generator_training_args=generator_trainer_args.model_dump(),
-        retriever_train_fn=retriever_trainer_fn,
-        generator_train_fn=generator_trainer_fn,
-    )
-
-    assert trainer.generator_training_args == generator_trainer_args
-    assert trainer.retriever_training_args == retriever_trainer_args
-
-
-def test_init_with_no_trainer_args(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=retriever_trainer_fn,
-        generator_train_fn=generator_trainer_fn,
-    )
-
-    assert trainer.generator_training_args == TrainingArgs()
-    assert trainer.retriever_training_args == TrainingArgs()
+    assert manager.generator_trainer == generator_trainer
+    assert manager.retriever_trainer == retriever_trainer
+    assert manager.mode == "retriever"
 
 
 @patch.object(PyTorchRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever(
     mock_prepare_retriever_for_training: MagicMock,
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
+    retriever_trainer: BaseRetrieverTrainer,
 ) -> None:
-    mock_retriever_trainer_fn = MagicMock()
-    retriever_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=mock_retriever_trainer_fn,
-        retriever_training_args=retriever_trainer_args,
+        retriever_trainer=retriever_trainer,
     )
+    # mock it
+    mock_retriever_trainer = MagicMock()
+    manager.retriever_trainer = mock_retriever_trainer
 
-    trainer.train()
+    manager.train()
 
     mock_prepare_retriever_for_training.assert_called_once()
-    mock_retriever_trainer_fn.assert_called_once_with(
-        mock_rag_system, train_dataloader, retriever_trainer_args
-    )
+    mock_retriever_trainer.train.assert_called_once_with()
 
 
 @patch.object(PyTorchRAGTrainerManager, "_prepare_retriever_for_training")
 def test_train_retriever_raises_unspecified_retriever_trainer_error(
     mock_prepare_retriever_for_training: MagicMock,
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
 ) -> None:
-    retriever_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_training_args=retriever_trainer_args,
     )
 
     with pytest.raises(
         UnspecifiedRetrieverTrainer,
         match="Attempted to perform retriever trainer with an unspecified trainer function.",
     ):
-        trainer.train()
+        manager.train()
         mock_prepare_retriever_for_training.assert_called_once()
 
 
 @patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator(
     mock_prepare_generator_for_training: MagicMock,
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
+    generator_trainer: BaseGeneratorTrainer,
 ) -> None:
-    mock_generator_trainer_fn = MagicMock()
-    generator_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="generator",
-        train_dataloader=train_dataloader,
-        generator_train_fn=mock_generator_trainer_fn,
-        generator_training_args=generator_trainer_args,
     )
+    # mock it
+    mock_generator_trainer = MagicMock()
+    manager.generator_trainer = mock_generator_trainer
 
-    trainer.train()
+    manager.train()
 
     mock_prepare_generator_for_training.assert_called_once()
-    mock_generator_trainer_fn.assert_called_once_with(
-        mock_rag_system, train_dataloader, generator_trainer_args
-    )
+    mock_generator_trainer.train.assert_called_once_with()
 
 
 @patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator_raises_unspecified_generator_trainer_error(
     mock_prepare_generator_for_training: MagicMock,
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
 ) -> None:
-    generator_trainer_args = TrainingArgs(
-        learning_rate=0.42, custom_kwargs={"param": True}
-    )
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="generator",
-        train_dataloader=train_dataloader,
-        generator_training_args=generator_trainer_args,
     )
 
     with pytest.raises(
         UnspecifiedGeneratorTrainer,
         match="Attempted to perform generator trainer with an unspecified trainer function.",
     ):
-        trainer.train()
+        manager.train()
         mock_prepare_generator_for_training.assert_called_once()
 
 
-def test_prepare_generator_for_training_mono_encoder(
-    mock_rag_system: RAGSystem,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="generator",
-        train_dataloader=train_dataloader,
-        generator_train_fn=generator_trainer_fn,
-    )
-    mock_rag_system = MagicMock()
-    mock_rag_system.retriever.encoder.return_value = True
-    trainer.rag_system = mock_rag_system
-
-    trainer._prepare_generator_for_training()
-
-    mock_rag_system.generator.model.train.assert_called_once()
-    mock_rag_system.retriever.encoder.eval.assert_called_once()
-
-
-def test_prepare_generator_for_training_dual_encoder(
-    mock_rag_system: RAGSystem,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="generator",
-        train_dataloader=train_dataloader,
-        generator_train_fn=generator_trainer_fn,
-    )
-    mock_rag_system = MagicMock()
-    mock_rag_system.retriever.encoder.return_value = False
-    trainer.rag_system = mock_rag_system
-
-    trainer._prepare_generator_for_training()
-
-    mock_rag_system.generator.model.train.assert_called_once()
-    mock_rag_system.retriever.query_encoder.eval.assert_called_once()
-    mock_rag_system.retriever.context_encoder.eval.assert_called_once()
-
-
-def test_prepare_retriever_for_training_mono_encoder(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=retriever_trainer_fn,
-    )
-    mock_rag_system = MagicMock()
-    mock_rag_system.retriever.encoder.return_value = True
-    trainer.rag_system = mock_rag_system
-
-    trainer._prepare_retriever_for_training()
-
-    mock_rag_system.generator.model.eval.assert_called_once()
-    mock_rag_system.retriever.encoder.train.assert_called_once()
-
-
-@pytest.mark.parametrize(
-    (
-        "context_encoder_frozen",
-        "context_encoder_train_count",
-        "context_encoder_eval_count",
-    ),
-    [(True, 0, 1), (False, 1, 0)],
-)
-def test_prepare_retriever_for_training_dual_encoder(
-    context_encoder_frozen: bool,
-    context_encoder_train_count: int,
-    context_encoder_eval_count: int,
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    train_dataloader: DataLoader,
-) -> None:
-    # arrange
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=retriever_trainer_fn,
-    )
-    mock_rag_system = MagicMock()
-    mock_rag_system.retriever.encoder.return_value = False
-    trainer.rag_system = mock_rag_system
-
-    # act
-    trainer._prepare_retriever_for_training(
-        freeze_context_encoder=context_encoder_frozen
-    )
-
-    # assert
-    mock_rag_system.generator.model.eval.assert_called_once()
-    mock_rag_system.retriever.query_encoder.train.assert_called_once()
-    mock_rag_system.retriever.context_encoder.eval.call_count == context_encoder_eval_count
-    mock_rag_system.retriever.context_encoder.train.call_count == context_encoder_train_count
-
-
 def test_get_federated_task_retriever(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    train_dataloader: DataLoader,
+    retriever_trainer: BaseRetrieverTrainer,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=retriever_trainer_fn,
+        retriever_trainer=retriever_trainer,
     )
 
     # act
-    retriever_trainer, _ = trainer._get_federated_trainer()
+    retriever_trainer, _ = manager._get_federated_trainer()
     out = retriever_trainer(MagicMock(), MagicMock(), MagicMock())
-    fl_task = trainer.get_federated_task()
+    fl_task = manager.get_federated_task()
 
     # assert
     assert out.loss == 0
@@ -330,48 +124,19 @@ def test_get_federated_task_retriever(
     assert fl_task._trainer_spec == retriever_trainer.__fl_task_trainer_config
 
 
-def test_get_federated_task_retriever_query_encoder(
-    mock_rag_system: RAGSystem,
-    retriever_trainer_fn: RetrieverTrainFn,
-    train_dataloader: DataLoader,
-    mock_dual_retriever: BaseRetriever,
-) -> None:
-    # arrange
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
-        mode="retriever",
-        train_dataloader=train_dataloader,
-        retriever_train_fn=retriever_trainer_fn,
-    )
-    mock_rag_system.retriever = mock_dual_retriever
-    trainer.rag_system = mock_rag_system
-
-    # act
-    fl_task = trainer.get_federated_task()
-    retriever_trainer, module = trainer._get_federated_trainer()
-
-    # assert
-    assert isinstance(fl_task, PyTorchFLTask)
-    assert module == mock_dual_retriever.query_encoder
-
-
 def test_get_federated_task_generator(
-    mock_rag_system: RAGSystem,
-    generator_trainer_fn: GeneratorTrainFn,
-    train_dataloader: DataLoader,
+    generator_trainer: BaseGeneratorTrainer,
 ) -> None:
     # arrange
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="generator",
-        train_dataloader=train_dataloader,
-        generator_train_fn=generator_trainer_fn,
+        generator_trainer=generator_trainer,
     )
 
     # act
-    generator_trainer, _ = trainer._get_federated_trainer()
+    generator_trainer, _ = manager._get_federated_trainer()
     out = generator_trainer(MagicMock(), MagicMock(), MagicMock())
-    fl_task = trainer.get_federated_task()
+    fl_task = manager.get_federated_task()
 
     # assert
     assert out.loss == 0
@@ -379,33 +144,23 @@ def test_get_federated_task_generator(
     assert fl_task._trainer_spec == generator_trainer.__fl_task_trainer_config
 
 
-def test_get_federated_task_raises_unspecified_trainer_retriever(
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
-) -> None:
+def test_get_federated_task_raises_unspecified_trainer_retriever() -> None:
     # arrange
-    trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
+    manager = PyTorchRAGTrainerManager(
         mode="retriever",
-        train_dataloader=train_dataloader,
     )
 
     with pytest.raises(
         UnspecifiedRetrieverTrainer,
         match="Cannot federate an unspecified retriever trainer function.",
     ):
-        trainer.get_federated_task()
+        manager.get_federated_task()
 
 
-def test_get_federated_task_raises_unspecified_trainer_generator(
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
-) -> None:
+def test_get_federated_task_raises_unspecified_trainer_generator() -> None:
     # arrange
     trainer = PyTorchRAGTrainerManager(
-        rag_system=mock_rag_system,
         mode="generator",
-        train_dataloader=train_dataloader,
     )
 
     with pytest.raises(
@@ -415,17 +170,12 @@ def test_get_federated_task_raises_unspecified_trainer_generator(
         trainer.get_federated_task()
 
 
-def test_invalid_mode_raises_error(
-    mock_rag_system: RAGSystem,
-    train_dataloader: DataLoader,
-) -> None:
+def test_invalid_mode_raises_error() -> None:
     msg = (
         f"Unsupported RAG train mode: both. "
         f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
     )
     with pytest.raises(UnsupportedTrainerMode, match=msg):
         PyTorchRAGTrainerManager(
-            rag_system=mock_rag_system,
             mode="both",
-            train_dataloader=train_dataloader,
         )
