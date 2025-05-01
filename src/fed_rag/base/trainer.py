@@ -1,6 +1,7 @@
 """Base Trainer"""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -13,6 +14,7 @@ class BaseTrainer(BaseModel, ABC):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     rag_system: RAGSystem
+    train_dataset: Any
 
     @abstractmethod
     def train(self) -> TrainResult:
