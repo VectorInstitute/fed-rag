@@ -174,6 +174,23 @@ def mock_rag_system(
     )
 
 
+@pytest.fixture
+def another_mock_rag_system(
+    mock_generator: BaseGenerator,
+    mock_retriever: BaseRetriever,
+) -> RAGSystem:
+    knowledge_store = InMemoryKnowledgeStore()
+    rag_config = RAGConfig(
+        top_k=1,
+    )
+    return RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+
 class MockRAGTrainerManager(BaseRAGTrainerManager):
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
         return None
