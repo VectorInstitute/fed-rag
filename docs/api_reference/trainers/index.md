@@ -4,3 +4,5 @@
     options:
       members:
         - BaseTrainer
+        - BaseRetrieverTrainer
+        - BaseGeneratorTrainer

@@ -17,3 +17,7 @@ class UnspecifiedGeneratorTrainer(RAGTrainerManagerError):
 
 class UnsupportedTrainerMode(RAGTrainerManagerError):
     pass
+
+
+class InconsistentRAGSystems(RAGTrainerManagerError):
+    pass

@@ -10,14 +10,11 @@ from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.trainer_managers.pytorch import (
-    GeneratorTrainFn,
-    RetrieverTrainFn,
-    TrainingArgs,
-)
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
+from fed_rag.types.results import TestResult, TrainResult
 
 
 class _TestDataset(Dataset):
@@ -177,6 +174,23 @@ def mock_rag_system(
     )
 
 
+@pytest.fixture
+def another_mock_rag_system(
+    mock_generator: BaseGenerator,
+    mock_retriever: BaseRetriever,
+) -> RAGSystem:
+    knowledge_store = InMemoryKnowledgeStore()
+    rag_config = RAGConfig(
+        top_k=1,
+    )
+    return RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+
 class MockRAGTrainerManager(BaseRAGTrainerManager):
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
         return None
@@ -199,25 +213,41 @@ class MockRAGTrainerManager(BaseRAGTrainerManager):
         raise NotImplementedError()
 
 
-@pytest.fixture()
-def retriever_trainer_fn() -> RetrieverTrainFn:
-    def fn(
-        rag_system: RAGSystem,
-        train_loader: DataLoader,
-        trainer_args: TrainingArgs,
-    ) -> Any:
-        return {"retriever_loss": 0.42}
+class TestRetrieverTrainer(BaseRetrieverTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
 
-    return fn  # type: ignore
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
 
 
-@pytest.fixture()
-def generator_trainer_fn() -> GeneratorTrainFn:
-    def fn(
-        rag_system: RAGSystem,
-        train_loader: DataLoader,
-        trainer_args: TrainingArgs,
-    ) -> Any:
-        return {"generator_loss": 0.42}
+class TestGeneratorTrainer(BaseGeneratorTrainer):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
 
-    return fn  # type: ignore
+    def train(self) -> TrainResult:
+        return TrainResult(loss=0.42)
+
+    def evaluate(self) -> TestResult:
+        return TestResult(loss=0.42)
+
+
+@pytest.fixture
+def retriever_trainer(mock_rag_system: RAGSystem) -> BaseRetrieverTrainer:
+    return TestRetrieverTrainer(
+        rag_system=mock_rag_system,
+        train_dataset=[{"query": "mock query", "response": "mock response"}],
+    )
+
+
+@pytest.fixture
+def generator_trainer(mock_rag_system: RAGSystem) -> BaseGeneratorTrainer:
+    return TestGeneratorTrainer(
+        rag_system=mock_rag_system,
+        train_dataset=[{"query": "mock query", "response": "mock response"}],
+    )

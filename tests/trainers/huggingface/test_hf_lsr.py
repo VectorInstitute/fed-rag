@@ -58,7 +58,6 @@ def test_invalid_retriever_raises_error(
         ),
     ):
         HuggingFaceLSRTrainer(
-            model=mock_rag_system.retriever.encoder,
             rag_system=mock_rag_system,
             train_dataset=train_dataset,
         )
@@ -88,7 +87,6 @@ def test_huggingface_extra_missing(
             from fed_rag.trainers.huggingface.lsr import HuggingFaceLSRTrainer
 
             HuggingFaceLSRTrainer(
-                model=hf_rag_system.retriever.encoder,
                 rag_system=hf_rag_system,
                 train_dataset=train_dataset,
             )
@@ -110,7 +108,6 @@ def test_train(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     trainer = HuggingFaceLSRTrainer(
-        model=hf_rag_system.retriever.encoder,
         rag_system=hf_rag_system,
         train_dataset=train_dataset,
     )
@@ -133,7 +130,6 @@ def test_evaluate(
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     trainer = HuggingFaceLSRTrainer(
-        model=hf_rag_system.retriever.encoder,
         train_dataset=train_dataset,
         rag_system=hf_rag_system,
     )

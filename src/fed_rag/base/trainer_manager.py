@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-from fed_rag.exceptions import UnsupportedTrainerMode
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
+from fed_rag.exceptions import InconsistentRAGSystems, UnsupportedTrainerMode
 
 from .fl_task import BaseFLTask
 
@@ -15,15 +15,19 @@ from .fl_task import BaseFLTask
 class RAGTrainMode(str, Enum):
     RETRIEVER = "retriever"
     GENERATOR = "generator"
-    INTERLEAVED = "interleaved"
 
 
 class BaseRAGTrainerManager(BaseModel, ABC):
-    """Base RAG Trainer Class."""
+    """Base RAG Trainer Class.
+
+    The manager becomes solely responsible for orchestration, not for maintaining state
+    (i.e., the RAGSystem).
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    rag_system: RAGSystem
     mode: RAGTrainMode
+    retriever_trainer: BaseRetrieverTrainer | None = None
+    generator_trainer: BaseGeneratorTrainer | None = None
 
     @field_validator("mode", mode="before")
     @classmethod
@@ -38,6 +42,24 @@ class BaseRAGTrainerManager(BaseModel, ABC):
                 f"Unsupported RAG train mode: {v}. "
                 f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
             )
+
+    @model_validator(mode="after")
+    def validate_trainers_consistency(self) -> "BaseRAGTrainerManager":
+        """Validate that trainers use consistent RAG systems if both are present."""
+        if (
+            self.retriever_trainer is not None
+            and self.generator_trainer is not None
+        ):
+            # Check if both trainers have the same RAG system reference
+            if id(self.retriever_trainer.rag_system) != id(
+                self.generator_trainer.rag_system
+            ):
+                raise InconsistentRAGSystems(
+                    "Inconsistent RAG systems detected between retriever and generator trainers. "
+                    "Both trainers must use the same RAG system instance for consistent training."
+                )
+
+        return self
 
     @abstractmethod
     def _prepare_retriever_for_training(

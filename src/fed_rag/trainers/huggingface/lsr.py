@@ -3,9 +3,9 @@
 from typing import TYPE_CHECKING, Any, Optional
 
 import torch
-from pydantic import PrivateAttr, field_validator, model_validator
+from pydantic import PrivateAttr, model_validator
 
-from fed_rag.base.trainer import BaseTrainer
+from fed_rag.base.trainer import BaseRetrieverTrainer
 from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import (
     InvalidDataCollatorError,
@@ -18,6 +18,7 @@ from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
+from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from sentence_transformers import SentenceTransformerTrainer
@@ -123,7 +124,7 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         return (loss, inputs) if return_outputs else loss
 
 
-class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
+class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
     """HuggingFace LM-Supervised Retriever Trainer."""
 
     _hf_trainer: Optional["SentenceTransformerTrainer"] = PrivateAttr(
@@ -133,13 +134,11 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
     def __init__(
         self,
         rag_system: RAGSystem,
-        model: "SentenceTransformer",
         train_dataset: "Dataset",
         training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
         super().__init__(
-            model=model,
             train_dataset=train_dataset,
             rag_system=rag_system,
             training_arguments=training_arguments,
@@ -147,7 +146,20 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
         )
 
     @model_validator(mode="after")
-    def set_hf_trainer(self) -> "HuggingFaceLSRTrainer":
+    def set_private_attributes(self) -> "HuggingFaceLSRTrainer":
+        # if made it to here, then this import is available
+        from sentence_transformers import SentenceTransformer
+
+        # validate rag system
+        _validate_rag_system(self.rag_system)
+
+        # validate model
+        if not isinstance(self.model, SentenceTransformer):
+            raise TrainerError(
+                "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
+                "`~sentence_transformers.SentenceTransformer`."
+            )
+
         self._hf_trainer = LSRSentenceTransformerTrainer(
             model=self.model,
             args=self.training_arguments,
@@ -155,18 +167,6 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseTrainer):
         )
 
         return self
-
-    @field_validator("model", mode="before")
-    @classmethod
-    def validate_mode(cls, v: Any) -> "SentenceTransformer":
-        from sentence_transformers import SentenceTransformer
-
-        if not isinstance(v, SentenceTransformer):
-            raise TrainerError(
-                "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
-                "`~sentence_transformers.SentenceTransformer`."
-            )
-        return v
 
     def train(self) -> TrainResult:
         output: TrainOutput = self.hf_trainer_obj.train()

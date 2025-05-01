@@ -10,7 +10,7 @@ from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 
 
-class TestHFRetrieverTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
+class TestRetrieverTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
     __test__ = (
         False  # needed for Pytest collision. Avoids PytestCollectionWarning
     )
@@ -25,7 +25,7 @@ class TestHFRetrieverTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
         return Trainer()
 
 
-class TestHFGeneratorTrainer(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
+class TestGeneratorTrainer(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
     __test__ = (
         False  # needed for Pytest collision. Avoids PytestCollectionWarning
     )
@@ -56,3 +56,21 @@ def hf_rag_system(mock_rag_system: RAGSystem) -> RAGSystem:
     encoder.tokenizer = None
     mock_rag_system.retriever.encoder = encoder
     return mock_rag_system
+
+
+@pytest.fixture()
+def generator_trainer(
+    hf_rag_system: RAGSystem, train_dataset: Dataset
+) -> BaseGeneratorTrainer:
+    return TestGeneratorTrainer(
+        rag_system=hf_rag_system, train_dataset=train_dataset
+    )
+
+
+@pytest.fixture()
+def retriever_trainer(
+    hf_rag_system: RAGSystem, train_dataset: Dataset
+) -> BaseRetrieverTrainer:
+    return TestRetrieverTrainer(
+        rag_system=hf_rag_system, train_dataset=train_dataset
+    )

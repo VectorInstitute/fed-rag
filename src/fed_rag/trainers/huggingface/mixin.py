@@ -10,10 +10,9 @@ from typing import (
     runtime_checkable,
 )
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
 from fed_rag.exceptions import MissingExtraError
-from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
     from datasets import Dataset
@@ -34,15 +33,18 @@ if TYPE_CHECKING:  # pragma: no cover
 # Define the protocol for runtime checking
 @runtime_checkable
 class HuggingFaceTrainerProtocol(Protocol):
-    model: Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]
     train_dataset: "Dataset"
     training_arguments: Optional["TrainingArguments"]
+
+    def model(
+        self,
+    ) -> Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]:
+        pass  # pragma: no cover
 
 
 class HuggingFaceTrainerMixin(BaseModel, ABC):
     """HuggingFace Trainer Mixin."""
 
-    model: Union["SentenceTransformer", "PreTrainedModel", "PeftModel"]
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
     )
@@ -51,7 +53,8 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
 
     def __init__(
         self,
-        *args: Any,
+        train_dataset: "Dataset",
+        training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
         if not _has_huggingface:
@@ -60,14 +63,11 @@ class HuggingFaceTrainerMixin(BaseModel, ABC):
                 "To fix please run `pip install fed-rag[huggingface]`."
             )
             raise MissingExtraError(msg)
-        super().__init__(*args, **kwargs)
-
-    @model_validator(mode="after")
-    def validate_training_args(self) -> "HuggingFaceTrainerMixin":
-        if hasattr(self, "rag_system"):
-            _validate_rag_system(self.rag_system)
-
-        return self
+        super().__init__(
+            train_dataset=train_dataset,
+            training_arguments=training_arguments,
+            **kwargs,
+        )
 
     @property
     @abstractmethod
