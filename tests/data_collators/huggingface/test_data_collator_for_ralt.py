@@ -1,12 +1,14 @@
 import re
 import sys
-from unittest.mock import MagicMock, _Call, patch
+from typing import Sequence
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
 from pytest import MonkeyPatch
 from torch.testing import assert_close
 
+from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.data_collators.huggingface.ralt import (
     DEFAULT_EXAMPLE_TEMPLATE,
     DataCollatorForRALT,
@@ -157,10 +159,23 @@ def test_init(
     assert collator.default_return_tensors == "pt"
 
 
+@pytest.fixture()
+def mock_examples() -> Sequence[dict]:
+    return [
+        {
+            "query": f"fake query {ix}",
+            "answer": f"fake answer {ix}",
+            "context": f"fake context {ix}",
+        }
+        for ix in range(2)
+    ]
+
+
 @patch.object(RAGSystem, "retrieve")
 def test_lsr_collator_with_mocks(
     mock_retrieve: MagicMock,
     mock_rag_system: RAGSystem,
+    mock_examples: Sequence[dict],
     monkeypatch: MonkeyPatch,
 ) -> None:
     # Set environment variable for the duration of this test only
@@ -174,78 +189,50 @@ def test_lsr_collator_with_mocks(
     )
 
     # use mocks
-    mock_generator = MagicMock()
-    mock_generator.compute_target_sequence_proba.side_effect = [
-        torch.tensor(0.01),
-        torch.tensor(0.02),
-        torch.tensor(0.03),
-    ]
-    rag_system.generator = mock_generator
+    mock_tokenizer = MagicMock()
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
+    rag_system.generator.tokenizer = mock_tokenizer
 
-    mock_retrieve.return_value = [
-        SourceNode(
-            score=0.1,
-            node=KnowledgeNode(
-                embedding=[0.1], node_type="text", text_content="node 1"
-            ),
-        ),
-        SourceNode(
-            score=0.2,
-            node=KnowledgeNode(
-                embedding=[0.2], node_type="text", text_content="node 2"
-            ),
-        ),
-        SourceNode(
-            score=0.3,
-            node=KnowledgeNode(
-                embedding=[0.3], node_type="text", text_content="node 3"
-            ),
-        ),
+    mock_retrieve.side_effect = [
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(2)
+        ],
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(2, 4)
+        ],
     ]
 
     collator = DataCollatorForRALT(
-        rag_system=rag_system, example_template="{query} {context} {response}"
+        rag_system=mock_rag_system,
+        example_template="{query} {context} {response}",
     )
 
     # act
-    features = [{"query": "mock query", "response": "mock response"}]
-    batch = collator(features)
+    batch = collator(mock_examples)
 
     assert_close(
-        batch["retrieval_scores"], torch.tensor([0.1, 0.2, 0.3]).unsqueeze(0)
+        batch["input_ids"], torch.tensor([0.1, 0.2, 0.3]).unsqueeze(0)
     )
     assert_close(
-        batch["lm_scores"], torch.tensor([0.01, 0.02, 0.03]).unsqueeze(0)
-    )
-    mock_retrieve.assert_called_once_with("mock query")
-    mock_generator.compute_target_sequence_proba.assert_has_calls(
-        [
-            _Call(
-                (
-                    (),
-                    {
-                        "prompt": "mock query node 1",
-                        "target": "\n<response>\nmock response\n</response>\n",
-                    },
-                )
-            ),
-            _Call(
-                (
-                    (),
-                    {
-                        "prompt": "mock query node 2",
-                        "target": "\n<response>\nmock response\n</response>\n",
-                    },
-                )
-            ),
-            _Call(
-                (
-                    (),
-                    {
-                        "prompt": "mock query node 3",
-                        "target": "\n<response>\nmock response\n</response>\n",
-                    },
-                )
-            ),
-        ]
+        batch["labels"], torch.tensor([0.01, 0.02, 0.03]).unsqueeze(0)
     )
