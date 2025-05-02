@@ -2521,9 +2521,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceLSRTrainer" class="md-nav__link">
+  <a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceTrainerForLSR" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceLSRTrainer
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceTrainerForLSR
     </span>
   </a>
   
@@ -2964,9 +2964,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceLSRTrainer" class="md-nav__link">
+  <a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceTrainerForLSR" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceLSRTrainer
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceTrainerForLSR
     </span>
   </a>
   
@@ -3285,11 +3285,11 @@
 
 
 
-<h2 id="src.fed_rag.trainers.huggingface.lsr.HuggingFaceLSRTrainer" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">HuggingFaceLSRTrainer</span>
+<h2 id="src.fed_rag.trainers.huggingface.lsr.HuggingFaceTrainerForLSR" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">HuggingFaceTrainerForLSR</span>
 
 
-<a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceLSRTrainer" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag.trainers.huggingface.lsr.HuggingFaceTrainerForLSR" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
@@ -3361,7 +3361,7 @@
 <span class="normal"><a href="#__codelineno-0-178">178</a></span>
 <span class="normal"><a href="#__codelineno-0-179">179</a></span>
 <span class="normal"><a href="#__codelineno-0-180">180</a></span>
-<span class="normal"><a href="#__codelineno-0-181">181</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-127"><a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="k">class</span><span class="w"> </span><span class="nc">HuggingFaceLSRTrainer</span><span class="p">(</span><span class="n">HuggingFaceTrainerMixin</span><span class="p">,</span> <span class="n">BaseRetrieverTrainer</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-181">181</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-127"><a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="k">class</span><span class="w"> </span><span class="nc">HuggingFaceTrainerForLSR</span><span class="p">(</span><span class="n">HuggingFaceTrainerMixin</span><span class="p">,</span> <span class="n">BaseRetrieverTrainer</span><span class="p">):</span>
 </span><span id="__span-0-128"><a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;HuggingFace LM-Supervised Retriever Trainer.&quot;&quot;&quot;</span>
 </span><span id="__span-0-129"><a id="__codelineno-0-129" name="__codelineno-0-129"></a>
 </span><span id="__span-0-130"><a id="__codelineno-0-130" name="__codelineno-0-130"></a>    <span class="n">_hf_trainer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SentenceTransformerTrainer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span>
@@ -3383,7 +3383,7 @@
 </span><span id="__span-0-146"><a id="__codelineno-0-146" name="__codelineno-0-146"></a>        <span class="p">)</span>
 </span><span id="__span-0-147"><a id="__codelineno-0-147" name="__codelineno-0-147"></a>
 </span><span id="__span-0-148"><a id="__codelineno-0-148" name="__codelineno-0-148"></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="__span-0-149"><a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HuggingFaceLSRTrainer&quot;</span><span class="p">:</span>
+</span><span id="__span-0-149"><a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_private_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HuggingFaceTrainerForLSR&quot;</span><span class="p">:</span>
 </span><span id="__span-0-150"><a id="__codelineno-0-150" name="__codelineno-0-150"></a>        <span class="c1"># if made it to here, then this import is available</span>
 </span><span id="__span-0-151"><a id="__codelineno-0-151" name="__codelineno-0-151"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
 </span><span id="__span-0-152"><a id="__codelineno-0-152" name="__codelineno-0-152"></a>
@@ -3393,7 +3393,7 @@
 </span><span id="__span-0-156"><a id="__codelineno-0-156" name="__codelineno-0-156"></a>        <span class="c1"># validate model</span>
 </span><span id="__span-0-157"><a id="__codelineno-0-157" name="__codelineno-0-157"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">SentenceTransformer</span><span class="p">):</span>
 </span><span id="__span-0-158"><a id="__codelineno-0-158" name="__codelineno-0-158"></a>            <span class="k">raise</span> <span class="n">TrainerError</span><span class="p">(</span>
-</span><span id="__span-0-159"><a id="__codelineno-0-159" name="__codelineno-0-159"></a>                <span class="s2">&quot;For `HuggingFaceLSRTrainer`, attribute `model` must be of type &quot;</span>
+</span><span id="__span-0-159"><a id="__codelineno-0-159" name="__codelineno-0-159"></a>                <span class="s2">&quot;For `HuggingFaceTrainerForLSR`, attribute `model` must be of type &quot;</span>
 </span><span id="__span-0-160"><a id="__codelineno-0-160" name="__codelineno-0-160"></a>                <span class="s2">&quot;`~sentence_transformers.SentenceTransformer`.&quot;</span>
 </span><span id="__span-0-161"><a id="__codelineno-0-161" name="__codelineno-0-161"></a>            <span class="p">)</span>
 </span><span id="__span-0-162"><a id="__codelineno-0-162" name="__codelineno-0-162"></a>
