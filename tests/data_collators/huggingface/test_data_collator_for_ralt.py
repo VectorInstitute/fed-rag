@@ -1,6 +1,6 @@
 import re
 import sys
-from typing import Sequence
+from typing import Any, Sequence
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -171,9 +171,13 @@ def mock_examples() -> Sequence[dict]:
     ]
 
 
+@patch(
+    "fed_rag.data_collators.huggingface.ralt.DataCollatorForLanguageModeling"
+)
 @patch.object(RAGSystem, "retrieve")
 def test_lsr_collator_with_mocks(
     mock_retrieve: MagicMock,
+    mock_hf_data_collator_for_lm_class: MagicMock,
     mock_rag_system: RAGSystem,
     mock_examples: Sequence[dict],
     monkeypatch: MonkeyPatch,
@@ -188,15 +192,18 @@ def test_lsr_collator_with_mocks(
         rag_config=mock_rag_system.rag_config,
     )
 
-    # use mocks
+    # arrange mocks
     mock_tokenizer = MagicMock()
     mock_encode_return: EncodeResult = {
         "attention_mask": None,
         "input_ids": [1, 1, 1],
     }
     mock_tokenizer.encode.return_value = mock_encode_return
+    mock_tokenizer.unwrapped.all_special_ids.__getitem__.return_value = 42
     rag_system.generator.tokenizer = mock_tokenizer
 
+    # mock top-k = 2
+    mock_top_k_val = 2
     mock_retrieve.side_effect = [
         [
             SourceNode(
@@ -207,7 +214,7 @@ def test_lsr_collator_with_mocks(
                     text_content=f"fake text context {ix}",
                 ),
             )
-            for ix in range(2)
+            for ix in range(mock_top_k_val)
         ],
         [
             SourceNode(
@@ -218,21 +225,45 @@ def test_lsr_collator_with_mocks(
                     text_content=f"fake text context {ix}",
                 ),
             )
-            for ix in range(2, 4)
+            for ix in range(mock_top_k_val, mock_top_k_val * 2)
         ],
     ]
 
+    def _mock_torch_call(features: Any) -> dict[str, torch.Tensor]:
+        retval = {
+            k: torch.stack([torch.tensor(el) for el in v], dim=0)
+            for k, v in features.items()
+            if k in ["input_ids", "target_ids"]
+        }
+        retval["labels"] = retval["target_ids"]
+        del retval["target_ids"]
+        return retval
+
+    # Create a mock instance to be returned when the class is instantiated
+    mock_torch_call = MagicMock()
+    mock_torch_call.side_effect = _mock_torch_call
+    mock_collator_instance = MagicMock()
+    mock_collator_instance.torch_call = mock_torch_call
+    mock_hf_data_collator_for_lm_class.return_value = mock_collator_instance
+
+    # arrange collator
     collator = DataCollatorForRALT(
         rag_system=mock_rag_system,
         example_template="{query} {context} {response}",
     )
 
     # act
-    batch = collator(mock_examples)
+    collated_batch = collator(mock_examples)
 
+    expected_num_examples = mock_top_k_val * len(mock_examples)
+    assert collated_batch["input_ids"].shape[0] == expected_num_examples
+    mock_hf_data_collator_for_lm_class.assert_called_once()
+    mock_torch_call.assert_called_once()
     assert_close(
-        batch["input_ids"], torch.tensor([0.1, 0.2, 0.3]).unsqueeze(0)
+        collated_batch["input_ids"],
+        torch.tensor([[1, 1, 1] for _ in range(expected_num_examples)]),
     )
     assert_close(
-        batch["labels"], torch.tensor([0.01, 0.02, 0.03]).unsqueeze(0)
+        collated_batch["labels"],
+        torch.tensor([[1, 1, 42] for _ in range(expected_num_examples)]),
     )

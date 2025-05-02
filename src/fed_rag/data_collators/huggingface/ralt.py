@@ -160,8 +160,8 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
         processed_features = {
             "input_ids": inputs_list,
-            "attention_mask": targets_list,
-            "target_ids": attention_mask_list,
+            "attention_mask": attention_mask_list,
+            "target_ids": targets_list,
         }
 
         # STEP 2 — Use ~transformers.DataCollatorForLanguageModeling
