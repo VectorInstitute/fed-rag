@@ -73,6 +73,10 @@ class MockGenerator(BaseGenerator):
     def tokenizer(self) -> MockTokenizer:
         return self._tokenizer
 
+    @tokenizer.setter
+    def tokenizer(self, v: Any) -> None:
+        self._tokenizer = v
+
 
 @pytest.fixture
 def mock_generator() -> BaseGenerator:
