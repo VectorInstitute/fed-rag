@@ -26,7 +26,6 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
-    from sentence_transformers import SentenceTransformerTrainer
     from transformers import Trainer, TrainingArguments
     from transformers.trainer_utils import TrainOutput
 
@@ -75,5 +74,5 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
         raise NotImplementedError
 
     @property
-    def hf_trainer_obj(self) -> "SentenceTransformerTrainer":
+    def hf_trainer_obj(self) -> "Trainer":
         return self._hf_trainer
