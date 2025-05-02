@@ -7,6 +7,10 @@ class TrainerError(FedRAGError):
     pass
 
 
+class InconsistentDatasetError(TrainerError):
+    pass
+
+
 class InvalidLossError(TrainerError):
     pass
 

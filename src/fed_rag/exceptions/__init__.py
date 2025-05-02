@@ -19,6 +19,7 @@ from .inspectors import (
 )
 from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
 from .trainer import (
+    InconsistentDatasetError,
     InvalidDataCollatorError,
     InvalidLossError,
     MissingInputTensor,
@@ -66,4 +67,5 @@ __all__ = [
     "InvalidLossError",
     "MissingInputTensor",
     "InvalidDataCollatorError",
+    "InconsistentDatasetError",
 ]
