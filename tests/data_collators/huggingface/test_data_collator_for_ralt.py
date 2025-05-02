@@ -11,6 +11,7 @@ from torch.testing import assert_close
 from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.data_collators.huggingface.ralt import (
     DEFAULT_EXAMPLE_TEMPLATE,
+    DataCollatorForLanguageModeling,
     DataCollatorForRALT,
 )
 from fed_rag.exceptions import FedRAGError, MissingExtraError
@@ -171,6 +172,10 @@ def mock_examples() -> Sequence[dict]:
     ]
 
 
+@patch.object(
+    DataCollatorForLanguageModeling,
+    "torch_call",
+)
 @patch(
     "fed_rag.data_collators.huggingface.ralt.DataCollatorForLanguageModeling"
 )
@@ -178,6 +183,7 @@ def mock_examples() -> Sequence[dict]:
 def test_lsr_collator_with_mocks(
     mock_retrieve: MagicMock,
     mock_hf_data_collator_for_lm_class: MagicMock,
+    mock_torch_call: MagicMock,
     mock_rag_system: RAGSystem,
     mock_examples: Sequence[dict],
     monkeypatch: MonkeyPatch,
@@ -240,7 +246,7 @@ def test_lsr_collator_with_mocks(
         return retval
 
     # Create a mock instance to be returned when the class is instantiated
-    mock_torch_call = MagicMock()
+    # mock_torch_call = MagicMock()
     mock_torch_call.side_effect = _mock_torch_call
     mock_collator_instance = MagicMock()
     mock_collator_instance.torch_call = mock_torch_call
