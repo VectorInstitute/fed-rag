@@ -1,6 +1,6 @@
 """HuggingFace Data Collator For Retrieval-Augmented Generator Training"""
 
-from typing import Any, cast
+from typing import Any
 
 from pydantic import Field
 
@@ -10,7 +10,7 @@ from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    import transformers.data.data_collator as transformers_data_collators
+    # import transformers.data.data_collator as transformers_data_collators
     from transformers.data.data_collator import (
         DataCollatorForLanguageModeling,
         DataCollatorMixin,
@@ -175,10 +175,10 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
             tokenizer=unwrapped_tokenizer,
             mlm=False,  # we could implement masking here on instructions
         )
-        # bring back proper typing
-        data_collator_for_lm = cast(
-            transformers_data_collators.DataCollatorForLanguageModeling,
-            data_collator_for_lm,
-        )
+        # # bring back proper typing
+        # data_collator_for_lm = cast(
+        #     transformers_data_collators.DataCollatorForLanguageModeling,
+        #     data_collator_for_lm,
+        # )
 
         return data_collator_for_lm.torch_call(processed_features)  # type: ignore[no-any-return]
