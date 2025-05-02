@@ -100,6 +100,7 @@ nav:
       - api_reference/tokenizers/huggingface.md
     - Trainers:
       - api_reference/trainers/index.md
+      - api_reference/trainers/pytorch.md
       - api_reference/trainers/huggingface.md
   - Glossary: glossary.md
   - Community:

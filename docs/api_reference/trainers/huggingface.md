@@ -11,3 +11,8 @@
       members:
         - HuggingFaceTrainerForLSR
         - LSRSentenceTransformerTrainer
+
+::: src.fed_rag.trainers.huggingface.ralt
+    options:
+      members:
+        - HuggingFaceTrainerForRALT
