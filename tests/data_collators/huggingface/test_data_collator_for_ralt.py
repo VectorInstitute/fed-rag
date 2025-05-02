@@ -14,7 +14,11 @@ from fed_rag.data_collators.huggingface.ralt import (
     DataCollatorForLanguageModeling,
     DataCollatorForRALT,
 )
-from fed_rag.exceptions import FedRAGError, MissingExtraError
+from fed_rag.exceptions import (
+    DataCollatorError,
+    FedRAGError,
+    MissingExtraError,
+)
 from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
@@ -265,3 +269,70 @@ def test_lsr_collator_with_mocks(
         collated_batch["labels"],
         torch.tensor([[1, 1, 42] for _ in range(expected_num_examples)]),
     )
+
+
+@patch.object(RAGSystem, "retrieve")
+def test_lsr_collator_raises_data_collator_error_when_missing_eos_token_id(
+    mock_retrieve: MagicMock,
+    mock_rag_system: RAGSystem,
+    mock_examples: Sequence[dict],
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # Set environment variable for the duration of this test only
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    rag_system = RAGSystem(
+        generator=mock_rag_system.generator,
+        retriever=mock_rag_system.retriever,
+        knowledge_store=mock_rag_system.knowledge_store,
+        rag_config=mock_rag_system.rag_config,
+    )
+
+    # arrange mocks
+    mock_tokenizer = MagicMock()
+    mock_encode_return: EncodeResult = {
+        "attention_mask": None,
+        "input_ids": [1, 1, 1],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
+    mock_tokenizer.unwrapped.special_tokens_map.get.side_effect = KeyError
+    rag_system.generator.tokenizer = mock_tokenizer
+
+    # mock top-k = 2
+    mock_top_k_val = 2
+    mock_retrieve.side_effect = [
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(mock_top_k_val)
+        ],
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(mock_top_k_val, mock_top_k_val * 2)
+        ],
+    ]
+
+    # arrange collator
+    collator = DataCollatorForRALT(
+        rag_system=mock_rag_system,
+        example_template="{query} {context} {response}",
+    )
+
+    # act
+    with pytest.raises(
+        DataCollatorError, match="Tokenizer doesn't have an `eos_token`."
+    ):
+        collator(mock_examples)
