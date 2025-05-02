@@ -51,5 +51,10 @@ def train_dataset() -> Dataset:
 
 
 @pytest.fixture()
+def another_train_dataset() -> Dataset:
+    return _TestDataset(size=10)
+
+
+@pytest.fixture()
 def train_dataloader(train_dataset: Dataset) -> DataLoader:
     return DataLoader(train_dataset, batch_size=2, shuffle=True)
