@@ -1,4 +1,4 @@
-"""HuggingFace PeftModel Generator"""
+"""HuggingFace Data Collator For LM-Supervised Retriever Training"""
 
 from typing import Any
 

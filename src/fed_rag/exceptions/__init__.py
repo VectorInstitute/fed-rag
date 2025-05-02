@@ -1,5 +1,6 @@
 from .common import MissingExtraError
 from .core import FedRAGError
+from .data_collator import DataCollatorError
 from .fl_tasks import (
     FLTaskError,
     MissingFLTaskConfig,
@@ -38,6 +39,7 @@ __all__ = [
     "FedRAGError",
     # common
     "MissingExtraError",
+    "DataCollatorError",
     # fl_tasks
     "FLTaskError",
     "MissingFLTaskConfig",
