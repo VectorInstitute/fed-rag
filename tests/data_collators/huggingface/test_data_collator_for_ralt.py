@@ -164,7 +164,7 @@ def mock_examples() -> Sequence[dict]:
     return [
         {
             "query": f"fake query {ix}",
-            "answer": f"fake answer {ix}",
+            "response": f"fake response {ix}",
             "context": f"fake context {ix}",
         }
         for ix in range(2)

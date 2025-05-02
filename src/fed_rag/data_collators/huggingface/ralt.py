@@ -121,9 +121,9 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
             # parallel in-context retrieval-augmentation creates
             # top_k separated finetuning instances
             for source in source_nodes:
-                finetune_instance_text = self.finetune_example_template.format(
+                finetune_instance_text = self.example_template.format(
                     query=example["query"],
-                    answer=example["response"],
+                    response=example["response"],
                     context=source.node.get_content()["text_content"],
                 )
                 finetuning_instances.append(finetune_instance_text)
@@ -159,9 +159,9 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
                 attention_mask_list.append(attention_mask)
 
         processed_features = {
-            "input_ids": input_ids,
-            "attention_mask": attention_mask,
-            "target_ids": target_ids,
+            "input_ids": inputs_list,
+            "attention_mask": targets_list,
+            "target_ids": attention_mask_list,
         }
 
         # STEP 2 — Use ~transformers.DataCollatorForLanguageModeling
