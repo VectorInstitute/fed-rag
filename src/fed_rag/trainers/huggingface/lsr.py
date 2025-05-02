@@ -124,7 +124,7 @@ class LSRSentenceTransformerTrainer(SentenceTransformerTrainer):
         return (loss, inputs) if return_outputs else loss
 
 
-class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
+class HuggingFaceTrainerForLSR(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
     """HuggingFace LM-Supervised Retriever Trainer."""
 
     _hf_trainer: Optional["SentenceTransformerTrainer"] = PrivateAttr(
@@ -146,7 +146,7 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
         )
 
     @model_validator(mode="after")
-    def set_private_attributes(self) -> "HuggingFaceLSRTrainer":
+    def set_private_attributes(self) -> "HuggingFaceTrainerForLSR":
         # if made it to here, then this import is available
         from sentence_transformers import SentenceTransformer
 
@@ -156,7 +156,7 @@ class HuggingFaceLSRTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
         # validate model
         if not isinstance(self.model, SentenceTransformer):
             raise TrainerError(
-                "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
+                "For `HuggingFaceTrainerForLSR`, attribute `model` must be of type "
                 "`~sentence_transformers.SentenceTransformer`."
             )
 
