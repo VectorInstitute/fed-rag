@@ -10,6 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.10] - 2025-05-02
+
+### Added
+
+- [Feature] Add HuggingFaceTrainerForRALT and associated DataCollatorForRALT (#241)
+- [Feature] Add PyTorchTrainerMixin (#239)
+- add trainers and data collators (#232)
+- [Feature] Add fed_rag.base.data_collators and BaseDataCollator (#231)
+- [Feature] Add target template to DataCollatorForLSR (#230)
+- [Feature] Implement compute_loss for LSRSentenceTransformerTrainer (#229)
+- [Feature] Add HuggingFaceLSRTrainer (#227)
+- [Feature] Adds HuggingFaceTrainerMixin (#226)
+- Add BaseTrainer (#225)
+- [Feature] Add HFRAGTrainer (#220)
+- [Feature] Add PyTorchRAGTrainer (#219)
+- [Feature] Data collators for LSR (both huggingface and torch) (#187)
+- Add exception for missing extra error (#208)
+
+### Changed
+
+- [refactor] Improvements to TrainerManagers and Trainers classes and adds BaseRetrieverTrainer & BaseGeneratorTrainer (#238)
+- [Refactor] Move DataCollatorForLSR to new fed_rag.data_collators.huggingface module (#233)
+- [chore] rename to trainer manager (#223)
+- [chore] Move HFSentenceTransformerRetriever to huggingface module for consistency (#207)
+
 ## [0.0.9] - 2025-04-25
 
 ### Added
