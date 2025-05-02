@@ -18,7 +18,7 @@ from fed_rag.exceptions import (
     TrainerError,
 )
 from fed_rag.trainers.huggingface.lsr import (
-    HuggingFaceLSRTrainer,
+    HuggingFaceTrainerForLSR,
     LSRSentenceTransformerTrainer,
 )
 from fed_rag.types.rag_system import RAGSystem
@@ -30,7 +30,7 @@ def test_init(
     # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-    trainer = HuggingFaceLSRTrainer(
+    trainer = HuggingFaceTrainerForLSR(
         model=hf_rag_system.retriever.encoder,
         rag_system=hf_rag_system,
         train_dataset=train_dataset,
@@ -53,11 +53,11 @@ def test_invalid_retriever_raises_error(
     with pytest.raises(
         TrainerError,
         match=(
-            "For `HuggingFaceLSRTrainer`, attribute `model` must be of type "
+            "For `HuggingFaceTrainerForLSR`, attribute `model` must be of type "
             "`~sentence_transformers.SentenceTransformer`."
         ),
     ):
-        HuggingFaceLSRTrainer(
+        HuggingFaceTrainerForLSR(
             rag_system=mock_rag_system,
             train_dataset=train_dataset,
         )
@@ -77,16 +77,18 @@ def test_huggingface_extra_missing(
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "`HuggingFaceLSRTrainer` requires `huggingface` extra to be installed. "
+            "`HuggingFaceTrainerForLSR` requires `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
             MissingExtraError,
             match=re.escape(msg),
         ):
-            from fed_rag.trainers.huggingface.lsr import HuggingFaceLSRTrainer
+            from fed_rag.trainers.huggingface.lsr import (
+                HuggingFaceTrainerForLSR,
+            )
 
-            HuggingFaceLSRTrainer(
+            HuggingFaceTrainerForLSR(
                 rag_system=hf_rag_system,
                 train_dataset=train_dataset,
             )
@@ -97,7 +99,7 @@ def test_huggingface_extra_missing(
             sys.modules[modules_to_import[ix]] = original_module
 
 
-@patch.object(HuggingFaceLSRTrainer, "hf_trainer_obj")
+@patch.object(HuggingFaceTrainerForLSR, "hf_trainer_obj")
 def test_train(
     mock_hf_trainer: MagicMock,
     hf_rag_system: RAGSystem,
@@ -107,7 +109,7 @@ def test_train(
     # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-    trainer = HuggingFaceLSRTrainer(
+    trainer = HuggingFaceTrainerForLSR(
         rag_system=hf_rag_system,
         train_dataset=train_dataset,
     )
@@ -129,7 +131,7 @@ def test_evaluate(
     # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-    trainer = HuggingFaceLSRTrainer(
+    trainer = HuggingFaceTrainerForLSR(
         train_dataset=train_dataset,
         rag_system=hf_rag_system,
     )

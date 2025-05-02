@@ -9,5 +9,5 @@
 ::: src.fed_rag.trainers.huggingface.lsr
     options:
       members:
-        - HuggingFaceLSRTrainer
+        - HuggingFaceTrainerForLSR
         - LSRSentenceTransformerTrainer
