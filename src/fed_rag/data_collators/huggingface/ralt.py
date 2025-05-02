@@ -1,6 +1,6 @@
 """HuggingFace Data Collator For Retrieval-Augmented Generator Training"""
 
-from typing import Any
+from typing import Any, cast
 
 from pydantic import Field
 
@@ -10,6 +10,7 @@ from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
+    import transformers.data.data_collator as transformers_data_collators
     from transformers.data.data_collator import (
         DataCollatorForLanguageModeling,
         DataCollatorMixin,
@@ -21,6 +22,11 @@ except ModuleNotFoundError:
 
     # Create a dummy class with a different name to avoid the redefinition
     class _DummyDataCollatorMixin:
+        """Dummy placeholder when transformers is not available."""
+
+        pass
+
+    class DataCollatorForLanguageModeling:  # type: ignore[no-redef]
         """Dummy placeholder when transformers is not available."""
 
         pass
@@ -168,6 +174,11 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         data_collator_for_lm = DataCollatorForLanguageModeling(
             tokenizer=unwrapped_tokenizer,
             mlm=False,  # we could implement masking here on instructions
+        )
+        # bring back proper typing
+        data_collator_for_lm = cast(
+            transformers_data_collators.DataCollatorForLanguageModeling,
+            data_collator_for_lm,
         )
 
         return data_collator_for_lm.torch_call(processed_features)  # type: ignore[no-any-return]
