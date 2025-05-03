@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.11] - 2025-05-03
+
+### Added
+
+- `HuggingFaceTrainerManager` missing implementations for preparing retriever/generator models for training (#245)
+
+### Changed
+
+- [Fix] LSRLoss should have first input in KL div be in log space (#245)
+- [Fix] `DataCollatorForLSR` should subclass `SentenceTransformerDataCollator` (#245)
+- [Fix] `DataCollatorForLSR` should require grads for retriever's for retriever scores, but not for lm scores (#245)
+
 ## [0.0.10] - 2025-05-02
 
 ### Added
