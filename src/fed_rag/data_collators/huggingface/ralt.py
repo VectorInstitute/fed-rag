@@ -39,6 +39,11 @@ You are a helpful assistant. Given the user's question, provide a succinct
 and accurate response. If context is provided, use it in your answer if it helps
 you to create the most accurate response.
 
+<warning>
+Only use the the provided context if its relevant to answer the question. Otherwise,
+ignore it and use your parametric knowledge to answer the question.
+</warning>
+
 <question>
 {query}
 </question>

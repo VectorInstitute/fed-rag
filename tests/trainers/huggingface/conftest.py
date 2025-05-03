@@ -53,6 +53,14 @@ def train_dataset() -> Dataset:
 @pytest.fixture()
 def hf_rag_system(mock_rag_system: RAGSystem) -> RAGSystem:
     encoder = SentenceTransformer(modules=[torch.nn.Linear(5, 5)])
+    # Mock the tokenize method on the first module
     encoder.tokenizer = None
+    encoder._first_module().tokenize = lambda texts: {
+        "input_ids": torch.ones((len(texts), 10))
+    }
+    encoder.encode = lambda texts, **kwargs: torch.ones(
+        (len(texts) if isinstance(texts, list) else 1, 5)
+    )
+
     mock_rag_system.retriever.encoder = encoder
     return mock_rag_system

@@ -53,36 +53,44 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         )
 
     def _prepare_generator_for_training(self, **kwargs: Any) -> None:
-        pass  # no-op
+        self.generator_trainer.model.train()
+
+        # freeze generator
+        if self.retriever_trainer:
+            self.retriever_trainer.model.eval()
 
     def _prepare_retriever_for_training(
         self, freeze_context_encoder: bool = True, **kwargs: Any
     ) -> None:
-        pass  # no-op
+        self.retriever_trainer.model.train()
 
-    def _train_retriever(self, **kwargs: Any) -> None:
+        # freeze generator
+        if self.generator_trainer:
+            self.generator_trainer.model.eval()
+
+    def _train_retriever(self, **kwargs: Any) -> TrainResult:
         self._prepare_retriever_for_training()
         if self.retriever_trainer:
-            self.retriever_trainer.train()
+            return self.retriever_trainer.train()
         else:
             raise UnspecifiedRetrieverTrainer(
                 "Attempted to perform retriever trainer with an unspecified trainer function."
             )
 
-    def _train_generator(self, **kwargs: Any) -> None:
+    def _train_generator(self, **kwargs: Any) -> TrainResult:
         self._prepare_generator_for_training()
         if self.generator_trainer:
-            self.generator_trainer.train()
+            return self.generator_trainer.train()
         else:
             raise UnspecifiedGeneratorTrainer(
                 "Attempted to perform generator trainer with an unspecified trainer function."
             )
 
-    def train(self, **kwargs: Any) -> None:
+    def train(self, **kwargs: Any) -> TrainResult:
         if self.mode == "retriever":
-            self._train_retriever()
+            return self._train_retriever()
         elif self.mode == "generator":
-            self._train_generator()
+            return self._train_generator()
         else:
             assert_never(self.mode)  # pragma: no cover
 

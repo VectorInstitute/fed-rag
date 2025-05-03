@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, _Call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
@@ -40,11 +40,10 @@ def test_lsr_forward_with_mocks(
     out = loss(retrieval_scores, lm_logits)
 
     # assert
-    calls = [
-        _Call(((retrieval_scores,), {"dim": 1})),
-        _Call(((lm_logits,), {"dim": 1})),
-    ]
-    mock_torch_functional.softmax.assert_has_calls(calls)
+    mock_torch_functional.log_softmax.assert_called_once_with(
+        retrieval_scores, dim=1
+    )
+    mock_torch_functional.softmax.assert_called_once_with(lm_logits, dim=1)
     mock_torch_functional.kl_div.assert_called_once()
     assert out == torch.Tensor([expected])
 
@@ -68,4 +67,4 @@ def test_lsr_expected_output_with_sample_data(
     out = loss(retriever_scores, lm_scores)
 
     assert retrieved_chunks.shape == (2, 3, 10)
-    assert_close(out, torch.tensor(-1.3212032318115234))
+    assert_close(out, torch.tensor(5.661825180053711))
