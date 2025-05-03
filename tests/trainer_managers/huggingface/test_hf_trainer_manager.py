@@ -274,11 +274,18 @@ def test_prepare_generator_for_training(
     manager.generator_trainer.model = mock_generator_model
     manager.retriever_trainer.model = mock_retriever_model
 
+    # Check parameters before
+    for param in generator_trainer.model.parameters():
+        assert param.requires_grad is True  # They should start unfrozen
+
     # act
     manager._prepare_generator_for_training()
 
+    # assert
     mock_generator_model.train.assert_called_once()
     mock_retriever_model.eval.assert_called_once()
+    for param in generator_trainer.model.parameters():
+        assert param.requires_grad is False  # They should now be frozen
 
 
 def test_prepare_retriever_for_training(
@@ -299,8 +306,15 @@ def test_prepare_retriever_for_training(
     manager.generator_trainer.model = mock_generator_model
     manager.retriever_trainer.model = mock_retriever_model
 
+    # Check parameters before
+    for param in retriever_trainer.model.parameters():
+        assert param.requires_grad is True  # They should start unfrozen
+
     # act
     manager._prepare_retriever_for_training()
 
+    # assert
     mock_generator_model.eval.assert_called_once()
     mock_retriever_model.train.assert_called_once()
+    for param in retriever_trainer.model.parameters():
+        assert param.requires_grad is False  # They should now be frozen
