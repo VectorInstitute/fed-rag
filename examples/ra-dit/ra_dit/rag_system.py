@@ -48,7 +48,7 @@ def main(
         )
 
     ## assemble
-    rag_config = RAGConfig(top_k=1)
+    rag_config = RAGConfig(top_k=2)
     rag_system = RAGSystem(
         knowledge_store=knowledge_store,  # knowledge store loaded from knowledge_store.py
         generator=generator,
