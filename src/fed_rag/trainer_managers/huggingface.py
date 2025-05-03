@@ -59,10 +59,6 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         if self.retriever_trainer:
             self.retriever_trainer.model.eval()
 
-            # Ensure all retriever parameters are frozen
-            for param in self.retriever_trainer.model.parameters():
-                param.requires_grad = False
-
     def _prepare_retriever_for_training(
         self, freeze_context_encoder: bool = True, **kwargs: Any
     ) -> None:
@@ -71,10 +67,6 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         # freeze generator
         if self.generator_trainer:
             self.generator_trainer.model.eval()
-
-            # Ensure all generator parameters are frozen
-            for param in self.generator_trainer.model.parameters():
-                param.requires_grad = False
 
     def _train_retriever(self, **kwargs: Any) -> TrainResult:
         self._prepare_retriever_for_training()

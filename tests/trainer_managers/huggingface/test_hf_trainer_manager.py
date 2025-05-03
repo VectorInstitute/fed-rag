@@ -1,5 +1,6 @@
 import re
 import sys
+from contextlib import nullcontext as does_not_raise
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -279,7 +280,8 @@ def test_prepare_generator_for_training(
         assert param.requires_grad is True  # They should start unfrozen
 
     # act
-    manager._prepare_generator_for_training()
+    with does_not_raise():
+        manager._prepare_generator_for_training()
 
     # assert
     mock_generator_model.train.assert_called_once()
@@ -311,7 +313,8 @@ def test_prepare_retriever_for_training(
         assert param.requires_grad is True  # They should start unfrozen
 
     # act
-    manager._prepare_retriever_for_training()
+    with does_not_raise():
+        manager._prepare_retriever_for_training()
 
     # assert
     mock_generator_model.eval.assert_called_once()
