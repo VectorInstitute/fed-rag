@@ -22,9 +22,8 @@ def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
     """Test extra is not installed."""
 
     modules = {
-        "transformers": None,
-        "transformers.data": None,
-        "transformers.data.data_collator": None,
+        "sentence_transformers": None,
+        "sentence_transformers.data_collator": None,
     }
     module_to_import = "fed_rag.data_collators.huggingface.lsr"
     original_module = sys.modules.pop(module_to_import, None)

@@ -164,6 +164,7 @@ class HuggingFaceTrainerForLSR(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
             model=self.model,
             args=self.training_arguments,
             data_collator=DataCollatorForLSR(rag_system=self.rag_system),
+            train_dataset=self.train_dataset,
         )
 
         return self

@@ -61,6 +61,7 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
             model=self.model,
             args=self.training_arguments,
             data_collator=DataCollatorForRALT(rag_system=self.rag_system),
+            train_dataset=self.train_dataset,
         )
 
         return self

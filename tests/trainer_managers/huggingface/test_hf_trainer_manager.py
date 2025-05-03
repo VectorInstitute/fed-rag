@@ -1,6 +1,5 @@
 import re
 import sys
-from contextlib import nullcontext as does_not_raise
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -258,28 +257,50 @@ def test_get_federated_task_raises_unspecified_trainers(
 
 
 def test_prepare_generator_for_training(
+    generator_trainer: BaseGeneratorTrainer,
+    retriever_trainer: BaseRetrieverTrainer,
     monkeypatch: MonkeyPatch,
 ) -> None:
-    # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
-
-    trainer = HuggingFaceRAGTrainerManager(
+    manager = HuggingFaceRAGTrainerManager(
         mode="generator",
+        generator_trainer=generator_trainer,
+        retriever_trainer=retriever_trainer,
     )
 
-    with does_not_raise():
-        trainer._prepare_generator_for_training()
+    # add mocks
+    mock_generator_model = MagicMock()
+    mock_retriever_model = MagicMock()
+    manager.generator_trainer.model = mock_generator_model
+    manager.retriever_trainer.model = mock_retriever_model
+
+    # act
+    manager._prepare_generator_for_training()
+
+    mock_generator_model.train.assert_called_once()
+    mock_retriever_model.eval.assert_called_once()
 
 
 def test_prepare_retriever_for_training(
+    generator_trainer: BaseGeneratorTrainer,
+    retriever_trainer: BaseRetrieverTrainer,
     monkeypatch: MonkeyPatch,
 ) -> None:
-    # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
-
-    trainer = HuggingFaceRAGTrainerManager(
+    manager = HuggingFaceRAGTrainerManager(
         mode="retriever",
+        generator_trainer=generator_trainer,
+        retriever_trainer=retriever_trainer,
     )
 
-    with does_not_raise():
-        trainer._prepare_retriever_for_training()
+    # add mocks
+    mock_generator_model = MagicMock()
+    mock_retriever_model = MagicMock()
+    manager.generator_trainer.model = mock_generator_model
+    manager.retriever_trainer.model = mock_retriever_model
+
+    # act
+    manager._prepare_retriever_for_training()
+
+    mock_generator_model.eval.assert_called_once()
+    mock_retriever_model.train.assert_called_once()

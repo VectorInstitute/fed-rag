@@ -1,9 +1,9 @@
 """HuggingFace Data Collator For LM-Supervised Retriever Training"""
 
-from typing import Any
+from typing import Any, Callable
 
 import torch
-from pydantic import Field
+from pydantic import Field, PrivateAttr
 
 from fed_rag.base.data_collator import BaseDataCollator
 from fed_rag.exceptions import MissingExtraError
@@ -12,25 +12,32 @@ from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    from transformers.data.data_collator import DataCollatorMixin
+    from sentence_transformers.data_collator import (
+        SentenceTransformerDataCollator,
+    )
 
     _has_huggingface = True
 except ModuleNotFoundError:
     _has_huggingface = False
 
     # Create a dummy class with a different name to avoid the redefinition
-    class _DummyDataCollatorMixin:
+    class _SentenceTransformerDataCollator:
         """Dummy placeholder when transformers is not available."""
 
         pass
 
-    DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
+    SentenceTransformerDataCollator = _SentenceTransformerDataCollator  # type: ignore
 
 
 DEFAULT_PROMPT_TEMPLATE = """
 You are a helpful assistant. Given the user's question, provide a succinct
 and accurate response. If context is provided, use it in your answer if it helps
 you to create the most accurate response.
+
+<warning>
+Only use the the provided context if its relevant to answer the question. Otherwise,
+ignore it and use your parametric knowledge to answer the question.
+</warning>
 
 <question>
 {query}
@@ -49,12 +56,23 @@ DEFAULT_TARGET_TEMPLATE = """
 """
 
 
-class DataCollatorForLSR(DataCollatorMixin, BaseDataCollator):
+class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
     """A HuggingFace DataCollator for LM-Supervised Retrieval."""
 
     prompt_template: str = Field(default=DEFAULT_PROMPT_TEMPLATE)
     target_template: str = Field(default=DEFAULT_TARGET_TEMPLATE)
     default_return_tensors: str = Field(default="pt")
+
+    # Add these fields to make Pydantic aware of them
+    tokenize_fn: Callable = Field(
+        default_factory=lambda: (lambda *args, **kwargs: {})
+    )
+    valid_label_columns: list[str] = Field(
+        default_factory=lambda: ["label", "score"]
+    )
+    _warned_columns: set = PrivateAttr(
+        default_factory=set
+    )  # exclude=True to match dataclass repr=False
 
     def __init__(
         self,
@@ -76,11 +94,14 @@ class DataCollatorForLSR(DataCollatorMixin, BaseDataCollator):
         prompt_template = prompt_template or DEFAULT_PROMPT_TEMPLATE
         target_template = target_template or DEFAULT_TARGET_TEMPLATE
 
-        super().__init__(
+        # init pydantic base model
+        BaseDataCollator.__init__(
+            self,
             rag_system=rag_system,
             prompt_template=prompt_template,
             target_template=target_template,
             default_return_tensors=default_return_tensors,
+            tokenize_fn=lambda *args, **kwargs: {},  # Pass this to Pydantic
             **kwargs,
         )
 
@@ -112,25 +133,29 @@ class DataCollatorForLSR(DataCollatorMixin, BaseDataCollator):
             query = example.get("query")
             response = example.get("response")
 
-            # retriever scores
+            # retriever scores - this should participate in gradient computation
             source_nodes = self.rag_system.retrieve(query)
-            retriever_scores = torch.tensor([n.score for n in source_nodes])
+            retriever_scores = torch.tensor(
+                [n.score for n in source_nodes], requires_grad=True
+            )
 
-            # lm supervised scores
+            # lm supervised scores - we don't want these to participate in gradient computation
             lm_scores = []
-            for chunk in source_nodes:
-                prompt = self.prompt_template.format(
-                    query=query,
-                    context=chunk.node.get_content()["text_content"],
-                )
-                target = self.target_template.format(response=response)
-                lm_score = (
-                    self.rag_system.generator.compute_target_sequence_proba(
+            with torch.no_grad():
+                for chunk in source_nodes:
+                    prompt = self.prompt_template.format(
+                        query=query,
+                        context=chunk.node.get_content()["text_content"],
+                    )
+                    target = self.target_template.format(response=response)
+                    # Add debugging
+                    print(f"prompt: {prompt}")
+                    print(f"target: {target}")
+                    lm_score = self.rag_system.generator.compute_target_sequence_proba(
                         prompt=prompt, target=target
                     )
-                )
-                lm_scores.append(lm_score)
-            lm_scores = torch.stack(lm_scores, dim=0)
+                    lm_scores.append(lm_score)
+                lm_scores = torch.stack(lm_scores, dim=0)
 
             # append to batch
             batch_retriever_scores.append(retriever_scores)

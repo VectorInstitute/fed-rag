@@ -49,9 +49,9 @@ class LSRLoss(nn.Module):
     def forward(
         self, retrieval_scores: torch.Tensor, lm_scores: torch.Tensor
     ) -> torch.Tensor:
-        retrieval_probs = F.softmax(retrieval_scores, dim=1)
+        retrieval_log_probs = F.log_softmax(retrieval_scores, dim=1)
         lm_probs = F.softmax(lm_scores, dim=1)
-        kl_div = F.kl_div(retrieval_probs, lm_probs, reduction="none").sum(
+        kl_div = F.kl_div(retrieval_log_probs, lm_probs, reduction="none").sum(
             dim=-1
         )
 
