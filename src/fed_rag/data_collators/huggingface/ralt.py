@@ -159,7 +159,7 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         Steps:
             1. process the features using the RAG system and example template to create
                the retrieval-augmented lm fine-tuning text
-            2. pass this processed features to ~transformers.DataCollatorForLanguageModeling
+            2. apply padding and get required ~torch.Tensors
 
 
         Args:
