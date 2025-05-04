@@ -13,7 +13,7 @@ from fed_rag.types.results import TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    from transformers import Trainer, TrainingArguments
+    from transformers import Trainer
 
     _has_huggingface = True
 except ModuleNotFoundError:
