@@ -1,7 +1,8 @@
 """HuggingFace Data Collator For Retrieval-Augmented Generator Training"""
 
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any
 
+import torch
 from pydantic import Field
 
 from fed_rag.base.data_collator import BaseDataCollator
@@ -10,11 +11,7 @@ from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    import transformers.data.data_collator as transformers_data_collators
-    from transformers.data.data_collator import (
-        DataCollatorForLanguageModeling,
-        DataCollatorMixin,
-    )
+    from transformers.data.data_collator import DataCollatorMixin
 
     _has_huggingface = True
 except ModuleNotFoundError:
@@ -26,12 +23,10 @@ except ModuleNotFoundError:
 
         pass
 
-    class DataCollatorForLanguageModeling:  # type: ignore[no-redef]
-        """Dummy placeholder when transformers is not available."""
-
-        pass
-
     DataCollatorMixin = _DummyDataCollatorMixin  # type: ignore
+
+if TYPE_CHECKING:  # pragma: no cover
+    from transformers import PreTrainedTokenizer
 
 
 DEFAULT_EXAMPLE_TEMPLATE = """
@@ -89,6 +84,69 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
             **kwargs,
         )
 
+    def _apply_padding(
+        self,
+        max_length: int,
+        inputs_list: list[list[int]],
+        attention_mask_list: list[list[int]],
+        tokenizer: "PreTrainedTokenizer",
+    ) -> dict[str, torch.Tensor]:
+        """Applys left padding for causal lm modelling."""
+
+        # First convert lists to tensors if not already
+        input_ids_tensors = [torch.tensor(ids) for ids in inputs_list]
+        attention_mask_tensors = [
+            torch.tensor(mask) for mask in attention_mask_list
+        ]
+        labels_tensors = [
+            torch.tensor(ids) for ids in inputs_list
+        ]  # Labels are the same as input_ids for causal LM
+
+        # Get pad token ID
+        pad_token_id = tokenizer.pad_token_id or tokenizer.eos_token_id
+
+        # Create padded tensors
+        padded_input_ids = []
+        padded_attention_mask = []
+        padded_labels = []
+
+        for input_ids, attention_mask, labels in zip(
+            input_ids_tensors, attention_mask_tensors, labels_tensors
+        ):
+            # Calculate padding needed
+            pad_len = max_length - len(input_ids)
+
+            if pad_len > 0:
+                # Create padding tensors
+                padding = torch.full(
+                    (pad_len,), pad_token_id, dtype=input_ids.dtype
+                )
+                mask_padding = torch.zeros(pad_len, dtype=attention_mask.dtype)
+                label_padding = torch.full(
+                    (pad_len,), -100, dtype=labels.dtype
+                )  # -100 to ignore in loss calculation
+
+                # Apply left padding
+                padded_input = torch.cat([padding, input_ids])
+                padded_mask = torch.cat([mask_padding, attention_mask])
+                padded_label = torch.cat([label_padding, labels])
+            else:
+                # No padding needed
+                padded_input = input_ids
+                padded_mask = attention_mask
+                padded_label = labels
+
+            padded_input_ids.append(padded_input)
+            padded_attention_mask.append(padded_mask)
+            padded_labels.append(padded_label)
+
+        # Stack into batch tensors
+        return {
+            "input_ids": torch.stack(padded_input_ids),
+            "attention_mask": torch.stack(padded_attention_mask),
+            "labels": torch.stack(padded_labels),
+        }
+
     def __call__(
         self, features: list[dict[str, Any]], return_tensors: str | None = None
     ) -> dict[str, Any]:
@@ -120,10 +178,10 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
             )
 
         # STEP 1 — use rag system to build the RALT fine-tuning texts
-        inputs_list = []
-        targets_list = []
-        attention_mask_list = []
         finetuning_instances = []
+        inputs_list = []
+        attention_mask_list = []
+        max_length = 0
         for example in features:
             # retrieve
             source_nodes = self.rag_system.retrieve(query=example["query"])
@@ -142,48 +200,24 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
                 # tokenize to get input_ids and target_ids
                 tokenizer = self.rag_system.generator.tokenizer
-                unwrapped_tokenizer = (
-                    self.rag_system.generator.tokenizer.unwrapped
-                )
-                try:
-                    eos_token = unwrapped_tokenizer.special_tokens_map.get(
-                        "eos_token"
-                    )
-                except KeyError:
-                    raise DataCollatorError(
-                        "Tokenizer doesn't have an `eos_token`."
-                    )
-                eos_token_ix = unwrapped_tokenizer.all_special_tokens.index(
-                    eos_token
-                )
-                eos_token_id = unwrapped_tokenizer.all_special_ids[
-                    eos_token_ix
-                ]
 
                 encode_result = tokenizer.encode(finetune_instance_text)
                 input_ids = encode_result["input_ids"]
                 attention_mask = encode_result["attention_mask"]
-                target_ids = input_ids[1:] + [eos_token_id]
+
+                current_input_len = len(input_ids)
+                if current_input_len > max_length:
+                    max_length = current_input_len
 
                 inputs_list.append(input_ids)
-                targets_list.append(target_ids)
                 attention_mask_list.append(attention_mask)
 
-        processed_features = {
-            "input_ids": inputs_list,
-            "attention_mask": attention_mask_list,
-            "target_ids": targets_list,
-        }
-
-        # STEP 2 — Use ~transformers.DataCollatorForLanguageModeling
-        data_collator_for_lm = DataCollatorForLanguageModeling(
-            tokenizer=unwrapped_tokenizer,
-            mlm=False,  # we could implement masking here on instructions
-        )
-        # bring back proper typing
-        data_collator_for_lm = cast(
-            transformers_data_collators.DataCollatorForLanguageModeling,
-            data_collator_for_lm,
+        # padding — apply left padding
+        padded_features = self._apply_padding(
+            max_length=max_length,
+            inputs_list=inputs_list,
+            attention_mask_list=attention_mask_list,
+            tokenizer=tokenizer.unwrapped,
         )
 
-        return data_collator_for_lm.torch_call(processed_features)  # type: ignore[no-any-return]
+        return padded_features

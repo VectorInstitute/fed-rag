@@ -12,7 +12,7 @@ from fed_rag.types.results import TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    from transformers import Trainer
+    from transformers import Trainer, TrainingArguments
 
     _has_huggingface = True
 except ModuleNotFoundError:
@@ -42,6 +42,11 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
         training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
+        if training_arguments is None:
+            training_arguments = TrainingArguments(remove_unused_columns=False)
+        else:
+            training_arguments.remove_unused_columns = False
+
         super().__init__(
             train_dataset=train_dataset,
             rag_system=rag_system,
