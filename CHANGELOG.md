@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.12] - 2025-05-03
+
+### Changed
+
+- Manually handle the padding versus delegating to `DataCollatorForCausalLM` (#248)
+- Ensure that `TrainingArguments.remove_unused_columns` is set to `False` (#248)
+
 ## [0.0.11] - 2025-05-03
 
 ### Added
