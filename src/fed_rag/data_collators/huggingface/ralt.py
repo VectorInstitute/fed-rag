@@ -95,7 +95,9 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
         # First convert lists to tensors if not already
         input_ids_tensors = [torch.tensor(ids) for ids in inputs_list]
-        attention_mask_tensors = [torch.tensor(mask) for mask in attention_mask_list]
+        attention_mask_tensors = [
+            torch.tensor(mask) for mask in attention_mask_list
+        ]
         labels_tensors = [
             torch.tensor(ids) for ids in inputs_list
         ]  # Labels are the same as input_ids for causal LM
@@ -120,7 +122,9 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
             if pad_len > 0:
                 # Create padding tensors
-                padding = torch.full((pad_len,), pad_token_id, dtype=input_ids.dtype)
+                padding = torch.full(
+                    (pad_len,), pad_token_id, dtype=input_ids.dtype
+                )
                 mask_padding = torch.zeros(pad_len, dtype=attention_mask.dtype)
                 label_padding = torch.full(
                     (pad_len,), -100, dtype=labels.dtype
@@ -173,7 +177,9 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
             return_tensors if return_tensors else self.default_return_tensors
         )
         if return_tensors != "pt":
-            raise DataCollatorError(f"Framework '{return_tensors}' not recognized!")
+            raise DataCollatorError(
+                f"Framework '{return_tensors}' not recognized!"
+            )
 
         # STEP 1 — use rag system to build the RALT fine-tuning texts
         finetuning_instances = []

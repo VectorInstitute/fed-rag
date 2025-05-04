@@ -59,7 +59,9 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
         if training_arguments is None:
             training_arguments = _get_default_training_args()
         else:
-            training_arguments.remove_unused_columns = False  # pragma: no cover
+            training_arguments.remove_unused_columns = (
+                False  # pragma: no cover
+            )
 
         super().__init__(
             train_dataset=train_dataset,
