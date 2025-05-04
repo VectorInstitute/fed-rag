@@ -6,13 +6,14 @@ from pydantic import PrivateAttr, model_validator
 
 from fed_rag.base.trainer import BaseGeneratorTrainer
 from fed_rag.data_collators.huggingface.ralt import DataCollatorForRALT
+from fed_rag.exceptions import MissingExtraError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
 from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    from transformers import Trainer, TrainingArguments
+    from transformers import Trainer
 
     _has_huggingface = True
 except ModuleNotFoundError:
@@ -30,6 +31,12 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers.trainer_utils import TrainOutput
 
 
+def _get_default_training_args() -> "TrainingArguments":
+    from transformers import TrainingArguments
+
+    return TrainingArguments(remove_unused_columns=False)
+
+
 class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
     """HuggingFace Trainer for Retrieval-Augmented LM Training/Fine-Tuning."""
 
@@ -42,8 +49,15 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
         training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,
     ):
+        if not _has_huggingface:
+            msg = (
+                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
+                "To fix please run `pip install fed-rag[huggingface]`."
+            )
+            raise MissingExtraError(msg)
+
         if training_arguments is None:
-            training_arguments = TrainingArguments(remove_unused_columns=False)
+            training_arguments = _get_default_training_args()
         else:
             training_arguments.remove_unused_columns = False
 

@@ -4,8 +4,11 @@ from typing import Sequence
 from unittest.mock import MagicMock, patch
 
 import pytest
+import torch
 from pytest import MonkeyPatch
+from torch.testing import assert_close
 
+from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.data_collators.huggingface.ralt import (
     DEFAULT_EXAMPLE_TEMPLATE,
     DataCollatorForRALT,
@@ -19,7 +22,8 @@ from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types.rag_system import RAGSystem, SourceNode
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
@@ -171,80 +175,80 @@ def mock_examples() -> Sequence[dict]:
     ]
 
 
-# @patch.object(RAGSystem, "retrieve")
-# def test_lsr_collator_with_mocks(
-#     mock_retrieve: MagicMock,
-#     mock_rag_system: RAGSystem,
-#     mock_examples: Sequence[dict],
-#     monkeypatch: MonkeyPatch,
-# ) -> None:
-#     # Set environment variable for the duration of this test only
-#     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+@patch.object(RAGSystem, "retrieve")
+def test_lsr_collator_with_mocks(
+    mock_retrieve: MagicMock,
+    mock_rag_system: RAGSystem,
+    mock_examples: Sequence[dict],
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # Set environment variable for the duration of this test only
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-#     rag_system = RAGSystem(
-#         generator=mock_rag_system.generator,
-#         retriever=mock_rag_system.retriever,
-#         knowledge_store=mock_rag_system.knowledge_store,
-#         rag_config=mock_rag_system.rag_config,
-#     )
+    rag_system = RAGSystem(
+        generator=mock_rag_system.generator,
+        retriever=mock_rag_system.retriever,
+        knowledge_store=mock_rag_system.knowledge_store,
+        rag_config=mock_rag_system.rag_config,
+    )
 
-#     # arrange mocks
-#     mock_tokenizer = MagicMock()
-#     mock_encode_return: EncodeResult = {
-#         "attention_mask": None,
-#         "input_ids": [1, 1, 1],
-#     }
-#     mock_tokenizer.encode.return_value = mock_encode_return
-#     mock_tokenizer.unwrapped.all_special_ids.__getitem__.return_value = 42
-#     rag_system.generator.tokenizer = mock_tokenizer
+    # arrange mocks
+    mock_tokenizer = MagicMock()
+    mock_encode_return: EncodeResult = {
+        "attention_mask": [1, 1, 1],
+        "input_ids": [1, 2, 3],
+    }
+    mock_tokenizer.encode.return_value = mock_encode_return
+    mock_tokenizer.unwrapped.pad_token_id = 42
+    mock_tokenizer.unwrapped.pad_token = "<PAD>"
+    rag_system.generator.tokenizer = mock_tokenizer
 
-#     # mock top-k = 2
-#     mock_top_k_val = 2
-#     mock_retrieve.side_effect = [
-#         [
-#             SourceNode(
-#                 score=ix / 10,
-#                 node=KnowledgeNode(
-#                     embedding=[ix, ix, ix],
-#                     node_type="text",
-#                     text_content=f"fake text context {ix}",
-#                 ),
-#             )
-#             for ix in range(mock_top_k_val)
-#         ],
-#         [
-#             SourceNode(
-#                 score=ix / 10,
-#                 node=KnowledgeNode(
-#                     embedding=[ix, ix, ix],
-#                     node_type="text",
-#                     text_content=f"fake text context {ix}",
-#                 ),
-#             )
-#             for ix in range(mock_top_k_val, mock_top_k_val * 2)
-#         ],
-#     ]
+    # mock top-k = 2
+    mock_top_k_val = 2
+    mock_retrieve.side_effect = [
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(mock_top_k_val)
+        ],
+        [
+            SourceNode(
+                score=ix / 10,
+                node=KnowledgeNode(
+                    embedding=[ix, ix, ix],
+                    node_type="text",
+                    text_content=f"fake text context {ix}",
+                ),
+            )
+            for ix in range(mock_top_k_val, mock_top_k_val * 2)
+        ],
+    ]
 
-#     # arrange collator
-#     collator = DataCollatorForRALT(
-#         rag_system=mock_rag_system,
-#         example_template="{query} {context} {response}",
-#     )
+    # arrange collator
+    collator = DataCollatorForRALT(
+        rag_system=mock_rag_system,
+        example_template="{query} {context} {response}",
+    )
 
-#     # act
-#     collated_batch = collator(mock_examples)
+    # act
+    collated_batch = collator(mock_examples)
 
-#     expected_num_examples = mock_top_k_val * len(mock_examples)
-#     assert collated_batch["input_ids"].shape[0] == expected_num_examples
-#     mock_torch_call.assert_called_once()
-#     assert_close(
-#         collated_batch["input_ids"],
-#         torch.tensor([[1, 1, 1] for _ in range(expected_num_examples)]),
-#     )
-#     assert_close(
-#         collated_batch["labels"],
-#         torch.tensor([[1, 1, 42] for _ in range(expected_num_examples)]),
-#     )
+    expected_num_examples = mock_top_k_val * len(mock_examples)
+    assert collated_batch["input_ids"].shape[0] == expected_num_examples
+    assert_close(
+        collated_batch["input_ids"],
+        torch.tensor([[1, 2, 3] for _ in range(expected_num_examples)]),
+    )
+    assert_close(
+        collated_batch["labels"],
+        torch.tensor([[1, 2, 3] for _ in range(expected_num_examples)]),
+    )
 
 
 def test_lsr_collator_raises_data_collator_error_when_missing_eos_token_id(
