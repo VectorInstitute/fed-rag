@@ -134,7 +134,9 @@ def test_invalid_return_tensors(
         FedRAGError,
         match=f"Framework '{return_tensors}' not recognized!",
     ):
-        collator = DataCollatorForRALT(rag_system=mock_rag_system, prompt_template="")
+        collator = DataCollatorForRALT(
+            rag_system=mock_rag_system, prompt_template=""
+        )
         collator([], return_tensors)
 
 
@@ -183,12 +185,12 @@ def test_lsr_collator_with_mocks(
     # Set environment variable for the duration of this test only
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-    #     rag_system = RAGSystem(
-    #         generator=mock_rag_system.generator,
-    #         retriever=mock_rag_system.retriever,
-    #         knowledge_store=mock_rag_system.knowledge_store,
-    #         rag_config=mock_rag_system.rag_config,
-    #     )
+    rag_system = RAGSystem(
+        generator=mock_rag_system.generator,
+        retriever=mock_rag_system.retriever,
+        knowledge_store=mock_rag_system.knowledge_store,
+        rag_config=mock_rag_system.rag_config,
+    )
 
     # arrange mocks
     mock_tokenizer = MagicMock()
@@ -231,6 +233,7 @@ def test_lsr_collator_with_mocks(
     # arrange collator
     collator = DataCollatorForRALT(
         rag_system=mock_rag_system,
+        example_template="{query} {context} {response}",
     )
 
     # act
