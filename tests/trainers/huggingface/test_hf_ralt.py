@@ -27,6 +27,7 @@ def test_init(
     assert trainer.train_dataset == train_dataset
     assert trainer.model == hf_rag_system.generator.model
     assert trainer.rag_system == hf_rag_system
+    assert trainer.training_arguments.remove_unused_columns is False
     assert isinstance(trainer.hf_trainer_obj, Trainer)
 
 

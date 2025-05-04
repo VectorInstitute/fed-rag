@@ -148,9 +148,6 @@ class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
                         context=chunk.node.get_content()["text_content"],
                     )
                     target = self.target_template.format(response=response)
-                    # Add debugging
-                    print(f"prompt: {prompt}")
-                    print(f"target: {target}")
                     lm_score = self.rag_system.generator.compute_target_sequence_proba(
                         prompt=prompt, target=target
                     )
