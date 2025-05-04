@@ -4,11 +4,8 @@ from typing import Sequence
 from unittest.mock import MagicMock, patch
 
 import pytest
-import torch
 from pytest import MonkeyPatch
-from torch.testing import assert_close
 
-from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.data_collators.huggingface.ralt import (
     DEFAULT_EXAMPLE_TEMPLATE,
     DataCollatorForRALT,
@@ -22,8 +19,7 @@ from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
-from fed_rag.types.knowledge_node import KnowledgeNode
-from fed_rag.types.rag_system import RAGSystem, SourceNode
+from fed_rag.types.rag_system import RAGSystem
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
@@ -134,9 +130,7 @@ def test_invalid_return_tensors(
         FedRAGError,
         match=f"Framework '{return_tensors}' not recognized!",
     ):
-        collator = DataCollatorForRALT(
-            rag_system=mock_rag_system, prompt_template=""
-        )
+        collator = DataCollatorForRALT(rag_system=mock_rag_system, prompt_template="")
         collator([], return_tensors)
 
 
@@ -185,12 +179,12 @@ def test_lsr_collator_with_mocks(
     # Set environment variable for the duration of this test only
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
-    rag_system = RAGSystem(
-        generator=mock_rag_system.generator,
-        retriever=mock_rag_system.retriever,
-        knowledge_store=mock_rag_system.knowledge_store,
-        rag_config=mock_rag_system.rag_config,
-    )
+    #     rag_system = RAGSystem(
+    #         generator=mock_rag_system.generator,
+    #         retriever=mock_rag_system.retriever,
+    #         knowledge_store=mock_rag_system.knowledge_store,
+    #         rag_config=mock_rag_system.rag_config,
+    #     )
 
     # arrange mocks
     mock_tokenizer = MagicMock()
@@ -233,7 +227,6 @@ def test_lsr_collator_with_mocks(
     # arrange collator
     collator = DataCollatorForRALT(
         rag_system=mock_rag_system,
-        example_template="{query} {context} {response}",
     )
 
     # act
