@@ -71,7 +71,16 @@ def main(
     generator_id: str = "llama2_7b",
     generator_variant: Literal["plain", "lora", "qlora"] = "qlora",
 ) -> TrainResult:
-    """For starting any of the FL Task components."""
+    """For performing RAG fine-tuning.
+
+    Example:
+        # retriever fine-tuning (LSR)
+        `python -m ra_dit.finetune --task retriever`
+
+        # generator fine-tuning (RALT)
+        `python -m ra_dit.finetune --task generator`
+    """
+
     logger.info(
         f"Executing trainer for: task='{task}', retriever_id='{retriever_id}', "
         f"generator_id='{generator_id}', generator_variant='{generator_variant}'"
