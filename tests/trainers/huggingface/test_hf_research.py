@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from datasets import Dataset
 from pytest import MonkeyPatch
-from transformers import Trainer
+from trl import GRPOTrainer
 
 from fed_rag.exceptions import FedRAGError, MissingExtraError
 from fed_rag.trainers.huggingface.research import HuggingFaceTrainerForReSearch
@@ -27,7 +27,7 @@ def test_init(
     assert trainer.model == hf_rag_system.generator.model
     assert trainer.rag_system == hf_rag_system
     assert trainer.training_arguments.remove_unused_columns is False
-    assert isinstance(trainer.hf_trainer_obj, Trainer)
+    assert isinstance(trainer.hf_trainer_obj, GRPOTrainer)
 
 
 def test_init_raises_invalid_rag_system_error(
@@ -45,7 +45,7 @@ def test_huggingface_extra_missing(
     train_dataset: Dataset, hf_rag_system: RAGSystem, monkeypatch: MonkeyPatch
 ) -> None:
     modules = {
-        "transformers": None,
+        "trl": None,
     }
     modules_to_import = [
         "fed_rag.trainers.huggingface.mixin",

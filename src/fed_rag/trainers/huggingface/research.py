@@ -11,13 +11,13 @@ from fed_rag.types import RAGSystem, TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:
-    from transformers import Trainer
+    from trl import GRPOConfig, GRPOTrainer
 
     _has_huggingface = True
 except ModuleNotFoundError:
     _has_huggingface = False
 
-    class Trainer:  # type: ignore[no-redef]
+    class GRPOTrainer:  # type: ignore[no-redef]
         """Dummy placeholder when transformers is not available."""
 
         pass
@@ -25,13 +25,13 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
-    from transformers import Trainer, TrainingArguments
+    from trl import GRPOConfig, GRPOTrainer
 
 
-def _get_default_training_args() -> "TrainingArguments":
-    from transformers import TrainingArguments
+def _get_default_training_args() -> "GRPOConfig":
+    from trl import GRPOConfig
 
-    return TrainingArguments(remove_unused_columns=False)
+    return GRPOConfig()
 
 
 class HuggingFaceTrainerForReSearch(
@@ -50,13 +50,13 @@ class HuggingFaceTrainerForReSearch(
     rollout.
     """
 
-    _hf_trainer: Optional["Trainer"] = PrivateAttr(default=None)
+    _hf_trainer: Optional["GRPOTrainer"] = PrivateAttr(default=None)
 
     def __init__(
         self,
         rag_system: RAGSystem,
         train_dataset: "Dataset",
-        training_arguments: Optional["TrainingArguments"] = None,
+        training_arguments: Optional["GRPOConfig"] = None,
         **kwargs: Any,
     ):
         if not _has_huggingface:
@@ -82,11 +82,15 @@ class HuggingFaceTrainerForReSearch(
 
     @model_validator(mode="after")
     def set_private_attributes(self) -> "HuggingFaceTrainerForReSearch":
-        from transformers import Trainer
+        from trl import GRPOTrainer
 
         _validate_rag_system(self.rag_system)
 
-        self._hf_trainer = Trainer(self.model)
+        self._hf_trainer = GRPOTrainer(
+            self.model,
+            processing_class=self.rag_system.generator.tokenizer.unwrapped,
+            reward_funcs=HuggingFaceTrainerForReSearch.rollout_reward_func,
+        )
 
         return self
 
@@ -97,5 +101,11 @@ class HuggingFaceTrainerForReSearch(
         raise NotImplementedError
 
     @property
-    def hf_trainer_obj(self) -> "Trainer":
+    def hf_trainer_obj(self) -> "GRPOTrainer":
         return self._hf_trainer
+
+    @staticmethod
+    def rollout_reward_func(
+        completions: list[Any], **kwargs: Any
+    ) -> list[float]:
+        raise NotImplementedError

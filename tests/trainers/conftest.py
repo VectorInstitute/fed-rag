@@ -85,6 +85,8 @@ def mock_dual_retriever() -> MockDualRetriever:
 
 
 class MockTokenizer(BaseTokenizer):
+    _unwrapped: Any | None = None
+
     def encode(self, input: str, **kwargs: Any) -> list[int]:
         return [0, 1, 2]
 
@@ -92,8 +94,12 @@ class MockTokenizer(BaseTokenizer):
         return "mock decoded sentence"
 
     @property
-    def unwrapped(self) -> None:
-        return None
+    def unwrapped(self) -> Any:
+        return self._unwrapped
+
+    @unwrapped.setter
+    def unwrapped(self, v: Any) -> None:
+        self._unwrapped = v
 
 
 @pytest.fixture()
