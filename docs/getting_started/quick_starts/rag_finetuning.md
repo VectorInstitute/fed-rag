@@ -1,6 +1,6 @@
 # Fine-tune a RAG System
 
-<!-- markdownlint-disable-file MD033 -->
+<!-- markdownlint-disable-file MD033 MD046 -->
 
 In this quick start, we'll go over how we can take the RAG system we built from
 the previous quick start example, and fine-tune it.
@@ -14,64 +14,83 @@ the previous quick start example, and fine-tune it.
     This provides access to the HuggingFace models and training utilities we'll
     use for both retriever and generator fine-tuning.
 
-## Retrieval-Augmented Generator Fine-tuning
+## The Train Dataset
 
-The objective of retrieval-augmented generator fine-tuning is to adapt the LLM
-to make more effective use of the retrieved passages or chunks. We accomplish this
-by using the causal language modelling task on instruction examples that contain
-a user query, some retrieved context passage, and finally a response.
+Training a RAG system requires a train dataset that is familiarly shaped as a question-answering
+dataset.
 
-Performing this kind of fine-tuning is made easy using FedRAG abstractions as
-demonstrated below.
+```py title="training examples for RAG fine-tuning"
+train_dataset = [  # (1)!
+    {
+        "query": [
+            "What is machine learning?",
+            "Tell me about climate change",
+            "How do computers work?",
+        ],
+        "response": [
+            "Machine learning is a field of AI focused on algorithms that learn from data.",
+            "Climate change refers to long-term shifts in temperatures and weather patterns.",
+            "Computers work by processing information using logic gates and electronic components.",
+        ],
+    }
+]
+```
+
+1. A train example is essentially a (`query`, `response`) pair.
+
+## Define our Trainer objects
+
+To perform RAG fine-tuning, FedRAG offers both a [`BaseGeneratorTrainer`](../../api_reference/trainers/index.md)
+and a [`BaseRetrieverTrainer`](../../api_reference/trainers/index.md) that incorporate
+the training logic for each of these respective RAG components.
+
+For this quick start, we make use of the following trainers:
+
+- [`HuggingFaceTrainerForRALT`](../../api_reference/trainers/huggingface.md) — A
+  generator trainer that fine-tunes the LLM using retrieval-augmented instruction
+  examples.
+- [`HuggingFaceTrainerForLSR`](../../api_reference/trainers/huggingface.md) — A
+  retriever trainer that fine-tunes the retriever model using retrieval chunk scores
+  and the log probabilities derived from the generator LLM using the ground truth
+  response.
 
 ``` py title="retrieval-augmented fine-tuning"
 from fed_rag.trainers.huggingface.ralt import HuggingFaceTrainerForRALT
-
-rag_system = ...  # RAG system from previous quick start example
-train_dataset = [
-    {
-        "query": [
-            "What is machine learning?",
-            "Tell me about climate change",
-            "How do computers work?",
-        ],
-        "response": [
-            "Machine learning is a field of AI focused on algorithms that learn from data.",
-            "Climate change refers to long-term shifts in temperatures and weather patterns.",
-            "Computers work by processing information using logic gates and electronic components.",
-        ],
-    }
-]
-trainer = HuggingFaceTrainerForRALT(rag_system, train_dataset)
-train_result = trainer.train()
-print(f"loss: {train_result.loss}")
-```
-
-## Language-Model Supervised Retriever Fine-tuning
-
-In language-model supervised retriever fine-tuning or LSR for short, the goal is
-to adapt the retriever model using the log probabilities outputted by the LLM
-generator.
-
-``` py title="lm-supervised retriever fine-tuning"
 from fed_rag.trainers.huggingface.lsr import HuggingFaceTrainerForLSR
 
-rag_system = ...  # RAG system from previous quick start example
-train_dataset = [
-    {
-        "query": [
-            "What is machine learning?",
-            "Tell me about climate change",
-            "How do computers work?",
-        ],
-        "response": [
-            "Machine learning is a field of AI focused on algorithms that learn from data.",
-            "Climate change refers to long-term shifts in temperatures and weather patterns.",
-            "Computers work by processing information using logic gates and electronic components.",
-        ],
-    }
-]
-trainer = HuggingFaceTrainerForLSR(rag_system, train_dataset)
-train_result = trainer.train()
-print(f"loss: {train_result.loss}")
+
+rag_system = ...  # from previous quick start
+generator_trainer = HuggingFaceTrainerForRALT(
+    rag_system=rag_system,
+    train_dataset=train_dataset,
+)
+retriever_trainer = HuggingFaceTrainerForRALT(
+    rag_system=rag_system,
+    train_dataset=train_dataset,
+)
 ```
+
+## Define our Trainer Manager object
+
+To orchestrate training between the two RAG components, FedRAG offers a manager
+class called [`BaseTrainerManager`](../../api_reference/trainer_managers/index.md).
+The training manager contains logic to prepare the component and system for the
+specific training task (i.e., retriever or generator), and also contains a simple
+method to transform the task into a federated one.
+
+```py title="training with managers"
+from fed_rag.trainer_managers.huggingface import HuggingFaceTrainerManager
+
+manager = HuggingFaceTrainerManager(
+    mode="retriever",  # (1)!
+    retriever_trainer=retriever_trainer,
+    generator_trainer=generator_trainer,
+)
+train_result = manager.train()
+print(f"loss: {train_result.loss}")
+
+# get your federated learning task (optional)
+fl_task = manager.get_federated_task()
+```
+
+1. Mode can be "retriever" or "generator"—see [`RAGTrainMode`](../../api_reference/trainer_managers/index.md)
