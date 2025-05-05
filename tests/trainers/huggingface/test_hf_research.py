@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 from datasets import Dataset
 from pytest import MonkeyPatch
+from transformers import Trainer
 
 from fed_rag.exceptions import FedRAGError, MissingExtraError
 from fed_rag.trainers.huggingface.research import HuggingFaceTrainerForReSearch
@@ -26,6 +27,7 @@ def test_init(
     assert trainer.model == hf_rag_system.generator.model
     assert trainer.rag_system == hf_rag_system
     assert trainer.training_arguments.remove_unused_columns is False
+    assert isinstance(trainer.hf_trainer_obj, Trainer)
 
 
 def test_init_raises_invalid_rag_system_error(
