@@ -10,21 +10,21 @@ hide:
 :material-hexagon-multiple:{ .vector-icon } FedRAG
 </h1>
 
-## Simplified RAG fine-tuning across federated architectures
+## Simplified RAG fine-tuning across centralized or federated architectures
 
 <div class="grid cards" markdown>
 
-- <h2>:fontawesome-solid-wand-magic-sparkles:{ .lg .middle } Federate with ease</h2>
+- <h2>:fontawesome-solid-wand-magic-sparkles:{ .lg .middle } Advanced RAG fine-tuning</h2>
 
-    Transform centralized RAG fine-tuning into federated learning with just a
-    few additional lines of code.
+    Comprehensive support for state-of-the-art RAG fine-tuning methods that can
+    be federated with ease.
 
     [:octicons-arrow-right-24: Getting started](getting_started/essentials.md)
 
 - <h2>:fontawesome-solid-cubes-stacked:{ .lg .middle } Work with your tools</h2>
 
     Seamlessly integrates with popular frameworks including HuggingFace,
-    LlamaIndex, and LangChain — use the tools you already know.
+    and LlamaIndex — use the tools you already know.
 
     [:octicons-arrow-right-24: Examples](examples/index.md)
 

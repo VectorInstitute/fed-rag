@@ -16,12 +16,12 @@
 FedRAG is an open-source framework for federated fine-tuning of Retrieval-Augmented
 Generation (RAG) systems.
 
-## Simplified RAG fine-tuning across federated architectures
+## Simplified RAG fine-tuning across centralized or federated architectures
 
-### Federate with ease
+### Advanced RAG fine-tuning
 
-Transform centralized RAG fine-tuning into federated learning with just a
-few additional lines of code.
+Comprehensive support for state-of-the-art RAG fine-tuning methods that can be
+federated with ease.
 
 ### Work with your tools
 

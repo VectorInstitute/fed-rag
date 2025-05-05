@@ -167,6 +167,4 @@ print(response.source_nodes)
 
 ## What's next?
 
-Having explored federating a centralized task and building a RAG system, we'll
-dive deeper into fine-tuning RAG in our upcoming how-to guides. For now, let's
-proceed with installation and our usage patterns.
+Having learned how to build a RAG system, let's move on to learning how to fine-tune one!

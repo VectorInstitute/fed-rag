@@ -42,8 +42,13 @@ FL.
 FedRAG is for the model builders, data scientists, and researchers who wish to fine-tune
 their RAG systems on their own datasets.
 
-!!! note "Note — FedRAG also enables centralized RAG fine-tuning"
+!!! note "Note — FedRAG prioritizes both centralized and federated RAG fine-tuning"
 
-    While the main premise for FedRAG is FL, note that centralized fine-tuning is
-    also supported (as our readers shall see shortly in the upcoming Quick Start
-    example).
+    While FedRAG supports federated learning scenarios, it's designed first and
+    foremost as a comprehensive RAG fine-tuning library. Most users deploy FedRAG
+    in completely centralized environments to take advantage of its intuitive API,
+    powerful abstractions, and integration with popular frameworks.
+
+    Centralized mode offers the full range of RAG fine-tuning techniques with zero
+    federation overhead. The federated capabilities are available when you need
+    them for privacy-sensitive or distributed data scenarios.
