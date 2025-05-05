@@ -616,6 +616,8 @@
       
         
       
+        
+      
     
     
     
@@ -695,6 +697,29 @@
   
   <span class="md-ellipsis">
     Build a RAG System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quick_starts/rag_finetuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Fine-tune a RAG System
     
   </span>
   
@@ -3046,10 +3071,14 @@ FL.</p>
 <p>FedRAG is for the model builders, data scientists, and researchers who wish to fine-tune
 their RAG systems on their own datasets.</p>
 <div class="admonition note">
-<p class="admonition-title">Note — FedRAG also enables centralized RAG fine-tuning</p>
-<p>While the main premise for FedRAG is FL, note that centralized fine-tuning is
-also supported (as our readers shall see shortly in the upcoming Quick Start
-example).</p>
+<p class="admonition-title">Note — FedRAG prioritizes both centralized and federated RAG fine-tuning</p>
+<p>While FedRAG supports federated learning scenarios, it's designed first and
+foremost as a comprehensive RAG fine-tuning library. Most users deploy FedRAG
+in completely centralized environments to take advantage of its intuitive API,
+powerful abstractions, and integration with popular frameworks.</p>
+<p>Centralized mode offers the full range of RAG fine-tuning techniques with zero
+federation overhead. The federated capabilities are available when you need
+them for privacy-sensitive or distributed data scenarios.</p>
 </div>
 
 
