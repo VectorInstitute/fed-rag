@@ -167,5 +167,4 @@ print(response.source_nodes)
 
 ## What's next?
 
-Having learned how to build a RAG system, let's move on to learning how to fine-tune
-one!
+Having learned how to build a RAG system, let's move on to learning how to fine-tune one!
