@@ -1,4 +1,4 @@
-from typing import Any, Generator
+from typing import Generator
 
 import pytest
 import transformers.training_args
@@ -10,7 +10,7 @@ ORIGINAL_VALID_DICT_FIELDS = list(
 
 
 @pytest.fixture(autouse=True)
-def reset_valid_dict_fields() -> Generator[Any, Any, Any]:
+def reset_valid_dict_fields() -> Generator[None, None, None]:
     """Reset _VALID_DICT_FIELDS before each test to prevent cross-test contamination.
 
     Errors occur when using `trl` which has a `SFTConfig` that has a dict-like
