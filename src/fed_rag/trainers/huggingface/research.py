@@ -88,6 +88,7 @@ class HuggingFaceTrainerForReSearch(
 
         self._hf_trainer = GRPOTrainer(
             self.model,
+            args=self.training_arguments,
             processing_class=self.rag_system.generator.tokenizer.unwrapped,
             reward_funcs=HuggingFaceTrainerForReSearch.rollout_reward_func,
         )
