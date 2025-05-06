@@ -54,7 +54,8 @@ dependencies = [
 huggingface = [
   "peft>=0.14.0",
   "transformers>=4.49.0",
-  "sentence-transformers>=3.4.1"
+  "sentence-transformers>=3.4.1",
+  "trl>=0.17.0"
 ]
 
 [project.urls]
