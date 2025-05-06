@@ -48,21 +48,21 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
             self.generator_trainer.model.eval()
 
     def _train_retriever(self, **kwargs: Any) -> None:
-        self._prepare_retriever_for_training()
         if self.retriever_trainer:
+            self._prepare_retriever_for_training()
             self.retriever_trainer.train()
         else:
             raise UnspecifiedRetrieverTrainer(
-                "Attempted to perform retriever trainer with an unspecified trainer function."
+                "Attempted to perform retriever trainer with an unspecified trainer."
             )
 
     def _train_generator(self, **kwargs: Any) -> None:
-        self._prepare_generator_for_training()
         if self.generator_trainer:
+            self._prepare_generator_for_training()
             self.generator_trainer.train()
         else:
             raise UnspecifiedGeneratorTrainer(
-                "Attempted to perform generator trainer with an unspecified trainer function."
+                "Attempted to perform generator trainer with an unspecified trainer."
             )
 
     def train(self, **kwargs: Any) -> None:
@@ -77,7 +77,7 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
         if self.mode == "retriever":
             if self.retriever_trainer is None:
                 raise UnspecifiedRetrieverTrainer(
-                    "Cannot federate an unspecified retriever trainer function."
+                    "Cannot federate an unspecified retriever trainer."
                 )
             retriever_train_fn = self.retriever_trainer.train
             retriever_module = self.retriever_trainer.model
@@ -96,7 +96,7 @@ class PyTorchRAGTrainerManager(BaseRAGTrainerManager):
         elif self.mode == "generator":
             if self.generator_trainer is None:
                 raise UnspecifiedGeneratorTrainer(
-                    "Cannot federate an unspecified generator trainer function."
+                    "Cannot federate an unspecified generator trainer."
                 )
             generator_train_fn = self.generator_trainer.train
             generator_module = self.generator_trainer.model
