@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Any, cast
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from typing_extensions import assert_never
 
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.exceptions import (
@@ -123,6 +124,5 @@ class BaseRAGTrainerManager(BaseModel, ABC):
             case RAGTrainMode.GENERATOR:
                 trainer = cast(BaseGeneratorTrainer, self.generator_trainer)
             case _:
-                msg = f"Can't get model with an unsupported train mode: {self.mode}"
-                raise UnsupportedTrainerMode(msg)
+                assert_never(self.mode)  # pragma: no cover
         return trainer.model
