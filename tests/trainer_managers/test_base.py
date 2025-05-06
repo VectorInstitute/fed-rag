@@ -21,6 +21,11 @@ def test_init(
     assert trainer.retriever_trainer == retriever_trainer
     assert trainer.generator_trainer == generator_trainer
     assert trainer.mode == "generator"
+    assert trainer.model == generator_trainer.model
+
+    # update mode
+    trainer.mode = "retriever"
+    assert trainer.model == retriever_trainer.model
 
 
 def test_invalid_mode_raises_error(
