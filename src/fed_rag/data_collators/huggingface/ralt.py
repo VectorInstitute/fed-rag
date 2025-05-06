@@ -103,11 +103,20 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         ]  # Labels are the same as input_ids for causal LM
 
         # Get pad token ID
-        if tokenizer.pad_token is None or tokenizer.pad_token_id < 0:
-            raise DataCollatorError(
-                "Asking to pad but the tokenizer does not have a padding token."
-            )
-        pad_token_id = tokenizer.pad_token_id
+        if tokenizer.pad_token is not None:
+            if tokenizer.pad_token_id < 0:
+                raise DataCollatorError(
+                    "Asking to pad but the tokenizer has a value for pad_token_id < 0."
+                )
+            pad_token_id = tokenizer.pad_token_id
+        else:
+            if tokenizer.eos_token_id is not None:
+                pad_token_id = tokenizer.eos_token_id
+            else:
+                raise DataCollatorError(
+                    "Asking to pad but the tokenizer does not have a padding token "
+                    "nor an eos token that can potentially be used in its place."
+                )
 
         # Create padded tensors
         padded_input_ids = []

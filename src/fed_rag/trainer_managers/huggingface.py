@@ -106,9 +106,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: "HFModelType",
-                _train_dataset: "Dataset",
-                _val_dataset: "Dataset",
+                model: "HFModelType",
+                train_dataset: "Dataset",
+                val_dataset: "Dataset",
             ) -> TrainResult:
                 _ = retriever_train_fn()
                 return TrainResult(loss=0)
@@ -128,9 +128,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: "HFModelType",  # TODO: handle union types in inspector
-                _train_dataset: "Dataset",
-                _val_dataset: "Dataset",
+                model: "HFModelType",  # TODO: handle union types in inspector
+                train_dataset: "Dataset",
+                val_dataset: "Dataset",
             ) -> TrainResult:
                 _ = generator_train_fn()
                 # TODO get loss from out
@@ -151,7 +151,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         # TODO: add logic for getting evaluator/tester and then federate it as well
         # federated_tester = self.get_federated_tester(tester_decorator)
         # For now, using a simple placeholder test function
-        def test_fn(_mdl: "HFModelType", _dataset: "Dataset") -> TestResult:
+        def test_fn(
+            model: "HFModelType", eval_dataset: "Dataset"
+        ) -> TestResult:
             # Implement simple testing or return a placeholder
             return TestResult(loss=0.42, metrics={})  # pragma: no cover
 
