@@ -50,6 +50,38 @@ def test_init(
     assert manager.mode == RAGTrainMode.RETRIEVER
 
 
+def test_init_raises_unspecified_generator_trainer_error(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Generator trainer must be set when in generator mode",
+    ):
+        HuggingFaceRAGTrainerManager(
+            mode="generator",
+        )
+
+
+@patch.object(HuggingFaceRAGTrainerManager, "_prepare_retriever_for_training")
+def test_init_raises_unspecified_retriever_trainer_error(
+    mock_prepare_retriever_for_training: MagicMock,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Retriever trainer must be set when in retriever mode",
+    ):
+        HuggingFaceRAGTrainerManager(
+            mode="retriever",
+        )
+
+
 def test_huggingface_extra_missing(
     retriever_trainer: BaseRetrieverTrainer,
     generator_trainer: BaseGeneratorTrainer,
@@ -105,26 +137,6 @@ def test_train_retriever(
     mock_retriever_trainer.train.assert_called_once_with()
 
 
-@patch.object(HuggingFaceRAGTrainerManager, "_prepare_retriever_for_training")
-def test_train_retriever_raises_unspecified_retriever_trainer_error(
-    mock_prepare_retriever_for_training: MagicMock,
-    monkeypatch: MonkeyPatch,
-) -> None:
-    # skip validation of rag system
-    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
-
-    manager = HuggingFaceRAGTrainerManager(
-        mode="retriever",
-    )
-
-    with pytest.raises(
-        UnspecifiedRetrieverTrainer,
-        match="Attempted to perform retriever trainer with an unspecified trainer function.",
-    ):
-        manager.train()
-        mock_prepare_retriever_for_training.assert_called_once()
-
-
 @patch.object(HuggingFaceRAGTrainerManager, "_prepare_generator_for_training")
 def test_train_generator(
     mock_prepare_generator_for_training: MagicMock,
@@ -145,26 +157,6 @@ def test_train_generator(
 
     mock_prepare_generator_for_training.assert_called_once()
     mock_generator_trainer.train.assert_called_once_with()
-
-
-@patch.object(HuggingFaceRAGTrainerManager, "_prepare_generator_for_training")
-def test_train_generator_raises_unspecified_generator_trainer_error(
-    mock_prepare_generator_for_training: MagicMock,
-    monkeypatch: MonkeyPatch,
-) -> None:
-    # skip validation of rag system
-    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
-
-    manager = HuggingFaceRAGTrainerManager(
-        mode="generator",
-    )
-
-    with pytest.raises(
-        UnspecifiedGeneratorTrainer,
-        match="Attempted to perform generator trainer with an unspecified trainer function.",
-    ):
-        manager.train()
-        mock_prepare_generator_for_training.assert_called_once()
 
 
 def test_get_federated_task_retriever(
@@ -231,29 +223,46 @@ def test_invalid_mode_raises_error(
         )
 
 
-def test_get_federated_task_raises_unspecified_trainers(
+def test_get_federated_task_raises_unspecified_generator_error(
     monkeypatch: MonkeyPatch,
+    retriever_trainer: BaseRetrieverTrainer,
 ) -> None:
     # skip validation of rag system
     monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
 
     # arrange
+    # this will pass validations at init
     manager = HuggingFaceRAGTrainerManager(
-        mode="generator",
+        mode="retriever", retriever_trainer=retriever_trainer
     )
 
     with pytest.raises(
         UnspecifiedGeneratorTrainer,
-        match="Cannot federate an unspecified generator trainer function.",
+        match="Cannot federate an unspecified generator trainer.",
     ):
+        manager.mode = "generator"  # user modifies the mode
         manager.get_federated_task()
 
-    # change mode to retriever
-    manager.mode = "retriever"
+
+def test_private_get_federated_task_raises_unspecified_retriever_error(
+    monkeypatch: MonkeyPatch,
+    generator_trainer: BaseGeneratorTrainer,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange
+    # this will pass validations at init
+    manager = HuggingFaceRAGTrainerManager(
+        mode="generator", generator_trainer=generator_trainer
+    )
+
     with pytest.raises(
         UnspecifiedRetrieverTrainer,
-        match="Cannot federate an unspecified retriever trainer function.",
+        match="Cannot federate an unspecified retriever trainer.",
     ):
+        # change mode to retriever
+        manager.mode = "retriever"
         manager.get_federated_task()
 
 
@@ -321,3 +330,43 @@ def test_prepare_retriever_for_training(
     mock_retriever_model.train.assert_called_once()
     for param in retriever_trainer.model.parameters():
         assert param.requires_grad is False  # They should now be frozen
+
+
+def test_private_train_retriever_raises_unspecified_retriever_error(
+    generator_trainer: BaseGeneratorTrainer,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # no retriever trainer set
+    manager = HuggingFaceRAGTrainerManager(
+        mode="generator",
+        generator_trainer=generator_trainer,
+    )
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Attempted to perform retriever trainer with an unspecified trainer.",
+    ):
+        manager._train_retriever()
+
+
+def test_private_train_generator_raises_unspecified_generator_error(
+    retriever_trainer: BaseGeneratorTrainer,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # skip validation of rag system
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # no retriever trainer set
+    manager = HuggingFaceRAGTrainerManager(
+        mode="retriever",
+        retriever_trainer=retriever_trainer,
+    )
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Attempted to perform generator trainer with an unspecified trainer.",
+    ):
+        manager._train_generator()
