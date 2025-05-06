@@ -346,3 +346,37 @@ def test_lsr_collator_apply_padding(
     }
     for k, v in batch.items():
         assert_close(v, expected[k])
+
+
+def test_lsr_collator_apply_padding_with_eos_token(
+    mock_rag_system: RAGSystem,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("FEDRAG_SKIP_VALIDATION", "1")
+
+    # arrange collator
+    collator = DataCollatorForRALT(
+        rag_system=mock_rag_system,
+    )
+
+    # arrange mock tokenizer
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.pad_token = None
+    mock_tokenizer.eos_token_id = 42
+
+    # act
+    batch = collator._apply_padding(
+        max_length=3,
+        inputs_list=[[1, 1, 1], [2, 2]],
+        attention_mask_list=[[1, 1, 1], [1, 1]],
+        tokenizer=mock_tokenizer,
+    )
+
+    # assert
+    expected = {
+        "input_ids": torch.tensor([[1, 1, 1], [42, 2, 2]]),
+        "attention_mask": torch.tensor([[1, 1, 1], [0, 1, 1]]),
+        "labels": torch.tensor([[1, 1, 1], [-100, 2, 2]]),
+    }
+    for k, v in batch.items():
+        assert_close(v, expected[k])

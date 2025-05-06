@@ -123,6 +123,6 @@ class BaseRAGTrainerManager(BaseModel, ABC):
                 trainer = cast(BaseRetrieverTrainer, self.retriever_trainer)
             case RAGTrainMode.GENERATOR:
                 trainer = cast(BaseGeneratorTrainer, self.generator_trainer)
-            case _:
+            case _:  # pragma: no cover
                 assert_never(self.mode)  # pragma: no cover
         return trainer.model
