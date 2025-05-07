@@ -2,12 +2,13 @@
 
 from typing import TYPE_CHECKING, Any, Literal, Optional
 
-from pydantic import Field, PrivateAttr, SecretStr
+from pydantic import Field, PrivateAttr, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions import (
     InvalidDistance,
     KnowledgeStoreError,
+    KnowledgeStoreNotFoundError,
     LoadNodeError,
 )
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
@@ -76,13 +77,9 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
     _client: Optional["QdrantClient"] = PrivateAttr(default=None)
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        check_qdrant_installed()
-        super().__init__(*args, **kwargs)
-
-    def _collection_exists(self, collection_name: str) -> bool:
+    def _collection_exists(self) -> bool:
         """Check if a collection exists."""
-        return self.client.collection_exists(collection_name)  # type: ignore[no-any-return]
+        return self.client.collection_exists(self.collection_name)  # type: ignore[no-any-return]
 
     def _create_collection(
         self, collection_name: str, vector_size: int, distance: str
@@ -104,6 +101,34 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             vectors_config=VectorParams(size=vector_size, distance=distance),
         )
 
+    def _ensure_collection_exists(self) -> None:
+        if not self._collection_exists():
+            raise KnowledgeStoreNotFoundError(
+                f"Collection {self.collection_name} does not exist."
+            )
+
+    def _check_if_collection_exists_otherwise_create_one(
+        self, vector_size: int
+    ) -> None:
+        if not self._collection_exists():
+            try:
+                self._create_collection(
+                    collection_name=self.collection_name,
+                    vector_size=vector_size,
+                    distance=self.collection_distance,
+                )
+            except Exception:
+                raise KnowledgeStoreError(
+                    f"Failed to create new collection: {self.collection_name}"
+                )
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_dependencies(cls, data: Any) -> Any:
+        """Validate that qdrant dependencies are installed."""
+        check_qdrant_installed()
+        return data
+
     @property
     def client(self) -> "QdrantClient":
         if self._client is None:
@@ -120,6 +145,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         return self._client
 
     def load_node(self, node: KnowledgeNode) -> None:
+        self._check_if_collection_exists_otherwise_create_one(
+            vector_size=len(node.embedding)
+        )
+
         point = _covert_knowledge_node_to_qdrant_point(node)
         try:
             self.client.upsert(
@@ -134,6 +163,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         if not nodes:
             return
 
+        self._check_if_collection_exists_otherwise_create_one(
+            vector_size=len(nodes[0].embedding)
+        )
+
         points = [_covert_knowledge_node_to_qdrant_point(n) for n in nodes]
         try:
             self.client.upload_points(
@@ -141,7 +174,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             )
         except Exception as e:
             raise LoadNodeError(
-                f"Loading nodes into collection '{self.collection}' failed"
+                f"Loading nodes into collection '{self.collection_name}' failed"
             ) from e
 
     def retrieve(
@@ -149,6 +182,8 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     ) -> list[tuple[float, KnowledgeNode]]:
         """Retrieve top-k nodes from the vector store."""
         from qdrant_client.conversions.common_types import QueryResponse
+
+        self._ensure_collection_exists()
 
         hits: QueryResponse = self.client.query_points(
             collection_name=self.collection_name, query=query_emb, limit=top_k
@@ -169,6 +204,8 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             UpdateStatus,
         )
 
+        self._ensure_collection_exists()
+
         try:
             res: UpdateResult = self.client.delete(
                 collection_name=self.collection_name,
@@ -188,12 +225,16 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         return bool(res.status == UpdateStatus.COMPLETED)
 
     def clear(self) -> None:
+        self._ensure_collection_exists()
+
         # delete the collection
         self.client.delete_collection(collection_name=self.collection_name)
 
     @property
     def count(self) -> int:
         from qdrant_client.http.models import CollectionInfo
+
+        self._ensure_collection_exists()
 
         try:
             collection_info: CollectionInfo = self.client.get_collection(

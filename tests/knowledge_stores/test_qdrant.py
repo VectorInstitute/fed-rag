@@ -9,7 +9,9 @@ from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
 
 
 def test_init() -> None:
-    knowledge_store = QdrantKnowledgeStore(collection_name="test collection")
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection", collection_vector_size=100
+    )
 
     assert isinstance(knowledge_store, QdrantKnowledgeStore)
 
