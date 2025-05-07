@@ -69,21 +69,21 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
             self.generator_trainer.model.eval()
 
     def _train_retriever(self, **kwargs: Any) -> TrainResult:
-        self._prepare_retriever_for_training()
         if self.retriever_trainer:
+            self._prepare_retriever_for_training()
             return self.retriever_trainer.train()
         else:
             raise UnspecifiedRetrieverTrainer(
-                "Attempted to perform retriever trainer with an unspecified trainer function."
+                "Attempted to perform retriever trainer with an unspecified trainer."
             )
 
     def _train_generator(self, **kwargs: Any) -> TrainResult:
-        self._prepare_generator_for_training()
         if self.generator_trainer:
+            self._prepare_generator_for_training()
             return self.generator_trainer.train()
         else:
             raise UnspecifiedGeneratorTrainer(
-                "Attempted to perform generator trainer with an unspecified trainer function."
+                "Attempted to perform generator trainer with an unspecified trainer."
             )
 
     def train(self, **kwargs: Any) -> TrainResult:
@@ -98,7 +98,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         if self.mode == "retriever":
             if self.retriever_trainer is None:
                 raise UnspecifiedRetrieverTrainer(
-                    "Cannot federate an unspecified retriever trainer function."
+                    "Cannot federate an unspecified retriever trainer."
                 )
             retriever_train_fn = self.retriever_trainer.train
             retriever_module = self.retriever_trainer.model
@@ -106,9 +106,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: "HFModelType",
-                _train_dataset: "Dataset",
-                _val_dataset: "Dataset",
+                model: "HFModelType",
+                train_dataset: "Dataset",
+                val_dataset: "Dataset",
             ) -> TrainResult:
                 _ = retriever_train_fn()
                 return TrainResult(loss=0)
@@ -121,16 +121,16 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         elif self.mode == "generator":
             if self.generator_trainer is None:
                 raise UnspecifiedGeneratorTrainer(
-                    "Cannot federate an unspecified generator trainer function."
+                    "Cannot federate an unspecified generator trainer."
                 )
             generator_train_fn = self.generator_trainer.train
             generator_module = self.generator_trainer.model
 
             # Create a standalone function for federation
             def train_wrapper(
-                _mdl: "HFModelType",  # TODO: handle union types in inspector
-                _train_dataset: "Dataset",
-                _val_dataset: "Dataset",
+                model: "HFModelType",  # TODO: handle union types in inspector
+                train_dataset: "Dataset",
+                val_dataset: "Dataset",
             ) -> TrainResult:
                 _ = generator_train_fn()
                 # TODO get loss from out
@@ -151,7 +151,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         # TODO: add logic for getting evaluator/tester and then federate it as well
         # federated_tester = self.get_federated_tester(tester_decorator)
         # For now, using a simple placeholder test function
-        def test_fn(_mdl: "HFModelType", _dataset: "Dataset") -> TestResult:
+        def test_fn(
+            model: "HFModelType", eval_dataset: "Dataset"
+        ) -> TestResult:
             # Implement simple testing or return a placeholder
             return TestResult(loss=0.42, metrics={})  # pragma: no cover
 

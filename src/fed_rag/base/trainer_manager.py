@@ -2,12 +2,18 @@
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from typing_extensions import assert_never
 
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
-from fed_rag.exceptions import InconsistentRAGSystems, UnsupportedTrainerMode
+from fed_rag.exceptions import (
+    InconsistentRAGSystems,
+    UnspecifiedGeneratorTrainer,
+    UnspecifiedRetrieverTrainer,
+    UnsupportedTrainerMode,
+)
 
 from .fl_task import BaseFLTask
 
@@ -42,6 +48,28 @@ class BaseRAGTrainerManager(BaseModel, ABC):
                 f"Unsupported RAG train mode: {v}. "
                 f"Mode must be one of: {', '.join([m.value for m in RAGTrainMode])}"
             )
+
+    # Validate trainer presence
+    @model_validator(mode="after")
+    def validate_trainers(self) -> "BaseRAGTrainerManager":
+        """Validate trainer requirements."""
+        # Validate trainer presence based on mode
+        if (
+            self.mode == RAGTrainMode.RETRIEVER
+            and self.retriever_trainer is None
+        ):
+            raise UnspecifiedRetrieverTrainer(
+                "Retriever trainer must be set when in retriever mode"
+            )
+        if (
+            self.mode == RAGTrainMode.GENERATOR
+            and self.generator_trainer is None
+        ):
+            raise UnspecifiedGeneratorTrainer(
+                "Generator trainer must be set when in generator mode"
+            )
+
+        return self
 
     @model_validator(mode="after")
     def validate_trainers_consistency(self) -> "BaseRAGTrainerManager":
@@ -86,3 +114,15 @@ class BaseRAGTrainerManager(BaseModel, ABC):
     @abstractmethod
     def get_federated_task(self) -> BaseFLTask:
         """Get the federated task."""
+
+    @property
+    def model(self) -> Any:
+        """Return the model to be trained."""
+        match self.mode:
+            case RAGTrainMode.RETRIEVER:
+                trainer = cast(BaseRetrieverTrainer, self.retriever_trainer)
+            case RAGTrainMode.GENERATOR:
+                trainer = cast(BaseGeneratorTrainer, self.generator_trainer)
+            case _:  # pragma: no cover
+                assert_never(self.mode)  # pragma: no cover
+        return trainer.model

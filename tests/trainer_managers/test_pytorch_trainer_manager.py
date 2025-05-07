@@ -54,20 +54,14 @@ def test_train_retriever(
     mock_retriever_trainer.train.assert_called_once_with()
 
 
-@patch.object(PyTorchRAGTrainerManager, "_prepare_retriever_for_training")
-def test_train_retriever_raises_unspecified_retriever_trainer_error(
-    mock_prepare_retriever_for_training: MagicMock,
-) -> None:
-    manager = PyTorchRAGTrainerManager(
-        mode="retriever",
-    )
-
+def test_init_raises_unspecified_retriever_trainer_error() -> None:
     with pytest.raises(
         UnspecifiedRetrieverTrainer,
-        match="Attempted to perform retriever trainer with an unspecified trainer function.",
+        match="Retriever trainer must be set when in retriever mode",
     ):
-        manager.train()
-        mock_prepare_retriever_for_training.assert_called_once()
+        PyTorchRAGTrainerManager(
+            mode="retriever",
+        )
 
 
 @patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
@@ -77,6 +71,7 @@ def test_train_generator(
 ) -> None:
     manager = PyTorchRAGTrainerManager(
         mode="generator",
+        generator_trainer=generator_trainer,
     )
     # mock it
     mock_generator_trainer = MagicMock()
@@ -88,20 +83,14 @@ def test_train_generator(
     mock_generator_trainer.train.assert_called_once_with()
 
 
-@patch.object(PyTorchRAGTrainerManager, "_prepare_generator_for_training")
-def test_train_generator_raises_unspecified_generator_trainer_error(
-    mock_prepare_generator_for_training: MagicMock,
-) -> None:
-    manager = PyTorchRAGTrainerManager(
-        mode="generator",
-    )
-
+def test_init_raises_unspecified_generator_trainer_error() -> None:
     with pytest.raises(
         UnspecifiedGeneratorTrainer,
-        match="Attempted to perform generator trainer with an unspecified trainer function.",
+        match="Generator trainer must be set when in generator mode",
     ):
-        manager.train()
-        mock_prepare_generator_for_training.assert_called_once()
+        PyTorchRAGTrainerManager(
+            mode="generator",
+        )
 
 
 def test_get_federated_task_retriever(
@@ -144,30 +133,39 @@ def test_get_federated_task_generator(
     assert fl_task._trainer_spec == generator_trainer.__fl_task_trainer_config
 
 
-def test_get_federated_task_raises_unspecified_trainer_retriever() -> None:
+def test_get_federated_task_raises_unspecified_generator_error(
+    retriever_trainer: BaseRetrieverTrainer,
+) -> None:
     # arrange
+    # this will pass validations at init
     manager = PyTorchRAGTrainerManager(
-        mode="retriever",
-    )
-
-    with pytest.raises(
-        UnspecifiedRetrieverTrainer,
-        match="Cannot federate an unspecified retriever trainer function.",
-    ):
-        manager.get_federated_task()
-
-
-def test_get_federated_task_raises_unspecified_trainer_generator() -> None:
-    # arrange
-    trainer = PyTorchRAGTrainerManager(
-        mode="generator",
+        mode="retriever", retriever_trainer=retriever_trainer
     )
 
     with pytest.raises(
         UnspecifiedGeneratorTrainer,
-        match="Cannot federate an unspecified generator trainer function.",
+        match="Cannot federate an unspecified generator trainer.",
     ):
-        trainer.get_federated_task()
+        manager.mode = "generator"  # user modifies the mode
+        manager.get_federated_task()
+
+
+def test_private_get_federated_task_raises_unspecified_retriever_error(
+    generator_trainer: BaseGeneratorTrainer,
+) -> None:
+    # arrange
+    # this will pass validations at init
+    manager = PyTorchRAGTrainerManager(
+        mode="generator", generator_trainer=generator_trainer
+    )
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Cannot federate an unspecified retriever trainer.",
+    ):
+        # change mode to retriever
+        manager.mode = "retriever"
+        manager.get_federated_task()
 
 
 def test_invalid_mode_raises_error() -> None:
@@ -225,3 +223,35 @@ def test_prepare_retriever_for_training(
 
     mock_generator_model.eval.assert_called_once()
     mock_retriever_model.train.assert_called_once()
+
+
+def test_private_train_retriever_raises_unspecified_retriever_error(
+    generator_trainer: BaseGeneratorTrainer,
+) -> None:
+    # no retriever trainer set
+    manager = PyTorchRAGTrainerManager(
+        mode="generator",
+        generator_trainer=generator_trainer,
+    )
+
+    with pytest.raises(
+        UnspecifiedRetrieverTrainer,
+        match="Attempted to perform retriever trainer with an unspecified trainer.",
+    ):
+        manager._train_retriever()
+
+
+def test_private_train_generator_raises_unspecified_generator_error(
+    retriever_trainer: BaseGeneratorTrainer,
+) -> None:
+    # no retriever trainer set
+    manager = PyTorchRAGTrainerManager(
+        mode="retriever",
+        retriever_trainer=retriever_trainer,
+    )
+
+    with pytest.raises(
+        UnspecifiedGeneratorTrainer,
+        match="Attempted to perform generator trainer with an unspecified trainer.",
+    ):
+        manager._train_generator()
