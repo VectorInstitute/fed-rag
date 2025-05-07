@@ -5,7 +5,11 @@ from typing import TYPE_CHECKING, Any, Literal, Optional
 from pydantic import Field, PrivateAttr, SecretStr
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.exceptions import InvalidDistance, LoadNodeError
+from fed_rag.exceptions import (
+    InvalidDistance,
+    KnowledgeStoreError,
+    LoadNodeError,
+)
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
 from fed_rag.types.knowledge_node import KnowledgeNode
 
@@ -143,6 +147,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
+        """Retrieve top-k nodes from the vector store."""
         from qdrant_client.conversions.common_types import QueryResponse
 
         hits: QueryResponse = self.client.query_points(
@@ -155,17 +160,66 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         return retval
 
     def delete_node(self, node_id: str) -> bool:
-        raise NotImplementedError
+        """Delete a node based on its node_id."""
+        from qdrant_client.http.models import (
+            FieldCondition,
+            Filter,
+            MatchValue,
+            UpdateResult,
+            UpdateStatus,
+        )
+
+        try:
+            res: UpdateResult = self.client.delete(
+                collection_name=self.collection_name,
+                points_selector=Filter(
+                    must=[
+                        FieldCondition(
+                            key="node_id", match=MatchValue(value=node_id)
+                        )
+                    ]
+                ),
+            )
+        except Exception:
+            raise KnowledgeStoreError(
+                f"Failed to delete node: {node_id} from collection '{self.collection_name}'"
+            )
+
+        return bool(res.status == UpdateStatus.COMPLETED)
 
     def clear(self) -> None:
-        raise NotImplementedError
+        # delete the collection
+        self.client.delete_collection(collection_name=self.collection_name)
 
     @property
     def count(self) -> int:
-        raise NotImplementedError
+        from qdrant_client.http.models import CollectionInfo
+
+        try:
+            collection_info: CollectionInfo = self.client.get_collection(
+                collection_name=self.collection_name
+            )
+        except Exception as e:
+            raise KnowledgeStoreError(
+                f"Failed to get vector count for collection '{self.collection_name}': {str(e)}"
+            ) from e
+
+        if collection_info.vectors_count is None:
+            raise KnowledgeStoreError(
+                "Collection exists, but `vectors_count` is None."
+            )
+        else:
+            return int(collection_info.vectors_count)
 
     def persist(self) -> None:
-        raise NotImplementedError
+        """Persist a knowledge store to disk."""
+        raise NotImplementedError(
+            "`persist()` is not available in QdrantKnowledgeStore."
+        )
 
     def load(self) -> None:
-        raise NotImplementedError
+        """Load a previously persisted knowledge store."""
+        raise NotImplementedError(
+            "`load()` is not available in QdrantKnowledgeStore. "
+            "Data is automatically persisted and loaded from the Qdrant server."
+        )
