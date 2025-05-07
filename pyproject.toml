@@ -57,6 +57,7 @@ huggingface = [
   "sentence-transformers>=3.4.1"
 ]
 qdrant = [
+  "grpcio>=1.71.0",
   "qdrant-client[fastembed]>=1.14.2"
 ]
 

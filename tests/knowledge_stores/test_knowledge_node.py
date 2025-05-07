@@ -155,6 +155,7 @@ def test_serialize_metadata() -> None:
         metadata={"key1": "value1", "key2": "value2"},
     )
     serialized_content = node.model_dump()
+    assert "node_id" in serialized_content
     assert (
         serialized_content["metadata"]
         == '{"key1": "value1", "key2": "value2"}'

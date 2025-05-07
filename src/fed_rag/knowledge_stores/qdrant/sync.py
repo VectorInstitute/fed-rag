@@ -11,6 +11,7 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 
 if TYPE_CHECKING:
     from qdrant_client import QdrantClient
+    from qdrant_client.http.models import ScoredPoint
     from qdrant_client.models import PointStruct
 
 
@@ -33,7 +34,7 @@ def _get_qdrant_client(
     else:
         url = f"http://{host}:{port}"
 
-    return QdrantClient(url=url, api_key=api_key, **kwargs)
+    return QdrantClient(url=url, api_key=api_key, prefer_grpc=True, **kwargs)
 
 
 def _covert_knowledge_node_to_qdrant_point(
@@ -42,7 +43,16 @@ def _covert_knowledge_node_to_qdrant_point(
     from qdrant_client.models import PointStruct
 
     return PointStruct(
-        id=node.node_id, vector=node.embedding, payload=node.metadata
+        id=node.node_id, vector=node.embedding, payload=node.model_dump()
+    )
+
+
+def _convert_scored_point_to_knowledge_node_and_score_tuple(
+    scored_point: "ScoredPoint",
+) -> tuple[float, KnowledgeNode]:
+    return (
+        scored_point.score,
+        KnowledgeNode.model_validate(scored_point.payload),
     )
 
 
@@ -50,7 +60,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     """Qdrant Knowledge Store Class"""
 
     host: str = Field(default="localhost")
-    port: int = Field(default=6333)
+    port: int = Field(default=6334)
     ssl: bool = Field(default=False)
     api_key: SecretStr | None = Field(default=None)
     collection_name: str = Field(description="Name of Qdrant collection")
@@ -133,7 +143,16 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
-        raise NotImplementedError
+        from qdrant_client.conversions.common_types import QueryResponse
+
+        hits: QueryResponse = self.client.query_points(
+            collection_name=self.collection_name, query=query_emb, limit=top_k
+        )
+        retval = [
+            _convert_scored_point_to_knowledge_node_and_score_tuple(pt)
+            for pt in hits.points
+        ]
+        return retval
 
     def delete_node(self, node_id: str) -> bool:
         raise NotImplementedError

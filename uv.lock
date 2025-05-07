@@ -778,6 +778,7 @@ huggingface = [
     { name = "transformers" },
 ]
 qdrant = [
+    { name = "grpcio" },
     { name = "qdrant-client", extra = ["fastembed"] },
 ]
 
@@ -807,6 +808,7 @@ docs = [
 requires-dist = [
     { name = "datasets", specifier = ">=3.1.0" },
     { name = "flwr", specifier = ">=1.18.0" },
+    { name = "grpcio", marker = "extra == 'qdrant'", specifier = ">=1.71.0" },
     { name = "peft", marker = "extra == 'huggingface'", specifier = ">=0.14.0" },
     { name = "pyarrow", specifier = ">=19.0.1" },
     { name = "pydantic", specifier = ">=2.10.5" },
