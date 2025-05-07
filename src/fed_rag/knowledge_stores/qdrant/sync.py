@@ -1,10 +1,11 @@
 """Qdrant Knowledge Store"""
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from pydantic import Field, PrivateAttr, SecretStr
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.exceptions import InvalidDistance
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
 from fed_rag.types.knowledge_node import KnowledgeNode
 
@@ -41,12 +42,42 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     port: int = Field(default=6333)
     ssl: bool = Field(default=False)
     api_key: SecretStr | None = Field(default=None)
+    collection_name: str = Field(description="Name of Qdrant collection")
+    collection_distance: Literal[
+        "Cosine", "Euclid", "Dot", "Manhattan"
+    ] = Field(
+        description="Distance definition for collection", default="Cosine"
+    )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
     _client: Optional["QdrantClient"] = PrivateAttr(default=None)
 
     def __init__(self, *args: Any, **kwargs: Any):
         check_qdrant_installed()
         super().__init__(*args, **kwargs)
+
+    def _collection_exists(self, collection_name: str) -> bool:
+        """Check if a collection exists."""
+        return self.client.collection_exists(collection_name)  # type: ignore[no-any-return]
+
+    def _create_collection(
+        self, collection_name: str, vector_size: int, distance: str
+    ) -> None:
+        from qdrant_client.models import Distance, VectorParams
+
+        try:
+            # Try to convert to enum
+            distance = Distance(distance)
+        except ValueError:
+            # Catch the ValueError from enum conversion and raise your custom error
+            raise InvalidDistance(
+                f"Unsupported distance: {distance}. "
+                f"Mode must be one of: {', '.join([m.value for m in Distance])}"
+            )
+
+        self.client.create_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=vector_size, distance=distance),
+        )
 
     @property
     def client(self) -> "QdrantClient":
