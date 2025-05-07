@@ -22,6 +22,7 @@ from .knowledge_stores import (
     InvalidDistance,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
+    LoadNodeError,
 )
 from .trainer import (
     InconsistentDatasetError,
@@ -63,6 +64,7 @@ __all__ = [
     "KnowledgeStoreError",
     "KnowledgeStoreNotFoundError",
     "InvalidDistance",
+    "LoadNodeError",
     # rag trainer manager
     "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",

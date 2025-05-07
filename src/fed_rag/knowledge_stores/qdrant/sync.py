@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING, Any, Literal, Optional
 from pydantic import Field, PrivateAttr, SecretStr
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.exceptions import InvalidDistance
+from fed_rag.exceptions import InvalidDistance, LoadNodeError
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 if TYPE_CHECKING:
     from qdrant_client import QdrantClient
+    from qdrant_client.models import PointStruct
 
 
 def _get_qdrant_client(
@@ -33,6 +34,16 @@ def _get_qdrant_client(
         url = f"http://{host}:{port}"
 
     return QdrantClient(url=url, api_key=api_key, **kwargs)
+
+
+def _covert_knowledge_node_to_qdrant_point(
+    node: KnowledgeNode,
+) -> "PointStruct":
+    from qdrant_client.models import PointStruct
+
+    return PointStruct(
+        id=node.node_id, vector=node.embedding, payload=node.metadata
+    )
 
 
 class QdrantKnowledgeStore(BaseKnowledgeStore):
@@ -95,10 +106,29 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         return self._client
 
     def load_node(self, node: KnowledgeNode) -> None:
-        raise NotImplementedError
+        point = _covert_knowledge_node_to_qdrant_point(node)
+        try:
+            self.client.upsert(
+                collection_name=self.collection_name, points=[point]
+            )
+        except Exception as e:
+            raise LoadNodeError(
+                f"Failed to load node {node.node_id} into collection '{self.collection_name}': {str(e)}"
+            ) from e
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
-        raise NotImplementedError
+        if not nodes:
+            return
+
+        points = [_covert_knowledge_node_to_qdrant_point(n) for n in nodes]
+        try:
+            self.client.upload_points(
+                collection_name=self.collection_name, points=points
+            )
+        except Exception as e:
+            raise LoadNodeError(
+                f"Loading nodes into collection '{self.collection}' failed"
+            ) from e
 
     def retrieve(
         self, query_emb: list[float], top_k: int

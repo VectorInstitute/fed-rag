@@ -15,3 +15,7 @@ class KnowledgeStoreNotFoundError(KnowledgeStoreError, FileNotFoundError):
 
 class InvalidDistance(KnowledgeStoreError):
     pass
+
+
+class LoadNodeError(KnowledgeStoreError):
+    pass
