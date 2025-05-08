@@ -3,6 +3,7 @@
 import itertools
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Generator
 
@@ -60,6 +61,7 @@ def knowledge_store_from_retriever(
     collection_name: str | None,
     data_path: Path | None = None,
     clear_first: bool = False,
+    batch_size: int = 1000,
 ) -> QdrantKnowledgeStore:
     collection_name = collection_name or (
         retriever.model_name or retriever.context_model_name
@@ -67,10 +69,13 @@ def knowledge_store_from_retriever(
     collection_name = collection_name.replace("/", ".")
     ks_logger.info(
         f"Creating knowledge store from retriever: collection_name='{collection_name}', "
-        f"data_path={data_path if data_path else 'default'}, clear_first={clear_first}"
+        f"data_path={data_path if data_path else 'default'}, clear_first={clear_first} "
+        f"and batch_size={batch_size}."
     )
 
-    knowledge_store = QdrantKnowledgeStore(collection_name=collection_name)
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name=collection_name, load_node_kwargs={"parallel": 3}
+    )
 
     if clear_first:
         knowledge_store.clear()
@@ -81,8 +86,9 @@ def knowledge_store_from_retriever(
     filename = "md_sample-text-list-100-sec.jsonl"
 
     def batch_stream_file(
-        filename: str, batch_size: int = 1000
+        filename: str, batch_size: int
     ) -> Generator[list[str], None, None]:
+        """batch stream file"""
         with open(data_path / filename) as f:
             while True:
                 batch = [
@@ -94,7 +100,9 @@ def knowledge_store_from_retriever(
 
                 yield batch
 
-    for ix, batch in enumerate(batch_stream_file(filename, batch_size=1000)):
+    for ix, batch in enumerate(
+        batch_stream_file(filename, batch_size=batch_size)
+    ):
         try:
             chunks = [json.loads(line) for line in batch]
             ks_logger.info(
@@ -139,6 +147,7 @@ def main(
     collection_name: str | None = None,
     data_path: Path | None = None,
     clear_first: bool = False,
+    batch_size: int = 1000,
 ) -> tuple[str, int]:
     # get retriever
     retriever = get_retriever(
@@ -148,11 +157,16 @@ def main(
     )
 
     # build knowledge store
+    start_time = time.time()
     knowledge_store = knowledge_store_from_retriever(
         retriever=retriever,
         collection_name=collection_name,
         data_path=data_path,
         clear_first=clear_first,
+        batch_size=batch_size,
+    )
+    ks_logger.info(
+        f"Knowledge store creation took {time.time() - start_time:.2f} seconds"
     )
 
     return (knowledge_store.collection_name, knowledge_store.count)
