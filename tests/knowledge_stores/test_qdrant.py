@@ -531,16 +531,16 @@ def test_count(
     mock_qdrant_client_class: MagicMock,
     mock_ensure_collection_exists: MagicMock,
 ) -> None:
+    from qdrant_client.http.models import CountResult
+
     mock_client = MagicMock()
     mock_qdrant_client_class.return_value = mock_client
     knowledge_store = QdrantKnowledgeStore(
         collection_name="test collection",
     )
 
-    test_collection_info = MagicMock()
-    test_collection_info.vectors_count = 10
-
-    mock_client.get_collection.return_value = test_collection_info
+    test_count_result = CountResult(count=10)
+    mock_client.count.return_value = test_count_result
 
     # act
     res = knowledge_store.count
@@ -548,14 +548,14 @@ def test_count(
     # assert
     assert res == 10
     mock_ensure_collection_exists.assert_called_once()
-    mock_client.get_collection.assert_called_once_with(
+    mock_client.count.assert_called_once_with(
         collection_name="test collection"
     )
 
 
 @patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
 @patch("qdrant_client.QdrantClient")
-def test_count_raises_vectors_count_none_error(
+def test_count_raises_error(
     mock_qdrant_client_class: MagicMock,
     mock_ensure_collection_exists: MagicMock,
 ) -> None:
@@ -565,38 +565,7 @@ def test_count_raises_vectors_count_none_error(
         collection_name="test collection",
     )
 
-    test_collection_info = MagicMock()
-    test_collection_info.vectors_count = None
-
-    mock_client.get_collection.return_value = test_collection_info
-
-    # act
-    with pytest.raises(
-        KnowledgeStoreError,
-        match="Collection exists, but `vectors_count` is None.",
-    ):
-        knowledge_store.count
-
-    # assert
-    mock_ensure_collection_exists.assert_called_once()
-    mock_client.get_collection.assert_called_once_with(
-        collection_name="test collection"
-    )
-
-
-@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
-@patch("qdrant_client.QdrantClient")
-def test_count_raises_collection_info_error(
-    mock_qdrant_client_class: MagicMock,
-    mock_ensure_collection_exists: MagicMock,
-) -> None:
-    mock_client = MagicMock()
-    mock_qdrant_client_class.return_value = mock_client
-    knowledge_store = QdrantKnowledgeStore(
-        collection_name="test collection",
-    )
-
-    mock_client.get_collection.side_effect = RuntimeError("mock qdrant error")
+    mock_client.count.side_effect = RuntimeError("mock qdrant error")
 
     # act
     with pytest.raises(
@@ -607,7 +576,7 @@ def test_count_raises_collection_info_error(
 
     # assert
     mock_ensure_collection_exists.assert_called_once()
-    mock_client.get_collection.assert_called_once_with(
+    mock_client.count.assert_called_once_with(
         collection_name="test collection"
     )
 
