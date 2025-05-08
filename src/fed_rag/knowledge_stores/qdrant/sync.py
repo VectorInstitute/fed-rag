@@ -96,10 +96,17 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                 f"Mode must be one of: {', '.join([m.value for m in Distance])}"
             )
 
-        self.client.create_collection(
-            collection_name=collection_name,
-            vectors_config=VectorParams(size=vector_size, distance=distance),
-        )
+        try:
+            self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config=VectorParams(
+                    size=vector_size, distance=distance
+                ),
+            )
+        except Exception as e:
+            raise KnowledgeStoreError(
+                f"Failed to create collection: {str(e)}"
+            ) from e
 
     def _ensure_collection_exists(self) -> None:
         if not self._collection_exists():

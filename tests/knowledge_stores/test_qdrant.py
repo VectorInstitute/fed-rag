@@ -298,6 +298,32 @@ def test_private_create_collection_raises_invalid_distance_error(
         )
 
 
+@patch("qdrant_client.QdrantClient")
+def test_private_create_collection_raises_qdrant_error(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    mock_client.create_collection.side_effect = RuntimeError(
+        "mock qdrant error"
+    )
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to create collection: mock qdrant error",
+    ):
+        knowledge_store._create_collection(
+            collection_name="test collection",
+            vector_size=100,
+            distance=knowledge_store.collection_distance,
+        )
+
+
 @patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
 @patch("qdrant_client.QdrantClient")
 def test_retrieve(
@@ -583,4 +609,30 @@ def test_count_raises_collection_info_error(
     mock_ensure_collection_exists.assert_called_once()
     mock_client.get_collection.assert_called_once_with(
         collection_name="test collection"
+    )
+
+
+@patch.object(QdrantKnowledgeStore, "_collection_exists")
+@patch.object(QdrantKnowledgeStore, "_create_collection")
+@patch("qdrant_client.QdrantClient")
+def test_private_check_if_collection_exists_otherwise_create_one(
+    mock_qdrant_client_class: MagicMock,
+    mock_create_collection: MagicMock,
+    mock_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_collection_exists.return_value = False
+
+    # act
+    knowledge_store._check_if_collection_exists_otherwise_create_one(
+        vector_size=10
+    )
+
+    mock_collection_exists.assert_called_once()
+    mock_create_collection.assert_called_once_with(
+        collection_name="test collection", vector_size=10, distance="Cosine"
     )
