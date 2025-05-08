@@ -237,10 +237,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         # delete the collection
         try:
             self.client.delete_collection(collection_name=self.collection_name)
-        except Exception:
+        except Exception as e:
             raise KnowledgeStoreError(
-                f"Failed to delete collection '{self.collection_name}'"
-            )
+                f"Failed to delete collection '{self.collection_name}': {str(e)}"
+            ) from e
 
     @property
     def count(self) -> int:

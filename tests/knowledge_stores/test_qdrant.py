@@ -444,3 +444,56 @@ def test_delete_node_raises_error(
         match="Failed to delete node: '1' from collection 'test collection'",
     ):
         knowledge_store.delete_node(node_id="1")
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_clear(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    # act
+    with does_not_raise():
+        knowledge_store.clear()
+
+    # assert
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.delete_collection.assert_called_once_with(
+        collection_name="test collection"
+    )
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_clear_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    # act
+    mock_client.delete_collection.side_effect = RuntimeError(
+        "mock qdrant error"
+    )
+
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to delete collection 'test collection': mock qdrant error",
+    ):
+        knowledge_store.clear()
+
+    # assert
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.delete_collection.assert_called_once_with(
+        collection_name="test collection"
+    )
