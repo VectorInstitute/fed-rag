@@ -1595,6 +1595,7 @@ dependencies = [
     { name = "colorama" },
     { name = "fed-rag", extra = ["huggingface", "qdrant"] },
     { name = "fire" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
@@ -1602,6 +1603,7 @@ requires-dist = [
     { name = "colorama", specifier = ">=0.4.6" },
     { name = "fed-rag", extras = ["huggingface", "qdrant"], editable = "../../../" },
     { name = "fire", specifier = ">=0.7.0" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
 ]
 
 [[package]]

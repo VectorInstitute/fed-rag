@@ -3,11 +3,15 @@
 import itertools
 import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Generator
 
+from dotenv import load_dotenv
+
 # fed_rag
+from fed_rag.exceptions import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
@@ -63,6 +67,7 @@ def knowledge_store_from_retriever(
     clear_first: bool = False,
     num_parallel_load: int = 1,
     batch_size: int = 1000,
+    env_file_path: str | None = None,
 ) -> QdrantKnowledgeStore:
     collection_name = collection_name or (
         retriever.model_name or retriever.context_model_name
@@ -71,17 +76,27 @@ def knowledge_store_from_retriever(
     ks_logger.info(
         f"Creating knowledge store from retriever: collection_name='{collection_name}', "
         f"data_path={data_path if data_path else 'default'}, clear_first={clear_first} "
-        f"and batch_size={batch_size}."
+        f"batch_size={batch_size} and num_parallel_load={num_parallel_load}."
     )
 
-    knowledge_store = QdrantKnowledgeStore(
-        collection_name=collection_name,
-        load_node_kwargs={"parallel": num_parallel_load},
-    )
+    knowledge_store_kwargs = {
+        "collection_name": collection_name,
+        "load_node_kwargs": {"parallel": num_parallel_load},
+    }
+    if env_file_path:
+        load_dotenv(dotenv_path=env_file_path)
+        host = os.environ.get("QDRANT_HOST")
+        api_key = os.environ.get("QDRANT_API_KEY")
+        knowledge_store_kwargs.update(host=host, api_key=api_key, ssl=True)
+
+    knowledge_store = QdrantKnowledgeStore(**knowledge_store_kwargs)
 
     if clear_first:
-        knowledge_store.clear()
-        ks_logger.info("Knowledge store has been successfully cleared.")
+        try:
+            knowledge_store.clear()
+            ks_logger.info("Knowledge store has been successfully cleared.")
+        except KnowledgeStoreNotFoundError:
+            ks_logger.info("Knowledge store nonexistent. Nothing to clear.")
 
     # build the knowledge store by loading chunks from atlast corpus
     data_path = data_path if data_path else ATLAS_DIR
@@ -120,10 +135,13 @@ def knowledge_store_from_retriever(
         nodes = []
         for c in chunks:
             text = c.pop("text")
+            title = c.pop("title")
+            section = c.pop("section")
+            context_text = f"title: {title}\nsection: {section}\ntext: {text}"
             node = KnowledgeNode(
                 embedding=retriever.encode_context(text).tolist(),
                 node_type=NodeType.TEXT,
-                text_content=text,
+                text_content=context_text,
                 metadata=c,
             )
             nodes.append(node)
@@ -150,6 +168,8 @@ def main(
     data_path: Path | None = None,
     clear_first: bool = False,
     batch_size: int = 1000,
+    num_parallel_load: int = 1,
+    env_file_path: str | None = None,
 ) -> tuple[str, int]:
     # get retriever
     retriever = get_retriever(
@@ -166,6 +186,8 @@ def main(
         data_path=data_path,
         clear_first=clear_first,
         batch_size=batch_size,
+        num_parallel_load=num_parallel_load,
+        env_file_path=env_file_path,
     )
     ks_logger.info(
         f"Knowledge store creation took {time.time() - start_time:.2f} seconds"

@@ -14,7 +14,8 @@ requires-python = ">=3.12"
 dependencies = [
   "colorama>=0.4.6",
   "fed-rag[huggingface,qdrant]>=0.0.12",
-  "fire>=0.7.0"
+  "fire>=0.7.0",
+  "python-dotenv>=1.1.0"
 ]
 
 [project.scripts]
