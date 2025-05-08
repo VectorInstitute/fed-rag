@@ -1,8 +1,10 @@
 """Knowledge Store Utils."""
 
+import itertools
 import json
 import logging
 from pathlib import Path
+from typing import Generator
 
 # fed_rag
 from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
@@ -76,37 +78,56 @@ def knowledge_store_from_retriever(
 
     # build the knowledge store by loading chunks from atlast corpus
     data_path = data_path if data_path else ATLAS_DIR
-    filename = "sm_sample-text-list-100-sec.jsonl"
-    try:
+    filename = "md_sample-text-list-100-sec.jsonl"
+
+    def batch_stream_file(
+        filename: str, batch_size: int = 1000
+    ) -> Generator[list[str], None, None]:
         with open(data_path / filename) as f:
-            chunks = [json.loads(line) for line in f]
+            while True:
+                batch = [
+                    line.strip() for line in itertools.islice(f, batch_size)
+                ]
+
+                if not batch:
+                    break
+
+                yield batch
+
+    for ix, batch in enumerate(batch_stream_file(filename, batch_size=1000)):
+        try:
+            chunks = [json.loads(line) for line in batch]
+            ks_logger.info(
+                f"Successfully loaded knowledge artifacts from file: {filename} and batch: {ix + 1}"
+            )
+            ks_logger.debug(f"Loaded {len(chunks)} chunks from file")
+        except json.JSONDecodeError as e:
+            raise RuntimeError(
+                f"Failed to load chunks from {filename} and batch {ix + 1}: {e}"
+            ) from e
+
+        # create knowledge nodes
+        nodes = []
+        for c in chunks:
+            text = c.pop("text")
+            node = KnowledgeNode(
+                embedding=retriever.encode_context(text).tolist(),
+                node_type=NodeType.TEXT,
+                text_content=text,
+                metadata=c,
+            )
+            nodes.append(node)
+        ks_logger.info("KnowledgeNode's successfully created.")
+        ks_logger.debug(f"Created {len(nodes)} knowledge nodes")
+
+        # load into knowledge_store
+        knowledge_store.load_nodes(nodes=nodes)
         ks_logger.info(
-            f"Successfully loaded knowledge artifacts from file: {filename}"
+            f"KnowledgeNode's successfully loaded {len(nodes)} for batch: {ix + 1}."
         )
-        ks_logger.debug(f"Loaded {len(chunks)} chunks from file")
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        raise RuntimeError(f"Failed to load chunks from {filename}: {e}")
-
-    # create knowledge nodes
-    nodes = []
-    for c in chunks:
-        text = c.pop("text")
-        node = KnowledgeNode(
-            embedding=retriever.encode_context(text).tolist(),
-            node_type=NodeType.TEXT,
-            text_content=text,
-            metadata=c,
+        ks_logger.debug(
+            f"KnowledgeStore now has a total of {knowledge_store.count} knowledge nodes"
         )
-        nodes.append(node)
-    ks_logger.info("KnowledgeNode's successfully created.")
-    ks_logger.debug(f"Created {len(nodes)} knowledge nodes")
-
-    # load into knowledge_store
-    knowledge_store.load_nodes(nodes=nodes)
-    ks_logger.info("KnowledgeNode's successfully loaded.")
-    ks_logger.debug(
-        f"KnowledgeStore has {knowledge_store.count} knowledge nodes"
-    )
 
     return knowledge_store
 
