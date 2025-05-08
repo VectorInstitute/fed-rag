@@ -254,25 +254,19 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
     @property
     def count(self) -> int:
-        from qdrant_client.http.models import CollectionInfo
+        from qdrant_client.http.models import CountResult
 
         self._ensure_collection_exists()
 
         try:
-            collection_info: CollectionInfo = self.client.get_collection(
+            res: CountResult = self.client.count(
                 collection_name=self.collection_name
             )
+            return int(res.count)
         except Exception as e:
             raise KnowledgeStoreError(
                 f"Failed to get vector count for collection '{self.collection_name}': {str(e)}"
             ) from e
-
-        if collection_info.vectors_count is None:
-            raise KnowledgeStoreError(
-                "Collection exists, but `vectors_count` is None."
-            )
-        else:
-            return int(collection_info.vectors_count)
 
     def persist(self) -> None:
         """Persist a knowledge store to disk."""
