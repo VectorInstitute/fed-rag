@@ -385,3 +385,40 @@ def test_load_raises_error() -> None:
     )
     with pytest.raises(NotImplementedError, match=re.escape(msg)):
         knowledge_store.load()
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_delete_node(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.http.models import (
+        FieldCondition,
+        Filter,
+        MatchValue,
+        UpdateResult,
+        UpdateStatus,
+    )
+
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    test_update_result = UpdateResult(status=UpdateStatus.COMPLETED)
+
+    mock_client.delete.return_value = test_update_result
+
+    # act
+    knowledge_store.delete_node(node_id="1")
+
+    # assert
+    mock_client.delete.assert_called_once_with(
+        collection_name="test collection",
+        points_selector=Filter(
+            must=[FieldCondition(key="node_id", match=MatchValue(value="1"))]
+        ),
+    )
+    mock_ensure_collection_exists.assert_called_once()
