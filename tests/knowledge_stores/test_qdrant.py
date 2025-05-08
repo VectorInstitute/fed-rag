@@ -422,3 +422,25 @@ def test_delete_node(
         ),
     )
     mock_ensure_collection_exists.assert_called_once()
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_delete_node_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    mock_client.delete.side_effect = RuntimeError("mock qdrant error")
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to delete node: '1' from collection 'test collection'",
+    ):
+        knowledge_store.delete_node(node_id="1")

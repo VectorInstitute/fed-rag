@@ -226,7 +226,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             )
         except Exception:
             raise KnowledgeStoreError(
-                f"Failed to delete node: {node_id} from collection '{self.collection_name}'"
+                f"Failed to delete node: '{node_id}' from collection '{self.collection_name}'"
             )
 
         return bool(res.status == UpdateStatus.COMPLETED)
