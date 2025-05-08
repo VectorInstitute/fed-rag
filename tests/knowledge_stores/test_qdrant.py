@@ -1,6 +1,6 @@
 import re
 import sys
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -14,6 +14,7 @@ def test_init() -> None:
     )
 
     assert isinstance(knowledge_store, QdrantKnowledgeStore)
+    assert knowledge_store._client is None
 
 
 def test_init_raises_error_if_qdrant_extra_is_missing() -> None:
@@ -38,3 +39,17 @@ def test_init_raises_error_if_qdrant_extra_is_missing() -> None:
 
     # restore module so to not affect other tests
     sys.modules[module_to_import] = original_module
+
+
+@patch("qdrant_client.QdrantClient")
+def test_get_qdrant_client(mock_qdrant_client: MagicMock) -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection", collection_vector_size=100
+    )
+
+    # act
+    knowledge_store.client
+
+    mock_qdrant_client.assert_called_once_with(
+        url="http://localhost:6334", api_key=None, prefer_grpc=True
+    )

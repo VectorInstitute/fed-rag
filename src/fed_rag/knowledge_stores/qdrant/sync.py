@@ -14,7 +14,7 @@ from fed_rag.exceptions import (
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
 from fed_rag.types.knowledge_node import KnowledgeNode
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from qdrant_client import QdrantClient
     from qdrant_client.http.models import ScoredPoint
     from qdrant_client.models import PointStruct
