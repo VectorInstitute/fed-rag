@@ -19,7 +19,7 @@ from .inspectors import (
     UnequalNetParamWarning,
 )
 from .knowledge_stores import (
-    InvalidDistance,
+    InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
     LoadNodeError,
@@ -63,7 +63,7 @@ __all__ = [
     # knowledge stores
     "KnowledgeStoreError",
     "KnowledgeStoreNotFoundError",
-    "InvalidDistance",
+    "InvalidDistanceError",
     "LoadNodeError",
     # rag trainer manager
     "RAGTrainerManagerError",

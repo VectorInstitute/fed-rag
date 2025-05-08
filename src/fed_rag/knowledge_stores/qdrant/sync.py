@@ -6,7 +6,7 @@ from pydantic import Field, PrivateAttr, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions import (
-    InvalidDistance,
+    InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
     LoadNodeError,
@@ -42,7 +42,7 @@ def _get_qdrant_client(
     return QdrantClient(url=url, api_key=api_key, prefer_grpc=True, **kwargs)
 
 
-def _covert_knowledge_node_to_qdrant_point(
+def _convert_knowledge_node_to_qdrant_point(
     node: KnowledgeNode,
 ) -> "PointStruct":
     from qdrant_client.models import PointStruct
@@ -91,7 +91,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             distance = Distance(distance)
         except ValueError:
             # Catch the ValueError from enum conversion and raise your custom error
-            raise InvalidDistance(
+            raise InvalidDistanceError(
                 f"Unsupported distance: {distance}. "
                 f"Mode must be one of: {', '.join([m.value for m in Distance])}"
             )
@@ -104,7 +104,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     def _ensure_collection_exists(self) -> None:
         if not self._collection_exists():
             raise KnowledgeStoreNotFoundError(
-                f"Collection {self.collection_name} does not exist."
+                f"Collection '{self.collection_name}' does not exist."
             )
 
     def _check_if_collection_exists_otherwise_create_one(
@@ -149,7 +149,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             vector_size=len(node.embedding)
         )
 
-        point = _covert_knowledge_node_to_qdrant_point(node)
+        point = _convert_knowledge_node_to_qdrant_point(node)
         try:
             self.client.upsert(
                 collection_name=self.collection_name, points=[point]
@@ -167,7 +167,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             vector_size=len(nodes[0].embedding)
         )
 
-        points = [_covert_knowledge_node_to_qdrant_point(n) for n in nodes]
+        points = [_convert_knowledge_node_to_qdrant_point(n) for n in nodes]
         try:
             self.client.upload_points(
                 collection_name=self.collection_name, points=points

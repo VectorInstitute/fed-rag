@@ -13,7 +13,7 @@ class KnowledgeStoreNotFoundError(KnowledgeStoreError, FileNotFoundError):
     pass
 
 
-class InvalidDistance(KnowledgeStoreError):
+class InvalidDistanceError(KnowledgeStoreError):
     pass
 
 
