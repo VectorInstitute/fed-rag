@@ -174,7 +174,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             )
         except Exception as e:
             raise LoadNodeError(
-                f"Loading nodes into collection '{self.collection_name}' failed"
+                f"Loading nodes into collection '{self.collection_name}' failed: {str(e)}"
             ) from e
 
     def retrieve(

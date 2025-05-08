@@ -27,7 +27,7 @@ def test_init() -> None:
     assert knowledge_store._client is None
 
 
-def test_init_raises_error_if_qdrant_extra_is_missing() -> None:
+def test_init_raises_error_if_qdrant_extra_is_missing_parent_import() -> None:
     modules = {"qdrant_client": None}
     module_to_import = "fed_rag.knowledge_stores.qdrant"
 
@@ -44,6 +44,32 @@ def test_init_raises_error_if_qdrant_extra_is_missing() -> None:
             match=re.escape(msg),
         ):
             from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
+
+            QdrantKnowledgeStore()
+
+    # restore module so to not affect other tests
+    sys.modules[module_to_import] = original_module
+
+
+def test_init_raises_error_if_qdrant_extra_is_missing() -> None:
+    modules = {"qdrant_client": None}
+    module_to_import = "fed_rag.knowledge_stores.qdrant.sync"
+
+    if module_to_import in sys.modules:
+        original_module = sys.modules.pop(module_to_import)
+
+    with patch.dict("sys.modules", modules):
+        msg = (
+            "Qdrant knowledge stores require the qdrant-client to be installed. "
+            "To fix please run `pip install fed-rag[qdrant]`."
+        )
+        with pytest.raises(
+            MissingExtraError,
+            match=re.escape(msg),
+        ):
+            from fed_rag.knowledge_stores.qdrant.sync import (
+                QdrantKnowledgeStore,
+            )
 
             QdrantKnowledgeStore()
 
@@ -124,6 +150,71 @@ def test_load_node_raises_error(mock_qdrant_client_class: MagicMock) -> None:
         match="Failed to load node 1 into collection 'test collection': mock error from qdrant",
     ):
         knowledge_store.load_node(node)
+
+
+@patch("qdrant_client.QdrantClient")
+def test_load_nodes(mock_qdrant_client_class: MagicMock) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    nodes = [
+        KnowledgeNode(
+            node_id="1",
+            embedding=[1, 1, 1],
+            node_type="text",
+            text_content="mock node",
+        ),
+        KnowledgeNode(
+            node_id="2",
+            embedding=[2, 2, 2],
+            node_type="text",
+            text_content="mock node",
+        ),
+    ]
+
+    # act
+    knowledge_store.load_nodes(nodes)
+
+    mock_client.collection_exists.assert_called_once_with("test collection")
+    mock_client.upload_points.assert_called_once_with(
+        collection_name="test collection",
+        points=[_convert_knowledge_node_to_qdrant_point(n) for n in nodes],
+    )
+
+
+@patch("qdrant_client.QdrantClient")
+def test_load_nodes_raises_error(mock_qdrant_client_class: MagicMock) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    nodes = [
+        KnowledgeNode(
+            node_id="1",
+            embedding=[1, 1, 1],
+            node_type="text",
+            text_content="mock node",
+        ),
+        KnowledgeNode(
+            node_id="2",
+            embedding=[2, 2, 2],
+            node_type="text",
+            text_content="mock node",
+        ),
+    ]
+
+    mock_client.upload_points.side_effect = RuntimeError(
+        "mock error from qdrant"
+    )
+
+    with pytest.raises(
+        LoadNodeError,
+        match="Loading nodes into collection 'test collection' failed: mock error from qdrant",
+    ):
+        knowledge_store.load_nodes(nodes)
 
 
 @patch("qdrant_client.QdrantClient")
