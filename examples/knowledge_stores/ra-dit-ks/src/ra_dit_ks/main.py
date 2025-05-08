@@ -61,6 +61,7 @@ def knowledge_store_from_retriever(
     collection_name: str | None,
     data_path: Path | None = None,
     clear_first: bool = False,
+    num_parallel_load: int = 1,
     batch_size: int = 1000,
 ) -> QdrantKnowledgeStore:
     collection_name = collection_name or (
@@ -74,7 +75,8 @@ def knowledge_store_from_retriever(
     )
 
     knowledge_store = QdrantKnowledgeStore(
-        collection_name=collection_name, load_node_kwargs={"parallel": 3}
+        collection_name=collection_name,
+        load_node_kwargs={"parallel": num_parallel_load},
     )
 
     if clear_first:
