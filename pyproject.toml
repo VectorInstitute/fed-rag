@@ -71,5 +71,5 @@ Changelog = "https://github.com/VectorInstitute/fed-rag/blob/main/CHANGELOG.md"
 only-include = ["src", "tests"] # keep build small, exclude examples
 
 [tool.uv.workspace]
-members = ["examples/quick-start"]
+members = ["examples/quick-start", "examples/knowledge_stores/ra-dit"]
 exclude = ["examples/ra-dit"]
