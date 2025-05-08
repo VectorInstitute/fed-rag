@@ -133,4 +133,6 @@ class KnowledgeNode(BaseModel):
         if isinstance(metadata, str):
             deserialized_metadata = json.loads(metadata)
             return cast(dict[Any, Any], deserialized_metadata)
+        if metadata is None:
+            return {}
         return metadata

@@ -14,6 +14,7 @@ from fed_rag.exceptions import (
 from fed_rag.knowledge_stores.qdrant.sync import (
     QdrantKnowledgeStore,
     _convert_knowledge_node_to_qdrant_point,
+    _convert_scored_point_to_knowledge_node_and_score_tuple,
 )
 from fed_rag.types.knowledge_node import KnowledgeNode
 
@@ -183,6 +184,9 @@ def test_load_nodes(mock_qdrant_client_class: MagicMock) -> None:
         points=[_convert_knowledge_node_to_qdrant_point(n) for n in nodes],
     )
 
+    with does_not_raise():
+        knowledge_store.load_nodes([])  # a no-op
+
 
 @patch("qdrant_client.QdrantClient")
 def test_load_nodes_raises_error(mock_qdrant_client_class: MagicMock) -> None:
@@ -291,3 +295,42 @@ def test_private_create_collection_raises_invalid_distance_error(
             vector_size=100,
             distance="invalid distance",
         )
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_retrieve(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.conversions.common_types import QueryResponse
+    from qdrant_client.http.models import ScoredPoint
+
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    test_node = KnowledgeNode(
+        node_id="1",
+        embedding=[1, 1, 1],
+        node_type="text",
+        text_content="mock node",
+    )
+    print(test_node.model_dump())
+    test_pt = ScoredPoint(
+        id="1", score=0.42, version=1, payload=test_node.model_dump()
+    )
+    test_query_response = QueryResponse(points=[test_pt])
+    mock_client.query_points.return_value = test_query_response
+
+    # act
+    retrieval_res = knowledge_store.retrieve(query_emb=[1, 1, 1], top_k=5)
+
+    # assert
+    expected = [
+        _convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)
+    ]
+    assert expected == retrieval_res
+    mock_ensure_collection_exists.assert_called_once()
