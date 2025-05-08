@@ -12,6 +12,7 @@
 ![GitHub License](https://img.shields.io/github/license/VectorInstitute/fed-rag)
 ![GitHub Release](https://img.shields.io/github/v/release/VectorInstitute/fed-rag)
 [![DOI](https://zenodo.org/badge/918377874.svg)](https://doi.org/10.5281/zenodo.15092361)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/VectorInstitute/fed-rag)
 
 FedRAG is an open-source framework for federated fine-tuning of Retrieval-Augmented
 Generation (RAG) systems.
