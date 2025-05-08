@@ -155,6 +155,7 @@ def test_serialize_metadata() -> None:
         metadata={"key1": "value1", "key2": "value2"},
     )
     serialized_content = node.model_dump()
+    assert "node_id" in serialized_content
     assert (
         serialized_content["metadata"]
         == '{"key1": "value1", "key2": "value2"}'
@@ -187,3 +188,17 @@ def test_deserialize_metadata() -> None:
         metadata='{"key1": "value1", "key2": "value2"}',
     )
     assert node.metadata == {"key1": "value1", "key2": "value2"}
+
+
+def test_deserialize_metadata_when_empty() -> None:
+    node = KnowledgeNode(
+        node_type="text",
+        embedding=[0.1, 0.2],
+        text_content="content",
+    )
+    serialized = node.model_dump()
+
+    deserialized_node = KnowledgeNode.model_validate(serialized)
+
+    assert node == deserialized_node
+    assert serialized["metadata"] is None

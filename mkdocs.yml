@@ -84,6 +84,7 @@ nav:
     - Knowledge Stores:
       - api_reference/knowledge_stores/index.md
       - InMemory: api_reference/knowledge_stores/in_memory.md
+      - Qdrant: api_reference/knowledge_stores/qdrant.md
       - Mixins: api_reference/knowledge_stores/mixins.md
     - Loss:
       - api_reference/loss/pytorch.md

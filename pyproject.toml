@@ -56,6 +56,10 @@ huggingface = [
   "transformers>=4.49.0",
   "sentence-transformers>=3.4.1"
 ]
+qdrant = [
+  "grpcio>=1.71.0",
+  "qdrant-client[fastembed]>=1.14.2"
+]
 
 [project.urls]
 Documentation = "https://vectorinstitute.github.io/fed-rag/"

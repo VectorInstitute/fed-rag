@@ -11,3 +11,11 @@ class KnowledgeStoreError(FedRAGError):
 
 class KnowledgeStoreNotFoundError(KnowledgeStoreError, FileNotFoundError):
     pass
+
+
+class InvalidDistanceError(KnowledgeStoreError):
+    pass
+
+
+class LoadNodeError(KnowledgeStoreError):
+    pass

@@ -18,7 +18,12 @@ from .inspectors import (
     MissingTrainerSpec,
     UnequalNetParamWarning,
 )
-from .knowledge_stores import KnowledgeStoreError, KnowledgeStoreNotFoundError
+from .knowledge_stores import (
+    InvalidDistanceError,
+    KnowledgeStoreError,
+    KnowledgeStoreNotFoundError,
+    LoadNodeError,
+)
 from .trainer import (
     InconsistentDatasetError,
     InvalidDataCollatorError,
@@ -58,6 +63,8 @@ __all__ = [
     # knowledge stores
     "KnowledgeStoreError",
     "KnowledgeStoreNotFoundError",
+    "InvalidDistanceError",
+    "LoadNodeError",
     # rag trainer manager
     "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",
