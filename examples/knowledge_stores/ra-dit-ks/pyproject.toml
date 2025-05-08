@@ -12,7 +12,9 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-  "fed-rag[huggingface,qdrant]>=0.0.12"
+  "colorama>=0.4.6",
+  "fed-rag[huggingface,qdrant]>=0.0.12",
+  "fire>=0.7.0"
 ]
 
 [project.scripts]

@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from ra-dit!")
+from .logger import logger
+
+__all__ = ["logger"]
