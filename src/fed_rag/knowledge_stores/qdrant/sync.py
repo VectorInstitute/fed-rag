@@ -62,7 +62,10 @@ def _convert_scored_point_to_knowledge_node_and_score_tuple(
 
 
 class QdrantKnowledgeStore(BaseKnowledgeStore):
-    """Qdrant Knowledge Store Class"""
+    """Qdrant Knowledge Store Class
+
+    NOTE: This is a minimal implementation in order to just get started using Qdrant.
+    """
 
     host: str = Field(default="localhost")
     port: int = Field(default=6334)
