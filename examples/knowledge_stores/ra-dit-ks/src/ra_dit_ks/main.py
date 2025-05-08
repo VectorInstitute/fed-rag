@@ -24,13 +24,6 @@ ATLAS_DIR = DATA_DIR / "atlas" / "enwiki-dec2021"
 ks_logger = logging.getLogger("ra_dit_ks.main")
 
 
-retriever = HFSentenceTransformerRetriever(
-    query_model_name="nthakur/dragon-plus-query-encoder",
-    context_model_name="nthakur/dragon-plus-context-encoder",
-    load_model_at_init=False,
-)
-
-
 def get_retriever(
     model_name: str | None,
     query_model_name: str | None = "nthakur/dragon-plus-query-encoder",
@@ -46,7 +39,9 @@ def get_retriever(
     if model_name:
         ks_logger.info(f"Getting retriever: model_name='{model_name}'.")
         return HFSentenceTransformerRetriever(
-            model_name=model_name, load_model_at_init=False
+            model_name=model_name,
+            load_model_at_init=False,
+            load_model_kwargs={"device_map": "auto"},
         )
     else:
         ks_logger.info(
@@ -78,6 +73,8 @@ def knowledge_store_from_retriever(
         f"data_path={data_path if data_path else 'default'}, clear_first={clear_first} "
         f"batch_size={batch_size} and num_parallel_load={num_parallel_load}."
     )
+    sentence_transformer = retriever.encoder or retriever.context_encoder
+    ks_logger.debug(f"Retriever on device: {sentence_transformer.device}")
 
     knowledge_store_kwargs = {
         "collection_name": collection_name,
@@ -100,7 +97,7 @@ def knowledge_store_from_retriever(
 
     # build the knowledge store by loading chunks from atlast corpus
     data_path = data_path if data_path else ATLAS_DIR
-    filename = "md_sample-text-list-100-sec.jsonl"
+    filename = "text-list-100-sec.jsonl"
 
     def batch_stream_file(
         filename: str, batch_size: int
@@ -132,20 +129,30 @@ def knowledge_store_from_retriever(
             ) from e
 
         # create knowledge nodes
+        node_creation_start_time = time.time()
         nodes = []
+        texts = []
         for c in chunks:
             text = c.pop("text")
             title = c.pop("title")
             section = c.pop("section")
             context_text = f"title: {title}\nsection: {section}\ntext: {text}"
+            texts.append(context_text)
+
+        # batch encode
+        batch_embeddings = retriever.encode_context(texts)
+
+        for jx, c in enumerate(chunks):
             node = KnowledgeNode(
-                embedding=retriever.encode_context(text).tolist(),
+                embedding=batch_embeddings[jx].tolist(),
                 node_type=NodeType.TEXT,
-                text_content=context_text,
+                text_content=texts[jx],
                 metadata=c,
             )
             nodes.append(node)
-        ks_logger.info("KnowledgeNode's successfully created.")
+        ks_logger.info(
+            f"KnowledgeNode's successfully created in: {time.time() - node_creation_start_time:.2f} seconds"
+        )
         ks_logger.debug(f"Created {len(nodes)} knowledge nodes")
 
         # load into knowledge_store
