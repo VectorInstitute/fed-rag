@@ -636,3 +636,34 @@ def test_private_check_if_collection_exists_otherwise_create_one(
     mock_create_collection.assert_called_once_with(
         collection_name="test collection", vector_size=10, distance="Cosine"
     )
+
+
+@patch.object(QdrantKnowledgeStore, "_collection_exists")
+@patch.object(QdrantKnowledgeStore, "_create_collection")
+@patch("qdrant_client.QdrantClient")
+def test_private_check_if_collection_exists_otherwise_create_one_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_create_collection: MagicMock,
+    mock_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_collection_exists.return_value = False
+    mock_create_collection.side_effect = KnowledgeStoreError("mock error")
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to create new collection: 'test collection'",
+    ):
+        knowledge_store._check_if_collection_exists_otherwise_create_one(
+            vector_size=10
+        )
+
+    mock_collection_exists.assert_called_once()
+    mock_create_collection.assert_called_once_with(
+        collection_name="test collection", vector_size=10, distance="Cosine"
+    )

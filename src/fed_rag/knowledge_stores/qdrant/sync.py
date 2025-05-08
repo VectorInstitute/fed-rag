@@ -124,10 +124,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                     vector_size=vector_size,
                     distance=self.collection_distance,
                 )
-            except Exception:
+            except Exception as e:
                 raise KnowledgeStoreError(
-                    f"Failed to create new collection: {self.collection_name}"
-                )
+                    f"Failed to create new collection: '{self.collection_name}'"
+                ) from e
 
     @model_validator(mode="before")
     @classmethod
