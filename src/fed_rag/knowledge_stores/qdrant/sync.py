@@ -185,14 +185,21 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
         self._ensure_collection_exists()
 
-        hits: QueryResponse = self.client.query_points(
-            collection_name=self.collection_name, query=query_emb, limit=top_k
-        )
-        retval = [
+        try:
+            hits: QueryResponse = self.client.query_points(
+                collection_name=self.collection_name,
+                query=query_emb,
+                limit=top_k,
+            )
+        except Exception as e:
+            raise KnowledgeStoreError(
+                f"Failed to retrieve from collection '{self.collection_name}': {str(e)}"
+            ) from e
+
+        return [
             _convert_scored_point_to_knowledge_node_and_score_tuple(pt)
             for pt in hits.points
         ]
-        return retval
 
     def delete_node(self, node_id: str) -> bool:
         """Delete a node based on its node_id."""

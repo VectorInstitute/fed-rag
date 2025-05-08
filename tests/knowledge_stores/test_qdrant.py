@@ -7,6 +7,7 @@ import pytest
 
 from fed_rag.exceptions import (
     InvalidDistanceError,
+    KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
     LoadNodeError,
     MissingExtraError,
@@ -318,7 +319,6 @@ def test_retrieve(
         node_type="text",
         text_content="mock node",
     )
-    print(test_node.model_dump())
     test_pt = ScoredPoint(
         id="1", score=0.42, version=1, payload=test_node.model_dump()
     )
@@ -334,3 +334,54 @@ def test_retrieve(
     ]
     assert expected == retrieval_res
     mock_ensure_collection_exists.assert_called_once()
+
+
+@patch.object(QdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.QdrantClient")
+def test_retrieve_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = MagicMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    mock_client.query_points.side_effect = RuntimeError("mock qdrant error")
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to retrieve from collection 'test collection': mock qdrant error",
+    ):
+        knowledge_store.retrieve(query_emb=[1, 1, 1], top_k=5)
+
+    mock_ensure_collection_exists.assert_called_once()
+
+
+def test_persist_raises_error() -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    with pytest.raises(
+        NotImplementedError,
+        match=re.escape(
+            "`persist()` is not available in QdrantKnowledgeStore."
+        ),
+    ):
+        knowledge_store.persist()
+
+
+def test_load_raises_error() -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    msg = (
+        "`load()` is not available in QdrantKnowledgeStore. "
+        "Data is automatically persisted and loaded from the Qdrant server."
+    )
+    with pytest.raises(NotImplementedError, match=re.escape(msg)):
+        knowledge_store.load()
