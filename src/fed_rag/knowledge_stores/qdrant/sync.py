@@ -78,6 +78,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         description="Distance definition for collection", default="Cosine"
     )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
+    load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
     _client: Optional["QdrantClient"] = PrivateAttr(default=None)
 
     def _collection_exists(self) -> bool:
@@ -180,7 +181,9 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         points = [_convert_knowledge_node_to_qdrant_point(n) for n in nodes]
         try:
             self.client.upload_points(
-                collection_name=self.collection_name, points=points
+                collection_name=self.collection_name,
+                points=points,
+                **self.load_nodes_kwargs,
             )
         except Exception as e:
             raise LoadNodeError(

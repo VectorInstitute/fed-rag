@@ -22,11 +22,12 @@ from fed_rag.types.knowledge_node import KnowledgeNode
 
 def test_init() -> None:
     knowledge_store = QdrantKnowledgeStore(
-        collection_name="test collection",
+        collection_name="test collection", load_nodes_kwargs={"parallel": 4}
     )
 
     assert isinstance(knowledge_store, QdrantKnowledgeStore)
     assert knowledge_store._client is None
+    assert knowledge_store.load_nodes_kwargs == {"parallel": 4}
 
 
 def test_init_raises_error_if_qdrant_extra_is_missing_parent_import() -> None:
@@ -159,7 +160,7 @@ def test_load_nodes(mock_qdrant_client_class: MagicMock) -> None:
     mock_client = MagicMock()
     mock_qdrant_client_class.return_value = mock_client
     knowledge_store = QdrantKnowledgeStore(
-        collection_name="test collection",
+        collection_name="test collection", load_nodes_kwargs={"parallel": 4}
     )
     nodes = [
         KnowledgeNode(
@@ -183,6 +184,7 @@ def test_load_nodes(mock_qdrant_client_class: MagicMock) -> None:
     mock_client.upload_points.assert_called_once_with(
         collection_name="test collection",
         points=[_convert_knowledge_node_to_qdrant_point(n) for n in nodes],
+        parallel=4,
     )
 
     with does_not_raise():
