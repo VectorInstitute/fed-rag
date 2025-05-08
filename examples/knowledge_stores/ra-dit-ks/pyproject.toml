@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ra-dit-ks"
+version = "0.1.0"
+description = "Knowledge store builds for ra-dit examples"
+readme = "README.md"
+authors = [
+  {name = "nerdai", email = "andrei@vectorinstitute.ai"}
+]
+requires-python = ">=3.12"
+dependencies = [
+  "fed-rag[huggingface,qdrant]>=0.0.12"
+]
+
+[project.scripts]
+ra-dit = "ra_dit:main"
+
+[tool.uv.sources]
+fed-rag = {path = "../../../", editable = true}
