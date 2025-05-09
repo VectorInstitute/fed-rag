@@ -118,13 +118,15 @@ class HFSentenceTransformerRetriever(BaseRetriever):
             raise InvalidLoadType("Invalid `load_type` supplied.")
 
     def encode_context(
-        self, context: str | list[str], **kwargs: Any
+        self, context: str | list[str], 
+        **kwargs: Any,
     ) -> torch.Tensor:
         # validation guarantees one of these is not None
         encoder = self.encoder if self.encoder else self.context_encoder
         encoder = cast(SentenceTransformer, encoder)
 
-        return encoder.encode(context)
+        return encoder.encode(context,**kwargs)
+        #return encoder.encode(context, batch_size=768, show_progress_bar=True)
 
     def encode_query(
         self, query: str | list[str], **kwargs: Any

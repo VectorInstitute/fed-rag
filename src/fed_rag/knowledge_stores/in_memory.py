@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, cast
 
 import numpy as np
+import torch
 import pyarrow as pa
 import pyarrow.parquet as pq
 from pydantic import Field, PrivateAttr, model_serializer
@@ -13,10 +14,18 @@ from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions.knowledge_stores import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.mixins import ManagedMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.exceptions.common import MissingExtraError
 
 DEFAULT_CACHE_DIR = ".fed_rag/data_cache/"
 DEFAULT_TOP_K = 2
-
+try:
+    from sentence_transformers.util import cos_sim
+except ModuleNotFoundError:
+    msg = (
+        "`in_memory` requires the `huggingface` extra to be installed. "
+        "To fix please run `pip install fed-rag[huggingface]`."
+    )
+    raise MissingExtraError(msg)
 
 def _get_top_k_nodes(
     nodes: list[KnowledgeNode],
@@ -37,12 +46,19 @@ def _get_top_k_nodes(
             np.linalg.norm(np_a) * np.linalg.norm(np_b)
         )
         return cosine_sim
-
-    scores = [
-        (node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes
-    ]
-    scores.sort(key=lambda tup: tup[1], reverse=True)
-    return scores[:top_k]
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    query_tensor = torch.tensor(query_emb).half().to(device)
+    if not torch.is_tensor(nodes["embeddings"]):
+        nodes["embeddings"] = torch.tensor(nodes["embeddings"]).half().to(device)
+    similarities = cos_sim(query_tensor,nodes["embeddings"])
+    if similarities.device==device:
+        similarities = similarities.to("cpu")
+    similarities = similarities.tolist()[0]
+    zipped = list(zip(nodes["node_ids"], similarities))
+    print("similarities")
+    #scores.sort(key=lambda tup: tup[1], reverse=True)
+    sorted_similarities = sorted(zipped, key=lambda row: row[1],reverse=True)
+    return sorted_similarities[:top_k]
 
 
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
@@ -50,6 +66,10 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
 
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
+    _data_list: Dict[str, list] = PrivateAttr(default_factory=lambda: {
+        "node_ids": [],  # Empty KnowledgeNode for key1
+        "embeddings": []   # Empty KnowledgeNode for key2
+    })
 
     @classmethod
     def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
@@ -60,6 +80,8 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def load_node(self, node: KnowledgeNode) -> None:
         if node.node_id not in self._data:
             self._data[node.node_id] = node
+            self._data_list["node_ids"].append(node.node_id)
+            self._data_list["embeddings"].append(node.embedding)
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
@@ -70,7 +92,7 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     ) -> list[tuple[float, KnowledgeNode]]:
         all_nodes = list(self._data.values())
         node_ids_and_scores = _get_top_k_nodes(
-            nodes=all_nodes, query_emb=query_emb, top_k=top_k
+            nodes=self._data_list, query_emb=query_emb, top_k=top_k
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
