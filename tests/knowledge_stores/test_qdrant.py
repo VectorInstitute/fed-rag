@@ -9,6 +9,7 @@ from fed_rag.exceptions import (
     InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
+    KnowledgeStoreWarning,
     LoadNodeError,
     MissingExtraError,
 )
@@ -110,6 +111,31 @@ def test_get_qdrant_client_ssl(mock_qdrant_client_class: MagicMock) -> None:
         prefer_grpc=True,
         timeout=60,
     )
+
+
+@patch("qdrant_client.QdrantClient")
+def test_get_qdrant_client_error_at_teardown_throws_warning(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_instance = MagicMock()
+    mock_qdrant_client_class.return_value = mock_instance
+    mock_instance.close.side_effect = RuntimeError("mock error from qdrant")
+
+    # act
+    with pytest.warns(
+        KnowledgeStoreWarning,
+        match="Unable to close client: mock error from qdrant",
+    ):
+        with knowledge_store.get_client() as _client:
+            pass
+
+    mock_qdrant_client_class.assert_called_once_with(
+        url="http://localhost:6334", api_key=None, prefer_grpc=True, timeout=60
+    )
+    mock_instance.close.assert_called_once()
 
 
 @patch("qdrant_client.QdrantClient")
