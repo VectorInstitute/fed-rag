@@ -22,6 +22,7 @@ from .knowledge_stores import (
     InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
+    KnowledgeStoreWarning,
     LoadNodeError,
 )
 from .trainer import (
@@ -62,6 +63,7 @@ __all__ = [
     "InvalidReturnType",
     # knowledge stores
     "KnowledgeStoreError",
+    "KnowledgeStoreWarning",
     "KnowledgeStoreNotFoundError",
     "InvalidDistanceError",
     "LoadNodeError",
