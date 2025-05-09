@@ -62,6 +62,7 @@ def knowledge_store_from_retriever(
     clear_first: bool = False,
     num_parallel_load: int = 1,
     batch_size: int = 1000,
+    skip_to_batch: int | None = None,
     env_file_path: str | None = None,
 ) -> QdrantKnowledgeStore:
     collection_name = collection_name or (
@@ -71,7 +72,7 @@ def knowledge_store_from_retriever(
     ks_logger.info(
         f"Creating knowledge store from retriever: collection_name='{collection_name}', "
         f"data_path={data_path if data_path else 'default'}, clear_first={clear_first} "
-        f"batch_size={batch_size} and num_parallel_load={num_parallel_load}."
+        f"batch_size={batch_size} skip_to_batch={skip_to_batch} and num_parallel_load={num_parallel_load}."
     )
     sentence_transformer = retriever.encoder or retriever.context_encoder
     ks_logger.debug(f"Retriever on device: {sentence_transformer.device}")
@@ -117,6 +118,9 @@ def knowledge_store_from_retriever(
     for ix, batch in enumerate(
         batch_stream_file(filename, batch_size=batch_size)
     ):
+        if skip_to_batch and (ix + 1) < skip_to_batch:
+            continue
+
         try:
             chunks = [json.loads(line) for line in batch]
             ks_logger.info(
@@ -175,6 +179,7 @@ def main(
     data_path: Path | None = None,
     clear_first: bool = False,
     batch_size: int = 1000,
+    skip_to_batch: int | None = None,
     num_parallel_load: int = 1,
     env_file_path: str | None = None,
 ) -> tuple[str, int]:
@@ -193,6 +198,7 @@ def main(
         data_path=data_path,
         clear_first=clear_first,
         batch_size=batch_size,
+        skip_to_batch=skip_to_batch,
         num_parallel_load=num_parallel_load,
         env_file_path=env_file_path,
     )
