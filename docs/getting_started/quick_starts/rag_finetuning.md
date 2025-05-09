@@ -20,7 +20,9 @@ Training a RAG system requires a train dataset that is familiarly shaped as a qu
 dataset.
 
 ```py title="training examples for RAG fine-tuning"
-train_dataset = [  # (1)!
+from datasets import Dataset
+
+train_dataset = Dataset.from_dict(  # (1)!
     {
         "query": [
             "What is machine learning?",
@@ -33,7 +35,7 @@ train_dataset = [  # (1)!
             "Computers work by processing information using logic gates and electronic components.",
         ],
     }
-]
+)
 ```
 
 1. A train example is essentially a (`query`, `response`) pair.
@@ -64,7 +66,7 @@ generator_trainer = HuggingFaceTrainerForRALT(
     rag_system=rag_system,
     train_dataset=train_dataset,
 )
-retriever_trainer = HuggingFaceTrainerForRALT(
+retriever_trainer = HuggingFaceTrainerForLSR(
     rag_system=rag_system,
     train_dataset=train_dataset,
 )
@@ -73,15 +75,15 @@ retriever_trainer = HuggingFaceTrainerForRALT(
 ## Define our Trainer Manager object
 
 To orchestrate training between the two RAG components, FedRAG offers a manager
-class called [`BaseTrainerManager`](../../api_reference/trainer_managers/index.md).
+class called [`BaseRAGTrainerManager`](../../api_reference/trainer_managers/index.md).
 The training manager contains logic to prepare the component and system for the
 specific training task (i.e., retriever or generator), and also contains a simple
 method to transform the task into a federated one.
 
 ```py title="training with managers"
-from fed_rag.trainer_managers.huggingface import HuggingFaceTrainerManager
+from fed_rag.trainer_managers.huggingface import HuggingFaceRAGTrainerManager
 
-manager = HuggingFaceTrainerManager(
+manager = HuggingFaceRAGTrainerManager(
     mode="retriever",  # (1)!
     retriever_trainer=retriever_trainer,
     generator_trainer=generator_trainer,
