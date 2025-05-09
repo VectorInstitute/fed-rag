@@ -75,7 +75,7 @@ retriever_trainer = HuggingFaceTrainerForLSR(
 ## Define our Trainer Manager object
 
 To orchestrate training between the two RAG components, FedRAG offers a manager
-class called [`BaseTrainerManager`](../../api_reference/trainer_managers/index.md).
+class called [`BaseRAGTrainerManager`](../../api_reference/trainer_managers/index.md).
 The training manager contains logic to prepare the component and system for the
 specific training task (i.e., retriever or generator), and also contains a simple
 method to transform the task into a federated one.
