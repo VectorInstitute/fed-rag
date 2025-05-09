@@ -125,7 +125,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         encoder = self.encoder if self.encoder else self.context_encoder
         encoder = cast(SentenceTransformer, encoder)
 
-        return encoder.encode(context,**kwargs)
+        return encoder.encode(context, **kwargs)
 
     def encode_query(
         self, query: str | list[str], **kwargs: Any
