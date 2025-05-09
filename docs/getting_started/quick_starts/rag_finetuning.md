@@ -20,7 +20,9 @@ Training a RAG system requires a train dataset that is familiarly shaped as a qu
 dataset.
 
 ```py title="training examples for RAG fine-tuning"
-train_dataset = [  # (1)!
+from datasets import Dataset
+
+train_dataset = Dataset.from_dict(  # (1)!
     {
         "query": [
             "What is machine learning?",
@@ -33,7 +35,7 @@ train_dataset = [  # (1)!
             "Computers work by processing information using logic gates and electronic components.",
         ],
     }
-]
+)
 ```
 
 1. A train example is essentially a (`query`, `response`) pair.
