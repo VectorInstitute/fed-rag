@@ -66,7 +66,7 @@ generator_trainer = HuggingFaceTrainerForRALT(
     rag_system=rag_system,
     train_dataset=train_dataset,
 )
-retriever_trainer = HuggingFaceTrainerForRALT(
+retriever_trainer = HuggingFaceTrainerForLSR(
     rag_system=rag_system,
     train_dataset=train_dataset,
 )
@@ -81,9 +81,9 @@ specific training task (i.e., retriever or generator), and also contains a simpl
 method to transform the task into a federated one.
 
 ```py title="training with managers"
-from fed_rag.trainer_managers.huggingface import HuggingFaceTrainerManager
+from fed_rag.trainer_managers.huggingface import HuggingFaceRAGTrainerManager
 
-manager = HuggingFaceTrainerManager(
+manager = HuggingFaceRAGTrainerManager(
     mode="retriever",  # (1)!
     retriever_trainer=retriever_trainer,
     generator_trainer=generator_trainer,
