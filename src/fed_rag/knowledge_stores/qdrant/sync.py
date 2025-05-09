@@ -1,14 +1,17 @@
 """Qdrant Knowledge Store"""
 
-from typing import TYPE_CHECKING, Any, Literal, Optional
+import warnings
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Any, Generator, Literal
 
-from pydantic import Field, PrivateAttr, SecretStr, model_validator
+from pydantic import Field, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions import (
     InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
+    KnowledgeStoreWarning,
     LoadNodeError,
 )
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
@@ -24,6 +27,7 @@ def _get_qdrant_client(
     host: str,
     port: int,
     ssl: bool = False,
+    timeout: int | None = None,
     api_key: str | None = None,
     **kwargs: Any,
 ) -> "QdrantClient":
@@ -39,7 +43,9 @@ def _get_qdrant_client(
     else:
         url = f"http://{host}:{port}"
 
-    return QdrantClient(url=url, api_key=api_key, prefer_grpc=True, **kwargs)
+    return QdrantClient(
+        url=url, api_key=api_key, prefer_grpc=True, timeout=timeout, **kwargs
+    )
 
 
 def _convert_knowledge_node_to_qdrant_point(
@@ -79,11 +85,34 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
-    _client: Optional["QdrantClient"] = PrivateAttr(default=None)
+
+    @contextmanager
+    def get_client(
+        self,
+    ) -> Generator["QdrantClient", None, None]:
+        client = _get_qdrant_client(
+            host=self.host,
+            port=self.port,
+            ssl=self.ssl,
+            api_key=self.api_key.get_secret_value() if self.api_key else None,
+            timeout=60,  # Longer timeout for heavy operations
+            **self.client_kwargs,
+        )
+
+        try:
+            yield client
+        finally:
+            try:
+                client.close()
+            except Exception as e:
+                warnings.warn(
+                    f"Unable to close client: {str(e)}", KnowledgeStoreWarning
+                )
 
     def _collection_exists(self) -> bool:
         """Check if a collection exists."""
-        return self.client.collection_exists(self.collection_name)  # type: ignore[no-any-return]
+        with self.get_client() as client:
+            return client.collection_exists(self.collection_name)  # type: ignore[no-any-return]
 
     def _create_collection(
         self, collection_name: str, vector_size: int, distance: str
@@ -100,17 +129,18 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                 f"Mode must be one of: {', '.join([m.value for m in Distance])}"
             )
 
-        try:
-            self.client.create_collection(
-                collection_name=collection_name,
-                vectors_config=VectorParams(
-                    size=vector_size, distance=distance
-                ),
-            )
-        except Exception as e:
-            raise KnowledgeStoreError(
-                f"Failed to create collection: {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                client.create_collection(
+                    collection_name=collection_name,
+                    vectors_config=VectorParams(
+                        size=vector_size, distance=distance
+                    ),
+                )
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to create collection: {str(e)}"
+                ) from e
 
     def _ensure_collection_exists(self) -> None:
         if not self._collection_exists():
@@ -140,35 +170,21 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         check_qdrant_installed()
         return data
 
-    @property
-    def client(self) -> "QdrantClient":
-        if self._client is None:
-            # get and set client
-            self._client = _get_qdrant_client(
-                host=self.host,
-                port=self.port,
-                ssl=self.ssl,
-                api_key=self.api_key.get_secret_value()
-                if self.api_key
-                else None,
-                **self.client_kwargs,
-            )
-        return self._client
-
     def load_node(self, node: KnowledgeNode) -> None:
         self._check_if_collection_exists_otherwise_create_one(
             vector_size=len(node.embedding)
         )
 
         point = _convert_knowledge_node_to_qdrant_point(node)
-        try:
-            self.client.upsert(
-                collection_name=self.collection_name, points=[point]
-            )
-        except Exception as e:
-            raise LoadNodeError(
-                f"Failed to load node {node.node_id} into collection '{self.collection_name}': {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                client.upsert(
+                    collection_name=self.collection_name, points=[point]
+                )
+            except Exception as e:
+                raise LoadNodeError(
+                    f"Failed to load node {node.node_id} into collection '{self.collection_name}': {str(e)}"
+                ) from e
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         if not nodes:
@@ -179,16 +195,17 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         )
 
         points = [_convert_knowledge_node_to_qdrant_point(n) for n in nodes]
-        try:
-            self.client.upload_points(
-                collection_name=self.collection_name,
-                points=points,
-                **self.load_nodes_kwargs,
-            )
-        except Exception as e:
-            raise LoadNodeError(
-                f"Loading nodes into collection '{self.collection_name}' failed: {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                client.upload_points(
+                    collection_name=self.collection_name,
+                    points=points,
+                    **self.load_nodes_kwargs,
+                )
+            except Exception as e:
+                raise LoadNodeError(
+                    f"Loading nodes into collection '{self.collection_name}' failed: {str(e)}"
+                ) from e
 
     def retrieve(
         self, query_emb: list[float], top_k: int
@@ -198,16 +215,17 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
         self._ensure_collection_exists()
 
-        try:
-            hits: QueryResponse = self.client.query_points(
-                collection_name=self.collection_name,
-                query=query_emb,
-                limit=top_k,
-            )
-        except Exception as e:
-            raise KnowledgeStoreError(
-                f"Failed to retrieve from collection '{self.collection_name}': {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                hits: QueryResponse = client.query_points(
+                    collection_name=self.collection_name,
+                    query=query_emb,
+                    limit=top_k,
+                )
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to retrieve from collection '{self.collection_name}': {str(e)}"
+                ) from e
 
         return [
             _convert_scored_point_to_knowledge_node_and_score_tuple(pt)
@@ -226,21 +244,22 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
         self._ensure_collection_exists()
 
-        try:
-            res: UpdateResult = self.client.delete(
-                collection_name=self.collection_name,
-                points_selector=Filter(
-                    must=[
-                        FieldCondition(
-                            key="node_id", match=MatchValue(value=node_id)
-                        )
-                    ]
-                ),
-            )
-        except Exception:
-            raise KnowledgeStoreError(
-                f"Failed to delete node: '{node_id}' from collection '{self.collection_name}'"
-            )
+        with self.get_client() as client:
+            try:
+                res: UpdateResult = client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=Filter(
+                        must=[
+                            FieldCondition(
+                                key="node_id", match=MatchValue(value=node_id)
+                            )
+                        ]
+                    ),
+                )
+            except Exception:
+                raise KnowledgeStoreError(
+                    f"Failed to delete node: '{node_id}' from collection '{self.collection_name}'"
+                )
 
         return bool(res.status == UpdateStatus.COMPLETED)
 
@@ -248,12 +267,13 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         self._ensure_collection_exists()
 
         # delete the collection
-        try:
-            self.client.delete_collection(collection_name=self.collection_name)
-        except Exception as e:
-            raise KnowledgeStoreError(
-                f"Failed to delete collection '{self.collection_name}': {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                client.delete_collection(collection_name=self.collection_name)
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to delete collection '{self.collection_name}': {str(e)}"
+                ) from e
 
     @property
     def count(self) -> int:
@@ -261,15 +281,16 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
         self._ensure_collection_exists()
 
-        try:
-            res: CountResult = self.client.count(
-                collection_name=self.collection_name
-            )
-            return int(res.count)
-        except Exception as e:
-            raise KnowledgeStoreError(
-                f"Failed to get vector count for collection '{self.collection_name}': {str(e)}"
-            ) from e
+        with self.get_client() as client:
+            try:
+                res: CountResult = client.count(
+                    collection_name=self.collection_name
+                )
+                return int(res.count)
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to get vector count for collection '{self.collection_name}': {str(e)}"
+                ) from e
 
     def persist(self) -> None:
         """Persist a knowledge store to disk."""
