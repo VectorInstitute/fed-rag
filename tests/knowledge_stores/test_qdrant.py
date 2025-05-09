@@ -26,7 +26,6 @@ def test_init() -> None:
     )
 
     assert isinstance(knowledge_store, QdrantKnowledgeStore)
-    assert knowledge_store._client is None
     assert knowledge_store.load_nodes_kwargs == {"parallel": 4}
 
 
@@ -87,10 +86,11 @@ def test_get_qdrant_client(mock_qdrant_client_class: MagicMock) -> None:
     )
 
     # act
-    knowledge_store.client
+    with knowledge_store.get_client() as _client:
+        pass
 
     mock_qdrant_client_class.assert_called_once_with(
-        url="http://localhost:6334", api_key=None, prefer_grpc=True
+        url="http://localhost:6334", api_key=None, prefer_grpc=True, timeout=60
     )
 
 
@@ -101,10 +101,14 @@ def test_get_qdrant_client_ssl(mock_qdrant_client_class: MagicMock) -> None:
     )
 
     # act
-    knowledge_store.client
+    with knowledge_store.get_client() as _client:
+        pass
 
     mock_qdrant_client_class.assert_called_once_with(
-        url="https://localhost:6334", api_key=None, prefer_grpc=True
+        url="https://localhost:6334",
+        api_key=None,
+        prefer_grpc=True,
+        timeout=60,
     )
 
 

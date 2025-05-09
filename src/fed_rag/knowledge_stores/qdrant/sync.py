@@ -2,9 +2,9 @@
 
 import warnings
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Generator, Literal, Optional
+from typing import TYPE_CHECKING, Any, Generator, Literal
 
-from pydantic import Field, PrivateAttr, SecretStr, model_validator
+from pydantic import Field, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.exceptions import (
@@ -85,7 +85,6 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
-    _client: Optional["QdrantClient"] = PrivateAttr(default=None)
 
     @contextmanager
     def get_client(
