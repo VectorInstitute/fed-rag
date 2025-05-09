@@ -73,7 +73,7 @@ import json
 
 # knowledge chunks
 chunks_json_strs = [
-    '{"id": "0", "title": "Orchid", "text": "Orchids are easily distinguished from other plants, as they share some very evident derived characteristics or synapomorphies. Among these are: bilateral symmetry of the flower (zygomorphism), many resupinate flowers, a nearly always highly modified petal (labellum), fused stamens and carpels, and extremely small seeds"}'
+    '{"id": "0", "title": "Orchid", "text": "Orchids are easily distinguished from other plants, as they share some very evident derived characteristics or synapomorphies. Among these are: bilateral symmetry of the flower (zygomorphism), many resupinate flowers, a nearly always highly modified petal (labellum), fused stamens and carpels, and extremely small seeds"}',
     '{"id": "1", "title": "Tulip", "text": "Tulips are easily distinguished from other plants, as they share some very evident derived characteristics or synapomorphies. Among these are: bilateral symmetry of the flower (zygomorphism), many resupinate flowers, a nearly always highly modified petal (labellum), fused stamens and carpels, and extremely small seeds"}'
 ]
 chunks = [json.loads(line) for line in chunks_json_strs]
