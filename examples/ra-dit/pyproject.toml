@@ -8,7 +8,7 @@ dependencies = [
   "accelerate>=1.4.0",
   "bitsandbytes>=0.45.3",
   "colorama>=0.4.6",
-  "fed-rag[huggingface]",
+  "fed-rag[huggingface,qdrant]",
   "fire>=0.7.0",
   "pandas>=2.2.3",
   "sentence-transformers>=3.4.1",
