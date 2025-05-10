@@ -85,7 +85,7 @@ def knowledge_store_from_retriever(
         load_dotenv(dotenv_path=env_file_path)
         host = os.environ.get("QDRANT_HOST")
         api_key = os.environ.get("QDRANT_API_KEY")
-        knowledge_store_kwargs.update(host=host, api_key=api_key, ssl=True)
+        knowledge_store_kwargs.update(host=host, api_key=api_key, https=True)
 
     knowledge_store = QdrantKnowledgeStore(**knowledge_store_kwargs)
 
