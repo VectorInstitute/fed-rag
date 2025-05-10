@@ -91,7 +91,12 @@ def test_get_qdrant_client(mock_qdrant_client_class: MagicMock) -> None:
         pass
 
     mock_qdrant_client_class.assert_called_once_with(
-        url="http://localhost:6334", api_key=None, prefer_grpc=True, timeout=60
+        host="localhost",
+        port=6333,
+        grpc_port=6334,
+        api_key=None,
+        https=False,
+        timeout=None,
     )
 
 
@@ -106,10 +111,12 @@ def test_get_qdrant_client_ssl(mock_qdrant_client_class: MagicMock) -> None:
         pass
 
     mock_qdrant_client_class.assert_called_once_with(
-        url="https://localhost:6334",
+        host="localhost",
+        port=6333,
+        grpc_port=6334,
         api_key=None,
-        prefer_grpc=True,
-        timeout=60,
+        https=False,
+        timeout=None,
     )
 
 
@@ -133,7 +140,12 @@ def test_get_qdrant_client_error_at_teardown_throws_warning(
             pass
 
     mock_qdrant_client_class.assert_called_once_with(
-        url="http://localhost:6334", api_key=None, prefer_grpc=True, timeout=60
+        host="localhost",
+        port=6333,
+        grpc_port=6334,
+        api_key=None,
+        https=False,
+        timeout=None,
     )
     mock_instance.close.assert_called_once()
 

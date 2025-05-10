@@ -26,7 +26,8 @@ if TYPE_CHECKING:  # pragma: no cover
 def _get_qdrant_client(
     host: str,
     port: int,
-    ssl: bool = False,
+    grpc_port: int,
+    https: bool = False,
     timeout: int | None = None,
     api_key: str | None = None,
     **kwargs: Any,
@@ -38,13 +39,14 @@ def _get_qdrant_client(
     """
     from qdrant_client import QdrantClient
 
-    if ssl:
-        url = f"https://{host}:{port}"
-    else:
-        url = f"http://{host}:{port}"
-
     return QdrantClient(
-        url=url, api_key=api_key, prefer_grpc=True, timeout=timeout, **kwargs
+        host=host,
+        port=port,
+        grpc_port=grpc_port,
+        api_key=api_key,
+        timeout=timeout,
+        https=https,
+        **kwargs,
     )
 
 
@@ -74,8 +76,9 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     """
 
     host: str = Field(default="localhost")
-    port: int = Field(default=6334)
-    ssl: bool = Field(default=False)
+    port: int = Field(default=6333)
+    grpc_port: int = Field(default=6334)
+    https: bool = Field(default=False)
     api_key: SecretStr | None = Field(default=None)
     collection_name: str = Field(description="Name of Qdrant collection")
     collection_distance: Literal[
@@ -84,6 +87,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         description="Distance definition for collection", default="Cosine"
     )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
+    timeout: int | None = Field(default=None)
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
 
     @contextmanager
@@ -93,9 +97,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         client = _get_qdrant_client(
             host=self.host,
             port=self.port,
-            ssl=self.ssl,
+            grpc_port=self.grpc_port,
+            https=self.https,
+            timeout=self.timeout,
             api_key=self.api_key.get_secret_value() if self.api_key else None,
-            timeout=60,  # Longer timeout for heavy operations
             **self.client_kwargs,
         )
 
