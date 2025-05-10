@@ -56,6 +56,7 @@ def get_retriever(
 
 
 def knowledge_store_from_retriever(
+    filename: str,
     retriever: HFSentenceTransformerRetriever,
     collection_name: str | None,
     data_path: Path | None = None,
@@ -72,7 +73,8 @@ def knowledge_store_from_retriever(
     ks_logger.info(
         f"Creating knowledge store from retriever: collection_name='{collection_name}', "
         f"data_path={data_path if data_path else 'default'}, clear_first={clear_first} "
-        f"batch_size={batch_size} skip_to_batch={skip_to_batch} and num_parallel_load={num_parallel_load}."
+        f"batch_size={batch_size} skip_to_batch={skip_to_batch} "
+        f"filename={filename} and num_parallel_load={num_parallel_load}."
     )
     sentence_transformer = retriever.encoder or retriever.context_encoder
     ks_logger.debug(f"Retriever on device: {sentence_transformer.device}")
@@ -98,7 +100,6 @@ def knowledge_store_from_retriever(
 
     # build the knowledge store by loading chunks from atlast corpus
     data_path = data_path if data_path else ATLAS_DIR
-    filename = "text-list-100-sec.jsonl"
 
     def batch_stream_file(
         filename: str, batch_size: int
@@ -182,6 +183,7 @@ def main(
     skip_to_batch: int | None = None,
     num_parallel_load: int = 1,
     env_file_path: str | None = None,
+    filename: str = "text-list-100-sec.jsonl",
 ) -> tuple[str, int]:
     # get retriever
     retriever = get_retriever(
@@ -193,6 +195,7 @@ def main(
     # build knowledge store
     start_time = time.time()
     knowledge_store = knowledge_store_from_retriever(
+        filename=filename,
         retriever=retriever,
         collection_name=collection_name,
         data_path=data_path,
