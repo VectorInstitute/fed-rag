@@ -1,12 +1,13 @@
 """RA-DIT original RAG System."""
 
 import logging
+import os
 from typing import Literal
 
 from ra_dit.generators import GENERATORS
-from ra_dit.knowledge_stores.utils import knowledge_store_from_retriever
 from ra_dit.retrievers import RETRIEVERS
 
+from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
 from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 logger = logging.getLogger("ra_dit.rag_system")
@@ -30,9 +31,16 @@ def main(
             f"Updated retriever to upload checkpoint in: {retriever_checkpoint_path}"
         )
 
-    knowledge_store = knowledge_store_from_retriever(
-        retriever=retriever,
-        name=retriever_id,
+    # knowledge_store = knowledge_store_from_retriever(
+    #     retriever=retriever,
+    #     name=retriever_id,
+    # )
+    knowledge_store = QdrantKnowledgeStore(
+        host=os.environ.get("QDRANT_HOST"),
+        api_key=os.environ.get("QDRANT_API_KEY"),
+        collection_name="nthakur.dragon-plus-context-encoder",
+        https=True,
+        timeout=10,
     )
     logger.info(
         f"Successfully loaded knowledge from retriever: {retriever_id}"
@@ -70,8 +78,9 @@ if __name__ == "__main__":
         rag_system.generator.model.merge_and_unload()
 
     ## use the rag_system
-    source_nodes = rag_system.retrieve("What is a Tulip?")
-    response = rag_system.query("What is a Tulip?")
+    query = "Who is Terence Hawkins?"
+    source_nodes = rag_system.retrieve(query)
+    response = rag_system.query(query)
 
     print(source_nodes[0].score)
     print(f"\n{response}")
