@@ -8,16 +8,20 @@ A Docker image providing a pre-built Qdrant vector database with an Atlas corpus
 
 ```bash
 # Pull the image
-docker pull vectorinstitute/qdrant-dec-wiki-2018:latest
+docker pull vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 
-# Run the container with basic settings
+# Run the container with basic settings and gpu acceleration
 docker run -d \
   --name qdrant-vector-db \
+  --gpus all \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  -e TINY_SAMPLE=true \
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
+
+On first run, the container will take some time to initialize as it sets up the knowledge store. The container will show (health: starting) status during initialization and will change to (healthy) when ready to use.
 
 Access the dashboard: <http://localhost:6333/dashboard>
 
@@ -59,7 +63,7 @@ docker run -d \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 This will:
@@ -78,7 +82,7 @@ docker run -d \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 ### Testing with a Small Sample
@@ -92,7 +96,7 @@ docker run -d \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
   -e TINY_SAMPLE=true \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 ## Configuration Options
@@ -112,7 +116,7 @@ docker run -d \
   -e CLEAR_FIRST=True \
   -e CORPUS="enwiki-dec2021" \
   -e TINY_SAMPLE=false \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 ### Environment Variables
@@ -131,9 +135,38 @@ docker run -d \
 
 ## Using the Knowledge Store
 
-### Web Dashboard
+Once the container is `healthy` status, then we can use
 
-Open your browser to `http://localhost:6333/dashboard` to access the Qdrant web UI.
+### Using with fed-rag
+
+```python
+from fed_rag.retriever.knowledge_store import QdrantKnowledgeStore
+from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
+    HFSentenceTransformerRetriever,
+)
+
+# build retriever for encoding queries
+retriever = HFSentenceTransformerRetriever(
+    query_model_name="nthakur/dragon-plus-query-encoder",
+    context_model_name="nthakur/dragon-plus-context-encoder",
+    load_model_at_init=False,
+)
+
+# Connect to the containerized knowledge store
+knowledge_store = QdrantKnowledgeStore(
+    collection_name="nthakur.dragon-plus-context-encoder",
+    host="localhost",
+    port=6333,
+)
+
+# Retrieve documents
+query = "What is the history of marine biology?"
+query_emb = retriever.encode_query(query).tolist()
+
+results = knowledge_store.retrieve(query_emb=query_emb, top_k=3)
+for node in results:
+    print(f"Score: {node.score}, Content: {str(node.node)}")
+```
 
 ### REST API
 
@@ -171,25 +204,9 @@ results = client.search(
 )
 ```
 
-### Using with fed-rag
+### Web Dashboard
 
-```python
-from fed_rag.retriever.knowledge_store import QdrantKnowledgeStore
-
-# Connect to the containerized knowledge store
-knowledge_store = QdrantKnowledgeStore(
-    collection_name="nthakur.dragon-plus-context-encoder",
-    host="localhost",
-    port=6333,
-)
-
-# Retrieve documents
-results = knowledge_store.retrieve(
-    "What is the history of marine biology?", k=3
-)
-for doc in results:
-    print(f"Score: {doc.score}, Content: {doc.content}")
-```
+Open your browser to `http://localhost:6333/dashboard` to access the Qdrant web UI.
 
 ## Data Persistence
 
@@ -205,7 +222,7 @@ docker run -d \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 ## Health Monitoring
@@ -220,6 +237,28 @@ docker ps
 The STATUS column will show "(healthy)" when the service is running properly.
 
 ## Troubleshooting
+
+### GPU error: "could not select device driver"
+
+If you get an error like this when using `--gpus all`:
+
+```sh
+docker: Error response from daemon: could not select device driver "" with capabilities: [[gpu]].
+```
+
+This means the NVIDIA Container Toolkit is not properly installed. To fix it:
+
+```bash
+# Install the NVIDIA Container Toolkit
+# For Ubuntu/Debian:
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+```
 
 ### Container fails to start
 
@@ -266,7 +305,7 @@ docker run -d \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
   -e TINY_SAMPLE=true \
-  vectorinstitute/qdrant-dec-wiki-2018:latest
+  vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
 ## License
