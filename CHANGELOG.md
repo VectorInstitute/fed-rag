@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.13] - 2025-05-10
+
+### Added
+
+- [Feature] Add Qdrant knowledge store (sync) (#259)
+
+### Changed
+
+- `QdrantKnowledgeStore` align with qdrant sdk (#273)
+- [Fix] Set timeout param to ~qdrant_client.QdrantClient and use contextmanager for client creation and teardown (#272)
+- add load_nodes_kwargs and unit test `QdrantKnowledgeStore` (#266)
+- fix count `QdrantKnowledgeStore` (#265)
+- update federate fine-tune (#256)
+- Move validation of the presence of trainers to BaseTrainerManager (#257)
+
 ## [0.0.12] - 2025-05-03
 
 ### Changed
