@@ -113,6 +113,19 @@ docker run -d \
   vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
+The above command runs in detached mode and will create a container called `qdrant-vector-db`.
+Monitor the logs of the container to determine the progress. Once the container is
+`healthy` then it can be used.
+
+The command above launches a detached container named `qdrant-vector-db`. You can
+monitor its progress through the container logs via:
+
+```sh
+docker logs qdrant-vector-db
+```
+
+The knowledge store is ready for use once the container status shows as `healthy`.
+
 !!! note
     Building the knowledge store with all 33,176,581 text chunks can take 4-7 days,
     depending on your hardware setup. While our code provides a solid foundation,
@@ -125,14 +138,50 @@ docker run -d \
     Wikipedia text chunks, allowing for rapid validation before committing to
     a larger subset or the full dataset.
 
+### Testing the knowledge store
+
+Once the container shows `healthy`, the knowledge store can be used. Below is a
+code snippet for quickly testing that nodes can be successfully retrieved from it.
+
+```py title="Testing the knowledge store with FedRAG"
+from fed_rag.retriever.knowledge_store import QdrantKnowledgeStore
+from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
+    HFSentenceTransformerRetriever,
+)
+
+# build retriever for encoding queries
+retriever = HFSentenceTransformerRetriever(
+    query_model_name="nthakur/dragon-plus-query-encoder",
+    context_model_name="nthakur/dragon-plus-context-encoder",
+    load_model_at_init=False,
+)
+
+# Connect to the containerized knowledge store
+knowledge_store = QdrantKnowledgeStore(
+    collection_name="nthakur.dragon-plus-context-encoder",
+)
+
+# Retrieve documents
+query = "What is the history of marine biology?"
+query_emb = retriever.encode_query(query).tolist()
+
+results = knowledge_store.retrieve(query_emb=query_emb, top_k=3)
+for node in results:
+    print(f"Score: {node.score}, Content: {str(node.node)}")
+```
+
+### More details about the Docker image
+
+For comprehensive information about the prepared Docker image and its available
+configuration options, visit: <https://github.com/VectorInstitute/fed-rag/tree/main/examples/knowledge_stores/ra-dit-ks>.
+
 ## What's Next?
 
 Now that our knowledge store is complete, we'll proceed to construct the RAG system
 for fine-tuning.
 
 All code related to the knowledge store implementation can be found in the
-`examples/ra-dit/knowledge_store/` directory, with the Docker configuration
-located in `examples/ra-dit/knowledge_store/docker`.
+`examples/ra-dit/knowledge_store/` directory.
 
 <!-- References -->
 [^1]: Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
