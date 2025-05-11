@@ -1098,6 +1098,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Getting The Knowledge Store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing the knowledge store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-details-about-the-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      More details about the Docker image
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3274,6 +3298,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Getting The Knowledge Store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing the knowledge store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#more-details-about-the-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      More details about the Docker image
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3396,6 +3444,14 @@ the Qdrant vector database.</p>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>-v<span class="w"> </span>qdrant_data:/qdrant_storage<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 </span></code></pre></div>
+<p>The above command runs in detached mode and will create a container called <code>qdrant-vector-db</code>.
+Monitor the logs of the container to determine the progress. Once the container is
+<code>healthy</code> then it can be used.</p>
+<p>The command above launches a detached container named <code>qdrant-vector-db</code>. You can
+monitor its progress through the container logs via:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>qdrant-vector-db
+</span></code></pre></div>
+<p>The knowledge store is ready for use once the container status shows as <code>healthy</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Building the knowledge store with all 33,176,581 text chunks can take 4-7 days,
@@ -3410,12 +3466,42 @@ when running the container. This executes the process on a small subset of
 Wikipedia text chunks, allowing for rapid validation before committing to
 a larger subset or the full dataset.</p>
 </div>
+<h3 id="testing-the-knowledge-store">Testing the knowledge store<a class="headerlink" href="#testing-the-knowledge-store" title="Permanent link">&para;</a></h3>
+<p>Once the container shows <code>healthy</code>, the knowledge store can be used. Below is a
+code snippet for quickly testing that nodes can be successfully retrieved from it.</p>
+<div class="language-py highlight"><span class="filename">Testing the knowledge store with FedRAG</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.retriever.knowledge_store</span><span class="w"> </span><span class="kn">import</span> <span class="n">QdrantKnowledgeStore</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.retrievers.huggingface.hf_sentence_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">HFSentenceTransformerRetriever</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># build retriever for encoding queries</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">retriever</span> <span class="o">=</span> <span class="n">HFSentenceTransformerRetriever</span><span class="p">(</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">query_model_name</span><span class="o">=</span><span class="s2">&quot;nthakur/dragon-plus-query-encoder&quot;</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">context_model_name</span><span class="o">=</span><span class="s2">&quot;nthakur/dragon-plus-context-encoder&quot;</span><span class="p">,</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">)</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Connect to the containerized knowledge store</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="n">knowledge_store</span> <span class="o">=</span> <span class="n">QdrantKnowledgeStore</span><span class="p">(</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;nthakur.dragon-plus-context-encoder&quot;</span><span class="p">,</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="p">)</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="c1"># Retrieve documents</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;What is the history of marine biology?&quot;</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="n">query_emb</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">encode_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="n">results</span> <span class="o">=</span> <span class="n">knowledge_store</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_emb</span><span class="o">=</span><span class="n">query_emb</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score: </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">, Content: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">node</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="more-details-about-the-docker-image">More details about the Docker image<a class="headerlink" href="#more-details-about-the-docker-image" title="Permanent link">&para;</a></h3>
+<p>For comprehensive information about the prepared Docker image and its available
+configuration options, visit: <a href="https://github.com/VectorInstitute/fed-rag/tree/main/examples/knowledge_stores/ra-dit-ks">https://github.com/VectorInstitute/fed-rag/tree/main/examples/knowledge_stores/ra-dit-ks</a>.</p>
 <h2 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>Now that our knowledge store is complete, we'll proceed to construct the RAG system
 for fine-tuning.</p>
 <p>All code related to the knowledge store implementation can be found in the
-<code>examples/ra-dit/knowledge_store/</code> directory, with the Docker configuration
-located in <code>examples/ra-dit/knowledge_store/docker</code>.</p>
+<code>examples/ra-dit/knowledge_store/</code> directory.</p>
 <!-- References -->
 <div class="footnote">
 <hr />
