@@ -8,9 +8,14 @@
 
 We consider the paper "RA-DIT: Retrieval-Augmented Dual Instruction Tuning" by Lin,
 Xi Victoria et al (2023)[^1] and implement simplified versions of their experiments
-using FedRAG. This comprehensive implementation demonstrates the key concepts and
-techniques from the original research while adapting them for practical demonstration.
+using FedRAG. In this work, the authors build a RAG system and fine-tune both
+the generator and retriever using a wide array of question-answering (QA) datasets.
+In their experiments, a fine-tuned RAG consistently outperformed two baselines:
+a generator LLM, and the un-fine-tunded version of their RAG system—thus, demonstrating
+the benefits of fine-tuning RAG systems via RA-DIT.
 
+This comprehensive implementation demonstrates the key concepts and
+techniques from the original research while adapting them for practical demonstration.
 More specifically, in this example, we:
 
 1. [Build a Qdrant Knowledge Store](./qdrant_knowledge_store_wikipedia.md) — Take
