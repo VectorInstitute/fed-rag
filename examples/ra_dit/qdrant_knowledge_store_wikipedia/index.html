@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#build-the-qdrant-knowledge-store" class="md-skip">
+        <a href="#build-a-qdrant-knowledge-store" class="md-skip">
           Skip to content
         </a>
       
@@ -1000,6 +1000,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Build a Qdrant Knowledge Store
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1011,6 +1024,94 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#our-scaled-down-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Our Scaled Down Knowledge Store
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Our Scaled Down Knowledge Store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-raw-text-chunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      The raw text chunks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-knowledgenode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a KnowledgeNode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-nodes-to-a-qdrantknowledgestore" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding nodes to a QdrantKnowledgeStore
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-the-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting The Knowledge Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1029,7 +1130,7 @@
   
   
   <span class="md-ellipsis">
-    Fine-tuning with QA datasets
+    Fine-tuning with QA Datasets
     
   </span>
   
@@ -3109,6 +3210,83 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#our-scaled-down-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Our Scaled Down Knowledge Store
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Our Scaled Down Knowledge Store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-raw-text-chunks" class="md-nav__link">
+    <span class="md-ellipsis">
+      The raw text chunks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-knowledgenode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a KnowledgeNode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-nodes-to-a-qdrantknowledgestore" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding nodes to a QdrantKnowledgeStore
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-the-knowledge-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting The Knowledge Store
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -3126,7 +3304,135 @@
   
 
 
-<h1 id="build-the-qdrant-knowledge-store">Build the Qdrant Knowledge Store<a class="headerlink" href="#build-the-qdrant-knowledge-store" title="Permanent link">&para;</a></h1>
+<h1 id="build-a-qdrant-knowledge-store">Build a Qdrant Knowledge Store<a class="headerlink" href="#build-a-qdrant-knowledge-store" title="Permanent link">&para;</a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>For their RAG system, the authors of the RA-DIT<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> paper, used a knowledge
+store that was comprised of artifacts from two sources:</p>
+<ol>
+<li>Text chunks from the Dec. 20, 2021 Wikipedia dump. <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li>A sample of text chunks from the 2017-2020 CommonCrawl dumps. <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+</ol>
+<p>In total, their knowledge store (which they referred to as a "retrieval corpus")
+consisted of 399M knowledge nodes, each having text content with no more than
+200 words.</p>
+<h2 id="our-scaled-down-knowledge-store">Our Scaled Down Knowledge Store<a class="headerlink" href="#our-scaled-down-knowledge-store" title="Permanent link">&para;</a></h2>
+<h3 id="the-raw-text-chunks">The raw text chunks<a class="headerlink" href="#the-raw-text-chunks" title="Permanent link">&para;</a></h3>
+<p>For practical purposes, in this example, we only consider the text chunks from
+the Dec. 20, 2021 Wikipedia dump. Moreover, we only make use of the file
+<code>text-list-100-sec.jsonl</code> from this dump, which contains 33,176,581 chunks that
+follow the JSON schema depicted below.</p>
+<div class="language-json highlight"><span class="filename">A text chunk</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="err">chu</span><span class="kc">n</span><span class="err">k</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;section&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="creating-a-knowledgenode">Creating a <code>KnowledgeNode</code><a class="headerlink" href="#creating-a-knowledgenode" title="Permanent link">&para;</a></h3>
+<p>Each raw text chunk is converted to a <a href="../../../api_reference/knowledge_nodes/"><code>KnowledgeNode</code></a>,
+using a simple template for preparing the node's <code>text_content</code>.</p>
+<div class="language-py highlight"><span class="filename">Creating a KnowledgeNode code snippet</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types.knowledge_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">chunk</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">chunk_json_str</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">context_text</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="sa">f</span><span class="s2">&quot;title: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># (1)!</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">section: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;section&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">text: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">embedding</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">encode_context</span><span class="p">(</span><span class="n">context_text</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># (2)!</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="n">node</span> <span class="o">=</span> <span class="n">KnowledgeNode</span><span class="p">(</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">embedding</span><span class="o">=</span><span class="n">embedding</span><span class="p">,</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">node_type</span><span class="o">=</span><span class="n">NodeType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">text_content</span><span class="o">=</span><span class="n">context_text</span><span class="p">,</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="n">metadata</span><span class="o">=</span><span class="n">chunk</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>A simple template for creating the node's context from the chunk's data.</li>
+<li>A <code>HuggingFaceSentenceTransformerRetriever</code> was built using the models:
+<code>nthakur/dragon-plus-context-encoder</code> and <code>nthakur/dragon-plus-query-encoder</code>.</li>
+</ol>
+<h3 id="adding-nodes-to-a-qdrantknowledgestore">Adding nodes to a <code>QdrantKnowledgeStore</code><a class="headerlink" href="#adding-nodes-to-a-qdrantknowledgestore" title="Permanent link">&para;</a></h3>
+<p>In this example, we use the Qdrant extra and add our knowledge nodes to a locally
+running <code>QdrantKnowledgeStore</code>. The code snippet below shows how to instantiate
+such a knowledge store and subsequently add a node to it.</p>
+<p>In the accompanying code, we provide users the options to change their retriever
+<code>~sentence_transformer.SentenceTransformer</code> model, and also change the number of
+raw text chunks to index.</p>
+<div class="language-py highlight"><span class="filename">Adding our nodes to a QdrantKnowledgeStore</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.knowledge_stores.qdrant</span><span class="w"> </span><span class="kn">import</span> <span class="n">QdrantKnowledgeStore</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">knowledge_store</span> <span class="o">=</span> <span class="n">QdrantKnowledgeStore</span><span class="p">(</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;nthakur.dragon-plus-context-encoder&quot;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># add node to knowledge store</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">knowledge_store</span><span class="o">.</span><span class="n">load_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="getting-the-knowledge-store">Getting The Knowledge Store<a class="headerlink" href="#getting-the-knowledge-store" title="Permanent link">&para;</a></h2>
+<p>For convenience, we provide a Docker image that contains a pre-built Qdrant
+vector database that builds the knowledge store as described above.</p>
+<p>To get this image, you can pull it from Vector Institute's docker hub:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Pull the image</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>pull<span class="w"> </span>vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This Docker image is approximately 3.6GB in size due to the included Python
+environment and ML libraries. Ensure you have sufficient disk space and
+bandwidth when pulling the image.</p>
+</div>
+<p>The image can then be executed with the command provided below. This code
+will download the raw Wikipedia text chunks, encode them using the default
+retriever model (i.e., <code>nthakur/dragon-plus-context-encoder</code>) and add them to
+the Qdrant vector database.</p>
+<div class="language-sh highlight"><span class="filename">Running the docker image</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Run the container with basic settings and gpu acceleration</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--name<span class="w"> </span>qdrant-vector-db<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>--gpus<span class="w"> </span>all<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">6333</span>:6333<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">6334</span>:6334<span class="w"> </span><span class="se">\ </span><span class="w"> </span><span class="c1"># needed for gRPC</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>-v<span class="w"> </span>qdrant_data:/qdrant_storage<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span>vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Building the knowledge store with all 33,176,581 text chunks can take 4-7 days,
+depending on your hardware setup. While our code provides a solid foundation,
+you can implement further optimizations based on your specific performanc
+requirements and infrastructure.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To quickly verify the Docker image works correctly, use the parameter <code>-e TINY_SAMPLE=true</code>
+when running the container. This executes the process on a small subset of
+Wikipedia text chunks, allowing for rapid validation before committing to
+a larger subset or the full dataset.</p>
+</div>
+<h2 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Now that our knowledge store is complete, we'll proceed to construct the RAG system
+for fine-tuning.</p>
+<p>All code related to the knowledge store implementation can be found in the
+<code>examples/ra-dit/knowledge_store/</code> directory, with the Docker configuration
+located in <code>examples/ra-dit/knowledge_store/docker</code>.</p>
+<!-- References -->
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
+  The Twelfth International Conference on Learning Representations. 2023.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Common Crawl Foundation. (2017-2020). Common Crawl. Retrieved from <a href="https://commoncrawl.org/">https://commoncrawl.org/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Izacard, Gautier, et al. "Few-shot learning with retrieval augmented language
+  models." arXiv preprint arXiv:2208.03299 1.2 (2022): 4.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -3181,13 +3487,13 @@
         
         
           
-          <a href="../finetune/" class="md-footer__link md-footer__link--next" aria-label="Next: Fine-tuning with QA datasets">
+          <a href="../finetune/" class="md-footer__link md-footer__link--next" aria-label="Next: Fine-tuning with QA Datasets">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Fine-tuning with QA datasets
+                Fine-tuning with QA Datasets
               </div>
             </div>
             <div class="md-footer__button md-icon">

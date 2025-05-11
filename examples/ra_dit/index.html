@@ -1019,7 +1019,7 @@
   
   
   <span class="md-ellipsis">
-    Fine-tuning with QA datasets
+    Fine-tuning with QA Datasets
     
   </span>
   
@@ -3124,9 +3124,14 @@
 </a></p>
 <p>We consider the paper "RA-DIT: Retrieval-Augmented Dual Instruction Tuning" by Lin,
 Xi Victoria et al (2023)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and implement simplified versions of their experiments
-using FedRAG. This comprehensive implementation demonstrates the key concepts and
-techniques from the original research while adapting them for practical demonstration.</p>
-<p>More specifically, in this example, we:</p>
+using FedRAG. In this work, the authors build a RAG system and fine-tune both
+the generator and retriever using a wide array of question-answering (QA) datasets.
+In their experiments, a fine-tuned RAG consistently outperformed two baselines:
+a generator LLM, and the un-fine-tunded version of their RAG system—thus, demonstrating
+the benefits of fine-tuning RAG systems via RA-DIT.</p>
+<p>This comprehensive implementation demonstrates the key concepts and
+techniques from the original research while adapting them for practical demonstration.
+More specifically, in this example, we:</p>
 <ol>
 <li>
 <p><a href="qdrant_knowledge_store_wikipedia/">Build a Qdrant Knowledge Store</a> — Take
