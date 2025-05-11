@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../creating_finetuning_datasets/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../../integrations/">
+        <link rel="next" href="../ralt/">
       
       
       <link rel="icon" href="../../../assets/favicon-48x48.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Fine-tune RAG - FedRAG</title>
+        <title>Retriever Fine-tuning with LSR - FedRAG</title>
       
     
     
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Fine-tune RAG
+              Retriever Fine-tuning with LSR
             
           </span>
         </div>
@@ -748,7 +748,7 @@
   
   
   <span class="md-ellipsis">
-    How-To Guides
+    Tutorials
     
   </span>
   
@@ -765,33 +765,10 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_6">
             <span class="md-nav__icon md-icon"></span>
-            How-To Guides
+            Tutorials
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../creating_finetuning_datasets/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Create a Fine-tuning Dataset
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
               
             
               
@@ -813,13 +790,36 @@
   
   
   <span class="md-ellipsis">
-    Fine-tune RAG
+    Retriever Fine-tuning with LSR
     
   </span>
   
 
       </a>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ralt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generator Fine-tuning with RALT
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -927,9 +927,38 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../../examples/ra_dit/" class="md-nav__link">
+    
+    
+      
         
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../examples/ra_dit/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -938,7 +967,119 @@
   </span>
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            RA-DIT
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/ra_dit/qdrant_knowledge_store_wikipedia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Build a Qdrant Knowledge Store
+    
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/ra_dit/finetune/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Fine-tuning with QA
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/ra_dit/benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Benchmark Evaluations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/ra_dit/federated_finetune/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Federated Fine-tuning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2915,7 +3056,7 @@
   
 
 
-  <h1>Fine-tune RAG</h1>
+  <h1>Retriever Fine-tuning with LSR</h1>
 
 
 
@@ -2955,7 +3096,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../creating_finetuning_datasets/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Create a Fine-tuning Dataset">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tutorials">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2965,20 +3106,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Create a Fine-tuning Dataset
+                Tutorials
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../integrations/" class="md-footer__link md-footer__link--next" aria-label="Next: Integrations">
+          <a href="../ralt/" class="md-footer__link md-footer__link--next" aria-label="Next: Generator Fine-tuning with RALT">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Integrations
+                Generator Fine-tuning with RALT
               </div>
             </div>
             <div class="md-footer__button md-icon">
