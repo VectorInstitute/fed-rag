@@ -85,6 +85,7 @@ ENV FILENAME="text-list-100-sec.jsonl"
 # for startup
 ENV SKIP_DOWNLOAD="false"
 ENV TINY_SAMPLE="false"
+ENV SAMPLE_SIZE="full"
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 CMD ["./healthcheck.sh"]
