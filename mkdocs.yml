@@ -42,14 +42,19 @@ nav:
     - Installation: getting_started/installation.md
     - Standard Usage: getting_started/standard_usage.md
     - Advanced Usage: getting_started/advanced_usage.md
-    - How-To Guides:
-      - getting_started/how_to/index.md
-      - Create a Fine-tuning Dataset: getting_started/how_to/creating_finetuning_datasets.md
-      - Fine-tune RAG: getting_started/how_to/rag_finetuning.md
+    - Tutorials:
+      - getting_started/tutorials/index.md
+      - Retriever Fine-tuning with LSR: getting_started/tutorials/lsr.md
+      - Generator Fine-tuning with RALT: getting_started/tutorials/ralt.md
     - Integrations: getting_started/integrations.md
   - Examples:
     - examples/index.md
-    - RA-DIT: examples/ra_dit.md
+    - RA-DIT:
+      - examples/ra_dit/index.md
+      - Build a Qdrant Knowledge Store: examples/ra_dit/qdrant_knowledge_store_wikipedia.md
+      - Fine-tuning with QA: examples/ra_dit/finetune.md
+      - Benchmark Evaluations: examples/ra_dit/benchmarking.md
+      - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
   - API Reference:
     - api_reference/index.md
     - Data Collators:
