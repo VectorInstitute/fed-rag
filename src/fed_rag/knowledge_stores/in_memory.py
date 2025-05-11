@@ -47,9 +47,9 @@ def _get_top_k_nodes(
         )
         return cosine_sim
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    query_tensor = torch.tensor(query_emb).half().to(device)
+    query_tensor = torch.tensor(query_emb).to(device)
     if not torch.is_tensor(nodes["embeddings"]):
-        nodes["embeddings"] = torch.tensor(nodes["embeddings"]).half().to(device)
+        nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
     similarities = cos_sim(query_tensor,nodes["embeddings"])
     if similarities.device==device:
         similarities = similarities.to("cpu")
