@@ -14,6 +14,7 @@ extra:
 markdown_extensions:
   - attr_list
   - admonition
+  - footnotes
   - md_in_html
   - pymdownx.highlight:
       anchor_linenums: true
@@ -47,14 +48,16 @@ nav:
       - Retriever Fine-tuning with LSR: getting_started/tutorials/lsr.md
       - Generator Fine-tuning with RALT: getting_started/tutorials/ralt.md
     - Integrations: getting_started/integrations.md
-  - Examples:
+  - In-Depth Examples:
     - examples/index.md
     - RA-DIT:
       - examples/ra_dit/index.md
       - Build a Qdrant Knowledge Store: examples/ra_dit/qdrant_knowledge_store_wikipedia.md
-      - Fine-tuning with QA: examples/ra_dit/finetune.md
-      - Benchmark Evaluations: examples/ra_dit/benchmarking.md
+      - Fine-tuning with QA datasets: examples/ra_dit/finetune.md
+      - Evaluate with Benchmarks: examples/ra_dit/benchmarking.md
       - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
+    - LlamaIndex:
+      - examples/llamaindex/index.md
   - API Reference:
     - api_reference/index.md
     - Data Collators:

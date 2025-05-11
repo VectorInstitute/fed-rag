@@ -1,5 +1,7 @@
 # AI Pocket References
 
+<!-- markdownlint-disable-file MD033 -->
+
 <figure markdown="span" id="img_light_mode" class="pocket-reference-logo">
   ![AIPocketRefLogoLight](https://d3ddy8balm3goa.cloudfront.net/vector-ai-pocket-refs/aipr-logo-light.svg)
 </figure>

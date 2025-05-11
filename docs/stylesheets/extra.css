@@ -98,7 +98,8 @@
 }
 
 /* Reduce margins for h2 when using grid cards */
-.grid.cards h2 {
+.grid.cards h2,
+.grid.cards h3 {
   margin-top: 0; /* Remove top margin completely in cards */
   margin-bottom: 0.5rem; /* Smaller bottom margin in cards */
 }
