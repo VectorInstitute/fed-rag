@@ -2,6 +2,10 @@
 
 <!-- markdownlint-disable-file MD041 MD033 MD042 -->
 
+<a target="_blank" href="https://github.com/VectorInstitute/fed-rag/tree/main/examples/ra-dit">
+  <img src="https://img.shields.io/badge/view_in_github-black?logo=github&style=flat" alt="View in Github"/>
+</a>
+
 We consider the paper "RA-DIT: Retrieval-Augmented Dual Instruction Tuning" by Lin,
 Xi Victoria et al (2023)[^1] and implement simplified versions of their experiments
 using FedRAG. This comprehensive implementation demonstrates the key concepts and
