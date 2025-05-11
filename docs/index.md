@@ -26,7 +26,7 @@ hide:
     Seamlessly integrates with popular frameworks including HuggingFace,
     and LlamaIndex — use the tools you already know.
 
-    [:octicons-arrow-right-24: Examples](examples/index.md)
+    [:octicons-arrow-right-24: In-Depth Examples](examples/index.md)
 
 - <h2>:fontawesome-solid-feather:{ .lg .middle } Lightweight abstractions</h2>
 

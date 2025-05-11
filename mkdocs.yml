@@ -56,6 +56,8 @@ nav:
       - Fine-tuning with QA datasets: examples/ra_dit/finetune.md
       - Evaluate with Benchmarks: examples/ra_dit/benchmarking.md
       - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
+    - LlamaIndex:
+      - examples/llamaindex/index.md
   - API Reference:
     - api_reference/index.md
     - Data Collators:
