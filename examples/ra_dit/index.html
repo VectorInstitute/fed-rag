@@ -20,7 +20,7 @@
     
     
       
-        <title>Index - FedRAG</title>
+        <title>A comprehensive implementation of RA-DIT - FedRAG</title>
       
     
     
@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#a-comprehensive-implementation-of-ra-dit" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -111,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Index
+              A comprehensive implementation of RA-DIT
             
           </span>
         </div>
@@ -272,7 +277,7 @@
   
     
   
-  Examples
+  In-Depth Examples
 
         </a>
       </li>
@@ -865,6 +870,8 @@
       
         
       
+        
+      
     
     
     
@@ -888,7 +895,7 @@
   
   
   <span class="md-ellipsis">
-    Examples
+    In-Depth Examples
     
   </span>
   
@@ -905,7 +912,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Examples
+            In-Depth Examples
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1012,7 +1019,7 @@
   
   
   <span class="md-ellipsis">
-    Fine-tuning with QA
+    Fine-tuning with QA datasets
     
   </span>
   
@@ -1035,7 +1042,7 @@
   
   
   <span class="md-ellipsis">
-    Benchmark Evaluations
+    Evaluate with Benchmarks
     
   </span>
   
@@ -1067,6 +1074,65 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../llamaindex/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    LlamaIndex
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            LlamaIndex
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
             
           </ul>
@@ -3030,6 +3096,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -3048,9 +3116,50 @@
   
 
 
-  <h1>Index</h1>
+<h1 id="a-comprehensive-implementation-of-ra-dit">A comprehensive implementation of RA-DIT<a class="headerlink" href="#a-comprehensive-implementation-of-ra-dit" title="Permanent link">&para;</a></h1>
+<!-- markdownlint-disable-file MD041 MD033 MD042 -->
 
-
+<p><a target="_blank" href="https://github.com/VectorInstitute/fed-rag/tree/main/examples/ra-dit">
+  <img src="https://img.shields.io/badge/view_in_github-black?logo=github&style=flat" alt="View in Github"/>
+</a></p>
+<p>We consider the paper "RA-DIT: Retrieval-Augmented Dual Instruction Tuning" by Lin,
+Xi Victoria et al (2023)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and implement simplified versions of their experiments
+using FedRAG. This comprehensive implementation demonstrates the key concepts and
+techniques from the original research while adapting them for practical demonstration.</p>
+<p>More specifically, in this example, we:</p>
+<ol>
+<li>
+<p><a href="qdrant_knowledge_store_wikipedia/">Build a Qdrant Knowledge Store</a> — Take
+  artifacts derived from Wikipedia to populate a<code>QdrantKnowledgeStore</code>.</p>
+</li>
+<li>
+<p><a href="qdrant_knowledge_store_wikipedia/">Fine-tune with QA datasets</a> — Build a
+  <a href="../../api_reference/rag_system/"><code>RAGSystem</code></a> and fine-tune it with
+  some QA datasets using LSR and RALT trainers.</p>
+</li>
+<li>
+<p><a href="benchmarking/">Evaluate with Benchmarks</a> — Benchmark our fine-tuned RAG system
+  on MMLU and compare it to a few appropriate baselines.</p>
+</li>
+<li>
+<p><a href="federated_finetune/">Federated Fine-tuning</a> — Demonstrate how we can go
+  from centralized to federated fine-tuning of our RAG system.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Federated fine-tuning was not considered in Lin, Xi Victoria et al (2023)<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+</div>
+<!-- References -->
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
+The Twelfth International Conference on Learning Representations. 2023.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -3088,7 +3197,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Examples">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: In-Depth Examples">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -3098,7 +3207,7 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Examples
+                In-Depth Examples
               </div>
             </div>
           </a>
