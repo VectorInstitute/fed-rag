@@ -2,7 +2,6 @@
 
 import importlib
 import importlib.util
-from abc import ABC
 from typing import Any, ClassVar, Optional, TypedDict
 
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -17,7 +16,7 @@ class BridgeMetadata(TypedDict):
     installed_version: str
 
 
-class BaseBridgeMixin(BaseModel, ABC):
+class BaseBridgeMixin(BaseModel):
     """Base Bridge Class."""
 
     # Version of the bridge implementaiton
