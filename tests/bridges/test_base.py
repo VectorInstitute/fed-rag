@@ -52,7 +52,13 @@ def test_bridge_get_metadata() -> None:
 
 
 def test_rag_system_registry() -> None:
+    rag_system = RAGSystem()
+
     assert _TestBridgeMixin._framework in RAGSystem.bridges
+
+    metadata = rag_system.bridges["my-bridge-framework"]
+
+    assert metadata == _TestBridgeMixin.get_bridge_metadata()
 
 
 @patch("fed_rag.base.bridge.importlib.util")
