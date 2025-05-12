@@ -22,7 +22,7 @@ docker run -d \
 
 ## Using the Knowledge Store
 
-Once the container is `healthy` status, then we can use
+Once the container has `healthy` status, then we can use
 
 ### Using with fed-rag
 
