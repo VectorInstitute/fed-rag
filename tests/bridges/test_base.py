@@ -7,7 +7,10 @@ import pytest
 from pydantic import BaseModel
 
 from fed_rag.base.bridge import BaseBridgeMixin, BridgeMetadata
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import (
+    MissingExtraError,
+    MissingSpecifiedConversionMethod,
+)
 
 
 class _TestBridgeMixin(BaseBridgeMixin):
@@ -83,3 +86,25 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
         RAGSystem._bridge_extra = None  # type:ignore [assignment]
         rag_system = RAGSystem()
         rag_system.to_bridge()
+
+
+def test_invalid_mixin_raises_error() -> None:
+    msg = "Bridge mixin for `mock` is missing conversion method `missing_method`."
+    with pytest.raises(MissingSpecifiedConversionMethod, match=re.escape(msg)):
+
+        class InvalidMixin(BaseBridgeMixin):
+            _bridge_version = "0.1.0"
+            _bridge_extra = None
+            _framework = "mock"
+            _compatible_versions = ["0.1.x"]
+            _method_name = "missing_method"
+
+        # overwrite RAGSystem for this test
+        class RAGSystem(InvalidMixin, BaseModel):
+            bridges: ClassVar[dict[str, BridgeMetadata]] = {}
+
+            @classmethod
+            def _register_bridge(cls, metadata: BridgeMetadata) -> None:
+                """To be used only by `BaseBridgeMixin`."""
+                if metadata["framework"] not in cls.bridges:
+                    cls.bridges[metadata["framework"]] = metadata

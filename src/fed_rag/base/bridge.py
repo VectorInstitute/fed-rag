@@ -45,7 +45,7 @@ class BaseBridgeMixin(BaseModel):
                 # validate method exists
                 if not hasattr(cls, metadata["method_name"]):
                     raise MissingSpecifiedConversionMethod(
-                        f"{cls.__name__} is missing conversion method `{metadata['method_name']}`."
+                        f"Bridge mixin for `{metadata['framework']}` is missing conversion method `{metadata['method_name']}`."
                     )
                 base._register_bridge(metadata)
                 break
