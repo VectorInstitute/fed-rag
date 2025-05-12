@@ -59,7 +59,7 @@ class FedRAGManagedIndex(BaseManagedIndex):
 
     class FedRAGRetriever(BaseRetriever):
         def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
-            super().__init__(args, kwargs)
+            super().__init__(*args, **kwargs)
             self._rag_system = rag_system
 
         def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:

@@ -4,16 +4,19 @@ import importlib
 import importlib.util
 from typing import Any, ClassVar, Optional, TypedDict
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import (
+    MissingExtraError,
+    MissingSpecifiedConversionMethod,
+)
 
 
 class BridgeMetadata(TypedDict):
     bridge_version: str
     framework: str
     compatible_versions: list[str]
-    installed_version: str
+    method_name: str
 
 
 class BaseBridgeMixin(BaseModel):
@@ -24,15 +27,36 @@ class BaseBridgeMixin(BaseModel):
     _bridge_extra: ClassVar[Optional[str | None]]
     _framework: ClassVar[str]
     _compatible_versions: ClassVar[list[str]]
+    _method_name: ClassVar[str]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def get_bridge_metadata(self) -> BridgeMetadata:
+    def __init_subclass__(cls, **kwargs: Any):
+        """Register bridge into ~RAGSystem bridge registry."""
+        super().__init_subclass__(**kwargs)
+
+        # Register this bridge's metadata to the parent RAGSystem
+        for base in cls.__mro__:
+            if base.__name__ == "RAGSystem" and hasattr(
+                base, "_register_bridge"
+            ):
+                metadata = cls.get_bridge_metadata()
+
+                # validate method exists
+                if not hasattr(cls, metadata["method_name"]):
+                    raise MissingSpecifiedConversionMethod(
+                        f"{cls.__name__} is missing conversion method `{metadata['method_name']}`."
+                    )
+                base._register_bridge(metadata)
+                break
+
+    @classmethod
+    def get_bridge_metadata(cls) -> BridgeMetadata:
         metadata: BridgeMetadata = {
-            "bridge_version": self._bridge_version,
-            "framework": self._framework,
-            "compatible_versions": self._compatible_versions,
-            "installed_version": self.get_installed_framework_version(),
+            "bridge_version": cls._bridge_version,
+            "framework": cls._framework,
+            "compatible_versions": cls._compatible_versions,
+            "method_name": cls._method_name,
         }
         return metadata
 
@@ -47,15 +71,3 @@ class BaseBridgeMixin(BaseModel):
                 f"{cls.__name__} requires the {cls._framework} to be installed. "
                 f"To fix please run `pip install {missing_package_or_extra}`."
             )
-
-    @model_validator(mode="before")
-    @classmethod
-    def check_dependencies(cls, data: Any) -> Any:
-        """Validate that qdrant dependencies are installed."""
-        cls._validate_framework_installed()
-        return data
-
-    def get_installed_framework_version(self) -> str:
-        self._validate_framework_installed()
-        module = importlib.import_module(self._framework.replace("-", "_"))
-        return getattr(module, "__version__", "unknown")
