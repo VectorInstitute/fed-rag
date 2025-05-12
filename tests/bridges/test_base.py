@@ -1,10 +1,12 @@
 import re
 from contextlib import nullcontext as does_not_raise
+from typing import ClassVar
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import BaseModel
 
-from fed_rag.base.bridge import BaseBridgeMixin
+from fed_rag.base.bridge import BaseBridgeMixin, BridgeMetadata
 from fed_rag.exceptions import MissingExtraError
 
 
@@ -21,8 +23,14 @@ class _TestBridgeMixin(BaseBridgeMixin):
 
 
 # overwrite RAGSystem for this test
-class RAGSystem(_TestBridgeMixin):
-    pass
+class RAGSystem(_TestBridgeMixin, BaseModel):
+    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
+
+    @classmethod
+    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
+        """To be used only by `BaseBridgeMixin`."""
+        if metadata["framework"] not in cls.bridges:
+            cls.bridges[metadata["framework"]] = metadata
 
 
 def test_bridge_init() -> None:
@@ -41,6 +49,10 @@ def test_bridge_get_metadata() -> None:
     assert metadata["compatible_versions"] == ["0.1.x"]
     assert metadata["framework"] == "my-bridge-framework"
     assert metadata["method_name"] == "to_bridge"
+
+
+def test_rag_system_registry() -> None:
+    assert _TestBridgeMixin._framework in RAGSystem.bridges
 
 
 @patch("fed_rag.base.bridge.importlib.util")
