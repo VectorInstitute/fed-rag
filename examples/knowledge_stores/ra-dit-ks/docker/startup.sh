@@ -47,13 +47,7 @@ CLEAR_FIRST=${CLEAR_FIRST:-True}
 FILENAME=${FILENAME:-"text-list-100-sec.jsonl"}
 CORPUS=${CORPUS:-"enwiki-dec2021"}
 SKIP_DOWNLOAD=${SKIP_DOWNLOAD:-"false"}
-TINY_SAMPLE=${TINY_SAMPLE:-"false"}
 SAMPLE_SIZE=${SAMPLE_SIZE:-"full"}  # Options: "tiny", "small", "full"
-
-# Handle backward compatibility
-if [ "$TINY_SAMPLE" = "true" ]; then
-    SAMPLE_SIZE="tiny"
-fi
 
 # Identify Qdrant storage path
 QDRANT_STORAGE_PATH="/qdrant_storage"

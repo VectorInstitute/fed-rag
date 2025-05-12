@@ -84,7 +84,6 @@ ENV FILENAME="text-list-100-sec.jsonl"
 
 # for startup
 ENV SKIP_DOWNLOAD="false"
-ENV TINY_SAMPLE="false"
 ENV SAMPLE_SIZE="full"
 
 # Add health check

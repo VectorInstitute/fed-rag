@@ -92,7 +92,7 @@ docker run -d \
   -e BATCH_SIZE=5000 \
   -e CLEAR_FIRST=True \
   -e CORPUS="enwiki-dec2021" \
-  -e TINY_SAMPLE=false \
+  -e SAMPLE_SIZE=tiny \
   vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
@@ -106,7 +106,7 @@ docker run -d \
 | `BATCH_SIZE` | Batch size for processing data | 5000 |
 | `CLEAR_FIRST` | Whether to clear existing collections | True |
 | `CORPUS` | Which Atlas corpus to use | "enwiki-dec2021" |
-| `TINY_SAMPLE` | Use a tiny sample for testing | false |
+| `SAMPLE_SIZE` | Use a "tiny", "small" or "full" sample | "full" |
 | `SKIP_DOWNLOAD` | Skip downloading corpus (use pre-mounted data) | false |
 | `FILENAME` | Name of file to use from corpus | "text-list-100-sec.jsonl" |
 

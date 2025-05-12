@@ -133,7 +133,7 @@ The knowledge store is ready for use once the container status shows as `healthy
     requirements and infrastructure.
 
 !!! tip
-    To quickly verify the Docker image works correctly, use the parameter `-e TINY_SAMPLE=true`
+    To quickly verify the Docker image works correctly, use the parameter `-e SAMPLE_SIZE=tiny`
     when running the container. This executes the process on a small subset of
     Wikipedia text chunks, allowing for rapid validation before committing to
     a larger subset or the full dataset.
