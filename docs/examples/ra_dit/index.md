@@ -7,12 +7,13 @@
 </a>
 
 We consider the paper "RA-DIT: Retrieval-Augmented Dual Instruction Tuning" by Lin,
-Xi Victoria et al (2023)[^1] and implement simplified versions of their experiments
+Xi Victoria et al. (2023)[^1] and implement simplified versions of their experiments
 using FedRAG. In this work, the authors build a RAG system and fine-tune both
-the generator and retriever using a wide array of question-answering (QA) datasets.
-In their experiments, a fine-tuned RAG consistently outperformed two baselines:
-a generator LLM, and the un-fine-tunded version of their RAG system—thus, demonstrating
-the benefits of fine-tuning RAG systems via RA-DIT.
+the generator and retriever using a diverse question-answering (QA) datasets.
+Their experimental results demonstrate that a fine-tuned RAG system consistently
+outperforms two key baselines: a standalone generator LLM and an un-fine-tuned RAG
+system. These findings highlight the substantial benefits of applying the RA-DIT
+approach to enhance RAG system performance.
 
 This comprehensive implementation demonstrates the key concepts and
 techniques from the original research while adapting them for practical demonstration.

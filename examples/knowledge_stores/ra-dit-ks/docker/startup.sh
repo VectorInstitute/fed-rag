@@ -47,7 +47,7 @@ CLEAR_FIRST=${CLEAR_FIRST:-True}
 FILENAME=${FILENAME:-"text-list-100-sec.jsonl"}
 CORPUS=${CORPUS:-"enwiki-dec2021"}
 SKIP_DOWNLOAD=${SKIP_DOWNLOAD:-"false"}
-TINY_SAMPLE=${TINY_SAMPLE:-"false"}
+SAMPLE_SIZE=${SAMPLE_SIZE:-"full"}  # Options: "tiny", "small", "full"
 
 # Identify Qdrant storage path
 QDRANT_STORAGE_PATH="/qdrant_storage"
@@ -104,6 +104,42 @@ EOF
     fi
 }
 
+# Download a small sample from Dropbox (approximately 100MB)
+download_small_sample() {
+    echo "Downloading small sample file from Dropbox..."
+    mkdir -p /app/data/atlas/$CORPUS
+
+    # Install curl if not available
+    if ! command -v curl &> /dev/null; then
+        echo "Installing curl..."
+        apt-get update && apt-get install -y curl
+    fi
+
+    # Download small sample file (adjust URL as needed)
+    SMALL_SAMPLE_URL="https://www.dropbox.com/scl/fi/v030orqudy6672zs5d3ql/sample_1m-text-list-100-sec.jsonl?rlkey=2zbif6m7zbqdw0rwau0sn5dcu&st=46q6kb4o&dl=0"
+    SMALL_SAMPLE_FILE="/app/data/atlas/$CORPUS/sample_1m-text-list-100-sec.jsonl"
+
+    echo "Downloading from: $SMALL_SAMPLE_URL"
+    curl -L -o "$SMALL_SAMPLE_FILE" "$SMALL_SAMPLE_URL"
+
+    # Set filename to use the small sample
+    FILENAME="sample_1m-text-list-100-sec.jsonl"
+    echo "Using small sample file: $FILENAME"
+
+    echo "Verifying sample file download..."
+    if [ -f "$SMALL_SAMPLE_FILE" ]; then
+        echo "✅ Small sample file successfully downloaded to: $SMALL_SAMPLE_FILE"
+        echo "File details:"
+        ls -la "$SMALL_SAMPLE_FILE"
+        echo "File content (first 3 lines):"
+        head -n 3 "$SMALL_SAMPLE_FILE"
+    else
+        echo "❌ ERROR: Small sample file was NOT downloaded successfully"
+        echo "Falling back to tiny sample..."
+        create_tiny_sample
+    fi
+}
+
 # Initialization function
 initialize_database() {
     # Check if Qdrant is already initialized
@@ -117,10 +153,15 @@ initialize_database() {
     mkdir -p /data
     touch "/data/initialization_in_progress"
 
-    # Handle tiny sample case
-    if [ "$TINY_SAMPLE" = "true" ]; then
+    # Handle sample size selection
+    if [ "$SAMPLE_SIZE" = "tiny" ]; then
+        echo "Using tiny sample mode..."
         create_tiny_sample
+    elif [ "$SAMPLE_SIZE" = "small" ]; then
+        echo "Using small sample mode..."
+        download_small_sample
     elif [ "$SKIP_DOWNLOAD" != "true" ]; then
+        echo "Using full corpus mode..."
         # Clone Atlas repository if not already done
         if [ ! -d "/app/atlas" ]; then
             echo "Cloning Atlas repository..."
@@ -131,9 +172,9 @@ initialize_database() {
             pip install wget
 
             # Download the corpus
-            echo "Downloading Atlas corpus (this may take a while for large corpora)..."
+            echo "Downloading full Atlas corpus (this may take a significant amount of time)..."
             cd /app/atlas
-            python preprocessing/download_corpus.py --corpus $CORPUS --output_directory /data/atlas
+            python preprocessing/download_corpus.py --corpus corpora/wiki/$CORPUS --output_directory /data/atlas
 
             # Create smaller sample file if needed
             if [ "$FILENAME" != "text-list-100-sec.jsonl" ] && [ -f "/data/atlas/$CORPUS/text-list-100-sec.jsonl" ]; then
@@ -144,7 +185,7 @@ initialize_database() {
     else
         echo "Skipping download as SKIP_DOWNLOAD=true, but no data found."
         echo "You need to mount a volume with data at /data/atlas/$CORPUS/$FILENAME"
-        echo "or set TINY_SAMPLE=true to use a built-in tiny sample file."
+        echo "or set SAMPLE_SIZE=tiny to use a built-in tiny sample file."
         mkdir -p /data/atlas/$CORPUS
         if [ ! -f "/data/atlas/$CORPUS/$FILENAME" ]; then
             echo "WARNING: No data file found. Creating tiny sample as fallback."
