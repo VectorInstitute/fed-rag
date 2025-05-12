@@ -1,12 +1,16 @@
+import re
 from types import ModuleType
 from unittest.mock import MagicMock, _Call, patch
 
+import pytest
+
 from fed_rag.base.bridge import BaseBridgeMixin
+from fed_rag.exceptions import MissingExtraError
 
 
 class _TestBridgeMixin(BaseBridgeMixin):
     _bridge_version = "0.1.0"
-    _bridge_extra = "my-bridge"
+    _bridge_extra: str | None = "my-bridge"
     _framework = "my-bridge-framework"
     _compatible_versions = ["0.1.x"]
 
@@ -40,3 +44,25 @@ def test_bridge_get_metadata(
     assert metadata["bridge_version"] == "0.1.0"
     assert metadata["compatible_versions"] == ["0.1.x"]
     assert metadata["framework"] == "my-bridge-framework"
+
+
+@patch("fed_rag.base.bridge.importlib.util")
+def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
+    mock_importlib_util.find_spec.return_value = None
+
+    # with bridge-extra
+    msg = (
+        "_TestBridgeMixin requires the my-bridge-framework to be installed. "
+        "To fix please run `pip install fed-rag[my-bridge]`."
+    )
+    with pytest.raises(MissingExtraError, match=re.escape(msg)):
+        _TestBridgeMixin()
+
+    # without bridge-extra
+    msg = (
+        "_TestBridgeMixin requires the my-bridge-framework to be installed. "
+        "To fix please run `pip install my-bridge-framework`."
+    )
+    with pytest.raises(MissingExtraError, match=re.escape(msg)):
+        _TestBridgeMixin._bridge_extra = None
+        _TestBridgeMixin()
