@@ -2,14 +2,14 @@ from typing import Any, Optional, Sequence
 
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.base.base_retriever import BaseRetriever
-from llama_index.core.indices.managed.base import BaseManagedIndex
-from llama_index.core.llms.callbacks import llm_completion_callback
-from llama_index.core.llms.custom import (
+from llama_index.core.base.llms.types import (
     CompletionResponse,
     CompletionResponseGen,
-    CustomLLM,
     LLMMetadata,
 )
+from llama_index.core.indices.managed.base import BaseManagedIndex
+from llama_index.core.llms.callbacks import llm_completion_callback
+from llama_index.core.llms.custom import CustomLLM
 from llama_index.core.llms.utils import LLMType
 from llama_index.core.schema import (
     BaseNode,
@@ -57,7 +57,10 @@ class FedRAGManagedIndex(BaseManagedIndex):
             )
 
     class FedRAGLLM(CustomLLM):
-        """A ~llama_index.LLM adapter for fed_rag.RAGSystem."""
+        """A ~llama_index.LLM adapter for fed_rag.RAGSystem.
+
+        NOTE: this is a very basic LLM adapter.
+        """
 
         def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
             super().__init__(*args, **kwargs)
@@ -67,23 +70,21 @@ class FedRAGManagedIndex(BaseManagedIndex):
         def metadata(self) -> LLMMetadata:
             """Get LLM metadata."""
             return LLMMetadata(
-                context_window=self.context_window,
-                num_output=self.num_output,
-                model_name=self.model_name,
+                model_name="fedrag.generator",
             )
 
         @llm_completion_callback()
         def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
-            return CompletionResponse(text=self.dummy_response)
+            res = self._rag_system.generator.generate(query=prompt)
+            return CompletionResponse(text=res)
 
         @llm_completion_callback()
         def stream_complete(
             self, prompt: str, **kwargs: Any
         ) -> CompletionResponseGen:
-            response = ""
-            for token in self.dummy_response:
-                response += token
-                yield CompletionResponse(text=response, delta=token)
+            raise NotImplementedError(
+                "stream_complete is not implemented for FedRAGLLM."
+            )
 
     def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -121,5 +122,5 @@ class FedRAGManagedIndex(BaseManagedIndex):
         self, llm: Optional[LLMType] = None, **kwargs: Any
     ) -> BaseQueryEngine:
         # set llm
-
+        llm = self.FedRAGLLM(rag_system=self._rag_system)
         return super().as_query_engine(llm=llm, **kwargs)
