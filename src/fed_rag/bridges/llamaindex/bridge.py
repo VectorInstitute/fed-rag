@@ -8,6 +8,8 @@ from fed_rag.bridges.llamaindex._version import __version__
 if TYPE_CHECKING:
     from llama_index.core.indices.managed.base import BaseManagedIndex
 
+    from fed_rag.types.rag_system import RAGSystem  # avoids circular import
+
 
 class LlamaIndexBridgeMixin(BaseBridgeMixin):
     """LlamaIndex Bridge."""
@@ -17,5 +19,6 @@ class LlamaIndexBridgeMixin(BaseBridgeMixin):
     _framework = "llama-index-core"
     _compatible_versions = ["0.12.35"]
 
-    def to_llamaindex(self) -> BaseManagedIndex:
+    def to_llamaindex(self: "RAGSystem") -> BaseManagedIndex:
+        """Converts the RAGSystem to a ~llamaindex.core.BaseManagedIndex."""
         pass
