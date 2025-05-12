@@ -10,7 +10,7 @@ from fed_rag.exceptions import MissingExtraError
 
 class _TestBridgeMixin(BaseBridgeMixin):
     _bridge_version = "0.1.0"
-    _bridge_extra: str | None = "my-bridge"
+    _bridge_extra = "my-bridge"
     _framework = "my-bridge-framework"
     _compatible_versions = ["0.1.x"]
 
@@ -64,5 +64,5 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
         "To fix please run `pip install my-bridge-framework`."
     )
     with pytest.raises(MissingExtraError, match=re.escape(msg)):
-        _TestBridgeMixin._bridge_extra = None
+        _TestBridgeMixin._bridge_extra = None  # type:ignore [assignment]
         _TestBridgeMixin()
