@@ -60,6 +60,9 @@ qdrant = [
   "grpcio>=1.71.0",
   "qdrant-client[fastembed]>=1.14.2"
 ]
+llama-index = [
+  "llama-index-core>=0.12.35"
+]
 
 [project.urls]
 Documentation = "https://vectorinstitute.github.io/fed-rag/"
