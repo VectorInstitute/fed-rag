@@ -72,7 +72,7 @@ docker run -d \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  -e TINY_SAMPLE=true \
+  -e SAMPLE_SIZE=tiny \
   vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
@@ -273,7 +273,7 @@ docker port qdrant-vector-db
 
 ### Knowledge store initialization fails
 
-Try running with `TINY_SAMPLE=true` first to test the initialization process with a smaller dataset:
+Try running with `SAMPLE_SIZE=tiny` first to test the initialization process with a smaller dataset:
 
 ```bash
 docker run -d \
@@ -281,7 +281,7 @@ docker run -d \
   -p 6333:6333 \
   -p 6334:6334 \
   -v qdrant_data:/qdrant_storage \
-  -e TINY_SAMPLE=true \
+  -e SAMPLE_SIZE=tiny \
   vectorinstitute/qdrant-atlas-dec-wiki-2021:latest
 ```
 
