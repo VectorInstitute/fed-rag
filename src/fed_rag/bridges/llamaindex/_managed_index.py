@@ -1,7 +1,16 @@
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 
+from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.base.base_retriever import BaseRetriever
 from llama_index.core.indices.managed.base import BaseManagedIndex
+from llama_index.core.llms.callbacks import llm_completion_callback
+from llama_index.core.llms.custom import (
+    CompletionResponse,
+    CompletionResponseGen,
+    CustomLLM,
+    LLMMetadata,
+)
+from llama_index.core.llms.utils import LLMType
 from llama_index.core.schema import (
     BaseNode,
     Document,
@@ -28,6 +37,54 @@ def convert_llama_index_docs_to_knowledge_node(
 
 
 class FedRAGManagedIndex(BaseManagedIndex):
+    class FedRAGRetriever(BaseRetriever):
+        """A ~llama_index.BaseRetriever adapter for fed_rag.RAGSystem."""
+
+        def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
+            super().__init__(*args, **kwargs)
+            self._rag_system = rag_system
+
+        def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:
+            """Retrieve specialization for FedRAG.
+
+            Currently only supports text-based queries.
+            """
+            source_nodes = self._rag_system.retrieve(
+                query=query_bundle.query_str
+            )
+            return convert_source_node_to_llama_index_node_with_score(
+                source_nodes
+            )
+
+    class FedRAGLLM(CustomLLM):
+        """A ~llama_index.LLM adapter for fed_rag.RAGSystem."""
+
+        def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
+            super().__init__(*args, **kwargs)
+            self._rag_system = rag_system
+
+        @property
+        def metadata(self) -> LLMMetadata:
+            """Get LLM metadata."""
+            return LLMMetadata(
+                context_window=self.context_window,
+                num_output=self.num_output,
+                model_name=self.model_name,
+            )
+
+        @llm_completion_callback()
+        def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
+            return CompletionResponse(text=self.dummy_response)
+
+        @llm_completion_callback()
+        def stream_complete(
+            self, prompt: str, **kwargs: Any
+        ) -> CompletionResponseGen:
+            response = ""
+            for token in self.dummy_response:
+                response += token
+                yield CompletionResponse(text=response, delta=token)
+
     def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self._rag_system = rag_system
@@ -57,22 +114,12 @@ class FedRAGManagedIndex(BaseManagedIndex):
             "update_ref_doc not implemented for `FedRAGManagedIndex`."
         )
 
-    class FedRAGRetriever(BaseRetriever):
-        def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
-            super().__init__(*args, **kwargs)
-            self._rag_system = rag_system
-
-        def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:
-            """Retrieve specialization for FedRAG.
-
-            Currently only supports text-based queries.
-            """
-            source_nodes = self._rag_system.retrieve(
-                query=query_bundle.query_str
-            )
-            return convert_source_node_to_llama_index_node_with_score(
-                source_nodes
-            )
-
     def as_retriever(self, **kwargs: Any) -> BaseRetriever:
         return self.FedRAGRetriever(rag_system=self._rag_system)
+
+    def as_query_engine(
+        self, llm: Optional[LLMType] = None, **kwargs: Any
+    ) -> BaseQueryEngine:
+        # set llm
+
+        return super().as_query_engine(llm=llm, **kwargs)
