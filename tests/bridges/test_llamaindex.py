@@ -217,6 +217,26 @@ def test_fedrag_managed_index_insert(
     assert index._rag_system.knowledge_store.count == 2
 
 
+def test_fedrag_llm_complete(mock_rag_system: RAGSystem) -> None:
+    llm = FedRAGManagedIndex.FedRAGLLM(mock_rag_system)
+
+    response = llm.complete("mock prompt")
+
+    assert response.text == "mock output from 'mock prompt' and ''."
+
+
+def test_fedrag_llm_stream_complete_raises_error(
+    mock_rag_system: RAGSystem,
+) -> None:
+    llm = FedRAGManagedIndex.FedRAGLLM(mock_rag_system)
+
+    with pytest.raises(
+        NotImplementedError,
+        match="stream_complete is not implemented for FedRAGLLM.",
+    ):
+        llm.stream_complete(prompt="mock prompt")
+
+
 ## test methods with no implementation
 def test_fedrag_managed_index_raises_not_implemented_error(
     mock_rag_system: RAGSystem,

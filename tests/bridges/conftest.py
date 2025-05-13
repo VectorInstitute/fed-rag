@@ -129,8 +129,8 @@ class MockGenerator(BaseGenerator):
     _model = torch.nn.Linear(2, 1)
     _tokenizer = MockTokenizer()
 
-    def generate(self, input: str) -> str:
-        return f"mock output from '{input}'."
+    def generate(self, query: str, context: str, **kwargs: Any) -> str:
+        return f"mock output from '{query}' and '{context}'."
 
     def compute_target_sequence_proba(self, prompt: str, target: str) -> float:
         return 0.42
