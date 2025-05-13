@@ -62,6 +62,7 @@ def convert_llama_index_node_to_knowledge_node(
 
 
 class FedRAGManagedIndex(BaseManagedIndex):
+    # Inner Clases
     class FedRAGRetriever(BaseRetriever):
         """A ~llama_index.BaseRetriever adapter for fed_rag.RAGSystem."""
 
@@ -117,8 +118,14 @@ class FedRAGManagedIndex(BaseManagedIndex):
         def get_type(cls) -> IndexStructType:
             return IndexStructType.VECTOR_STORE
 
+    # methods and attributes
     def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
+        nodes = kwargs.get("nodes", [])
+        if len(list(nodes)) > 0:
+            raise BridgeError(
+                "FedRAGManagedIndex does not support nodes on initialization."
+            )
+        super().__init__(nodes=[], *args, **kwargs)
         self._rag_system = rag_system
 
     def _insert(
