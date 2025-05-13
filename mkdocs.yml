@@ -11,11 +11,16 @@ extra:
       link: https://web-cdn.bsky.app/profile/vectorinstitute.ai
     - icon: fontawesome/brands/x-twitter
       link: https://x.com/vectorinst
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 markdown_extensions:
   - attr_list
   - admonition
   - footnotes
   - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
