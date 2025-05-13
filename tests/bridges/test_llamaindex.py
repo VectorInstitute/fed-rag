@@ -9,13 +9,17 @@ from pydantic import BaseModel
 from fed_rag.base.bridge import BridgeMetadata
 from fed_rag.bridges.llamaindex._managed_index import (
     convert_llama_index_node_to_knowledge_node,
+    convert_source_node_to_llama_index_node_with_score,
 )
 from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.exceptions import BridgeError
+from fed_rag.types.rag_system import KnowledgeNode, SourceNode
 
 
 # overwrite RAGSystem for this test
 class RAGSystem(LlamaIndexBridgeMixin, BaseModel):
+    """Mocked RAGSystem for testing."""
+
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
     @classmethod
@@ -86,6 +90,27 @@ def test_convert_llama_node_to_knowledge_node_raises_error_text_resource_is_none
         match="Failed to convert ~llama_index.Node: text_resource attribute is None.",
     ):
         convert_llama_index_node_to_knowledge_node(llama_node)
+
+
+def test_convert_source_node_to_llama_node_with_score() -> None:
+    source_node = SourceNode(
+        score=0.42,
+        node=KnowledgeNode(
+            node_id="1",
+            embedding=[1, 1, 1],
+            node_type="text",
+            text_content="mock text",
+        ),
+    )
+
+    llama_node_with_score = convert_source_node_to_llama_index_node_with_score(
+        source_node
+    )
+
+    assert llama_node_with_score.score == 0.42
+    assert isinstance(llama_node_with_score.node, LlamaNode)
+    assert llama_node_with_score.node.id_ == "1"
+    assert llama_node_with_score.node.text_resource.text == "mock text"
 
 
 # test FedRAGManagedIndex
