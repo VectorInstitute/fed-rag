@@ -4,6 +4,7 @@ import pytest
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.schema import MediaResource
 from llama_index.core.schema import Node as LlamaNode
+from llama_index.core.schema import QueryBundle
 
 from fed_rag.bridges.llamaindex._managed_index import (
     FedRAGManagedIndex,
@@ -122,6 +123,28 @@ def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
 
     assert isinstance(retriever, FedRAGManagedIndex.FedRAGRetriever)
     assert retriever._rag_system == mock_rag_system
+
+
+def test_fedrag_managed_index_as_retriever_retrieve_method(
+    mock_rag_system: RAGSystem,
+) -> None:
+    mock_rag_system.knowledge_store.load_node(
+        KnowledgeNode(
+            node_id="1",
+            node_type="text",
+            text_content="mock node",
+            embedding=[1, 1, 1],
+        )
+    )
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+    retriever = index.as_retriever()
+
+    # act
+    res = retriever._retrieve(query_bundle=QueryBundle(query_str="mock query"))
+
+    assert len(res) == 1
+    assert res[0].node_id == "1"
+    assert res[0].node.text_resource.text == "mock node"
 
 
 @patch("llama_index.core.indices.base.resolve_llm")
