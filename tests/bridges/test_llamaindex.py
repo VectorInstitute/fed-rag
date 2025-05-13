@@ -1,12 +1,9 @@
-from typing import ClassVar
 from unittest.mock import MagicMock, patch
 
 import pytest
 from llama_index.core.schema import MediaResource
 from llama_index.core.schema import Node as LlamaNode
-from pydantic import BaseModel
 
-from fed_rag.base.bridge import BridgeMetadata
 from fed_rag.bridges.llamaindex._managed_index import (
     FedRAGManagedIndex,
     convert_llama_index_node_to_knowledge_node,
@@ -14,42 +11,29 @@ from fed_rag.bridges.llamaindex._managed_index import (
 )
 from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.exceptions import BridgeError
-from fed_rag.types.rag_system import KnowledgeNode, SourceNode
+from fed_rag.types.rag_system import KnowledgeNode, RAGSystem, SourceNode
 
 
-# overwrite RAGSystem for this test
-class RAGSystem(LlamaIndexBridgeMixin, BaseModel):
-    """Mocked RAGSystem for testing."""
-
-    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
-
-    @classmethod
-    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """To be used only by `BaseBridgeMixin`."""
-        if metadata["framework"] not in cls.bridges:
-            cls.bridges[metadata["framework"]] = metadata
-
-
-def test_rag_system_bridges() -> None:
+def test_rag_system_bridges(mock_rag_system: RAGSystem) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
-    rag_system = RAGSystem()
 
-    assert "llama-index" in rag_system.bridges
-    assert rag_system.bridges[metadata["framework"]] == metadata
+    assert "llama-index" in mock_rag_system.bridges
+    assert mock_rag_system.bridges[metadata["framework"]] == metadata
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
 
 
 @patch("fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex")
 def test_rag_system_conversion_method(
-    mock_managed_index_class: MagicMock,
+    mock_managed_index_class: MagicMock, mock_rag_system: RAGSystem
 ) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
-    rag_system = RAGSystem()
 
-    conversion_method = getattr(rag_system, metadata["method_name"])
+    conversion_method = getattr(mock_rag_system, metadata["method_name"])
     conversion_method()
 
-    mock_managed_index_class.assert_called_once_with(rag_system=rag_system)
+    mock_managed_index_class.assert_called_once_with(
+        rag_system=mock_rag_system
+    )
 
 
 # test node converters
@@ -115,8 +99,7 @@ def test_convert_source_node_to_llama_node_with_score() -> None:
 
 
 # test FedRAGManagedIndex
-def test_fedrag_managed_index_init() -> None:
-    rag_system = MagicMock()
-    index = FedRAGManagedIndex(rag_system=rag_system)
+def test_fedrag_managed_index_init(mock_rag_system: RAGSystem) -> None:
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
 
-    assert index._rag_system == rag_system
+    assert index._rag_system == mock_rag_system
