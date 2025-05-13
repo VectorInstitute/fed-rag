@@ -106,6 +106,16 @@ def test_fedrag_managed_index_init(mock_rag_system: RAGSystem) -> None:
     assert index._rag_system == mock_rag_system
 
 
+def test_fedrag_managed_index_init_raises_error_nodes_passed(
+    mock_rag_system: RAGSystem,
+) -> None:
+    with pytest.raises(
+        BridgeError,
+        match="FedRAGManagedIndex does not support nodes on initialization.",
+    ):
+        FedRAGManagedIndex(rag_system=mock_rag_system, nodes=[LlamaNode()])
+
+
 def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
     retriever = index.as_retriever()
@@ -138,3 +148,24 @@ def test_fedrag_managed_index_as_query_engine(
     query_engine = index.as_query_engine()
 
     assert isinstance(query_engine, BaseQueryEngine)
+
+
+## test methods with no implementation
+def test_fedrag_managed_index_raises_not_implemented_error(
+    mock_rag_system: RAGSystem,
+) -> None:
+    from llama_index.core.schema import Document
+
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+
+    with pytest.raises(
+        NotImplementedError,
+        match="update_ref_doc not implemented for `FedRAGManagedIndex`.",
+    ):
+        index.update_ref_doc(document=Document())
+
+    with pytest.raises(
+        NotImplementedError,
+        match="delete_ref_doc not implemented for `FedRAGManagedIndex`.",
+    ):
+        index.delete_ref_doc(ref_doc_id="1")
