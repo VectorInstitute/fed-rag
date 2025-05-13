@@ -3256,6 +3256,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#bridge-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Metadata
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3420,6 +3429,16 @@ underlying KnowledgeStore using LlamaIndex's API:</p>
 <p class="admonition-title">Note</p>
 <p>Streaming and async functionalities are not yet supported.</p>
 </div>
+<h2 id="bridge-metadata">Bridge Metadata<a class="headerlink" href="#bridge-metadata" title="Permanent link">&para;</a></h2>
+<p>To view the metadata of the LlamaIndex bridge, you can access the class attribute
+<code>bridge</code> of the <code>RAGSystem</code> class, which is a dictionary object that contains the
+<code>BridgeMetadata</code> for all of the installed bridges.</p>
+<div class="language-py highlight"><span class="filename">Bridge metadata</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># see available bridges</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># see the LlamaIndex bridge metadata</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">[</span><span class="s2">&quot;llama-index&quot;</span><span class="p">])</span>
+</span></code></pre></div>
 <!-- References -->
 <div class="footnote">
 <hr />
