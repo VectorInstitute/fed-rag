@@ -11,29 +11,52 @@ from llama_index.core.indices.managed.base import BaseManagedIndex
 from llama_index.core.llms.callbacks import llm_completion_callback
 from llama_index.core.llms.custom import CustomLLM
 from llama_index.core.llms.utils import LLMType
-from llama_index.core.schema import (
-    BaseNode,
-    Document,
-    NodeWithScore,
-    QueryBundle,
-)
+from llama_index.core.schema import Document, MediaResource
+from llama_index.core.schema import Node as LlamaNode
+from llama_index.core.schema import NodeWithScore, QueryBundle
 
+from fed_rag.exceptions import BridgeError
 from fed_rag.types.knowledge_node import KnowledgeNode
 from fed_rag.types.rag_system import RAGSystem, SourceNode
 
 
 def convert_source_node_to_llama_index_node_with_score(
-    nodes: Sequence[SourceNode],
-) -> list[NodeWithScore]:
-    """Convert ~fed_rag.SourceNode to ~llama_index.NodeWithScore."""
-    return []
+    node: SourceNode,
+) -> NodeWithScore:
+    """Convert ~fed_rag.SourceNode to ~llama_index.NodeWithScore.
+
+    NOTE: Currently only text nodes are supported.
+    """
+    text_resource = MediaResource(text=node.node.text_content)
+    llama_index_node = LlamaNode(
+        text_resource=text_resource, id_=node.node.node_id
+    )
+    return NodeWithScore(score=node.score, node=llama_index_node)
 
 
-def convert_llama_index_docs_to_knowledge_node(
-    llama_nodes: Sequence[BaseNode],
-) -> list[KnowledgeNode]:
-    """Convert ~llama_index.BaseNodes to ~fed_rag.KnowledgeNodes."""
-    return []
+def convert_llama_index_node_to_knowledge_node(
+    llama_node: LlamaNode,
+) -> KnowledgeNode:
+    """Convert ~llama_index.BaseNodes to ~fed_rag.KnowledgeNodes.
+
+    NOTE: Currently only text nodes are supported.
+    """
+    if llama_node.embedding is None:
+        raise BridgeError(
+            "Failed to convert ~llama_index.Node: embedding attribute is None."
+        )
+
+    if llama_node.text_resource is None:
+        raise BridgeError(
+            "Failed to convert ~llama_index.Node. text_resource attribute is None."
+        )
+    return KnowledgeNode(
+        node_id=llama_node.id_,
+        embedding=llama_node.embedding,
+        node_type="text",
+        text_content=llama_node.text_resource.text,
+        metadata=llama_node.metadata,
+    )
 
 
 class FedRAGManagedIndex(BaseManagedIndex):
@@ -52,9 +75,10 @@ class FedRAGManagedIndex(BaseManagedIndex):
             source_nodes = self._rag_system.retrieve(
                 query=query_bundle.query_str
             )
-            return convert_source_node_to_llama_index_node_with_score(
-                source_nodes
-            )
+            return [
+                convert_source_node_to_llama_index_node_with_score(sn)
+                for sn in source_nodes
+            ]
 
     class FedRAGLLM(CustomLLM):
         """A ~llama_index.LLM adapter for fed_rag.RAGSystem.
@@ -90,10 +114,13 @@ class FedRAGManagedIndex(BaseManagedIndex):
         super().__init__(*args, **kwargs)
         self._rag_system = rag_system
 
-    def _insert(self, nodes: Sequence[BaseNode], **insert_kwargs: Any) -> None:
-        knowledge_nodes = convert_llama_index_docs_to_knowledge_node(
-            llama_nodes=nodes
-        )
+    def _insert(
+        self, nodes: Sequence[LlamaNode], **insert_kwargs: Any
+    ) -> None:
+        knowledge_nodes = [
+            convert_llama_index_node_to_knowledge_node(llama_node=n)
+            for n in nodes
+        ]
         self._rag_system.knowledge_store.load_nodes(knowledge_nodes)
 
     def delete_ref_doc(
