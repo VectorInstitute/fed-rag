@@ -150,6 +150,50 @@ def test_fedrag_managed_index_as_query_engine(
     assert isinstance(query_engine, BaseQueryEngine)
 
 
+def test_fedrag_managed_index_delete_node(
+    mock_rag_system: RAGSystem,
+) -> None:
+    mock_rag_system.knowledge_store.load_node(
+        KnowledgeNode(
+            node_id="1",
+            node_type="text",
+            text_content="mock node",
+            embedding=[1, 1, 1],
+        )
+    )
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+
+    # act
+    index._delete_node(node_id="1")
+
+    # assert
+    assert index._rag_system.knowledge_store.count == 0
+
+
+def test_fedrag_managed_index_insert(
+    mock_rag_system: RAGSystem,
+) -> None:
+    llama_nodes = [
+        LlamaNode(
+            id_="1",
+            embedding=[1, 1, 1],
+            text_resource=MediaResource(text="node 1"),
+        ),
+        LlamaNode(
+            id_="2",
+            embedding=[2, 2, 2],
+            text_resource=MediaResource(text="node 2"),
+        ),
+    ]
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+
+    # act
+    index._insert(nodes=llama_nodes)
+
+    # assert
+    assert index._rag_system.knowledge_store.count == 2
+
+
 ## test methods with no implementation
 def test_fedrag_managed_index_raises_not_implemented_error(
     mock_rag_system: RAGSystem,
