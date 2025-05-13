@@ -88,7 +88,7 @@ rag_system = RAGSystem(
 
 ## Using the Bridge
 
-Converting your FedRAG system to a LlamaIndex object is seamless since the bridge
+Converting your RAG system to a LlamaIndex object is seamless since the bridge
 functionality is already built into the `RAGSystem` class. The `RAGSystem` inherits
 from `LlamaIndexBridgeMixin`, which provides the `to_llamaindex()` method for
 effortless conversion.
