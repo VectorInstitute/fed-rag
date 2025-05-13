@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.schema import MediaResource
 from llama_index.core.schema import Node as LlamaNode
 
@@ -103,3 +104,28 @@ def test_fedrag_managed_index_init(mock_rag_system: RAGSystem) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
 
     assert index._rag_system == mock_rag_system
+
+
+def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+    retriever = index.as_retriever()
+
+    assert isinstance(retriever, FedRAGManagedIndex.FedRAGRetriever)
+    assert retriever._rag_system == mock_rag_system
+
+
+@patch("llama_index.core.indices.base.resolve_llm")
+@patch(
+    "fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
+)
+def test_fedrag_managed_index_as_query_engine(
+    mock_fedrag_llm_class: MagicMock,
+    mock_resolve_llm: MagicMock,
+    mock_rag_system: RAGSystem,
+) -> None:
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+    query_engine = index.as_query_engine()
+
+    assert isinstance(query_engine, BaseQueryEngine)
+    mock_fedrag_llm_class.assert_called_once_with(rag_system=mock_rag_system)
+    mock_resolve_llm.assert_called_once()
