@@ -142,7 +142,7 @@ index.delete_nodes(node_ids=[node.node_id for node in llama_nodes])
 
 You can combine your bridged index with LlamaIndex's advanced features:
 
-```py title=advanced usage
+```py title="advanced usage"
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core.response_synthesizers import TreeSummarize
 
@@ -158,6 +158,10 @@ query_engine = index.as_query_engine(
         summary_template="Provide a concise summary of the following: {context}",
     ),
 )
+
+# Execute the query with the advanced configuration
+response = query_engine.query("Explain the benefits of RAG systems")
+print(response)
 ```
 
 !!! note
