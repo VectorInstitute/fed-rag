@@ -41,19 +41,23 @@ produces the ground-truth response, $r$ when given the input sequence of $q \cir
 for $i=1,\ldots,k$, where "$\circ$" is the concatenation operator. That is,
 
 $$
-p_{LSR}(c_i|q,r) = \frac{\exp (P_{LLM}(r| q \circ c_i)/\tau)}{\sum_{j=1}^k \exp(P_{LLM}(r | q \circ c_j)/\tau)}, \quad i=1,\ldots,k,
+p_{LSR}(c_i|q,r) = \frac{\exp (p_{LLM}(r| q \circ c_i)/\tau)}{\sum_{j=1}^k \exp(p_{LLM}(r | q \circ c_j)/\tau)}, \quad i=1,\ldots,k,
 $$
 
 where $\tau$ is a temperature hyperparameter.
 
-### LSR Training objective
+### LSR training objective
 
 The LSR loss is defined as the Kullback-Liebler divergence between these two probability
 distributions:
 
 $$
-\mathcal{L}_{LSR} = \mathbb{E}_{(q,r)\in\mathcal{D}_{\text{train}}} KL\big(p_{R}(c|q)\|p_{LSR}(c|q,r)\big).
+\mathcal{L}_{LSR} = \mathbb{E}_{(q,r)\in\mathcal{D}_{\text{train}}} KL\big(p_{R}(c|q)\|p_{LSR}(c|q,r)\big),
 $$
+
+where $\mathbb{E}_{{(q,r)\in\mathcal{D}_{\text{train}}}}(\cdot)$ is the expectation
+operator under the distribution defined by the (query, response) pairs from the
+training dataset $\mathcal{D}_{\text{train}}$.
 
 In minimizing the LSR loss, we are adapting the retriever model to assign higher
 scores to the knowledge nodes that increase the generator's likelihood of producing
