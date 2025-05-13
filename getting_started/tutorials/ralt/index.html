@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#generator-fine-tuning-with-ralt" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -807,6 +812,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Generator Fine-tuning with RALT
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -819,6 +839,58 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-ralt-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      The RALT Method
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The RALT Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ralt-training-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      RALT training objective
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-on-the-fedrag-implementation-of-ralt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes on the FedRAG Implementation of RALT
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3190,6 +3262,49 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-ralt-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      The RALT Method
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The RALT Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ralt-training-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      RALT training objective
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-on-the-fedrag-implementation-of-ralt" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes on the FedRAG Implementation of RALT
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -3208,9 +3323,80 @@
   
 
 
-  <h1>Generator Fine-tuning with RALT</h1>
-
-
+<h1 id="generator-fine-tuning-with-ralt">Generator Fine-Tuning with RALT<a class="headerlink" href="#generator-fine-tuning-with-ralt" title="Permanent link">&para;</a></h1>
+<p>The overall success of RAG systems depends heavily on the generator model's ability
+to effectively utilize retrieved knowledge. This capability is crucial because
+LLM generators are typically trained on corpora that differ from the sources populating
+the knowledge store. As a result, generators may struggle to properly integrate
+or reason with retrieved information that contains domain-specific terminology,
+formatting, or content structures.</p>
+<p>Retriever-Augmented LM Training (RALT), introduced by Lin et al. (2023)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>,
+addresses this challenge by fine-tuning the generator model specifically on examples
+that incorporate retrieved knowledge nodes. This process helps the generator learn
+to better contextualize, interpret, and integrate information from the knowledge
+store into its responses (and, even learn to ignore it when it deems it irrelevant
+to the original query).</p>
+<h2 id="the-ralt-method">The RALT Method<a class="headerlink" href="#the-ralt-method" title="Permanent link">&para;</a></h2>
+<p>Like the <a href="../lsr/">LSR method</a>, the RALT method is also applied over a training
+dataset (query, response) pairs. For each training example, we first retrieve the
+top-<span class="arithmatex">\(k\)</span> knowledge nodes, and then create <span class="arithmatex">\(k\)</span> independent instruction fine-tuning
+examples. The instruction fine-tuning template involves placeholders for the
+query, response, and the knowledge nodes' content (i.e., context for the query).</p>
+<div class="language-py highlight"><span class="filename">an example instruction template</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">instruction_template</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;You are a helpful assistant. Given the user query below,</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="s2">provide a response making use of the provided background context.</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="s2">&lt;query&gt;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="si">{query}</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s2">&lt;/query&gt;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">&lt;context&gt;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="si">{context}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s2">&lt;/context&gt;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="s2">&lt;response&gt;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="si">{response}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="s2">&lt;/response&gt;</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="s2">&quot;&quot;&quot;</span>
+</span></code></pre></div>
+<h3 id="ralt-training-objective">RALT training objective<a class="headerlink" href="#ralt-training-objective" title="Permanent link">&para;</a></h3>
+<p>For RALT, we apply the usual masked causal language modelling task, which trains
+the model to predict the next token given the previously seen tokens. Mathematically,
+if we let <span class="arithmatex">\(\{(q_i, r_i)\}_{i=1}^N\)</span> represent the training dataset of (query, response),
+pairs, and further, let <span class="arithmatex">\(c_{i,j}\)</span> represent the context from the <span class="arithmatex">\(j\)</span>-th knowledge
+node retrieved by the RAG system for query, <span class="arithmatex">\(q_i\)</span>, then we can write the RALT loss
+as follows:</p>
+<div class="arithmatex">\[
+\mathcal{L}_{RALT} = - \sum_{i}^N\sum_{j}^k \log p_{LLM}(r_i | q_i \circ c_{i,j}),
+\]</div>
+<p>where <span class="arithmatex">\(\log p_{LLM}(r_i | q_i \circ c_{i,j})\)</span> is the log probability that response,
+<span class="arithmatex">\(r_i\)</span>, is produced by the LLM given the input sequence <span class="arithmatex">\(q_i \circ c_{i,j}\)</span> (with "<span class="arithmatex">\(\circ\)</span>"
+representing concatenation).</p>
+<h2 id="notes-on-the-fedrag-implementation-of-ralt">Notes on the FedRAG Implementation of RALT<a class="headerlink" href="#notes-on-the-fedrag-implementation-of-ralt" title="Permanent link">&para;</a></h2>
+<p>The RALT implementation in FedRAG involves the typical coordination between a data
+collator and a trainer object. The <code>DataCollatorForRALT</code> takes on the responsibility
+of retrieving the <span class="arithmatex">\(k\)</span> nodes for every query in the batch, and creating the <span class="arithmatex">\(k\)</span>
+instruction-tuning instances. Tokenization and padding are also applied in the
+data collator. The <code>TrainerForRALT</code> then performs the causal language modelling
+training on the collated data for the generator model.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An alternative implementation would be to pass the creation of the instruction
+instances from the data collator to a pre-processing step that creates a
+training dataset. In other words, the train dataset is not the (query, response)
+pair, but an already processed instruction fine-tuning dataset. For unification
+purposes, the former was chosen to promote consistency between retriever and
+generator trainer workflows.</p>
+</div>
+<!-- References -->
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
+  The Twelfth International Conference on Learning Representations. 2023.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -3362,6 +3548,10 @@
     
     
       <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

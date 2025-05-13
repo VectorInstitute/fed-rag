@@ -75,6 +75,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#retriever-fine-tuning-with-lsr" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -784,6 +789,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Retriever Fine-tuning with LSR
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -796,6 +816,76 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-lsr-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      The LSR Method
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The LSR Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-probabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval probabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generation-llm-probabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generation (LLM) probabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsr-training-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      LSR training objective
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-on-the-fedrag-implementation-of-lsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes on the FedRAG Implementation of LSR
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3190,6 +3280,67 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-lsr-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      The LSR Method
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The LSR Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-probabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval probabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generation-llm-probabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generation (LLM) probabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsr-training-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      LSR training objective
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-on-the-fedrag-implementation-of-lsr" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes on the FedRAG Implementation of LSR
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -3208,9 +3359,73 @@
   
 
 
-  <h1>Retriever Fine-tuning with LSR</h1>
-
-
+<h1 id="retriever-fine-tuning-with-lsr">Retriever Fine-Tuning with LSR<a class="headerlink" href="#retriever-fine-tuning-with-lsr" title="Permanent link">&para;</a></h1>
+<p>RAG systems integrate three key components: a knowledge store, a retriever model,
+and a generator model. Effective fine-tuning approaches should enhance not just
+individual components, but the cohesive performance of the entire system.</p>
+<p>This tutorial focuses on the LM-Supervised Retriever (LSR) fine-tuning method, which
+was first introduced in Shi, Weijia et al. (2023)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and later generalized in
+Lin, Xi Victoria et al. (2023)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. With this method the retriever is fine-tuned
+by leveraging signals from the language model (i.e., generator).</p>
+<h2 id="the-lsr-method">The LSR Method<a class="headerlink" href="#the-lsr-method" title="Permanent link">&para;</a></h2>
+<p>The LSR method is applied over a training dataset of (query, response) pairs. It
+involves the computation of two probability distributions for every pair, namely:
+a probability distribution derived the from the retrieval scores of each of the
+retrieved knowledge nodes, and a probability distribution derived from the LLM
+generator conditioned on prompt and each of the knowledge node's context.</p>
+<p>Mathematically, let <span class="arithmatex">\((q, r)\)</span> represent the query and response, respectively of a
+given training example. Moreover let <span class="arithmatex">\(c_i\)</span> represent the context from the <span class="arithmatex">\(i\)</span>-th
+knowledge node retrieved by the RAG system for query, <span class="arithmatex">\(q\)</span>.</p>
+<h3 id="retrieval-probabilities">Retrieval probabilities<a class="headerlink" href="#retrieval-probabilities" title="Permanent link">&para;</a></h3>
+<p>The retrieval probability distribution is defined by applying the softmax function
+to the retrieval scores:</p>
+<div class="arithmatex">\[
+p_{R}(c_i|q) = \frac{\exp s(q, c_i)}{\sum_{j=1}^k \exp s(q, c_j)}, \quad i=1,\ldots,k,
+\]</div>
+<p>where <span class="arithmatex">\(s(q, c_i)\)</span> represents the similarity score between query, <span class="arithmatex">\(q\)</span> and context,
+<span class="arithmatex">\(c_i\)</span>.</p>
+<h3 id="generation-llm-probabilities">Generation (LLM) probabilities<a class="headerlink" href="#generation-llm-probabilities" title="Permanent link">&para;</a></h3>
+<p>Similarly, the probabilities derived from the LLM involves another application of
+the softmax function, but this time over the probabilities that the LLM generator
+produces the ground-truth response, <span class="arithmatex">\(r\)</span> when given the input sequence of <span class="arithmatex">\(q \circ c_i\)</span>
+for <span class="arithmatex">\(i=1,\ldots,k\)</span>, where "<span class="arithmatex">\(\circ\)</span>" is the concatenation operator. That is,</p>
+<div class="arithmatex">\[
+p_{LSR}(c_i|q,r) = \frac{\exp (p_{LLM}(r| q \circ c_i)/\tau)}{\sum_{j=1}^k \exp(p_{LLM}(r | q \circ c_j)/\tau)}, \quad i=1,\ldots,k,
+\]</div>
+<p>where <span class="arithmatex">\(\tau\)</span> is a temperature hyperparameter.</p>
+<h3 id="lsr-training-objective">LSR training objective<a class="headerlink" href="#lsr-training-objective" title="Permanent link">&para;</a></h3>
+<p>The LSR loss is defined as the Kullback-Liebler divergence between these two probability
+distributions:</p>
+<div class="arithmatex">\[
+\mathcal{L}_{LSR} = \mathbb{E}_{(q,r)\in\mathcal{D}_{\text{train}}} KL\big(p_{R}(c|q)\|p_{LSR}(c|q,r)\big),
+\]</div>
+<p>where <span class="arithmatex">\(\mathbb{E}_{{(q,r)\in\mathcal{D}_{\text{train}}}}(\cdot)\)</span> is the expectation
+operator under the distribution defined by the (query, response) pairs from the
+training dataset <span class="arithmatex">\(\mathcal{D}_{\text{train}}\)</span>.</p>
+<p>In minimizing the LSR loss, we are adapting the retriever model to assign higher
+scores to the knowledge nodes that increase the generator's likelihood of producing
+the ground-truth response, <span class="arithmatex">\(r\)</span>.</p>
+<h2 id="notes-on-the-fedrag-implementation-of-lsr">Notes on the FedRAG Implementation of LSR<a class="headerlink" href="#notes-on-the-fedrag-implementation-of-lsr" title="Permanent link">&para;</a></h2>
+<p>In FedRAG, we implement the LSR method with the typical coordination of a data collator
+and a trainer. The <code>DataCollatorForLSR</code> takes a batch of (query, response) pairs
+and produces the PyTorch tensors for retrieval scores as well as LLM scores for
+each knowledge node retrieved by the <code>RAGSystem</code>. This batch is then used by the
+<code>TrainerForLSR</code> which computes the <code>LSRLoss</code> for the batch and then performs the
+optimization step for the given training step.</p>
+<!-- References -->
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Shi, Weijia, et al. "Replug: Retrieval-augmented black-box language models."
+  arXiv preprint arXiv:2301.12652 (2023).&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
+  The Twelfth International Conference on Learning Representations. 2023.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 
@@ -3362,6 +3577,10 @@
     
     
       <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
