@@ -198,6 +198,7 @@ def test_compute_target_sequence_proba(
         [0.2, 0.2, 0.2, 0.2, 0.2]
     )
     mock_model = MagicMock()
+    mock_model.device = torch.device("cpu")
     generator.model = mock_model
     generator.tokenizer = mock_tokenizer
 
