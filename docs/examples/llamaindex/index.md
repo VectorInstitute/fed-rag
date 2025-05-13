@@ -167,5 +167,19 @@ print(response)
 !!! note
     Streaming and async functionalities are not yet supported.
 
+## Bridge Metadata
+
+To view the metadata of the LlamaIndex bridge, you can access the class attribute
+of `RAGSystem` called `bridge` which is a dictionary object that contains the
+`BridgeMetadata` for all of the installed bridges.
+
+```py title="Bridge metadata"
+# see available bridges
+print(RAGSystem.bridges)
+
+# see the LlamaIndex bridge metadata
+print(RAGSystem.bridges["llama-index"])
+```
+
 <!-- References -->
 [^1]: Liu, J. (2022). LlamaIndex [Computer software]. <https://doi.org/10.5281/zenodo.1234>
