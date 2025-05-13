@@ -21,7 +21,7 @@ class _TestBridgeMixin(BaseBridgeMixin):
     _method_name = "to_bridge"
 
     def to_bridge(self) -> None:
-        self._validate_framework_installed(self._method_name)
+        self._validate_framework_installed()
         return None
 
 
@@ -70,7 +70,7 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
 
     # with bridge-extra
     msg = (
-        "to_bridge requires the my-bridge-framework to be installed. "
+        "`my-bridge-framework` module is missing but needs to be installed. "
         "To fix please run `pip install fed-rag[my-bridge]`."
     )
     with pytest.raises(MissingExtraError, match=re.escape(msg)):
@@ -79,7 +79,7 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
 
     # without bridge-extra
     msg = (
-        "to_bridge requires the my-bridge-framework to be installed. "
+        "`my-bridge-framework` module is missing but needs to be installed. "
         "To fix please run `pip install my-bridge-framework`."
     )
     with pytest.raises(MissingExtraError, match=re.escape(msg)):

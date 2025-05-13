@@ -21,7 +21,7 @@ class LlamaIndexBridgeMixin(BaseBridgeMixin):
 
     _bridge_version = __version__
     _bridge_extra = "llama-index"
-    _framework = "llama-index-core"
+    _framework = "llama-index"
     _compatible_versions = ["0.12.35"]
     _method_name = "to_llamaindex"
 

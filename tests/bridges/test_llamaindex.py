@@ -1,4 +1,5 @@
 from typing import ClassVar
+from unittest.mock import MagicMock, patch
 
 from pydantic import BaseModel
 
@@ -21,6 +22,19 @@ def test_rag_system_bridges() -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
     rag_system = RAGSystem()
 
-    assert "llama-index-core" in rag_system.bridges
+    assert "llama-index" in rag_system.bridges
     assert rag_system.bridges[metadata["framework"]] == metadata
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
+
+
+@patch("fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex")
+def test_rag_system_conversion_method(
+    mock_managed_index_class: MagicMock,
+) -> None:
+    metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
+    rag_system = RAGSystem()
+
+    conversion_method = getattr(rag_system, metadata["method_name"])
+    conversion_method()
+
+    mock_managed_index_class.assert_called_once_with(rag_system=rag_system)

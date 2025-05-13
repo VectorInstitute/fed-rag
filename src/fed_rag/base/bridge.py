@@ -61,13 +61,15 @@ class BaseBridgeMixin(BaseModel):
         return metadata
 
     @classmethod
-    def _validate_framework_installed(cls, method_name: str) -> None:
-        if importlib.util.find_spec(cls._framework) is None:
-            if cls._bridge_extra:
-                missing_package_or_extra = f"fed-rag[{cls._bridge_extra}]"
-            else:
-                missing_package_or_extra = cls._framework
-            raise MissingExtraError(
-                f"{method_name} requires the {cls._framework} to be installed. "
+    def _validate_framework_installed(cls) -> None:
+        if importlib.util.find_spec(cls._framework.replace("-", "_")) is None:
+            missing_package_or_extra = (
+                f"fed-rag[{cls._bridge_extra}]"
+                if cls._bridge_extra
+                else cls._framework
+            )
+            msg = (
+                f"`{cls._framework}` module is missing but needs to be installed. "
                 f"To fix please run `pip install {missing_package_or_extra}`."
             )
+            raise MissingExtraError(msg)
