@@ -170,7 +170,7 @@ print(response)
 ## Bridge Metadata
 
 To view the metadata of the LlamaIndex bridge, you can access the class attribute
-of `RAGSystem` called `bridge` which is a dictionary object that contains the
+`bridge` of the `RAGSystem` class, which is a dictionary object that contains the
 `BridgeMetadata` for all of the installed bridges.
 
 ```py title="Bridge metadata"
