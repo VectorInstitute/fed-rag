@@ -118,7 +118,7 @@ def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
 @patch(
     "fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
 )
-def test_fedrag_managed_index_as_query_engine(
+def test_fedrag_managed_index_as_query_engine_mocked(
     mock_fedrag_llm_class: MagicMock,
     mock_resolve_llm: MagicMock,
     mock_rag_system: RAGSystem,
@@ -129,3 +129,12 @@ def test_fedrag_managed_index_as_query_engine(
     assert isinstance(query_engine, BaseQueryEngine)
     mock_fedrag_llm_class.assert_called_once_with(rag_system=mock_rag_system)
     mock_resolve_llm.assert_called_once()
+
+
+def test_fedrag_managed_index_as_query_engine(
+    mock_rag_system: RAGSystem,
+) -> None:
+    index = FedRAGManagedIndex(rag_system=mock_rag_system)
+    query_engine = index.as_query_engine()
+
+    assert isinstance(query_engine, BaseQueryEngine)
