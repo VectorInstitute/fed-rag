@@ -33,3 +33,6 @@ tmp_trainer/
 
 # qdrant
 qdrant_storage
+
+# notebooks
+dev_notebooks
