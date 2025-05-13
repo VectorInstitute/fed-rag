@@ -48,7 +48,7 @@ def convert_llama_index_node_to_knowledge_node(
 
     if llama_node.text_resource is None:
         raise BridgeError(
-            "Failed to convert ~llama_index.Node. text_resource attribute is None."
+            "Failed to convert ~llama_index.Node: text_resource attribute is None."
         )
     return KnowledgeNode(
         node_id=llama_node.id_,
