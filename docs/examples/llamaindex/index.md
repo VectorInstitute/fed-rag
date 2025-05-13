@@ -12,7 +12,7 @@ giving you the best of both worlds: FedRAG's fine-tuning capabilities combined
 with the extensive inference features of LlamaIndex.
 
 In this example, we demonstrate how you can convert a `RAGSystem` to a
-`~llama_index.ManagedIndex` from which you can obtain `~llama_index.QueryEngine`
+`~llama_index.BaseManagedIndex` from which you can obtain `~llama_index.QueryEngine`
 as well as `~llama_index.Retriever`.
 
 ## Installation
