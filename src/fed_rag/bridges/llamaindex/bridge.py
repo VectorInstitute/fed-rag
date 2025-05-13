@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from fed_rag.base.bridge import BaseBridgeMixin
 from fed_rag.bridges.llamaindex._version import __version__
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from llama_index.core.indices.managed.base import BaseManagedIndex
 
     from fed_rag.types.rag_system import RAGSystem  # avoids circular import
