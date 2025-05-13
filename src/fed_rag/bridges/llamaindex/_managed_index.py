@@ -7,6 +7,8 @@ from llama_index.core.base.llms.types import (
     CompletionResponseGen,
     LLMMetadata,
 )
+from llama_index.core.data_structs.data_structs import IndexStruct
+from llama_index.core.data_structs.struct_type import IndexStructType
 from llama_index.core.indices.managed.base import BaseManagedIndex
 from llama_index.core.llms.callbacks import llm_completion_callback
 from llama_index.core.llms.custom import CustomLLM
@@ -64,7 +66,12 @@ class FedRAGManagedIndex(BaseManagedIndex):
         """A ~llama_index.BaseRetriever adapter for fed_rag.RAGSystem."""
 
         def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
-            super().__init__(*args, **kwargs)
+            nodes = kwargs.get("nodes", [])
+            if len(list(nodes)) > 0:
+                raise BridgeError(
+                    "FedRAGManagedIndex does not support nodes on initialization."
+                )
+            super().__init__(nodes=[], *args, **kwargs)
             self._rag_system = rag_system
 
         def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:
@@ -110,6 +117,11 @@ class FedRAGManagedIndex(BaseManagedIndex):
                 "stream_complete is not implemented for FedRAGLLM."
             )
 
+    class FedRAGIndexStruct(IndexStruct):
+        @classmethod
+        def get_type(cls) -> IndexStructType:
+            return IndexStructType.VECTOR_STORE
+
     def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self._rag_system = rag_system
@@ -151,3 +163,10 @@ class FedRAGManagedIndex(BaseManagedIndex):
         # set llm
         llm = self.FedRAGLLM(rag_system=self._rag_system)
         return super().as_query_engine(llm=llm, **kwargs)
+
+    def _build_index_from_nodes(
+        self, nodes: Sequence[LlamaNode], **build_kwargs: Any
+    ) -> IndexStruct:
+        return self.FedRAGIndexStruct(
+            summary="~fed_rag.FedRAGManagedIndex wrapper of RAGSystem."
+        )

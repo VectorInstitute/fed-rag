@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from fed_rag.base.bridge import BridgeMetadata
 from fed_rag.bridges.llamaindex._managed_index import (
+    FedRAGManagedIndex,
     convert_llama_index_node_to_knowledge_node,
     convert_source_node_to_llama_index_node_with_score,
 )
@@ -114,3 +115,8 @@ def test_convert_source_node_to_llama_node_with_score() -> None:
 
 
 # test FedRAGManagedIndex
+def test_fedrag_managed_index_init() -> None:
+    rag_system = MagicMock()
+    index = FedRAGManagedIndex(rag_system=rag_system)
+
+    assert index._rag_system == rag_system
