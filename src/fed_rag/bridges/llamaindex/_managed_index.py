@@ -66,12 +66,7 @@ class FedRAGManagedIndex(BaseManagedIndex):
         """A ~llama_index.BaseRetriever adapter for fed_rag.RAGSystem."""
 
         def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
-            nodes = kwargs.get("nodes", [])
-            if len(list(nodes)) > 0:
-                raise BridgeError(
-                    "FedRAGManagedIndex does not support nodes on initialization."
-                )
-            super().__init__(nodes=[], *args, **kwargs)
+            super().__init__(*args, **kwargs)
             self._rag_system = rag_system
 
         def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:
