@@ -60,6 +60,9 @@ nav:
       - examples/llamaindex/index.md
   - API Reference:
     - api_reference/index.md
+    - Bridges:
+      - api_reference/bridges/index.md
+      - LlamaIndex: api_reference/bridges/llamaindex.md
     - Data Collators:
       - api_reference/data_collators/index.md
       - api_reference/data_collators/huggingface.md

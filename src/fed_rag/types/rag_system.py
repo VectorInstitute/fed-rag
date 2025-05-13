@@ -1,12 +1,14 @@
 """RAG System"""
 
-from typing import Any
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
+from fed_rag.base.bridge import BridgeMetadata
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 
@@ -32,12 +34,19 @@ class RAGConfig(BaseModel):
     context_separator: str = "\n"
 
 
-class RAGSystem(BaseModel):
+class RAGSystem(LlamaIndexBridgeMixin, BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     generator: BaseGenerator
     retriever: BaseRetriever
     knowledge_store: BaseKnowledgeStore
     rag_config: RAGConfig
+    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
+
+    @classmethod
+    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
+        """To be used only by `BaseBridgeMixin`."""
+        if metadata["framework"] not in cls.bridges:
+            cls.bridges[metadata["framework"]] = metadata
 
     def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""
