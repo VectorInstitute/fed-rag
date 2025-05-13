@@ -74,9 +74,14 @@ class HuggingFaceGeneratorMixin:
         target_start_idx = len(prompt_only_encode_result["input_ids"])
         target_ids = input_ids[target_start_idx:]
 
+        # Create tensor and send to the device where the model resides
+        input_ids_tensor = (
+            torch.tensor(input_ids).unsqueeze(0).to(self.model.device)
+        )
+
         # Get the logits from the model
         with torch.no_grad():
-            outputs = self.model(torch.tensor(input_ids).unsqueeze(0))
+            outputs = self.model(input_ids_tensor)
             logits = outputs.logits
 
         # Calculate probability of each target token given the previous tokens
