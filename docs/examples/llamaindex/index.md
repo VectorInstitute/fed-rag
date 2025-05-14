@@ -27,7 +27,7 @@ pip install fed-rag[llama-index,huggingface]
 
 ```py title="retriever, generator, and knowledge store"
 from transformers.generation.utils import GenerationConfig
-from fed_rag.generators.huggingface import HFPreTrainedModelGenerator
+from fed_rag.generators.huggingface import HFPretrainedModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
@@ -98,6 +98,7 @@ effortless conversion.
 index = rag_system.to_llamaindex()
 
 # Use it like any other LlamaIndex object to get a query engine
+query = "<YOUR QUERY>"
 query_engine = index.as_query_engine()
 response = query_engine.query(query)
 print(response)
