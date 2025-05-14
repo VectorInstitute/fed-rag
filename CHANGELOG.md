@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.14] - 2025-05-14
+
+### Added
+
+- `LlamaIndexBridge` (#285)
+- Add base bridge mixin (#284)
+
 ## [0.0.13] - 2025-05-10
 
 ### Added
