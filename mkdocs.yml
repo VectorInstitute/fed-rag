@@ -120,7 +120,6 @@ nav:
       - api_reference/trainers/index.md
       - api_reference/trainers/pytorch.md
       - api_reference/trainers/huggingface.md
-  - Glossary: glossary.md
   - Community:
     - Contributing:
       - community/contributing/index.md
