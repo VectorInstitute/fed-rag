@@ -26,7 +26,7 @@ docs = [
 
 [project]
 name = "fed-rag"
-version = "0.0.14"
+version = "0.0.14.post1"
 description = "A framework for federated fine-tuning of retrieval-augmented generation (RAG) systems."
 license = "Apache-2.0"
 keywords = ["machine learning", "federated learning", "deep learning", "llms", "rag", "retrieval", "semantic search"]

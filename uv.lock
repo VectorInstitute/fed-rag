@@ -819,7 +819,7 @@ wheels = [
 
 [[package]]
 name = "fed-rag"
-version = "0.0.14"
+version = "0.0.14.post1"
 source = { editable = "." }
 dependencies = [
     { name = "datasets" },
