@@ -43,5 +43,5 @@ This page documents currently supported integrations and our roadmap for future 
 
 !!! note "Contributing Integrations"
     We welcome community contributions for additional integrations. See our
-    [contribution guidelines](./CONTRIBUTING.md) for more information on
-    implementing and submitting new integrations.
+    [CONTRIBUTING](https://github.com/VectorInstitute/fed-rag/blob/main/CONTRIBUTING.md)
+    guidelines for more information on implementing and submitting new integrations.
