@@ -122,13 +122,12 @@ nav:
       - api_reference/trainers/huggingface.md
   - Glossary: glossary.md
   - Community:
-    - community/index.md
     - Contributing:
       - community/contributing/index.md
       - Ask a Question: community/contributing/ask_question.md
       - Submitting an Issue: community/contributing/submit_issue.md
       - Submitting a Pull Request: community/contributing/submit_pr.md
-    - Changelog: ../CHANGELOG.md
+    - Changelog: community/changelog.md
     - Resources:
       - AI Pocket References: community/resources/pocket_references.md
 plugins:

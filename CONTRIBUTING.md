@@ -185,6 +185,7 @@ make test
 
 We have several channels for project communication:
 
+- Join our [Discord community](https://discord.gg/5GMpSCFbTe)
 - For bug reports and feature requests, use [GitHub Issues](https://github.com/VectorInstitute/fed-rag/issues)
 - For longer discussions, use [GitHub Discussions](https://github.com/VectorInstitute/fed-rag/discussions)
 
