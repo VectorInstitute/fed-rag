@@ -122,7 +122,6 @@ nav:
       - api_reference/trainers/huggingface.md
   - Glossary: glossary.md
   - Community:
-    - community/index.md
     - Contributing:
       - community/contributing/index.md
       - Ask a Question: community/contributing/ask_question.md
