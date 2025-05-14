@@ -1,173 +1,100 @@
 # Standard Usage
 
-The standard usage pattern for FedRAG aligns to a natural RAG fine-tuning workflow,
-and looks as follows:
+The standard usage pattern for fine-tuning a RAG system with FedRAG follows the
+below listed steps:
 
-1. Build a [`RAGSystem`](../api_reference/rag_system/index.md)
-2. Create a [`RAGFinetuningDataset`](../api_reference/finetuning_datasets/index.md)
-3. Define a training loop and evaluation function and decorate both of these with
-the appropriate [`decorators`](../api_reference/decorators/index.md).
-4. Create an [`FLTask`](../api_reference/fl_tasks/index.md)
-5. Spin up FL servers and clients to begin federated fine-tuning!
+1. Build a `train_dataset` that contains examples of (query, response) pairs.
+2. Specify a retriever trainer as well as a generator trainer.
+3. Construct a RAG trainer manager and invoke the `train()` method
+4. (Optional) Get the associated `FLTask` `RAGTrainerManager.get_federated_task()`
 
-In the following subsections, we briefly elaborate on what's involved in each of
-these listed steps.
+!!! info
+    These steps assume that you have already constructed your `RAGSystem` that
+    you intend to fine-tune.
 
-!!! note
-    Steps 1. through 3. are—minus the decoration of trainers and testers—typical
-    steps one would perform for a centralized RAG fine-tuning task.
+!!! info
+    The below code snippets require the `hugginface` extra to be installed, which
+    can be done via a `pip install fed-rag[huggingface]`.
 
-!!! tip
-    Before proceeding to federated learning, one should verify that the centralized
-    task runs as intended with a representative dataset. In fact, centralized learning
-    represents a standard baseline with which to compare federated learning results.
+## Build a `train_dataset`
 
-## Build a `RAGSystem`
+For now, all FedRAG trainers deal with datasets that comprise of examples with
+(query, answer) pairs.
 
-Building a [`RAGSystem`](../api_reference/rag_system/index.md) involves defining
-a [`Retriever`](../api_reference/retrievers/index.md),
-[`KnowledgeStore`](../api_reference/knowledge_stores/index.md) as well as
-[`Generator`](../api_reference/generators/index.md), and subsequently supplying
-these along with a [`RAGConfig`](../api_reference/rag_system/index.md) (to define
-parameters such a `top_k`) to the [`RAGSystem`](../api_reference/rag_system/index.md)
-constructor.
+```py title="Example: a train dataset for HuggingFace"
+from datasets import Dataset
 
-``` py title="building a rag system"
-from fed_rag import RAGSystem, RAGConfig
-
-# three main components
-retriever = ...
-knowledge_store = ...
-generator = ...
-
-rag = RAGSystem(
-    generator=generator,
-    retriever=retriever,
-    knowledge_store=knowledge_store,
-    rag_config=RAGConfig(top_k=2),
+train_dataset = Dataset.from_dict(
+    {
+        "query": ["a query", "another query", ...],
+        "response": [
+            "reponse to a query",
+            "another response to another query",
+            ...,
+        ],
+    }
 )
 ```
 
-## Create a `RAGFinetuningDataset`
+## Specify a retriever and generator trainer
 
-With a [`RAGSystem`](../api_reference/rag_system/index.md) in place, we can create a fine-tuning dataset using examples
-that contain queries and their associated answers. In retrieval-augmented generator
-fine-tuning, we process each example by calling the `RAGSystem.retrieve()` method
-with the query to fetch relevant knowledge nodes from the connected [`KnowledgeStore`](../api_reference/knowledge_stores/index.md).
-These contextual nodes enhance each example, creating a collection of
-retrieval-augmented examples that form the RAG fine-tuning dataset for generator
-model training. Our how-to guides provide detailed instructions on performing this
-type of fine-tuning, as well as other approaches.
+FedRAG trainer classes bear the responsibility of training the associated retriever
+or generator on the training dataset. It has an attached data collator that takes
+a batch of the training dataset and applies the "forward" pass of the RAG system
+(i.e., retrieval from the knowledge store and if required, the subsequent generation
+step), and returns the `~torch.Tensors` required for computing the desire loss.
 
-=== "pytorch"
+These trainer classes take your `RAGSystem` as input amongst possibly other
+parameters.
 
-    ``` py title="creating a RAG fine-tuning dataset"
-    from fed_rag.utils.data import build_finetune_dataset
+```py title="Example HuggingFaceTrainers"
+from fed_rag.trainers.huggingface import (
+    HuggingFaceTrainerForRALT,
+    HuggingFaceTrainerForLSR,
+)
 
-    examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
+retriever_trainer = HuggingFaceTrainerForLSR(rag_system)
+generator_trainer = HuggingFaceTrainerForRALT(rag_system)
+```
 
-    dataset = build_finetune_dataset(
-        rag_system=rag_system, examples=examples, return_dataset="pt", ...  # (1)!
-    )
-    ```
+## Create a `RAGTrainerManager`
 
-    1. Check the [API Reference](../api_reference/finetuning_datasets/index.md)
-    for the remaining required parameters
+The trainer manager class is responsible for orchestrating the training of the RAG
+system.
 
-=== "huggingface"
+```py title="Example HuggingFaceRAGTrainerManager"
+from fed_rag.trainer_managers.huggingface import HuggingFaceRAGTrainerManager
 
-    ``` py title="creating a RAG fine-tuning dataset"
-    from fed_rag.utils.data import build_finetune_dataset
+trainer_manager = HuggingFaceRAGTrainerManager(
+    mode="retriever",
+    retriever_trainer=retriever_trainer,
+    generator_trainer=generator_trainer,
+)
 
-    examples: list[dict[str, str]] = [{"query": ..., "answer": ...}, ...]
+# train
+result = trainer_manager.train()
+print(result.loss)
+```
 
-    dataset = build_finetune_dataset(
-        rag_system=rag_system, examples=examples, return_dataset="hf", ...  # (1)!
-    )
-    ```
+!!! note
+    Alternating training of the retriever and generator can be done by modifying
+    the `mode` attribute of the manager and calling `train()`. In the future, the
+    trainer manager will be able to orchestrate between retriever and generator
+    fine-tuning within a single epoch.
 
-    1. Check the [API Reference](../api_reference/finetuning_datasets/index.md)
-    for the remaining required parameters
+## (Optional) Get the `FLTask` for federated training
 
-## Define a training loop and evaluation function
+FedRAG trainer managers offer a simple way to get the associated `FLTask` for
+federated fine-tuning.
 
-Like any model training process, a training loop establishes how the model learns
-from the dataset. Since RAG systems are essentially assemblies of component models
-(namely retriever and generator), we need to define a specific training loop to effectively learn from RAG fine-tuning datasets.
+```py title="Convert centralized to federated task"
+fl_task = trainer_manager.get_federated_task()  # (1)!
+```
 
-The lift to transform this from a centralized task is to a federated one is minimal
-with FedRAG, and the first step towards this endeavour amounts to the application
-of trainer and tester [`decorators`](../api_reference/decorators/index.md)
-on the respective functions.
+1. This will return an `FLTask` for either the retriever trainer or the generator
+trainer task, depending on the `mode` that the trainer manager is currently set on.
 
-=== "pytorch"
-
-    ``` py title="decorating training loops and evaluation functions"
-    from fed_rag.decorators import federate
-
-
-    @federate.trainer.pytorch
-    def training_loop():
-        ...
-
-
-    @federate.tester.pytorch
-    def evaluate():
-        ...
-    ```
-
-=== "huggingface"
-
-    ``` py title="decorating training loops and evaluation functions"
-    from fed_rag.decorators import federate
-
-
-    @federate.trainer.huggingface
-    def training_loop():
-        ...
-
-
-    @federate.tester.huggingface
-    def evaluate():
-        ...
-    ```
-
-These decorators perform inspection on these functions to automatically parse
-the model as well as training and validation datasets.
-
-## Create an `FLTask`
-
-The final step in the federation transformation involves building an
-[`FLTask`](../api_reference/fl_tasks/index.md) using the decorated trainer and
-evaluation function.
-
-=== "pytorch"
-
-    ``` py title="defining the FL task"
-    from fed_rag.fl_tasks.pytorch import PyTorchFLTask
-
-    # use from_trainer_tester class method
-    fl_task = PyTorchFLTask.from_trainer_and_tester(
-        trainer=decorated_trainer, tester=decorated_tester  # (1)!
-    )
-    ```
-
-    1. decorated with `federate.trainer.pytorch` and `federate.tester.pytorch`, respectively
-
-=== "huggingface"
-
-    ``` py title="defining the FL task"
-    from fed_rag.fl_tasks.huggingface import HuggingFaceFLTask
-
-    # use from_trainer_tester class method
-    fl_task = HuggingFaceFLTask.from_trainer_and_tester(
-        trainer=decorated_trainer, tester=decorated_tester  # (1)!
-    )
-    ```
-
-    1. decorated with `federate.trainer.huggingface` and `federate.tester.huggingface`, respectively
-
-## Spin up FL servers and clients
+### Spin up FL servers and clients
 
 With an `FLTask`, we can obtain an FL server as well as clients. Starting a server
 and required number of clients will commence the federated training.
