@@ -1,7 +1,9 @@
-# Advanced Usage
+# Low-level RALT Implementation
 
-The standard usage pattern for FedRAG aligns to a natural RAG fine-tuning workflow,
-and looks as follows:
+Here, we demonstrate an alternative manner in which users can perform RALT training
+that utilizes the lower level API of FedRAG. In particular, rather than working
+with FedRAG's [`BaseTrainer`](../../api_reference/trainers/index.md) and
+[`BaseDataCollator`](../../api_reference/data_collators/index.md).
 
 1. Build a [`RAGSystem`](../api_reference/rag_system/index.md)
 2. Create a [`RAGFinetuningDataset`](../api_reference/finetuning_datasets/index.md)
