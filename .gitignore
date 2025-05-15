@@ -36,3 +36,9 @@ qdrant_storage
 
 # notebooks
 dev_notebooks
+
+# trainer outputs
+trainer_output
+
+
+..bfg-report

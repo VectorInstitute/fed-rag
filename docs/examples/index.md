@@ -1,8 +1,8 @@
-# In-Depth Examples
+# Case Studies
 
 <!-- markdownlint-disable-file MD041 MD033 MD042 -->
 
-Here are some in-depth examples to further demonstrate FedRAG's usage and its
+Here are some in-depth case studies to further demonstrate FedRAG's usage and its
 overall utilty.
 
 <div class="grid cards" markdown>

@@ -52,7 +52,7 @@ nav:
       - Retriever Fine-tuning with LSR: getting_started/tutorials/lsr.md
       - Generator Fine-tuning with RALT: getting_started/tutorials/ralt.md
     - Integrations: getting_started/integrations.md
-  - In-Depth Examples:
+  - Case Studies:
     - examples/index.md
     - RA-DIT:
       - examples/ra_dit/index.md
@@ -62,6 +62,8 @@ nav:
       - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
     - LlamaIndex:
       - examples/llamaindex/index.md
+  - Notebooks:
+    - notebooks/basic_starter_hf.ipynb
   - API Reference:
     - api_reference/index.md
     - Bridges:
@@ -144,6 +146,8 @@ plugins:
             show_root_toc_entry: false
             show_symbol_type_heading: true
             show_symbol_type_toc: true
+  - mkdocs-jupyter:
+      execute: false
 repo_url: https://github.com/VectorInstitute/fed-rag
 repo_name: VectorInsitute/fed-rag
 site_name: FedRAG
