@@ -1,14 +1,17 @@
 """Internal RAG System Module"""
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeMetadata
-from fed_rag.base.generator import BaseGenerator
-from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.base.retriever import BaseRetriever
 from fed_rag.types.knowledge_node import KnowledgeNode
+
+if TYPE_CHECKING:  # pragma: no cover
+    # to avoid circular imports, using forward refs
+    from fed_rag.base.generator import BaseGenerator
+    from fed_rag.base.knowledge_store import BaseKnowledgeStore
+    from fed_rag.base.retriever import BaseRetriever
 
 
 class SourceNode(BaseModel):
@@ -44,9 +47,9 @@ class _RAGSystem(BaseModel):
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    generator: BaseGenerator
-    retriever: BaseRetriever
-    knowledge_store: BaseKnowledgeStore
+    generator: "BaseGenerator"
+    retriever: "BaseRetriever"
+    knowledge_store: "BaseKnowledgeStore"
     rag_config: RAGConfig
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
@@ -83,3 +86,19 @@ class _RAGSystem(BaseModel):
         return self.rag_config.context_separator.join(
             [node.get_content()["text_content"] for node in source_nodes]
         )
+
+
+def _resolve_forward_refs() -> None:
+    """Resolve forward references in _RAGSystem."""
+
+    # These imports are needed for Pydantic to resolve forward references
+    # ruff: noqa: F401
+    from fed_rag.base.generator import BaseGenerator
+    from fed_rag.base.knowledge_store import BaseKnowledgeStore
+    from fed_rag.base.retriever import BaseRetriever
+
+    # Update forward references
+    _RAGSystem.model_rebuild()
+
+
+_resolve_forward_refs()

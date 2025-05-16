@@ -1,10 +1,12 @@
 """Base Knowledge Store"""
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from fed_rag.types.knowledge_node import KnowledgeNode
+if TYPE_CHECKING:  # pragma: no cover
+    from fed_rag.types.knowledge_node import KnowledgeNode
 
 DEFAULT_KNOWLEDGE_STORE_NAME = "default"
 
@@ -19,17 +21,17 @@ class BaseKnowledgeStore(BaseModel, ABC):
     )
 
     @abstractmethod
-    def load_node(self, node: KnowledgeNode) -> None:
-        """Load a KnowledgeNode into the KnowledgeStore."""
+    def load_node(self, node: "KnowledgeNode") -> None:
+        """Load a "KnowledgeNode" into the KnowledgeStore."""
 
     @abstractmethod
-    def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
-        """Load multiple KnowledgeNodes in batch."""
+    def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
+        """Load multiple "KnowledgeNode"s in batch."""
 
     @abstractmethod
     def retrieve(
         self, query_emb: list[float], top_k: int
-    ) -> list[tuple[float, KnowledgeNode]]:
+    ) -> list[tuple[float, "KnowledgeNode"]]:
         """Retrieve top-k nodes from KnowledgeStore against a provided user query.
 
         Returns:

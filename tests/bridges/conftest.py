@@ -10,7 +10,7 @@ from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types._rag_system import RAGConfig, RAGSystem
+from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 
 class _TestDataset(Dataset):
