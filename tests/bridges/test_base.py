@@ -26,7 +26,7 @@ class _TestBridgeMixin(BaseBridgeMixin):
 
 
 # overwrite RAGSystem for this test
-class RAGSystem(_TestBridgeMixin, BaseModel):
+class _RAGSystem(_TestBridgeMixin, BaseModel):
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
     @classmethod
@@ -55,9 +55,9 @@ def test_bridge_get_metadata() -> None:
 
 
 def test_rag_system_registry() -> None:
-    rag_system = RAGSystem()
+    rag_system = _RAGSystem()
 
-    assert _TestBridgeMixin._framework in RAGSystem.bridges
+    assert _TestBridgeMixin._framework in _RAGSystem.bridges
 
     metadata = rag_system.bridges["my-bridge-framework"]
 
@@ -74,7 +74,7 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
         "To fix please run `pip install fed-rag[my-bridge]`."
     )
     with pytest.raises(MissingExtraError, match=re.escape(msg)):
-        rag_system = RAGSystem()
+        rag_system = _RAGSystem()
         rag_system.to_bridge()
 
     # without bridge-extra
@@ -83,8 +83,8 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
         "To fix please run `pip install my-bridge-framework`."
     )
     with pytest.raises(MissingExtraError, match=re.escape(msg)):
-        RAGSystem._bridge_extra = None  # type:ignore [assignment]
-        rag_system = RAGSystem()
+        _RAGSystem._bridge_extra = None  # type:ignore [assignment]
+        rag_system = _RAGSystem()
         rag_system.to_bridge()
 
 
@@ -100,7 +100,7 @@ def test_invalid_mixin_raises_error() -> None:
             _method_name = "missing_method"
 
         # overwrite RAGSystem for this test
-        class RAGSystem(InvalidMixin, BaseModel):
+        class _RAGSystem(InvalidMixin, BaseModel):
             bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
             @classmethod

@@ -1,77 +1,35 @@
-"""RAG System"""
+"""Public RAG System API.
 
-from typing import Any, ClassVar
-
-from pydantic import BaseModel, ConfigDict
+This module contains the public RAGSystem class that users interact with.
+It combines the base implementation with available bridge mixins.
+"""
 
 from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-from fed_rag.base.bridge import BridgeMetadata
-from fed_rag.base.generator import BaseGenerator
-from fed_rag.base.knowledge_store import BaseKnowledgeStore
-from fed_rag.base.retriever import BaseRetriever
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types._rag_system import (
+    RAGConfig,
+    RAGResponse,
+    SourceNode,
+    _RAGSystem,
+)
 
 
-class SourceNode(BaseModel):
-    score: float
-    node: KnowledgeNode
+# Define the public RAGSystem with all available bridges
+class RAGSystem(LlamaIndexBridgeMixin, _RAGSystem):
+    """RAG System with all available bridge functionality.
 
-    def __getattr__(self, __name: str) -> Any:
-        """Convenient wrapper on getattr of associated node."""
-        return getattr(self.node, __name)
+    The RAGSystem is the main entry point for creating and managing
+    retrieval-augmented generation systems. It integrates retrievers,
+    generators, and knowledge stores into a unified workflow.
 
+    In addition to core RAG functionality, it provides bridge methods
+    to popular frameworks:
 
-class RAGResponse(BaseModel):
-    response: str
-    source_nodes: list[SourceNode]
+    - to_llamaindex(): Convert to a LlamaIndex object (requires llama-index)
+    - to_langchain(): Convert to a LangChain object (requires langchain)
+    """
 
-    def __str__(self) -> str:
-        return self.response
-
-
-class RAGConfig(BaseModel):
-    top_k: int
-    context_separator: str = "\n"
+    pass
 
 
-class RAGSystem(LlamaIndexBridgeMixin, BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    generator: BaseGenerator
-    retriever: BaseRetriever
-    knowledge_store: BaseKnowledgeStore
-    rag_config: RAGConfig
-    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
-
-    @classmethod
-    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """To be used only by `BaseBridgeMixin`."""
-        if metadata["framework"] not in cls.bridges:
-            cls.bridges[metadata["framework"]] = metadata
-
-    def query(self, query: str) -> RAGResponse:
-        """Query the RAG system."""
-        source_nodes = self.retrieve(query)
-        context = self._format_context(source_nodes)
-        response = self.generate(query=query, context=context)
-        return RAGResponse(source_nodes=source_nodes, response=response)
-
-    def retrieve(self, query: str) -> list[SourceNode]:
-        """Retrieve from KnowledgeStore."""
-        query_emb: list[float] = self.retriever.encode_query(query).tolist()
-        raw_retrieval_result = self.knowledge_store.retrieve(
-            query_emb=query_emb, top_k=self.rag_config.top_k
-        )
-        return [
-            SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
-        ]
-
-    def generate(self, query: str, context: str) -> str:
-        """Generate response to query with context."""
-        return self.generator.generate(query=query, context=context)  # type: ignore
-
-    def _format_context(self, source_nodes: list[SourceNode]) -> str:
-        """Format the context from the source nodes."""
-        # TODO: how to format image context
-        return self.rag_config.context_separator.join(
-            [node.get_content()["text_content"] for node in source_nodes]
-        )
+# Export public classes
+__all__ = ["RAGSystem", "RAGConfig", "RAGResponse", "SourceNode"]
