@@ -11,8 +11,8 @@ from ..core.rag_system import RAGSystem
 from .rag import RAGConfig, RAGResponse, SourceNode
 
 warnings.warn(
-    "Importing RAGSystem from fed_rag.types.rag_system is deprecated. "
-    "Use fed_rag.core.rag_system or fed_rag.api instead.",
+    "Importing RAGSystem from fed_rag.types.rag_system is deprecated and will be"
+    "removed in a future release. Use fed_rag.core.rag_system or fed_rag instead.",
     DeprecationWarning,
     stacklevel=2,  # point to users import statement
 )
