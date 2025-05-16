@@ -21,6 +21,7 @@ def test_type_imports() -> None:
             KnowledgeNode,
             NodeContent,
             NodeType,
+            RAGConfig,
             RAGResponse,
             SourceNode,
             TestResult,
