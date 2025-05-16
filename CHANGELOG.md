@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.15] - 2025-05-16
+
+### Added
+
+- `.api` public module (#307)
+- New `core` module that houses `RAGSystem` (#306)
+
+### Changed
+
+- Refactor: move aux RAG system types to `fed_rag.types.rag` (#306)
+
 ## [0.0.14] - 2025-05-14
 
 ### Added
