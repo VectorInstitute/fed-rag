@@ -1,10 +1,21 @@
 from contextlib import nullcontext as does_not_raise
 
 
-def test_no_circular_imports() -> None:
+def test_type_imports() -> None:
     """Test that there are no circular imports in the types module."""
     with does_not_raise():
-        pass
+        # ruff: noqa: F401
+        from fed_rag.types import (  # results; knowledge node; rag system
+            KnowledgeNode,
+            NodeContent,
+            NodeType,
+            RAGConfig,
+            RAGResponse,
+            RAGSystem,
+            SourceNode,
+            TestResult,
+            TrainResult,
+        )
 
 
 def test_root_imports() -> None:
