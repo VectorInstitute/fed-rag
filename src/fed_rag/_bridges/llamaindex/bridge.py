@@ -2,8 +2,8 @@
 
 from typing import TYPE_CHECKING
 
+from fed_rag._bridges.llamaindex._version import __version__
 from fed_rag.base.bridge import BaseBridgeMixin
-from fed_rag.bridges.llamaindex._version import __version__
 
 if TYPE_CHECKING:  # pragma: no cover
     from llama_index.core.indices.managed.base import BaseManagedIndex
@@ -29,7 +29,7 @@ class LlamaIndexBridgeMixin(BaseBridgeMixin):
         """Converts the RAGSystem to a ~llamaindex.core.BaseManagedIndex."""
         self._validate_framework_installed()
 
-        from fed_rag.bridges.llamaindex._managed_index import (
+        from fed_rag._bridges.llamaindex._managed_index import (
             FedRAGManagedIndex,
         )
 

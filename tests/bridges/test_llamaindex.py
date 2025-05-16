@@ -6,12 +6,12 @@ from llama_index.core.schema import MediaResource
 from llama_index.core.schema import Node as LlamaNode
 from llama_index.core.schema import QueryBundle
 
-from fed_rag.bridges.llamaindex._managed_index import (
+from fed_rag._bridges.llamaindex._managed_index import (
     FedRAGManagedIndex,
     convert_llama_index_node_to_knowledge_node,
     convert_source_node_to_llama_index_node_with_score,
 )
-from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
+from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.exceptions import BridgeError
 from fed_rag.types.rag_system import KnowledgeNode, RAGSystem, SourceNode
 
@@ -24,7 +24,7 @@ def test_rag_system_bridges(mock_rag_system: RAGSystem) -> None:
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
 
 
-@patch("fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex")
+@patch("fed_rag._bridges.llamaindex._managed_index.FedRAGManagedIndex")
 def test_rag_system_conversion_method(
     mock_managed_index_class: MagicMock, mock_rag_system: RAGSystem
 ) -> None:
@@ -149,7 +149,7 @@ def test_fedrag_managed_index_as_retriever_retrieve_method(
 
 @patch("llama_index.core.indices.base.resolve_llm")
 @patch(
-    "fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
+    "fed_rag._bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
 )
 def test_fedrag_managed_index_as_query_engine_mocked(
     mock_fedrag_llm_class: MagicMock,

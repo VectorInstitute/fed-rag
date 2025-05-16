@@ -4,11 +4,11 @@ from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
+from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.base.bridge import BridgeMetadata
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.base.retriever import BaseRetriever
-from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 
