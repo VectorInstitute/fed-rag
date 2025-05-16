@@ -13,7 +13,7 @@ from .core import __all__ as _core_all
 from .types import *
 from .types import __all__ as _types_all
 
-API_VERSION = "0.1.0"
+API_VERSION = "0.0.1"
 
 
 def get_api_version() -> str:
