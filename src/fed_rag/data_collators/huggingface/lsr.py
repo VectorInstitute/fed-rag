@@ -5,10 +5,10 @@ from typing import Any, Callable
 import torch
 from pydantic import Field, PrivateAttr
 
+from fed_rag import RAGSystem
 from fed_rag.base.data_collator import BaseDataCollator
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
-from fed_rag.types.rag_system import RAGSystem
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:

@@ -1,5 +1,5 @@
+from fed_rag import RAGSystem
 from fed_rag.exceptions import FedRAGError
-from fed_rag.types.rag_system import RAGSystem
 
 
 def _validate_rag_system(rag_system: RAGSystem) -> None:
