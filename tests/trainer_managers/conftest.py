@@ -6,6 +6,7 @@ import torch
 from pydantic import PrivateAttr
 from torch.utils.data import DataLoader, Dataset
 
+from fed_rag import RAGConfig, RAGSystem
 from fed_rag.base.fl_task import BaseFLTask
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
@@ -13,7 +14,6 @@ from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.rag_system import RAGConfig, RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 
 

@@ -4,12 +4,12 @@ import pytest
 import torch
 from pydantic import PrivateAttr
 
+from fed_rag import RAGConfig, RAGSystem
 from fed_rag.base.data_collator import BaseDataCollator
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 
 class MockRetriever(BaseRetriever):

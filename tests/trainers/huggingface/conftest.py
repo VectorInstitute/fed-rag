@@ -4,9 +4,9 @@ from datasets import Dataset
 from sentence_transformers import SentenceTransformer
 from transformers import Trainer
 
+from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
-from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 
 

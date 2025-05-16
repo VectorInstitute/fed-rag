@@ -18,8 +18,8 @@ from llama_index.core.schema import Node as LlamaNode
 from llama_index.core.schema import NodeWithScore, QueryBundle
 
 from fed_rag.exceptions import BridgeError
+from fed_rag.types._rag_system import SourceNode, _RAGSystem
 from fed_rag.types.knowledge_node import KnowledgeNode
-from fed_rag.types.rag_system import RAGSystem, SourceNode
 
 
 def convert_source_node_to_llama_index_node_with_score(
@@ -64,9 +64,9 @@ def convert_llama_index_node_to_knowledge_node(
 class FedRAGManagedIndex(BaseManagedIndex):
     # Inner Clases
     class FedRAGRetriever(BaseRetriever):
-        """A ~llama_index.BaseRetriever adapter for fed_rag.RAGSystem."""
+        """A ~llama_index.BaseRetriever adapter for fed_rag._RAGSystem."""
 
-        def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
+        def __init__(self, rag_system: _RAGSystem, *args: Any, **kwargs: Any):
             super().__init__(*args, **kwargs)
             self._rag_system = rag_system
 
@@ -84,12 +84,12 @@ class FedRAGManagedIndex(BaseManagedIndex):
             ]
 
     class FedRAGLLM(CustomLLM):
-        """A ~llama_index.LLM adapter for fed_rag.RAGSystem.
+        """A ~llama_index.LLM adapter for fed_rag._RAGSystem.
 
         NOTE: this is a very basic LLM adapter.
         """
 
-        def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
+        def __init__(self, rag_system: _RAGSystem, *args: Any, **kwargs: Any):
             super().__init__(*args, **kwargs)
             self._rag_system = rag_system
 
@@ -119,7 +119,7 @@ class FedRAGManagedIndex(BaseManagedIndex):
             return IndexStructType.VECTOR_STORE
 
     # methods and attributes
-    def __init__(self, rag_system: RAGSystem, *args: Any, **kwargs: Any):
+    def __init__(self, rag_system: _RAGSystem, *args: Any, **kwargs: Any):
         nodes = kwargs.get("nodes", [])
         if len(list(nodes)) > 0:
             raise BridgeError(
@@ -170,5 +170,5 @@ class FedRAGManagedIndex(BaseManagedIndex):
         self, nodes: Sequence[LlamaNode], **build_kwargs: Any
     ) -> IndexStruct:
         return self.FedRAGIndexStruct(
-            summary="~fed_rag.FedRAGManagedIndex wrapper of RAGSystem."
+            summary="~fed_rag.FedRAGManagedIndex wrapper of _RAGSystem."
         )

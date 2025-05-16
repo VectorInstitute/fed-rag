@@ -6,17 +6,17 @@ from llama_index.core.schema import MediaResource
 from llama_index.core.schema import Node as LlamaNode
 from llama_index.core.schema import QueryBundle
 
-from fed_rag.bridges.llamaindex._managed_index import (
+from fed_rag._bridges.llamaindex._managed_index import (
     FedRAGManagedIndex,
     convert_llama_index_node_to_knowledge_node,
     convert_source_node_to_llama_index_node_with_score,
 )
-from fed_rag.bridges.llamaindex.bridge import LlamaIndexBridgeMixin
+from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
 from fed_rag.exceptions import BridgeError
-from fed_rag.types.rag_system import KnowledgeNode, RAGSystem, SourceNode
+from fed_rag.types._rag_system import KnowledgeNode, SourceNode, _RAGSystem
 
 
-def test_rag_system_bridges(mock_rag_system: RAGSystem) -> None:
+def test_rag_system_bridges(mock_rag_system: _RAGSystem) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
 
     assert "llama-index" in mock_rag_system.bridges
@@ -24,9 +24,9 @@ def test_rag_system_bridges(mock_rag_system: RAGSystem) -> None:
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
 
 
-@patch("fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex")
+@patch("fed_rag._bridges.llamaindex._managed_index.FedRAGManagedIndex")
 def test_rag_system_conversion_method(
-    mock_managed_index_class: MagicMock, mock_rag_system: RAGSystem
+    mock_managed_index_class: MagicMock, mock_rag_system: _RAGSystem
 ) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
 
@@ -101,14 +101,14 @@ def test_convert_source_node_to_llama_node_with_score() -> None:
 
 
 # test FedRAGManagedIndex
-def test_fedrag_managed_index_init(mock_rag_system: RAGSystem) -> None:
+def test_fedrag_managed_index_init(mock_rag_system: _RAGSystem) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
 
     assert index._rag_system == mock_rag_system
 
 
 def test_fedrag_managed_index_init_raises_error_nodes_passed(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     with pytest.raises(
         BridgeError,
@@ -117,7 +117,9 @@ def test_fedrag_managed_index_init_raises_error_nodes_passed(
         FedRAGManagedIndex(rag_system=mock_rag_system, nodes=[LlamaNode()])
 
 
-def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
+def test_fedrag_managed_index_as_retriever(
+    mock_rag_system: _RAGSystem,
+) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
     retriever = index.as_retriever()
 
@@ -126,7 +128,7 @@ def test_fedrag_managed_index_as_retriever(mock_rag_system: RAGSystem) -> None:
 
 
 def test_fedrag_managed_index_as_retriever_retrieve_method(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     mock_rag_system.knowledge_store.load_node(
         KnowledgeNode(
@@ -149,12 +151,12 @@ def test_fedrag_managed_index_as_retriever_retrieve_method(
 
 @patch("llama_index.core.indices.base.resolve_llm")
 @patch(
-    "fed_rag.bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
+    "fed_rag._bridges.llamaindex._managed_index.FedRAGManagedIndex.FedRAGLLM"
 )
 def test_fedrag_managed_index_as_query_engine_mocked(
     mock_fedrag_llm_class: MagicMock,
     mock_resolve_llm: MagicMock,
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
     query_engine = index.as_query_engine()
@@ -165,7 +167,7 @@ def test_fedrag_managed_index_as_query_engine_mocked(
 
 
 def test_fedrag_managed_index_as_query_engine(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     index = FedRAGManagedIndex(rag_system=mock_rag_system)
     query_engine = index.as_query_engine()
@@ -174,7 +176,7 @@ def test_fedrag_managed_index_as_query_engine(
 
 
 def test_fedrag_managed_index_delete_node(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     mock_rag_system.knowledge_store.load_node(
         KnowledgeNode(
@@ -194,7 +196,7 @@ def test_fedrag_managed_index_delete_node(
 
 
 def test_fedrag_managed_index_insert(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     llama_nodes = [
         LlamaNode(
@@ -217,7 +219,7 @@ def test_fedrag_managed_index_insert(
     assert index._rag_system.knowledge_store.count == 2
 
 
-def test_fedrag_llm_complete(mock_rag_system: RAGSystem) -> None:
+def test_fedrag_llm_complete(mock_rag_system: _RAGSystem) -> None:
     llm = FedRAGManagedIndex.FedRAGLLM(mock_rag_system)
 
     response = llm.complete("mock prompt")
@@ -226,7 +228,7 @@ def test_fedrag_llm_complete(mock_rag_system: RAGSystem) -> None:
 
 
 def test_fedrag_llm_stream_complete_raises_error(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     llm = FedRAGManagedIndex.FedRAGLLM(mock_rag_system)
 
@@ -239,7 +241,7 @@ def test_fedrag_llm_stream_complete_raises_error(
 
 ## test methods with no implementation
 def test_fedrag_managed_index_raises_not_implemented_error(
-    mock_rag_system: RAGSystem,
+    mock_rag_system: _RAGSystem,
 ) -> None:
     from llama_index.core.schema import Document
 

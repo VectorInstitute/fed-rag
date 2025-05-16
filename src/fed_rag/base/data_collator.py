@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag import RAGSystem
 
 
 class BaseDataCollator(BaseModel, ABC):

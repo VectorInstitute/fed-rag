@@ -1,10 +1,10 @@
 import pytest
 from torch.utils.data import DataLoader, Dataset
 
+from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.exceptions import InconsistentDatasetError
 from fed_rag.trainers.pytorch import PyTorchTrainerProtocol, TrainingArgs
-from fed_rag.types.rag_system import RAGSystem
 
 from .conftest import TestGeneratorTrainer, TestRetrieverTrainer
 

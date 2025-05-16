@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 import torch
 from pydantic import PrivateAttr, model_validator
 
+from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseRetrieverTrainer
 from fed_rag.data_collators.huggingface import DataCollatorForLSR
 from fed_rag.exceptions import (
@@ -16,7 +17,6 @@ from fed_rag.exceptions import (
 )
 from fed_rag.loss.pytorch.lsr import LSRLoss
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
-from fed_rag.types.rag_system import RAGSystem
 from fed_rag.types.results import TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
