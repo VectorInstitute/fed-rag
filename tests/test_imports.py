@@ -28,4 +28,6 @@ def test_root_imports() -> None:
 def test_base_direct_imports() -> None:
     """Test that base classes can be imported directly."""
     with does_not_raise():
-        pass
+        # ruff: noqa: F401
+        from fed_rag.base.bridge import BaseBridgeMixin
+        from fed_rag.base.data_collator import BaseDataCollator
