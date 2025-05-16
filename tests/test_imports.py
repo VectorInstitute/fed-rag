@@ -1,4 +1,9 @@
+import importlib
 from contextlib import nullcontext as does_not_raise
+
+import pytest
+
+from fed_rag import types
 
 
 def test_root_imports() -> None:
@@ -71,3 +76,13 @@ def test_all_simultaneously() -> None:
             TestResult,
             TrainResult,
         )
+
+
+@pytest.mark.parametrize("name", types.__all__)
+def test_types_all_importable(name: str) -> None:
+    """Tests that all names listed in __all__ are importable."""
+    mod = importlib.import_module("fed_rag.types")
+    attr = getattr(mod, name)
+
+    assert hasattr(mod, name)
+    assert attr is not None
