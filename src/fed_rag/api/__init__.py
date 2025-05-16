@@ -21,4 +21,4 @@ def get_api_version() -> str:
     return API_VERSION
 
 
-__all__ = _core_all + _types_all + ["API_VERSION", "get_api_version"]
+__all__ = sorted(_core_all + _types_all + ["API_VERSION", "get_api_version"])

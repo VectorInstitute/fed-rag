@@ -54,3 +54,5 @@ response = rag.query("How does retrieval-augmented generation work?")
                       │  User Code    │
                       └───────────────┘
 ```
+
+For project-wide documentation, see the [main README](../../../README.md).
