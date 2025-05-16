@@ -11,7 +11,7 @@ from accelerate.utils import gather_object
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from typing_extensions import Self
 
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.core.rag_system import RAGSystem
 
 
 class BenchmarkResult(BaseModel):

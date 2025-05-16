@@ -5,8 +5,8 @@ import re
 import pandas as pd
 from pydantic import PrivateAttr
 
+from fed_rag.core.rag_system import RAGSystem
 from fed_rag.generators.huggingface import HFPeftModelGenerator
-from fed_rag.types.rag_system import RAGSystem
 
 from .base import BaseBenchmark, ExamplePred, ScoredExamplePred
 

@@ -8,7 +8,7 @@ from typing import Literal
 
 from ra_dit.rag_system import main as get_rag_system
 
-from fed_rag.types.rag_system import RAGSystem
+from fed_rag.core.rag_system import RAGSystem
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets.huggingface import (
     HuggingFaceRAGFinetuningDataset,
