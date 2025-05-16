@@ -7,8 +7,8 @@ from typing import Literal
 from ra_dit.generators import GENERATORS
 from ra_dit.retrievers import RETRIEVERS
 
-from fed_rag.core.rag_system import RAGConfig, RAGSystem
 from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
+from fed_rag.types.rag_system import RAGConfig, RAGSystem
 
 logger = logging.getLogger("ra_dit.rag_system")
 
