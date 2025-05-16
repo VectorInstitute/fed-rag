@@ -1,4 +1,4 @@
-"""RAG System"""
+"""Internal RAG System Module"""
 
 from typing import Any, ClassVar
 
@@ -83,14 +83,3 @@ class _RAGSystem(BaseModel):
         return self.rag_config.context_separator.join(
             [node.get_content()["text_content"] for node in source_nodes]
         )
-
-
-# These imports must be after _RAGSystem to avoid circular dependencies
-# ruff: noqa: E402
-from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-
-
-class RAGSystem(LlamaIndexBridgeMixin, _RAGSystem):
-    """RAG System class."""
-
-    pass
