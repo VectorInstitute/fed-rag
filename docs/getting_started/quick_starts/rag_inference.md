@@ -144,7 +144,7 @@ Finally, with our three main components in hand, we can build our first
 [`RAGSystem`](../../api_reference/rag_system/index.md)!
 
 ``` py title="RAG system"
-from fed_rag.types.rag_system import RAGConfig, RAGSystem
+from fed_rag import RAGConfig, RAGSystem
 
 rag_config = RAGConfig(top_k=2)
 rag_system = RAGSystem(
