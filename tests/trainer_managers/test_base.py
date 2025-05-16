@@ -1,9 +1,9 @@
 import pytest
 
+from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import RAGTrainMode
 from fed_rag.exceptions import InconsistentRAGSystems, UnsupportedTrainerMode
-from fed_rag.types.rag_system import RAGSystem
 
 from .conftest import MockRAGTrainerManager
 

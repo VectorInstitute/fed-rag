@@ -8,6 +8,7 @@ import torch
 from pytest import MonkeyPatch
 from torch.testing import assert_close
 
+from fed_rag import RAGSystem
 from fed_rag.base.tokenizer import EncodeResult
 from fed_rag.data_collators.huggingface.ralt import (
     DEFAULT_EXAMPLE_TEMPLATE,
@@ -22,8 +23,7 @@ from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
-from fed_rag.types.knowledge_node import KnowledgeNode
-from fed_rag.types.rag_system import RAGSystem, SourceNode
+from fed_rag.types import KnowledgeNode, SourceNode
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:

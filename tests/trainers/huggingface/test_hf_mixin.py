@@ -7,10 +7,10 @@ from datasets import Dataset
 from pytest import MonkeyPatch
 from transformers import Trainer, TrainingArguments
 
+from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseRetrieverTrainer, BaseTrainer
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerProtocol
-from fed_rag.types.rag_system import RAGSystem
 
 from .conftest import TestHFGeneratorTrainer
 

@@ -8,9 +8,9 @@ from pytest import MonkeyPatch
 from transformers import Trainer
 from transformers.trainer_utils import TrainOutput
 
+from fed_rag import RAGSystem
 from fed_rag.exceptions import FedRAGError, MissingExtraError
 from fed_rag.trainers.huggingface.ralt import HuggingFaceTrainerForRALT
-from fed_rag.types.rag_system import RAGSystem
 
 
 def test_init(

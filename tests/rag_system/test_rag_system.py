@@ -2,11 +2,11 @@ from unittest.mock import MagicMock, patch
 
 import torch
 
+from fed_rag import RAGConfig, RAGSystem
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.knowledge_node import KnowledgeNode
-from fed_rag.types.rag_system import RAGConfig, RAGSystem, SourceNode
+from fed_rag.types import KnowledgeNode, SourceNode
 
 from .conftest import MockGenerator, MockRetriever
 
