@@ -4329,7 +4329,7 @@ text_chunks = [
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types.knowledge_node</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span><span class="p">,</span> <span class="n">NodeType</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span><span class="p">,</span> <span class="n">NodeType</span>
 
 <span class="c1"># create knowledge nodes</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -4353,7 +4353,7 @@ text_chunks = [
     <span class="p">)</span>
     <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">from fed_rag.types.knowledge_node import KnowledgeNode, NodeType
+<div class="clipboard-copy-txt" id="cell-5">from fed_rag.types import KnowledgeNode, NodeType
 
 # create knowledge nodes
 nodes = []
@@ -4570,7 +4570,7 @@ generator = HFPretrainedModelGenerator(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.types.rag_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
 
 <span class="n">rag_config</span> <span class="o">=</span> <span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">rag_system</span> <span class="o">=</span> <span class="n">RAGSystem</span><span class="p">(</span>
@@ -4580,7 +4580,7 @@ generator = HFPretrainedModelGenerator(
     <span class="n">rag_config</span><span class="o">=</span><span class="n">rag_config</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-10">from fed_rag.types.rag_system import RAGSystem, RAGConfig
+<div class="clipboard-copy-txt" id="cell-10">from fed_rag import RAGSystem, RAGConfig
 
 rag_config = RAGConfig(top_k=2)
 rag_system = RAGSystem(
