@@ -31,3 +31,15 @@ def test_base_direct_imports() -> None:
         # ruff: noqa: F401
         from fed_rag.base.bridge import BaseBridgeMixin
         from fed_rag.base.data_collator import BaseDataCollator
+        from fed_rag.base.fl_task import BaseFLTask
+        from fed_rag.base.generator import BaseGenerator
+        from fed_rag.base.knowledge_store import BaseKnowledgeStore
+        from fed_rag.base.retriever import BaseRetriever
+        from fed_rag.base.tokenizer import BaseTokenizer
+        from fed_rag.base.trainer import (
+            BaseGeneratorTrainer,
+            BaseRetrieverTrainer,
+            BaseTrainer,
+        )
+        from fed_rag.base.trainer_config import BaseTrainerConfig
+        from fed_rag.base.trainer_manager import BaseRAGTrainerManager
