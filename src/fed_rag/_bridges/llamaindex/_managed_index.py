@@ -17,8 +17,8 @@ from llama_index.core.schema import Document, MediaResource
 from llama_index.core.schema import Node as LlamaNode
 from llama_index.core.schema import NodeWithScore, QueryBundle
 
+from fed_rag.core._rag_system import SourceNode, _RAGSystem
 from fed_rag.exceptions import BridgeError
-from fed_rag.types._rag_system import SourceNode, _RAGSystem
 from fed_rag.types.knowledge_node import KnowledgeNode
 
 

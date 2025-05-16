@@ -5,35 +5,13 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeMetadata
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types import KnowledgeNode, RAGConfig, RAGResponse, SourceNode
 
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs
     from fed_rag.base.generator import BaseGenerator
     from fed_rag.base.knowledge_store import BaseKnowledgeStore
     from fed_rag.base.retriever import BaseRetriever
-
-
-class SourceNode(BaseModel):
-    score: float
-    node: KnowledgeNode
-
-    def __getattr__(self, __name: str) -> Any:
-        """Convenient wrapper on getattr of associated node."""
-        return getattr(self.node, __name)
-
-
-class RAGResponse(BaseModel):
-    response: str
-    source_nodes: list[SourceNode]
-
-    def __str__(self) -> str:
-        return self.response
-
-
-class RAGConfig(BaseModel):
-    top_k: int
-    context_separator: str = "\n"
 
 
 class _RAGSystem(BaseModel):
@@ -83,8 +61,10 @@ class _RAGSystem(BaseModel):
     def _format_context(self, source_nodes: list[SourceNode]) -> str:
         """Format the context from the source nodes."""
         # TODO: how to format image context
-        return self.rag_config.context_separator.join(
-            [node.get_content()["text_content"] for node in source_nodes]
+        return str(
+            self.rag_config.context_separator.join(
+                [node.get_content()["text_content"] for node in source_nodes]
+            )
         )
 
 

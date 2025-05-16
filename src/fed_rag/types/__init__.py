@@ -5,7 +5,7 @@ Only components defined in `__all__` are considered stable and public.
 """
 
 from .knowledge_node import KnowledgeNode, NodeContent, NodeType
-from .rag_system import RAGConfig, RAGResponse, RAGSystem, SourceNode
+from .rag import RAGConfig, RAGResponse, SourceNode
 from .results import TestResult, TrainResult
 
 __all__ = [
@@ -16,8 +16,7 @@ __all__ = [
     "KnowledgeNode",
     "NodeType",
     "NodeContent",
-    # rag system
-    "RAGSystem",
+    # rag
     "RAGConfig",
     "RAGResponse",
     "SourceNode",

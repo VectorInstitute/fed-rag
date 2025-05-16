@@ -1,5 +1,6 @@
 from fed_rag._version import VERSION
-from fed_rag.types.rag_system import RAGConfig, RAGSystem
+from fed_rag.core.rag_system import RAGSystem
+from fed_rag.types import RAGConfig
 
 __version__ = VERSION
 

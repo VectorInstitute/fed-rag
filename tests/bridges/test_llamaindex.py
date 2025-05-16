@@ -12,8 +12,8 @@ from fed_rag._bridges.llamaindex._managed_index import (
     convert_source_node_to_llama_index_node_with_score,
 )
 from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
+from fed_rag.core._rag_system import KnowledgeNode, SourceNode, _RAGSystem
 from fed_rag.exceptions import BridgeError
-from fed_rag.types._rag_system import KnowledgeNode, SourceNode, _RAGSystem
 
 
 def test_rag_system_bridges(mock_rag_system: _RAGSystem) -> None:
