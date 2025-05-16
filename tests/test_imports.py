@@ -5,7 +5,7 @@ def test_type_imports() -> None:
     """Test that there are no circular imports in the types module."""
     with does_not_raise():
         # ruff: noqa: F401
-        from fed_rag.types import (  # results; knowledge node; rag system
+        from fed_rag.types import (
             KnowledgeNode,
             NodeContent,
             NodeType,
@@ -21,7 +21,8 @@ def test_type_imports() -> None:
 def test_root_imports() -> None:
     """Test that core types can be imported from the root."""
     with does_not_raise():
-        pass
+        # ruff: noqa: F401
+        from fed_rag import RAGConfig, RAGSystem
 
 
 def test_base_direct_imports() -> None:
