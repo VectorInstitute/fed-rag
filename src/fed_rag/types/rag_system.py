@@ -1,23 +1,22 @@
-"""RAG System Module"""
+"""
+RAG System type definitions and implementation.
 
-from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-from fed_rag.types._rag_system import (
-    RAGConfig,
-    RAGResponse,
-    SourceNode,
-    _RAGSystem,
+Note: The RAGSystem implementation has moved to fed_rag.core.rag_system.
+This module is maintained for backward compatibility.
+"""
+
+import warnings
+
+from ..core.rag_system import RAGSystem
+from .rag import RAGConfig, RAGResponse, SourceNode
+
+warnings.warn(
+    "Importing RAGSystem from fed_rag.types.rag_system is deprecated and will be"
+    "removed in a future release. Use fed_rag.core.rag_system or fed_rag instead.",
+    DeprecationWarning,
+    stacklevel=2,  # point to users import statement
 )
 
 
-# Define the public RAGSystem with all available bridges
-class RAGSystem(LlamaIndexBridgeMixin, _RAGSystem):
-    """RAG System with all available bridge functionality.
-
-    The RAGSystem is the main entry point for creating and managing
-    retrieval-augmented generation systems.
-    """
-
-    pass
-
-
+# Export all symbols for backward compatibility
 __all__ = ["RAGSystem", "RAGConfig", "RAGResponse", "SourceNode"]

@@ -21,6 +21,7 @@ def test_type_imports() -> None:
             KnowledgeNode,
             NodeContent,
             NodeType,
+            RAGConfig,
             RAGResponse,
             SourceNode,
             TestResult,
@@ -86,3 +87,11 @@ def test_types_all_importable(name: str) -> None:
 
     assert hasattr(mod, name)
     assert attr is not None
+
+
+def test_import_rag_system_from_types() -> None:
+    """Test deprecated import path for RAGSystem from fed_rag.types"""
+
+    with pytest.warns(DeprecationWarning):
+        # ruff: noqa: F401
+        from fed_rag.types.rag_system import RAGSystem
