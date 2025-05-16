@@ -1,7 +1,7 @@
-"""Public API for fed-rag (Pre-1.0)
+"""Public API for fed-rag (Pre-0.1.0)
 
 This module defines the evolving public API for fed-rag. While we aim for stability,
-components here may change during the pre-1.0 development phase.
+components here may change during the pre-0.1.0 development phase.
 
 For most use cases, this is the only module you need to import from: fed_rag.api.
 """
