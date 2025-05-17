@@ -119,7 +119,8 @@ class FedRAGManagedIndex(BaseManagedIndex):
 
         @llm_completion_callback()
         def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
-            res = self._rag_system.generator.generate(query=prompt, context="")
+            with self.generator_for_llama() as generator:
+                res = generator.generate(query=prompt, context="")
             return CompletionResponse(text=res)
 
         @llm_completion_callback()
