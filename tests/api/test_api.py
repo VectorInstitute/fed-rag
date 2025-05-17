@@ -1,16 +1,8 @@
 import importlib
-from contextlib import nullcontext as does_not_raise
 
 import pytest
 
 from fed_rag import api
-
-
-def test_root_imports() -> None:
-    """Test public api imports"""
-    with does_not_raise():
-        # ruff: noqa: F401
-        from fed_rag.api import RAGConfig, RAGResponse, RAGSystem, SourceNode
 
 
 @pytest.mark.parametrize("name", api.__all__)
@@ -84,3 +76,8 @@ def test_no_internal_leakage() -> None:
     assert (
         "BaseRAGTrainerManager" not in api.__all__
     ), "API shouldn't expose base classes"
+
+    # no managed in-memory store
+    assert (
+        "ManagedInMemoryKnowledgeStore" not in api.__all__
+    ), "API shouldn't expose ManagedInMemoryKnowledgeStore"

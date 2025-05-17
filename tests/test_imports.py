@@ -69,6 +69,7 @@ def test_all_simultaneously() -> None:
         from fed_rag.base.trainer_config import BaseTrainerConfig
         from fed_rag.base.trainer_manager import BaseRAGTrainerManager
         from fed_rag.types import (
+            BridgeMetadata,
             KnowledgeNode,
             NodeContent,
             NodeType,

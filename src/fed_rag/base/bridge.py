@@ -2,7 +2,7 @@
 
 import importlib
 import importlib.util
-from typing import Any, ClassVar, Optional, TypedDict
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -10,13 +10,7 @@ from fed_rag.exceptions import (
     MissingExtraError,
     MissingSpecifiedConversionMethod,
 )
-
-
-class BridgeMetadata(TypedDict):
-    bridge_version: str
-    framework: str
-    compatible_versions: list[str]
-    method_name: str
+from fed_rag.types import BridgeMetadata
 
 
 class BaseBridgeMixin(BaseModel):
