@@ -3,7 +3,7 @@ from importlib.util import find_spec
 from fed_rag.exceptions import MissingExtraError
 
 
-def check_huggingface_installed(cls_name: str) -> None:
+def check_huggingface_installed(cls_name: str | None = None) -> None:
     transformers_spec = find_spec("transformers")
     peft_spec = find_spec("peft")
     sentence_transformers_spec = find_spec("sentence_transformers")
