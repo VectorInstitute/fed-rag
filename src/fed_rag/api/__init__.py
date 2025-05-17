@@ -14,6 +14,8 @@ from .generators import *
 from .generators import __all__ as _generators_all
 from .knowledge_stores import *
 from .knowledge_stores import __all__ as _knowledge_stores_all
+from .retrievers import *
+from .retrievers import __all__ as _retrievers_all
 from .types import *
 from .types import __all__ as _types_all
 
@@ -29,6 +31,7 @@ __all__ = sorted(
     _core_all
     + _generators_all
     + _knowledge_stores_all
+    + _retrievers_all
     + _types_all
     + ["API_VERSION", "get_api_version"]
 )
