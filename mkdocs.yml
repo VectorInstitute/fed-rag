@@ -61,8 +61,6 @@ nav:
       - Fine-tuning with QA Datasets: examples/ra_dit/finetune.md
       - Evaluate with Benchmarks: examples/ra_dit/benchmarking.md
       - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
-    - LlamaIndex:
-      - examples/llamaindex/index.md
   - Notebooks:
     - notebooks/basic_starter_hf.ipynb
     - Integrations:
