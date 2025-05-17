@@ -1,24 +1,15 @@
 # Import Patterns
 
-FedRAG offers multiple import patterns to suit different coding styles and preferences.
-All patterns use the stable public API, so you can choose the style that works best for your project.
+FedRAG provides a carefully designed public API for working with RAG and both centralized
+and federated fine-tuning components. All components exported at the root level
+and from public subpackages are considered stable and follow semantic versioning guidelines.
 
-!!! note
-    The stable public API is versioned separately from the main library. Currently,
-    this API is pre v1, and while we aim for stability, components here may change
-    during the pre v1 development phase.
+## Root Imports
 
-!!! info
-    You may still import from the internal API i.e, `fed_rag.types` or
-    `fed_rag.trainers` and etc., but it is in the intention that in the future
-    that for most use cases, imports should come from the public API: `fed_rag.api`.
-
-## Flat Imports from API
-
-Import everything you need directly from the main API module:
+Import core components directly from the root:
 
 ```py
-from fed_rag.api import (
+from fed_rag import (
     RAGSystem,
     HFPretrainedModelGenerator,
     HFSentenceTransformerRetriever,
@@ -39,11 +30,11 @@ For better organization and increased clarity, you can import from specific
 component categories:
 
 ```py
-from fed_rag.api.core import RAGSystem
-from fed_rag.api.types import RAGConfig
-from fed_rag.api.generators import HFPretrainedModelGenerator
-from fed_rag.api.retrievers import HFSentenceTransformerRetriever
-from fed_rag.api.knowledge_stores import InMemoryKnowledgeStore
+from fed_rag.core import RAGSystem
+from fed_rag.types import RAGConfig
+from fed_rag.generators import HFPretrainedModelGenerator
+from fed_rag.retrievers import HFSentenceTransformerRetriever
+from fed_rag.knowledge_stores import InMemoryKnowledgeStore
 
 # Create system with components from different namespaces
 system = RAGSystem(
@@ -53,3 +44,7 @@ system = RAGSystem(
     rag_config=RAGConfig(...),
 )
 ```
+
+!!! note
+    Modules and functions prefixed with an underscore (e.g., `_internal`) are considered
+    implementation details and may change between versions.
