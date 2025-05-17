@@ -13,6 +13,8 @@ from .knowledge_stores import *
 from .knowledge_stores import __all__ as _knowledge_stores_all
 from .retrievers import *
 from .retrievers import __all__ as _retrievers_all
+from .trainer_managers import *
+from .trainer_managers import __all__ as _trainer_managers_all
 
 __version__ = VERSION
 
@@ -22,5 +24,6 @@ __all__ = sorted(
     + _generators_all
     + _knowledge_stores_all
     + _retrievers_all
+    + _trainer_managers_all
     + ["RAGConfig"]
 )
