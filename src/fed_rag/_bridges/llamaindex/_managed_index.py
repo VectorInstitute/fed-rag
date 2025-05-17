@@ -1,4 +1,5 @@
-from typing import Any, Optional, Sequence
+from contextlib import contextmanager
+from typing import Any, Generator, Optional, Sequence
 
 from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.core.base.base_retriever import BaseRetriever
@@ -7,6 +8,7 @@ from llama_index.core.base.llms.types import (
     CompletionResponseGen,
     LLMMetadata,
 )
+from llama_index.core.constants import DEFAULT_SIMILARITY_TOP_K
 from llama_index.core.data_structs.data_structs import IndexStruct
 from llama_index.core.data_structs.struct_type import IndexStructType
 from llama_index.core.indices.managed.base import BaseManagedIndex
@@ -17,9 +19,10 @@ from llama_index.core.schema import Document, MediaResource
 from llama_index.core.schema import Node as LlamaNode
 from llama_index.core.schema import NodeWithScore, QueryBundle
 
+from fed_rag.base.generator import BaseGenerator
 from fed_rag.core._rag_system import SourceNode, _RAGSystem
 from fed_rag.exceptions import BridgeError
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.types import KnowledgeNode
 
 
 def convert_source_node_to_llama_index_node_with_score(
@@ -68,6 +71,9 @@ class FedRAGManagedIndex(BaseManagedIndex):
 
         def __init__(self, rag_system: _RAGSystem, *args: Any, **kwargs: Any):
             super().__init__(*args, **kwargs)
+            self.similiarity_top_k = kwargs.get(
+                "similarity_top_k", DEFAULT_SIMILARITY_TOP_K
+            )
             self._rag_system = rag_system
 
         def _retrieve(self, query_bundle: QueryBundle) -> list[NodeWithScore]:
@@ -75,9 +81,18 @@ class FedRAGManagedIndex(BaseManagedIndex):
 
             Currently only supports text-based queries.
             """
-            source_nodes = self._rag_system.retrieve(
-                query=query_bundle.query_str
+
+            query_emb: list[float] = self._rag_system.retriever.encode_query(
+                query_bundle.query_str
+            ).tolist()
+            raw_retrieval_result = self._rag_system.knowledge_store.retrieve(
+                query_emb=query_emb, top_k=self.similiarity_top_k
             )
+            source_nodes = [
+                SourceNode(score=el[0], node=el[1])
+                for el in raw_retrieval_result
+            ]
+
             return [
                 convert_source_node_to_llama_index_node_with_score(sn)
                 for sn in source_nodes
@@ -100,9 +115,25 @@ class FedRAGManagedIndex(BaseManagedIndex):
                 model_name="fedrag.generator",
             )
 
+        @contextmanager
+        def generator_for_llama(
+            self,
+        ) -> Generator[BaseGenerator, None, None]:
+            original_template = self._rag_system.generator.prompt_template
+            try:
+                template_for_llamaindex = "{query}"
+                self._rag_system.generator.prompt_template = (
+                    template_for_llamaindex
+                )
+
+                yield self._rag_system.generator
+            finally:
+                self._rag_system.generator.prompt_template = original_template
+
         @llm_completion_callback()
         def complete(self, prompt: str, **kwargs: Any) -> CompletionResponse:
-            res = self._rag_system.generator.generate(query=prompt, context="")
+            with self.generator_for_llama() as generator:
+                res = generator.generate(query=prompt, context="")
             return CompletionResponse(text=res)
 
         @llm_completion_callback()

@@ -268,3 +268,20 @@ def test_huggingface_extra_missing_imported_from_parent() -> None:
 
     # restore module so to not affect other tests
     sys.modules[module_to_import] = original_module
+
+
+def test_prompt_setter() -> None:
+    # arrange
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name",
+        load_model_at_init=False,
+    )
+
+    # act
+    generator.prompt_template = "query: {query} and context: {context}"
+
+    # assert
+    assert (
+        generator.prompt_template.format(query="a", context="b")
+        == "query: a and context: b"
+    )

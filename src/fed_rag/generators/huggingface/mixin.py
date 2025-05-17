@@ -27,7 +27,7 @@ class HuggingFaceGeneratorMixin:
         self: HFGeneratorProtocol, query: str, context: str, **kwargs: Any
     ) -> str:
         formatted_query = self.prompt_template.format(
-            question=query, context=context
+            query=query, context=context
         )
 
         # encode query
