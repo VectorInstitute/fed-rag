@@ -7,6 +7,23 @@ from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.tokenizer import BaseTokenizer
 
+DEFAULT_PROMPT_TEMPLATE = """
+You are a helpful assistant. Given the user's query, provide a succinct
+and accurate response. If context is provided, use it in your answer if it helps
+you to create the most accurate response.
+
+<query>
+{query}
+</query>
+
+<context>
+{context}
+</context>
+
+<response>
+
+"""
+
 
 class BaseGenerator(BaseModel, ABC):
     """Base Generator Class."""
@@ -35,3 +52,13 @@ class BaseGenerator(BaseModel, ABC):
 
         NOTE: this is used in LM Supervised Retriever fine-tuning.
         """
+
+    @property
+    @abstractmethod
+    def prompt_template(self) -> str:
+        """Prompt template for formating query and context."""
+
+    @prompt_template.setter
+    @abstractmethod
+    def prompt_template(self, value: str) -> None:
+        """Prompt template setter."""

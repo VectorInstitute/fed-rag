@@ -129,6 +129,7 @@ def mock_tokenizer() -> BaseTokenizer:
 class MockGenerator(BaseGenerator):
     _model = torch.nn.Linear(2, 1)
     _tokenizer = MockTokenizer()
+    _prompt_template = "{query} and {context}"
 
     def generate(self, query: str, context: str, **kwargs: Any) -> str:
         return f"mock output from '{query}' and '{context}'."
@@ -147,6 +148,14 @@ class MockGenerator(BaseGenerator):
     @property
     def tokenizer(self) -> MockTokenizer:
         return self._tokenizer
+
+    @tokenizer.setter
+    def tokenizer(self, value: BaseTokenizer) -> None:
+        self._tokenizer = value
+
+    @property
+    def prompt_template(self) -> str:
+        return self._prompt_template
 
 
 @pytest.fixture

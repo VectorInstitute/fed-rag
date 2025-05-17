@@ -24,13 +24,13 @@ from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 from .mixin import HuggingFaceGeneratorMixin
 
 DEFAULT_PROMPT_TEMPLATE = """
-You are a helpful assistant. Given the user's question, provide a succinct
+You are a helpful assistant. Given the user's query, provide a succinct
 and accurate response. If context is provided, use it in your answer if it helps
 you to create the most accurate response.
 
-<question>
-{question}
-</question>
+<query>
+{query}
+</query>
 
 <context>
 {context}
@@ -53,7 +53,7 @@ class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         description="Optional kwargs dict for loading models from HF. Defaults to None.",
         default_factory=dict,
     )
-    prompt_template: str = Field(description="Prompt template for RAG.")
+    _prompt_template: str = PrivateAttr(default=DEFAULT_PROMPT_TEMPLATE)
     _model: Optional["PreTrainedModel"] = PrivateAttr(default=None)
     _tokenizer: HFPretrainedTokenizer | None = PrivateAttr(default=None)
 
@@ -75,17 +75,16 @@ class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         generation_config = (
             generation_config if generation_config else GenerationConfig()
         )
-        prompt_template = (
-            prompt_template if prompt_template else DEFAULT_PROMPT_TEMPLATE
-        )
         super().__init__(
             model_name=model_name,
             generation_config=generation_config,
-            prompt_template=prompt_template,
             load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
         )
         self._tokenizer = HFPretrainedTokenizer(
             model_name=model_name, load_model_at_init=load_model_at_init
+        )
+        self._prompt_template = (
+            prompt_template if prompt_template else DEFAULT_PROMPT_TEMPLATE
         )
         if load_model_at_init:
             self._model = self._load_model_from_hf()
@@ -118,3 +117,11 @@ class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
     @tokenizer.setter
     def tokenizer(self, value: HFPretrainedTokenizer) -> None:
         self._tokenizer = value
+
+    @property
+    def prompt_template(self) -> str:
+        return self._prompt_template
+
+    @prompt_template.setter
+    def prompt_template(self, value: str) -> None:
+        self._prompt_template = value
