@@ -1,16 +1,8 @@
 import importlib
-from contextlib import nullcontext as does_not_raise
 
 import pytest
 
 from fed_rag import api
-
-
-def test_root_imports() -> None:
-    """Test public api imports"""
-    with does_not_raise():
-        # ruff: noqa: F401
-        from fed_rag.api import RAGConfig, RAGResponse, RAGSystem, SourceNode
 
 
 @pytest.mark.parametrize("name", api.__all__)
