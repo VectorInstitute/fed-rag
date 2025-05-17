@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.16] - 2025-05-16
+
+### public API [0.0.2]
+
+- added retrievers, generators, knowledge stores, and rest of types (#310)
+
 ## [0.0.15] - 2025-05-16
 
 ### Added
