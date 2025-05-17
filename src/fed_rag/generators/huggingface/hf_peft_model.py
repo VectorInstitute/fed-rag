@@ -2,27 +2,17 @@
 
 from typing import TYPE_CHECKING, Any, Optional
 
-from pydantic import ConfigDict, Field, PrivateAttr
-
-try:
-    from peft import PeftModel, prepare_model_for_kbit_training
-    from transformers import AutoModelForCausalLM
-    from transformers.generation.utils import GenerationConfig
-
-    _has_huggingface = True
-except ModuleNotFoundError:
-    _has_huggingface = False
-
+from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 
 if TYPE_CHECKING:  # pragma: no cover
     from peft import PeftModel
     from transformers.generation.utils import GenerationConfig
 
 from fed_rag.base.generator import BaseGenerator
-from fed_rag.exceptions.common import MissingExtraError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 from .mixin import HuggingFaceGeneratorMixin
+from .utils import check_huggingface_installed
 
 DEFAULT_PROMPT_TEMPLATE = """
 You are a helpful assistant. Given the user's query, provide a succinct
@@ -81,12 +71,8 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         load_base_model_kwargs: dict | None = None,
         load_model_at_init: bool = True,
     ):
-        if not _has_huggingface:
-            msg = (
-                f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
-                "To fix please run `pip install fed-rag[huggingface]`."
-            )
-            raise MissingExtraError(msg)
+        # if reaches here, then passed checks for huggingface extra installation
+        from transformers.generation.utils import GenerationConfig
 
         generation_config = (
             generation_config if generation_config else GenerationConfig()
@@ -111,6 +97,9 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
             self._model = self._load_model_from_hf()
 
     def _load_model_from_hf(self, **kwargs: Any) -> "PeftModel":
+        from peft import PeftModel, prepare_model_for_kbit_training
+        from transformers import AutoModelForCausalLM
+
         load_base_kwargs = self.load_base_model_kwargs
         load_kwargs = self.load_model_kwargs
         load_kwargs.update(kwargs)
@@ -127,6 +116,13 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         return PeftModel.from_pretrained(
             base_model, self.model_name, **load_kwargs
         )
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_dependencies(cls, data: Any) -> Any:
+        """Validate that huggingface dependencies are installed."""
+        check_huggingface_installed(cls.__name__)
+        return data
 
     @property
     def model(self) -> "PeftModel":

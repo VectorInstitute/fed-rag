@@ -225,7 +225,7 @@ def test_huggingface_extra_missing() -> None:
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "HFPretrainedModelGenerator` requires the `huggingface` extra to be installed. "
+            "`HFPretrainedModelGenerator` requires the `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(

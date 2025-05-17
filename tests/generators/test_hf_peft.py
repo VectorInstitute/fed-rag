@@ -121,9 +121,7 @@ def test_hf_pretrained_generator_class_init_no_load(
     assert generator.tokenizer.unwrapped == tokenizer
 
 
-@patch(
-    "fed_rag.generators.huggingface.hf_peft_model.prepare_model_for_kbit_training"
-)
+@patch("peft.prepare_model_for_kbit_training")
 @patch.object(PeftModel, "from_pretrained")
 @patch.object(AutoModelForCausalLM, "from_pretrained")
 @patch.object(AutoTokenizer, "from_pretrained")
@@ -243,7 +241,7 @@ def test_huggingface_extra_missing() -> None:
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "`HFPeftModelGenerator` requires `huggingface` extra to be installed. "
+            "`HFPeftModelGenerator` requires the `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
