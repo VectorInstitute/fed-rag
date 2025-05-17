@@ -81,7 +81,7 @@ chunks = [json.loads(line) for line in chunks_json_strs]
 
 ``` py title="knowledge store"
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types import KnowledgeNode, NodeType
+from fed_rag.data_structures import KnowledgeNode, NodeType
 
 knowledge_store = InMemoryKnowledgeStore()
 

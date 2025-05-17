@@ -31,7 +31,7 @@ component categories:
 
 ```py
 from fed_rag.core import RAGSystem
-from fed_rag.types import RAGConfig
+from fed_rag.data_structures.rag import RAGConfig
 from fed_rag.generators import HFPretrainedModelGenerator
 from fed_rag.retrievers import HFSentenceTransformerRetriever
 from fed_rag.knowledge_stores import InMemoryKnowledgeStore

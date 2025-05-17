@@ -37,7 +37,7 @@ using a simple template for preparing the node's `text_content`.
 
 ```py title="Creating a KnowledgeNode code snippet"
 import json
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 
 chunk = json.loads(chunk_json_str)
 context_text = (

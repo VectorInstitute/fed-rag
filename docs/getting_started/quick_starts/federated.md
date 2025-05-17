@@ -54,7 +54,7 @@ We use a standard training loop that is PyTorch native, making use of the
 ...  # (1)!
 from torch.types import Device
 from torch.utils.data import DataLoader
-from fed_rag.types import TestResult
+from fed_rag.data_structures import TestResult
 
 
 def train_loop(
@@ -96,7 +96,7 @@ Finally, a typical evaluation function that computes the accuracy of the model.
 
 ``` py title="evaluation function"
 ...  # (1)!
-from fed_rag.types import TestResult
+from fed_rag.data_structures import TestResult
 
 
 def test(m: torch.nn.Module, test_loader: DataLoader) -> TestResult:
