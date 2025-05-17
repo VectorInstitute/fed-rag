@@ -64,6 +64,8 @@ nav:
       - examples/llamaindex/index.md
   - Notebooks:
     - notebooks/basic_starter_hf.ipynb
+    - Integrations:
+      - notebooks/integrations/llama_index.ipynb
   - API Reference:
     - api_reference/index.md
     - Bridges:
