@@ -12,10 +12,15 @@ from .knowledge_stores import *
 from .knowledge_stores import __all__ as _knowledge_stores_all
 from .retrievers import *
 from .retrievers import __all__ as _retrievers_all
+from .types import RAGConfig
 
 __version__ = VERSION
 
 
 __all__ = sorted(
-    _core_all + _generators_all + _knowledge_stores_all + _retrievers_all
+    _core_all
+    + _generators_all
+    + _knowledge_stores_all
+    + _retrievers_all
+    + ["RAGConfig"]
 )
