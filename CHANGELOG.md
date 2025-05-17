@@ -10,7 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
-## [0.0.17] - 2025-5-16
+## [0.0.18] - 2025-05-16
+
+### Added
+
+- Trainer managers to root import (#320)
+
+### Changed
+
+- Don't raise `MissingExtraError` for HF generators at import time (#320)
+- Add public api for `fed_rag.trainers` (#320)
+- Refactor `types` to `data_structures` (#319)
+
+## [0.0.17] - 2025-05-16
 
 ### Changed
 
