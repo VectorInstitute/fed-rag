@@ -76,3 +76,8 @@ def test_no_internal_leakage() -> None:
     assert (
         "BaseRAGTrainerManager" not in api.__all__
     ), "API shouldn't expose base classes"
+
+    # no managed in-memory store
+    assert (
+        "ManagedInMemoryKnowledgeStore" not in api.__all__
+    ), "API shouldn't expose ManagedInMemoryKnowledgeStore"

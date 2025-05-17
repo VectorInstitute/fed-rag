@@ -10,6 +10,8 @@ For most use cases, this is the only module you need to import from: fed_rag.api
 # ruff: noqa: F403, F401
 from .core import *
 from .core import __all__ as _core_all
+from .knowledge_stores import *
+from .knowledge_stores import __all__ as _knowledge_stores_all
 from .types import *
 from .types import __all__ as _types_all
 
@@ -21,4 +23,9 @@ def get_api_version() -> str:
     return API_VERSION
 
 
-__all__ = sorted(_core_all + _types_all + ["API_VERSION", "get_api_version"])
+__all__ = sorted(
+    _core_all
+    + _knowledge_stores_all
+    + _types_all
+    + ["API_VERSION", "get_api_version"]
+)
