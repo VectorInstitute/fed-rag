@@ -6,7 +6,7 @@ and from public subpackages are considered stable and follow semantic versioning
 
 ## Root Imports
 
-The simplest approach - import everything you need directly from the root:
+Import core components directly from the root:
 
 ```py
 from fed_rag import (
