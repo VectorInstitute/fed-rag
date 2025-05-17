@@ -1,4 +1,4 @@
-from fed_rag.types import KnowledgeNode, SourceNode
+from fed_rag.data_structures import KnowledgeNode, SourceNode
 
 
 def test_getattr_sourcenode_wraps_knowledge_node() -> None:

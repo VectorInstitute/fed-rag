@@ -1,29 +1,19 @@
-"""Auxiliaty types for RAG System"""
+"""Data structures for RAG.
 
-from typing import Any
+Note: The correct module has moved to fed_rag.data_structures.rag. This module is
+maintained for backward compatibility.
+"""
 
-from pydantic import BaseModel
+import warnings
 
-from .knowledge_node import KnowledgeNode
+from ..data_structures.rag import RAGConfig, RAGResponse, SourceNode
 
+warnings.warn(
+    "Importing RAGConfig, RAGResponse, SourceNode from fed_rag.types.rag"
+    "is deprecated and will be removed in a future release. Use "
+    "fed_rag.data_structures.rag or fed_rag.data_structures instead.",
+    DeprecationWarning,
+    stacklevel=2,  # point to users import statement
+)
 
-class SourceNode(BaseModel):
-    score: float
-    node: KnowledgeNode
-
-    def __getattr__(self, __name: str) -> Any:
-        """Convenient wrapper on getattr of associated node."""
-        return getattr(self.node, __name)
-
-
-class RAGResponse(BaseModel):
-    response: str
-    source_nodes: list[SourceNode]
-
-    def __str__(self) -> str:
-        return self.response
-
-
-class RAGConfig(BaseModel):
-    top_k: int
-    context_separator: str = "\n"
+__all__ = ["RAGConfig", "RAGResponse", "SourceNode"]

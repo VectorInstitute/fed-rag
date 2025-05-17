@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 
 
 class MockRetriever(BaseRetriever):

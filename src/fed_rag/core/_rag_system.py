@@ -5,7 +5,12 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeMetadata
-from fed_rag.types import KnowledgeNode, RAGConfig, RAGResponse, SourceNode
+from fed_rag.data_structures import (
+    KnowledgeNode,
+    RAGConfig,
+    RAGResponse,
+    SourceNode,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs

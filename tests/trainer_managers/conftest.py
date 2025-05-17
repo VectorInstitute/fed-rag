@@ -13,8 +13,8 @@ from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager
+from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.results import TestResult, TrainResult
 
 
 class _TestDataset(Dataset):

@@ -6,11 +6,11 @@ from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict
 
+from fed_rag.data_structures import BridgeMetadata
 from fed_rag.exceptions import (
     MissingExtraError,
     MissingSpecifiedConversionMethod,
 )
-from fed_rag.types import BridgeMetadata
 
 
 class BaseBridgeMixin(BaseModel):

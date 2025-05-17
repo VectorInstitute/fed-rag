@@ -5,7 +5,7 @@ import pytest
 import torch
 
 from fed_rag.base.tokenizer import EncodeResult
-from fed_rag.types import KnowledgeNode, SourceNode
+from fed_rag.data_structures import KnowledgeNode, SourceNode
 from fed_rag.utils.data import build_finetune_dataset
 from fed_rag.utils.data.finetuning_datasets import PyTorchRAGFinetuningDataset
 from fed_rag.utils.data.finetuning_datasets.huggingface import (

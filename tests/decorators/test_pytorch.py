@@ -6,6 +6,7 @@ import pytest
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.decorators import federate
 from fed_rag.exceptions.inspectors import (
     InvalidReturnType,
@@ -17,7 +18,6 @@ from fed_rag.inspectors.pytorch import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
-from fed_rag.types import TestResult, TrainResult
 
 
 def test_decorated_trainer() -> None:
@@ -53,7 +53,7 @@ def test_decorated_trainer_raises_invalid_return_type_error() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Trainer should return a fed_rag.types.TrainResult or a subclsas of it.",
+        match="Trainer should return a fed_rag.data_structures.TrainResult or a subclsas of it.",
     ):
         federate.trainer.pytorch(fn)
 
@@ -169,7 +169,7 @@ def test_decorated_tester_raises_invalid_return_type() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Tester should return a fed_rag.types.TestResult or a subclsas of it.",
+        match="Tester should return a fed_rag.data_structures.TestResult or a subclsas of it.",
     ):
         federate.tester.pytorch(fn)
 

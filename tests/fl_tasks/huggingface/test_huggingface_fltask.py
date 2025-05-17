@@ -16,6 +16,7 @@ from peft.utils import get_peft_model_state_dict
 from torch.nn import Module
 from transformers import PreTrainedModel
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.exceptions import (
     MissingExtraError,
     MissingRequiredNetParam,
@@ -30,7 +31,6 @@ from fed_rag.fl_tasks.huggingface import (
     UnequalNetParamWarning,
     _get_weights,
 )
-from fed_rag.types import TestResult, TrainResult
 
 
 # TODO: parametrize tests using trainer/tester from pretrained models

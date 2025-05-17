@@ -11,8 +11,8 @@ from peft import LoraConfig, PeftModel, get_peft_model
 from sentence_transformers import SentenceTransformer
 from transformers import PretrainedConfig, PreTrainedModel
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.decorators import federate
-from fed_rag.types import TestResult, TrainResult
 
 
 @pytest.fixture

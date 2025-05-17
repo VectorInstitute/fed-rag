@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:  # pragma: no cover
-    from fed_rag.types.knowledge_node import KnowledgeNode
+    from fed_rag.data_structures.knowledge_node import KnowledgeNode
 
 DEFAULT_KNOWLEDGE_STORE_NAME = "default"
 

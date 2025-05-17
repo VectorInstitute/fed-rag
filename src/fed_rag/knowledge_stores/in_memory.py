@@ -10,9 +10,9 @@ from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions.knowledge_stores import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.mixins import ManagedMixin
-from fed_rag.types.knowledge_node import KnowledgeNode
 
 DEFAULT_CACHE_DIR = ".fed_rag/data_cache/"
 DEFAULT_TOP_K = 2

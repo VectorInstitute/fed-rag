@@ -21,8 +21,8 @@ from llama_index.core.schema import NodeWithScore, QueryBundle
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.core._rag_system import SourceNode, _RAGSystem
+from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import BridgeError
-from fed_rag.types import KnowledgeNode
 
 
 def convert_source_node_to_llama_index_node_with_score(

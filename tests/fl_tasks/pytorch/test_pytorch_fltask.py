@@ -11,6 +11,7 @@ from flwr.server.strategy import FedAvg
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.exceptions import MissingRequiredNetParam, UnequalNetParamWarning
 from fed_rag.fl_tasks.pytorch import (
     BaseFLTaskBundle,
@@ -18,7 +19,6 @@ from fed_rag.fl_tasks.pytorch import (
     PyTorchFLTask,
     _get_weights,
 )
-from fed_rag.types import TestResult, TrainResult
 
 
 def test_init_flower_client(

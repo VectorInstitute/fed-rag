@@ -5,8 +5,8 @@ import pytest
 from torch.utils.data import DataLoader, Dataset
 
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
+from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.trainers.pytorch.mixin import PyTorchTrainerMixin
-from fed_rag.types.results import TestResult, TrainResult
 
 
 class TestRetrieverTrainer(PyTorchTrainerMixin, BaseRetrieverTrainer):
