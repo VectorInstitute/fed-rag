@@ -47,6 +47,7 @@ if TYPE_CHECKING:  # pragma: no cover
 from typing_extensions import Self
 
 from fed_rag.base.fl_task import BaseFLTask
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.exceptions import (
     MissingRequiredNetParam,
     MissingTesterSpec,
@@ -58,7 +59,6 @@ from fed_rag.inspectors.pytorch import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
-from fed_rag.types import TestResult, TrainResult
 
 HFModelType: TypeAlias = Union[
     "SentenceTransformer", "PreTrainedModel", "PeftModel"

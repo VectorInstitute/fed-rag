@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import (
     InvalidDistanceError,
     KnowledgeStoreError,
@@ -18,7 +19,6 @@ from fed_rag.knowledge_stores.qdrant.sync import (
     _convert_knowledge_node_to_qdrant_point,
     _convert_scored_point_to_knowledge_node_and_score_tuple,
 )
-from fed_rag.types.knowledge_node import KnowledgeNode
 
 
 def test_init() -> None:

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Generator, Literal
 from pydantic import Field, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import (
     InvalidDistanceError,
     KnowledgeStoreError,
@@ -15,7 +16,6 @@ from fed_rag.exceptions import (
     LoadNodeError,
 )
 from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
-from fed_rag.types.knowledge_node import KnowledgeNode
 
 if TYPE_CHECKING:  # pragma: no cover
     from qdrant_client import QdrantClient

@@ -1,20 +1,19 @@
-"""TesterResult"""
+"""Data structures for results
 
-from typing import Any
+Note: The correct module has moved to fed_rag.data_structures.results. This module is
+maintained for backward compatibility.
+"""
 
-from pydantic import BaseModel, Field
+import warnings
 
+from ..data_structures.results import TestResult, TrainResult
 
-class TrainResult(BaseModel):
-    loss: float
+warnings.warn(
+    "Importing TrainResult, TestResult from fed_rag.types.results"
+    "is deprecated and will be removed in a future release. Use "
+    "fed_rag.data_structures.results or fed_rag.data_structures instead.",
+    DeprecationWarning,
+    stacklevel=2,  # point to users import statement
+)
 
-
-class TestResult(BaseModel):
-    __test__ = (
-        False  # needed for Pytest collision. Avoids PytestCollectionWarning
-    )
-    loss: float
-    metrics: dict[str, Any] = Field(
-        description="Additional metrics computed on test set.",
-        default_factory=dict,
-    )
+__all__ = ["TrainResult", "TestResult"]

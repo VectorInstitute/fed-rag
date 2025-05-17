@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreNotFoundError
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.knowledge_node import KnowledgeNode
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@
 import inspect
 from typing import Any, Callable
 
+from fed_rag.data_structures import TestResult
 from fed_rag.exceptions import (
     InvalidReturnType,
     MissingDataParam,
@@ -10,7 +11,6 @@ from fed_rag.exceptions import (
 )
 from fed_rag.inspectors.common import TesterSignatureSpec
 from fed_rag.inspectors.huggingface.utils import get_type_name
-from fed_rag.types import TestResult
 
 
 def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
@@ -19,7 +19,7 @@ def inspect_tester_signature(fn: Callable) -> TesterSignatureSpec:
     # validate return type
     return_type = sig.return_annotation
     if (return_type is Any) or not issubclass(return_type, TestResult):
-        msg = "Tester should return a fed_rag.types.TestResult or a subclass of it."
+        msg = "Tester should return a fed_rag.data_structures.TestResult or a subclass of it."
         raise InvalidReturnType(msg)
 
     # inspect fn params

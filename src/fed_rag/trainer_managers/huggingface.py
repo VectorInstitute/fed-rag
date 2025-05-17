@@ -6,13 +6,13 @@ from typing_extensions import assert_never
 
 from fed_rag.base.trainer import BaseTrainer
 from fed_rag.base.trainer_manager import BaseRAGTrainerManager, RAGTrainMode
+from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.decorators import federate
 from fed_rag.exceptions import (
     MissingExtraError,
     UnspecifiedGeneratorTrainer,
     UnspecifiedRetrieverTrainer,
 )
-from fed_rag.types.results import TestResult, TrainResult
 
 try:
     from datasets import Dataset

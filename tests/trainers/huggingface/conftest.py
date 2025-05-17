@@ -6,8 +6,8 @@ from transformers import Trainer
 
 from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseGeneratorTrainer, BaseRetrieverTrainer
+from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
-from fed_rag.types.results import TestResult, TrainResult
 
 
 class TestHFRetrieverTrainer(HuggingFaceTrainerMixin, BaseRetrieverTrainer):

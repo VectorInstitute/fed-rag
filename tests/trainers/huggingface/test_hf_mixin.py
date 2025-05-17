@@ -58,10 +58,10 @@ def test_huggingface_extra_missing(
             MissingExtraError,
             match=re.escape(msg),
         ):
+            from fed_rag.data_structures.results import TestResult, TrainResult
             from fed_rag.trainers.huggingface.mixin import (
                 HuggingFaceTrainerMixin,
             )
-            from fed_rag.types.results import TestResult, TrainResult
 
             class TestHFRetrieverTrainer(
                 HuggingFaceTrainerMixin, BaseRetrieverTrainer

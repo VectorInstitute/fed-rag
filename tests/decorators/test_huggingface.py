@@ -8,6 +8,7 @@ from peft import PeftModel
 from sentence_transformers import SentenceTransformer
 from transformers import PreTrainedModel
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.decorators import federate
 from fed_rag.exceptions.inspectors import (
     InvalidReturnType,
@@ -19,7 +20,6 @@ from fed_rag.inspectors.huggingface import (
     TesterSignatureSpec,
     TrainerSignatureSpec,
 )
-from fed_rag.types import TestResult, TrainResult
 
 
 ## For All
@@ -71,7 +71,7 @@ def test_decorated_trainer_raises_invalid_return_type_error_hf_pretrained() -> (
 
     with pytest.raises(
         InvalidReturnType,
-        match="Trainer should return a fed_rag.types.TrainResult or a subclass of it.",
+        match="Trainer should return a fed_rag.data_structures.TrainResult or a subclass of it.",
     ):
         federate.trainer.huggingface(train_loop)
 
@@ -185,7 +185,7 @@ def test_decorated_tester_raises_invalid_return_type_hf_pretrained() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Tester should return a fed_rag.types.TestResult or a subclass of it.",
+        match="Tester should return a fed_rag.data_structures.TestResult or a subclass of it.",
     ):
         federate.tester.huggingface(fn)
 
@@ -291,7 +291,7 @@ def test_decorated_trainer_raises_invalid_return_type_error_hf_st() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Trainer should return a fed_rag.types.TrainResult or a subclass of it.",
+        match="Trainer should return a fed_rag.data_structures.TrainResult or a subclass of it.",
     ):
         federate.trainer.huggingface(train_loop)
 
@@ -403,7 +403,7 @@ def test_decorated_tester_raises_invalid_return_type_hf_st() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Tester should return a fed_rag.types.TestResult or a subclass of it.",
+        match="Tester should return a fed_rag.data_structures.TestResult or a subclass of it.",
     ):
         federate.tester.huggingface(fn)
 
@@ -497,7 +497,7 @@ def test_decorated_trainer_raises_invalid_return_type_error_hf_peft() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Trainer should return a fed_rag.types.TrainResult or a subclass of it.",
+        match="Trainer should return a fed_rag.data_structures.TrainResult or a subclass of it.",
     ):
         federate.trainer.huggingface(train_loop)
 
@@ -607,7 +607,7 @@ def test_decorated_tester_raises_invalid_return_type_hf_peft() -> None:
 
     with pytest.raises(
         InvalidReturnType,
-        match="Tester should return a fed_rag.types.TestResult or a subclass of it.",
+        match="Tester should return a fed_rag.data_structures.TestResult or a subclass of it.",
     ):
         federate.tester.huggingface(fn)
 

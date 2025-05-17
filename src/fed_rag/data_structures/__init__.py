@@ -1,5 +1,5 @@
 """
-fed_rag.types
+fed_rag.data_structures
 
 Only components defined in `__all__` are considered stable and public.
 """
@@ -24,5 +24,3 @@ __all__ = [
     "RAGResponse",
     "SourceNode",
 ]
-
-__deprecated__ = True

@@ -6,7 +6,7 @@
         - TesterSignatureSpec
         - TesterSignatureSpec
 
-::: src.fed_rag.types.results
+::: src.fed_rag.data_structures.results
     options:
       members:
         - TrainResult

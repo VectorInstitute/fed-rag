@@ -5,8 +5,8 @@ import torch
 from fed_rag import RAGConfig, RAGSystem
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.data_structures import KnowledgeNode, SourceNode
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types import KnowledgeNode, SourceNode
 
 from .conftest import MockGenerator, MockRetriever
 

@@ -6,7 +6,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 
 from fed_rag import RAGSystem
-from fed_rag.types.results import TestResult, TrainResult
+from fed_rag.data_structures.results import TestResult, TrainResult
 
 
 class BaseTrainer(BaseModel, ABC):

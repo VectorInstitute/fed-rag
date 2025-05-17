@@ -3,6 +3,7 @@
 import inspect
 from typing import Any, Callable
 
+from fed_rag.data_structures import TrainResult
 from fed_rag.exceptions import (
     InvalidReturnType,
     MissingDataParam,
@@ -11,7 +12,6 @@ from fed_rag.exceptions import (
 )
 from fed_rag.inspectors.common import TrainerSignatureSpec
 from fed_rag.inspectors.huggingface.utils import get_type_name
-from fed_rag.types import TrainResult
 
 
 def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
@@ -20,7 +20,7 @@ def inspect_trainer_signature(fn: Callable) -> TrainerSignatureSpec:
     # validate return type
     return_type = sig.return_annotation
     if (return_type is Any) or not issubclass(return_type, TrainResult):
-        msg = "Trainer should return a fed_rag.types.TrainResult or a subclass of it."
+        msg = "Trainer should return a fed_rag.data_structures.TrainResult or a subclass of it."
         raise InvalidReturnType(msg)
 
     # inspect fn params

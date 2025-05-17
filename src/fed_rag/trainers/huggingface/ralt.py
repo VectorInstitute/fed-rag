@@ -7,9 +7,9 @@ from pydantic import PrivateAttr, model_validator
 from fed_rag import RAGSystem
 from fed_rag.base.trainer import BaseGeneratorTrainer
 from fed_rag.data_collators.huggingface.ralt import DataCollatorForRALT
+from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.trainers.huggingface.mixin import HuggingFaceTrainerMixin
-from fed_rag.types.results import TestResult, TrainResult
 from fed_rag.utils.huggingface import _validate_rag_system
 
 try:

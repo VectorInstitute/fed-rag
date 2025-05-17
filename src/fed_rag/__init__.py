@@ -6,13 +6,13 @@ from fed_rag._version import VERSION
 # ruff: noqa: F403, F401
 from .core import *
 from .core import __all__ as _core_all
+from .data_structures import RAGConfig
 from .generators import *
 from .generators import __all__ as _generators_all
 from .knowledge_stores import *
 from .knowledge_stores import __all__ as _knowledge_stores_all
 from .retrievers import *
 from .retrievers import __all__ as _retrievers_all
-from .types import RAGConfig
 
 __version__ = VERSION
 

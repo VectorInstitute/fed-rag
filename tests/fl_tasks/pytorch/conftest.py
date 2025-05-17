@@ -7,8 +7,8 @@ import pytest
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
+from fed_rag.data_structures import TestResult, TrainResult
 from fed_rag.decorators import federate
-from fed_rag.types import TestResult, TrainResult
 
 
 class _TestDataset(Dataset):

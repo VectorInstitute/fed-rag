@@ -1,3 +1,3 @@
 <!-- markdownlint-disable-file MD041 -->
 
-::: src.fed_rag.types.knowledge_node
+::: src.fed_rag.data_structures.knowledge_node

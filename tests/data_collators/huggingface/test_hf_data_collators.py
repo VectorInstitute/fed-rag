@@ -9,13 +9,13 @@ from torch.testing import assert_close
 
 from fed_rag import RAGSystem
 from fed_rag.data_collators.huggingface import DataCollatorForLSR
+from fed_rag.data_structures import KnowledgeNode, SourceNode
 from fed_rag.exceptions import MissingExtraError
 from fed_rag.exceptions.core import FedRAGError
 from fed_rag.generators.huggingface import HFPeftModelGenerator
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
-from fed_rag.types import KnowledgeNode, SourceNode
 
 
 def test_huggingface_extra_missing(mock_rag_system: RAGSystem) -> None:
