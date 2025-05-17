@@ -86,6 +86,10 @@ class MockGenerator(BaseGenerator):
     def prompt_template(self) -> str:
         return self._prompt_template
 
+    @prompt_template.setter
+    def prompt_template(self, v: str) -> None:
+        self._prompt_template = v
+
 
 @pytest.fixture
 def mock_generator() -> BaseGenerator:
