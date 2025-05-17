@@ -11,6 +11,7 @@ Import core components directly from the root:
 ```py
 from fed_rag import (
     RAGSystem,
+    RAGConfig,
     HFPretrainedModelGenerator,
     HFSentenceTransformerRetriever,
     InMemoryKnowledgeStore,
@@ -21,6 +22,7 @@ system = RAGSystem(
     retriever=HFSentenceTransformerRetriever(...),
     generator=HFPretrainedModelGenerator(...),
     knowledge_store=InMemoryKnowledgeStore(),
+    rag_config=RAGConfig(...),
 )
 ```
 
