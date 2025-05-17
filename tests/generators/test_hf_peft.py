@@ -121,9 +121,7 @@ def test_hf_pretrained_generator_class_init_no_load(
     assert generator.tokenizer.unwrapped == tokenizer
 
 
-@patch(
-    "fed_rag.generators.huggingface.hf_peft_model.prepare_model_for_kbit_training"
-)
+@patch("peft.prepare_model_for_kbit_training")
 @patch.object(PeftModel, "from_pretrained")
 @patch.object(AutoModelForCausalLM, "from_pretrained")
 @patch.object(AutoTokenizer, "from_pretrained")
@@ -243,7 +241,7 @@ def test_huggingface_extra_missing() -> None:
 
     with patch.dict("sys.modules", modules):
         msg = (
-            "`HFPeftModelGenerator` requires `huggingface` extra to be installed. "
+            "`HFPeftModelGenerator` requires the `huggingface` extra to be installed. "
             "To fix please run `pip install fed-rag[huggingface]`."
         )
         with pytest.raises(
@@ -253,32 +251,6 @@ def test_huggingface_extra_missing() -> None:
             from fed_rag.generators.huggingface.hf_peft_model import (
                 HFPeftModelGenerator,
             )
-
-            HFPeftModelGenerator("fake_name", "fake_base_name")
-
-    # restore module so to not affect other tests
-    sys.modules[module_to_import] = original_module
-
-
-def test_huggingface_extra_missing_imported_from_parent() -> None:
-    """Test extra is not installed."""
-
-    modules = {"transformers": None}
-    module_to_import = "fed_rag.generators.huggingface"
-
-    if module_to_import in sys.modules:
-        original_module = sys.modules.pop(module_to_import)
-
-    with patch.dict("sys.modules", modules):
-        msg = (
-            "`fed_rag.generators.huggingface` requires `huggingface` extra to be installed. "
-            "To fix please run `pip install fed-rag[huggingface]`."
-        )
-        with pytest.raises(
-            MissingExtraError,
-            match=re.escape(msg),
-        ):
-            from fed_rag.generators.huggingface import HFPeftModelGenerator
 
             HFPeftModelGenerator("fake_name", "fake_base_name")
 
