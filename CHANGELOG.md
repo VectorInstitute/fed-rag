@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.17] - 2025-5-16
+
+### Changed
+
+- Rip out public api, as its not standard (#317)
+
 ## [0.0.16] - 2025-05-16
 
 ### public API [0.0.2]
