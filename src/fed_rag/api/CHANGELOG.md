@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Knowledge stores and rest of types (#310)
+- Knowledge stores and rest of types, generators and retrievers (#310)
 
 ## [0.0.1] - 2025-05-16
 
