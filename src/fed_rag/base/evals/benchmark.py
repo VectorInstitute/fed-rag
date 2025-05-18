@@ -1,7 +1,7 @@
 """Base Benchmark and Benchmarker"""
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Any, Sequence
 
 from pydantic import BaseModel, ConfigDict
 
@@ -28,6 +28,7 @@ class BaseBenchmarker(BaseModel, ABC):
         batch_size: int = 1,
         num_examples: int | None = None,
         num_workers: int = 1,
+        **kwargs: Any,
     ) -> BenchmarkResult:
         """Execute the benchmark using the associated `RAGSystem`.
 
