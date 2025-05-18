@@ -144,7 +144,7 @@ Once the container shows `healthy`, the knowledge store can be used. Below is a
 code snippet for quickly testing that nodes can be successfully retrieved from it.
 
 ```py title="Testing the knowledge store with FedRAG"
-from fed_rag.retriever.knowledge_store import QdrantKnowledgeStore
+from fed_rag.knowledge_stores.qdrant import QdrantKnowledgeStore
 from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
     HFSentenceTransformerRetriever,
 )
