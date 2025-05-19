@@ -17,7 +17,7 @@ class Benchmarker(BaseModel):
     def _update_running_score(
         self,
         agg: AggregationMode,
-        running_score: float,
+        running_score: float | None,
         next_score: float,
         num_examples_seen: int,
     ) -> float:
@@ -33,6 +33,9 @@ class Benchmarker(BaseModel):
         Returns:
             float: the updated running score
         """
+        if not running_score:
+            return next_score
+
         match agg:
             case AggregationMode.AVG:
                 return (num_examples_seen * running_score + next_score) / (
@@ -67,6 +70,7 @@ class Benchmarker(BaseModel):
 
         Args:
             agg (AggregationMode | str): the aggregation mode to apply to all example scores.
+                Modes include `avg`, `sum`, `max`, or `min`.
             benchmark (BaseBenchmark): the benchmark to run the `RAGSystem` against.
             batch_size (int, optional): number of examples to process in a single batch.
             metric (BaseEvaluationMetric): the metric to use for evaluation.
@@ -84,7 +88,7 @@ class Benchmarker(BaseModel):
         else:
             examples_iterator = benchmark.as_iterator()
 
-        running_score = 0.0
+        running_score = None
         num_seen = 0
         for example in examples_iterator:
             # prediction
