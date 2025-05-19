@@ -20,12 +20,14 @@ class MyMetric(BaseEvaluationMetric):
 
 def test_benchmarker_avg(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="avg")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="avg"
+    )
 
     # assert
     assert result.score == 2
@@ -36,12 +38,14 @@ def test_benchmarker_avg(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_sum(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="sum")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="sum"
+    )
 
     # assert
     assert result.score == 6
@@ -52,12 +56,14 @@ def test_benchmarker_sum(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_min(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="min")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="min"
+    )
 
     # assert
     assert result.score == 1
@@ -68,12 +74,14 @@ def test_benchmarker_min(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_max(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="max")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="max"
+    )
 
     # assert
     assert result.score == 3
@@ -84,13 +92,13 @@ def test_benchmarker_max(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_num_examples(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
 
     # act
     result = benchmarker.run(
-        benchmark=my_benchmark, metric=metric, num_examples=2
+        benchmark=test_benchmark, metric=metric, num_examples=2
     )
 
     # assert
@@ -102,13 +110,15 @@ def test_benchmarker_num_examples(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_min_reversed(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
     metric.answers = metric.answers[::-1]
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="min")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="min"
+    )
 
     # assert
     assert result.score == 1
@@ -119,13 +129,15 @@ def test_benchmarker_min_reversed(mock_rag_system: RAGSystem) -> None:
 
 def test_benchmarker_max_reversed(mock_rag_system: RAGSystem) -> None:
     # arrange
-    my_benchmark = benchmarks.MyBenchmark()
+    test_benchmark = benchmarks.TestBenchmark()
     benchmarker = Benchmarker(rag_system=mock_rag_system)
     metric = MyMetric()
     metric.answers = metric.answers[::-1]
 
     # act
-    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="max")
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="max"
+    )
 
     # assert
     assert result.score == 3

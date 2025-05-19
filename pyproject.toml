@@ -64,6 +64,9 @@ qdrant = [
 llama-index = [
   "llama-index-core>=0.12.35"
 ]
+huggingface-evals = [
+  "datasets>=3.1.0"
+]
 
 [project.urls]
 Documentation = "https://vectorinstitute.github.io/fed-rag/"

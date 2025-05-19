@@ -2,9 +2,16 @@ from typing import Any, Sequence
 
 from fed_rag.base.evals.benchmark import BaseBenchmark
 from fed_rag.data_structures import BenchmarkExample
+from fed_rag.evals.benchmarks.huggingface.mixin import (
+    HuggingFaceBenchmarkMixin,
+)
 
 
-class MyBenchmark(BaseBenchmark):
+class TestBenchmark(BaseBenchmark):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
         return [
             BenchmarkExample(query="query 1", response="response 1"),
@@ -13,4 +20,21 @@ class MyBenchmark(BaseBenchmark):
         ]
 
 
-__all__ = ["MyBenchmark"]
+class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    dataset_name = "test_benchmark"
+
+    def _get_query_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["query"])
+
+    def _get_response_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["response"])
+
+    def _get_context_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["context"])
+
+
+__all__ = ["TestBenchmark", "TestHFBenchmark"]
