@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import BaseModel, PrivateAttr, model_validator
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset
 
 
