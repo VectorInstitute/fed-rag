@@ -27,15 +27,14 @@ class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
 
     dataset_name = "nerdai/_test_rag_dataset"
 
-    def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
-        return [
-            BenchmarkExample(query="query 1", response="response 1"),
-            BenchmarkExample(query="query 2", response="response 2"),
-            BenchmarkExample(query="query 3", response="response 3"),
-        ]
+    def _get_query_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["query"])
 
-    def _map_dataset_example(self, example: dict) -> dict[str, Any]:
-        raise NotImplementedError
+    def _get_response_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["response"])
+
+    def _get_context_from_example(self, example: dict[str, Any]) -> str:
+        return str(example["context"])
 
 
 __all__ = ["TestBenchmark", "TestHFBenchmark"]

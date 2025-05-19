@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from fed_rag.data_structures.evals import BenchmarkExample
+
 from .. import _benchmarks as benchmarks
 
 TEST_CACHE_DIR = Path(__file__).parents[2].absolute() / "datasets"
@@ -15,3 +17,4 @@ def test_hf_mixin() -> None:
         test_hf_benchmark.dataset_name.replace("nerdai/", "")
         == test_hf_benchmark._dataset.info.dataset_name
     )
+    assert isinstance(test_hf_benchmark[0], BenchmarkExample)

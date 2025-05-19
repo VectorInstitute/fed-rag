@@ -32,5 +32,6 @@ class BaseBenchmark(BaseModel, ABC):
 
     @model_validator(mode="after")
     def set_examples(self) -> "BaseBenchmark":
+        print("setting examples")
         self._examples = self._get_examples()
         return self
