@@ -14,8 +14,12 @@ class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
     """HuggingFace MMLU Benchmark."""
 
     dataset_name = "cais/mmlu"
+    configuration_name: str = "all"
 
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
+        return []
+
+    def _map_dataset_example(self, example: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
     @model_validator(mode="before")
