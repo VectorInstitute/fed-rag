@@ -9,14 +9,6 @@ def check_huggingface_evals_installed(cls_name: str | None = None) -> None:
     has_huggingface = datasets_spec is not None
 
     if not has_huggingface:
-        msg = (
-            "Missing installation of the huggingface-evals extra, yet is required "
-            "by an import `HuggingFaceBenchmark` class. To fix please run "
-            "`pip install fed-rag[huggingface]`."
-        )
-        raise MissingExtraError(msg)
-
-    if not has_huggingface:
         if cls_name:
             msg = (
                 f"`{cls_name}` requires the `huggingface-evals` extra to be installed. "
