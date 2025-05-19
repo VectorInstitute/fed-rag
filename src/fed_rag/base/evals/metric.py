@@ -1,7 +1,7 @@
 """Base EvaluationMetric"""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -14,8 +14,3 @@ class BaseEvaluationMetric(BaseModel, ABC):
         self, prediction: str, actual: str, *args: Any, **kwargs: Any
     ) -> float:
         """Evaluate an example prediction against the actual response."""
-
-    @property
-    @abstractmethod
-    def aggregate_fn(self) -> Callable[[list[float]], float]:
-        """Compute aggregation of scores."""
