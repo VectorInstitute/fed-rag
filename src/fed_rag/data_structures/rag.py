@@ -18,6 +18,7 @@ class SourceNode(BaseModel):
 
 class RAGResponse(BaseModel):
     response: str
+    raw_response: str | None = None
     source_nodes: list[SourceNode]
 
     def __str__(self) -> str:
