@@ -9,7 +9,7 @@ from fed_rag.data_structures.evals import BenchmarkExample
 
 
 class BaseBenchmark(BaseModel, ABC):
-    """Base Data Collator."""
+    """Base Benchmark."""
 
     _examples: Sequence[BenchmarkExample] = PrivateAttr()
 

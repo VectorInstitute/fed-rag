@@ -12,6 +12,8 @@ from fed_rag.data_structures.evals import AggregationMode, BenchmarkResult
 
 
 class Benchmarker(BaseModel):
+    """Benchmarker"""
+
     rag_system: RAGSystem
 
     def _update_running_score(
