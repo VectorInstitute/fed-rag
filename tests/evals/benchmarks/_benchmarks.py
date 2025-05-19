@@ -25,7 +25,7 @@ class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
         False  # needed for Pytest collision. Avoids PytestCollectionWarning
     )
 
-    dataset_name = "nerdai/_test_rag_dataset"
+    dataset_name = "test_benchmark"
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
         return str(example["query"])
