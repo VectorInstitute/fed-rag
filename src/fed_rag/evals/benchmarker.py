@@ -5,8 +5,8 @@ from typing import Any
 from pydantic import BaseModel
 
 from fed_rag import RAGSystem
-from fed_rag.base.evals import EvaluationMetric
 from fed_rag.base.evals.benchmark import BaseBenchmark
+from fed_rag.base.evals.metric import BaseEvaluationMetric
 from fed_rag.data_structures.evals import BenchmarkResult
 
 
@@ -16,7 +16,7 @@ class Benchmarker(BaseModel):
     def run(
         self,
         benchmark: BaseBenchmark,
-        metric: EvaluationMetric,
+        metric: BaseEvaluationMetric,
         batch_size: int = 1,
         num_examples: int | None = None,
         num_workers: int = 1,
@@ -49,7 +49,7 @@ class Benchmarker(BaseModel):
             scores.append(score)
             num_seen += 1
 
-        final_score = metric.aggregate(scores)
+        final_score = metric.aggregate_fn(scores)
         return BenchmarkResult(
             score=final_score,
             metric_name=metric.name,
