@@ -98,3 +98,37 @@ def test_benchmarker_num_examples(mock_rag_system: RAGSystem) -> None:
     assert result.num_examples_used == 2
     assert result.num_total_examples == 3
     assert result.metric_name == "MyMetric"
+
+
+def test_benchmarker_min_reversed(mock_rag_system: RAGSystem) -> None:
+    # arrange
+    my_benchmark = benchmarks.MyBenchmark()
+    benchmarker = Benchmarker(rag_system=mock_rag_system)
+    metric = MyMetric()
+    metric.answers = metric.answers[::-1]
+
+    # act
+    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="min")
+
+    # assert
+    assert result.score == 1
+    assert result.num_examples_used == 3
+    assert result.num_total_examples == 3
+    assert result.metric_name == "MyMetric"
+
+
+def test_benchmarker_max_reversed(mock_rag_system: RAGSystem) -> None:
+    # arrange
+    my_benchmark = benchmarks.MyBenchmark()
+    benchmarker = Benchmarker(rag_system=mock_rag_system)
+    metric = MyMetric()
+    metric.answers = metric.answers[::-1]
+
+    # act
+    result = benchmarker.run(benchmark=my_benchmark, metric=metric, agg="max")
+
+    # assert
+    assert result.score == 3
+    assert result.num_examples_used == 3
+    assert result.num_total_examples == 3
+    assert result.metric_name == "MyMetric"

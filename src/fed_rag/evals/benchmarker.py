@@ -81,6 +81,9 @@ class Benchmarker(BaseModel):
 
         Returns:
             BenchmarkResult: the benchmark result
+
+        TODO: implement concurrent as well as batch execution. Need RAGSystem
+        to be able to handle batches as well.
         """
 
         if num_examples:
