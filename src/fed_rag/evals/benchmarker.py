@@ -21,6 +21,18 @@ class Benchmarker(BaseModel):
         next_score: float,
         num_examples_seen: int,
     ) -> float:
+        """Update the running score.
+
+        Args:
+            agg (AggregationMode): aggregation mode.
+            running_score (float): the running score to be updated.
+            next_score (float): the score of the latest scored example.
+            num_examples_seen (int): the number of examples seen prior to the
+                latest scored example.
+
+        Returns:
+            float: the updated running score
+        """
         match agg:
             case AggregationMode.AVG:
                 return (num_examples_seen * running_score + next_score) / (
