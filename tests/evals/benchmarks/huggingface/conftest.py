@@ -26,3 +26,29 @@ def dummy_dataset() -> Dataset:
         split=Split.TEST,
     )
     return benchmark
+
+
+@pytest.fixture
+def dummy_mmlu() -> Dataset:
+    benchmark_info = DatasetInfo(
+        dataset_name="cais/mmlu",
+    )
+    benchmark = Dataset.from_dict(
+        {
+            "question": [
+                "What is the embryological origin of the hyoid bone?"
+            ],
+            "choices": [
+                [
+                    "The first pharyngeal arch",
+                    "The first and second pharyngeal arches",
+                    "The second pharyngeal arch",
+                    "The second and third pharyngeal arches",
+                ]
+            ],
+            "answer": ["D"],
+        },
+        info=benchmark_info,
+        split=Split.TEST,
+    )
+    return benchmark

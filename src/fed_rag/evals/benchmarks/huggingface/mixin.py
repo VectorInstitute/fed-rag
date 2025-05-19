@@ -38,7 +38,7 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
 
     def _map_dataset_example(self, example: dict[str, Any]) -> dict[str, Any]:
         """Map the examples in the dataset to include a `~fed_rag.data_structures.evals.BenchmarkExample`."""
-        query = self._get_context_from_example(example)
+        query = self._get_query_from_example(example)
         response = self._get_response_from_example(example)
         context = self._get_context_from_example(example)
 

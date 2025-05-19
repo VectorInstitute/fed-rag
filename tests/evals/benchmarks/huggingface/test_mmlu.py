@@ -3,8 +3,10 @@ import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
+from datasets import Dataset
 
 import fed_rag.evals.benchmarks as benchmarks
+from fed_rag.data_structures.evals import BenchmarkExample
 from fed_rag.exceptions import MissingExtraError
 
 
@@ -18,6 +20,21 @@ def test_mmlu_benchmark(mock_load_dataset: MagicMock) -> None:
         name=mmlu.configuration_name,
         split=mmlu.split,
         streaming=mmlu.streaming,
+    )
+
+
+@patch("datasets.load_dataset")
+def test_mmlu_query_response_context_extractors(
+    mock_load_dataset: MagicMock, dummy_mmlu: Dataset
+) -> None:
+    # arrange
+    mock_load_dataset.return_value = dummy_mmlu
+    mmlu = benchmarks.HuggingFaceMMLU()
+
+    assert isinstance(mmlu[0], BenchmarkExample)
+    assert (
+        mmlu[0].query
+        == "What is the embryological origin of the hyoid bone?\n\nA: The first pharyngeal arch\nB: The first and second pharyngeal arches\nC: The second pharyngeal arch\nD: The second and third pharyngeal arches"
     )
 
 
