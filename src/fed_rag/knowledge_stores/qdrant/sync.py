@@ -2,9 +2,9 @@
 
 import warnings
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Generator, Literal
+from typing import TYPE_CHECKING, Any, Generator, Literal, Optional
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, PrivateAttr, SecretStr, model_validator
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.data_structures.knowledge_node import KnowledgeNode
@@ -41,7 +41,7 @@ def _get_qdrant_client(
     from qdrant_client import QdrantClient
 
     if in_memory:
-        return QdrantClient(":memorry:")
+        return QdrantClient(":memory:")
     else:
         return QdrantClient(
             host=host,
@@ -97,31 +97,52 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         description="Specifies whether the client should refer to an in-memory service.",
     )
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
+    _in_memory_client: Optional["QdrantClient"] = PrivateAttr(default=None)
 
     @contextmanager
     def get_client(
         self,
     ) -> Generator["QdrantClient", None, None]:
-        client = _get_qdrant_client(
-            in_memory=self.in_memory,
-            host=self.host,
-            port=self.port,
-            grpc_port=self.grpc_port,
-            https=self.https,
-            timeout=self.timeout,
-            api_key=self.api_key.get_secret_value() if self.api_key else None,
-            **self.client_kwargs,
-        )
-
-        try:
-            yield client
-        finally:
-            try:
-                client.close()
-            except Exception as e:
-                warnings.warn(
-                    f"Unable to close client: {str(e)}", KnowledgeStoreWarning
+        if self.in_memory:
+            if self._in_memory_client is None:
+                self._in_memory_client = _get_qdrant_client(
+                    in_memory=self.in_memory,
+                    host=self.host,
+                    port=self.port,
+                    grpc_port=self.grpc_port,
+                    https=self.https,
+                    timeout=self.timeout,
+                    api_key=self.api_key.get_secret_value()
+                    if self.api_key
+                    else None,
+                    **self.client_kwargs,
                 )
+
+            yield self._in_memory_client  # yield persistent in-memory client
+        else:
+            # create a new client connection and yield this
+            client = _get_qdrant_client(
+                host=self.host,
+                port=self.port,
+                grpc_port=self.grpc_port,
+                https=self.https,
+                timeout=self.timeout,
+                api_key=self.api_key.get_secret_value()
+                if self.api_key
+                else None,
+                **self.client_kwargs,
+            )
+
+            try:
+                yield client
+            finally:
+                try:
+                    client.close()
+                except Exception as e:
+                    warnings.warn(
+                        f"Unable to close client: {str(e)}",
+                        KnowledgeStoreWarning,
+                    )
 
     def _collection_exists(self) -> bool:
         """Check if a collection exists."""
