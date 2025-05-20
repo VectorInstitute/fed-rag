@@ -4,6 +4,7 @@ import pytest
 from datasets import Dataset, IterableDataset
 
 from fed_rag.data_structures.evals import BenchmarkExample
+from fed_rag.exceptions import EvalsError
 
 from .. import _benchmarks as benchmarks
 
@@ -60,3 +61,16 @@ def test_hf_convert_to_streaming(
     next(example_stream)
     with pytest.raises(StopIteration):
         next(example_stream)
+
+
+@patch("datasets.load_dataset")
+def test_hf_mixin_raises_error_if_load_dataset_fails(
+    mock_load_dataset: MagicMock, dummy_dataset: Dataset
+) -> None:
+    mock_load_dataset.side_effect = RuntimeError("dataset load fail")
+
+    with pytest.raises(
+        EvalsError,
+        match="Failed to load dataset, `test_benchmark`, due to error: dataset load fail",
+    ):
+        benchmarks.TestHFBenchmark()
