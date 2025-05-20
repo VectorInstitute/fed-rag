@@ -23,6 +23,10 @@ class TestBenchmark(BaseBenchmark):
         for ex in self._get_examples():
             yield ex
 
+    @property
+    def num_examples(self) -> int:
+        return len(self._get_examples())
+
 
 class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
     __test__ = (

@@ -1,14 +1,24 @@
 from typing import Any, Generator
 
 import pytest
-from datasets import Dataset, DatasetInfo, IterableDataset, Split
+from datasets import (
+    Dataset,
+    DatasetInfo,
+    IterableDataset,
+    Split,
+    SplitDict,
+    SplitInfo,
+)
 
 
 @pytest.fixture
 def dummy_dataset() -> Dataset:
+    split_dict = SplitDict()
+    split_dict.add(SplitInfo(name="test", num_examples=3))
     benchmark_info = DatasetInfo(
         dataset_name="test_benchmark",
         description="A toy RAG dataset for testing purposes",
+        splits=split_dict,
     )
     benchmark = Dataset.from_dict(
         {
@@ -49,13 +59,26 @@ def dummy_iterable_dataset() -> IterableDataset:
             "context": "yet another context for yet another query",
         }
 
-    return IterableDataset.from_generator(example_gen, split=Split.TEST)
+    benchmark = IterableDataset.from_generator(example_gen, split=Split.TEST)
+    split_dict = SplitDict()
+    split_dict.add(SplitInfo(name="test", num_examples=3))
+    benchmark.info.update(
+        DatasetInfo(
+            dataset_name="test_benchmark",
+            description="A toy RAG dataset for testing purposes",
+            splits=split_dict,
+        )
+    )
+    return benchmark
 
 
 @pytest.fixture
 def dummy_mmlu() -> Dataset:
+    split_dict = SplitDict()
+    split_dict.add(SplitInfo(name="test", num_examples=1))
     benchmark_info = DatasetInfo(
         dataset_name="cais/mmlu",
+        splits=split_dict,
     )
     benchmark = Dataset.from_dict(
         {

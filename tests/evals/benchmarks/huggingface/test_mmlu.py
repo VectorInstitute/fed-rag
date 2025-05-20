@@ -31,6 +31,7 @@ def test_mmlu_query_response_context_extractors(
     mock_load_dataset.return_value = dummy_mmlu
     mmlu = benchmarks.HuggingFaceMMLU()
 
+    assert mmlu.num_examples == 1
     assert isinstance(mmlu[0], BenchmarkExample)
     assert (
         mmlu[0].query

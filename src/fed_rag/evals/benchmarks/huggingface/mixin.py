@@ -18,7 +18,7 @@ from fed_rag.data_structures.evals import BenchmarkExample
 from fed_rag.exceptions import EvalsError
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datasets import Dataset, IterableDataset, SplitInfo
+    from datasets import Dataset, IterableDataset
 
 
 BENCHMARK_EXAMPLE_JSON_KEY = "__benchmark_example_json"
@@ -116,6 +116,8 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
 
     @property
     def num_examples(self) -> int:
+        from datasets import SplitInfo
+
         if split_info := self.dataset.info.splits[self.split]:
             split_info = cast(
                 SplitInfo,

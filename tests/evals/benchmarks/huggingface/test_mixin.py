@@ -16,6 +16,7 @@ def test_hf_mixin(
     mock_load_dataset.return_value = dummy_dataset
     test_hf_benchmark = benchmarks.TestHFBenchmark()
 
+    assert test_hf_benchmark.num_examples == 3
     assert len(test_hf_benchmark) == 3
     assert (
         test_hf_benchmark.dataset_name
