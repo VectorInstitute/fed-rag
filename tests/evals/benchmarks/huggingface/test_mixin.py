@@ -38,3 +38,25 @@ def test_hf_streaming(
     next(example_stream)
     with pytest.raises(StopIteration):
         next(example_stream)
+
+
+@patch("datasets.load_dataset")
+def test_hf_convert_to_streaming(
+    mock_load_dataset: MagicMock,
+    dummy_dataset: Dataset,
+    dummy_iterable_dataset: IterableDataset,
+) -> None:
+    mock_load_dataset.return_value = dummy_dataset
+    mock_to_iterable_dataset = MagicMock()
+    mock_to_iterable_dataset.return_value = dummy_iterable_dataset
+    dummy_dataset.to_iterable_dataset = mock_to_iterable_dataset
+    test_hf_benchmark = benchmarks.TestHFBenchmark()
+
+    assert isinstance(test_hf_benchmark.dataset, Dataset)
+
+    example_stream = test_hf_benchmark.as_stream()
+    next(example_stream)
+    next(example_stream)
+    next(example_stream)
+    with pytest.raises(StopIteration):
+        next(example_stream)
