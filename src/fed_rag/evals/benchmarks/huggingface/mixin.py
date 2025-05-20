@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Sequence,
     Union,
+    cast,
 )
 
 from pydantic import BaseModel, PrivateAttr
@@ -84,7 +85,7 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
 
         return self._dataset
 
-    # Provide required implementations for ~BaseBenchmark
+    # Provide required implementations for abstractmethods in ~BaseBenchmark
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
         from datasets import Dataset
 
@@ -111,4 +112,27 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
         for hf_example in iterable_dataset:
             yield BenchmarkExample.model_validate(
                 hf_example[BENCHMARK_EXAMPLE_JSON_KEY]
+            )
+
+    @property
+    def num_examples(self) -> int:
+        from datasets import SplitInfo
+
+        if splits := self.dataset.info.splits:
+            try:
+                split_info = splits[self.split]
+                split_info = cast(
+                    SplitInfo,
+                    split_info,
+                )
+                return int(split_info.num_examples)
+            except (KeyError, TypeError):
+                raise EvalsError(
+                    f"Unable to get size of dataset: `{self.dataset_name}`. "
+                    f"Split, `{self.split}` does not exist in the splits of the dataset."
+                )
+        else:
+            raise EvalsError(
+                f"Unable to get size of dataset: `{self.dataset_name}`. "
+                "The dataset does not have any listed splits."
             )

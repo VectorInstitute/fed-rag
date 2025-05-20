@@ -39,3 +39,12 @@ class BaseBenchmark(BaseModel, ABC):
     @abstractmethod
     def as_stream(self) -> Generator[BenchmarkExample, None, None]:
         """Produce a stream of `BenchmarkExamples`."""
+
+    @property
+    @abstractmethod
+    def num_examples(self) -> int:
+        """Number of examples in the benchmark.
+
+        NOTE: if streaming, `_examples` is likely set to an empty list. Thus,
+        we leave this implementation for the subclasses.
+        """
