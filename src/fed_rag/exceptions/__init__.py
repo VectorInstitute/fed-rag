@@ -2,6 +2,7 @@ from .bridge import BridgeError, MissingSpecifiedConversionMethod
 from .common import MissingExtraError
 from .core import FedRAGError
 from .data_collator import DataCollatorError
+from .evals import EvalsError, EvalsWarning
 from .fl_tasks import (
     FLTaskError,
     MissingFLTaskConfig,
@@ -47,9 +48,12 @@ __all__ = [
     # common
     "MissingExtraError",
     "DataCollatorError",
-    # bridges"
+    # bridges
     "BridgeError",
     "MissingSpecifiedConversionMethod",
+    # evals
+    "EvalsError",
+    "EvalsWarning",
     # fl_tasks
     "FLTaskError",
     "MissingFLTaskConfig",
