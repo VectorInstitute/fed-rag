@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.19] - 2025-05-20
+
+### Added
+
+- Add support for in-memory Qdrant instances (#350)
+- Add `EvalError` (#339)
+- Add streaming support for HF benchmarks (#337)
+- [Feature] Add HuggingFaceBenchmarkMixin and first HuggingFaceMMLU benchmark (#334)
+- [Feature] Add ExactMatchEvaluationMetric (#333)
+- [Feature] Add base.evals module and BaseBenchmark BaseBenchmarker classes (#326)
+
+### Changed
+
+- Add `num_examples` to `BaseBenchmark` (#344)
+
 ## [0.0.18] - 2025-05-16
 
 ### Added

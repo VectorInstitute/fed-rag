@@ -8,8 +8,8 @@ authors:
     given-names: "David"
     email: "david.emerson@vectorinstitute.ai"
 title: "fed-rag"
-version: "0.0.18"
-abstract: "A framework for federated fine-tuning of retrieval-augmented generation (RAG) systems."
+version: "0.0.19"
+abstract: "Simplified fine-tuning of retrieval-augmented generation (RAG) systems."
 keywords:
   - machine learning
   - federated learning
