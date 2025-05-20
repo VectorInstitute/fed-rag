@@ -70,7 +70,7 @@ def dummy_mmlu() -> Dataset:
                     "The second and third pharyngeal arches",
                 ]
             ],
-            "answer": ["D"],
+            "answer": [3],
         },
         info=benchmark_info,
         split=Split.TEST,
