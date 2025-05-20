@@ -1,4 +1,4 @@
-"""TesterResult"""
+"""Data structures for results"""
 
 from typing import Any
 

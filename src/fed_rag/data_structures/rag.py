@@ -1,4 +1,4 @@
-"""Auxiliaty types for RAG System"""
+"""Auxiliary types for RAG System"""
 
 from typing import Any
 

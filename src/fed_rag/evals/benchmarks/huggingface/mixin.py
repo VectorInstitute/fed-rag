@@ -14,6 +14,7 @@ from typing import (
 from pydantic import BaseModel, PrivateAttr
 
 from fed_rag.data_structures.evals import BenchmarkExample
+from fed_rag.exceptions import EvalsError
 
 if TYPE_CHECKING:  # pragma: no cover
     from datasets import Dataset, IterableDataset
@@ -60,13 +61,18 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
     def _load_dataset(self) -> Union["Dataset", "IterableDataset"]:
         from datasets import load_dataset
 
-        loaded_dataset = load_dataset(
-            self.dataset_name,
-            name=self.configuration_name,
-            split=self.split,
-            streaming=self.streaming,
-            **self.load_kwargs,
-        )
+        try:
+            loaded_dataset = load_dataset(
+                self.dataset_name,
+                name=self.configuration_name,
+                split=self.split,
+                streaming=self.streaming,
+                **self.load_kwargs,
+            )
+        except Exception as e:
+            raise EvalsError(
+                f"Failed to load dataset, `{self.dataset_name}`, due to error: {str(e)}"
+            ) from e
 
         # add BenchmarkExample to dataset
         return loaded_dataset.map(self._map_dataset_example)
