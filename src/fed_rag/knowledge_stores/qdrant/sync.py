@@ -30,6 +30,7 @@ def _get_qdrant_client(
     https: bool = False,
     timeout: int | None = None,
     api_key: str | None = None,
+    in_memory: bool = False,
     **kwargs: Any,
 ) -> "QdrantClient":
     """Get a QdrantClient
@@ -39,15 +40,18 @@ def _get_qdrant_client(
     """
     from qdrant_client import QdrantClient
 
-    return QdrantClient(
-        host=host,
-        port=port,
-        grpc_port=grpc_port,
-        api_key=api_key,
-        timeout=timeout,
-        https=https,
-        **kwargs,
-    )
+    if in_memory:
+        return QdrantClient(":memorry:")
+    else:
+        return QdrantClient(
+            host=host,
+            port=port,
+            grpc_port=grpc_port,
+            api_key=api_key,
+            timeout=timeout,
+            https=https,
+            **kwargs,
+        )
 
 
 def _convert_knowledge_node_to_qdrant_point(
@@ -88,6 +92,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     )
     client_kwargs: dict[str, Any] = Field(default_factory=dict)
     timeout: int | None = Field(default=None)
+    in_memory: bool = Field(
+        default=False,
+        description="Specifies whether the client should refer to an in-memory service.",
+    )
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
 
     @contextmanager
@@ -95,6 +103,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         self,
     ) -> Generator["QdrantClient", None, None]:
         client = _get_qdrant_client(
+            in_memory=self.in_memory,
             host=self.host,
             port=self.port,
             grpc_port=self.grpc_port,
