@@ -4,6 +4,7 @@ from contextlib import nullcontext as does_not_raise
 from unittest.mock import MagicMock, patch
 
 import pytest
+from qdrant_client import QdrantClient
 
 from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import (
@@ -28,6 +29,20 @@ def test_init() -> None:
 
     assert isinstance(knowledge_store, QdrantKnowledgeStore)
     assert knowledge_store.load_nodes_kwargs == {"parallel": 4}
+
+
+def test_init_in_memory() -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+        in_memory=True,
+    )
+
+    assert isinstance(knowledge_store, QdrantKnowledgeStore)
+    assert knowledge_store.in_memory is True
+
+    with does_not_raise():
+        with knowledge_store.get_client() as client:
+            assert isinstance(client, QdrantClient)
 
 
 def test_init_raises_error_if_qdrant_extra_is_missing_parent_import() -> None:
