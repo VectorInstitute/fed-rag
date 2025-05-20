@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from datasets import Dataset
+import pytest
+from datasets import Dataset, IterableDataset
 
 from fed_rag.data_structures.evals import BenchmarkExample
 
@@ -24,10 +25,16 @@ def test_hf_mixin(
 
 @patch("datasets.load_dataset")
 def test_hf_streaming(
-    mock_load_dataset: MagicMock, dummy_dataset: Dataset
+    mock_load_dataset: MagicMock, dummy_iterable_dataset: IterableDataset
 ) -> None:
-    mock_load_dataset.return_value = dummy_dataset
+    mock_load_dataset.return_value = dummy_iterable_dataset
     test_hf_benchmark = benchmarks.TestHFBenchmark(streaming=True)
 
+    assert isinstance(test_hf_benchmark.dataset, IterableDataset)
+
     example_stream = test_hf_benchmark.as_stream()
-    print(next(example_stream).model_dump())
+    next(example_stream)
+    next(example_stream)
+    next(example_stream)
+    with pytest.raises(StopIteration):
+        next(example_stream)

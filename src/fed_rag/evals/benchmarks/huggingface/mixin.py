@@ -80,10 +80,15 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
 
     # Provide required implementations for ~BaseBenchmark
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
-        return [
-            BenchmarkExample.model_validate(el)
-            for el in self.dataset[BENCHMARK_EXAMPLE_JSON_KEY]
-        ]
+        from datasets import Dataset
+
+        if isinstance(self.dataset, Dataset):
+            return [
+                BenchmarkExample.model_validate(el)
+                for el in self.dataset[BENCHMARK_EXAMPLE_JSON_KEY]
+            ]
+        else:
+            return []  # examples should be streamed
 
     def as_stream(self) -> Generator[BenchmarkExample, None, None]:
         from datasets import IterableDataset
