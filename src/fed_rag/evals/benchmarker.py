@@ -140,11 +140,9 @@ class Benchmarker(BaseModel):
 
                 num_seen += 1
 
-        num_total_examples = num_seen if is_streaming else len(benchmark)
-
         return BenchmarkResult(
             score=running_score,
             metric_name=metric.__class__.__name__,
             num_examples_used=num_seen,
-            num_total_examples=num_total_examples,
+            num_total_examples=benchmark.num_examples,
         )

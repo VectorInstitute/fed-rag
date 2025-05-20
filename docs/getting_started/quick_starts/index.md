@@ -10,9 +10,11 @@ quick start examples in order to get a better feeling of the library.
 - :material-hexagon-outline: [__Centralized to Federated__](./federated.md) — Transform
   a centralized training task into a federated learning task.
 - :material-hexagon-outline: [__Build a RAG System__](./rag_inference.md) — Assemble
-  a RAG System using FedRAG's lightweight abstractions.
+  a RAG system using FedRAG's lightweight abstractions.
 - :material-hexagon-outline: [__Fine-tune a RAG System__](./rag_finetuning.md) — Fine-tune
   a RAG system on custom QA data, demonstrating both centralized training and
   optional federation capabilities.
+- :material-hexagon-outline: [__Benchmark a RAG System__](./rag_finetuning.md) —
+  Evaluate a RAG system on popular benchmarks like MMLU.
 
 </div>
