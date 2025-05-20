@@ -118,13 +118,21 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
     def num_examples(self) -> int:
         from datasets import SplitInfo
 
-        if split_info := self.dataset.info.splits[self.split]:
-            split_info = cast(
-                SplitInfo,
-                split_info,
-            )
-            return int(split_info.num_examples)
+        if splits := self.dataset.info.splits:
+            try:
+                split_info = splits[self.split]
+                split_info = cast(
+                    SplitInfo,
+                    split_info,
+                )
+                return int(split_info.num_examples)
+            except (KeyError, TypeError):
+                raise EvalsError(
+                    f"Unable to get size of dataset: `{self.dataset_name}`. "
+                    f"Split, `{self.split}` does not exist in the splits of the dataset."
+                )
         else:
             raise EvalsError(
-                f"Unable to get size of dataset: `{self.dataset_name}` for split: {self.split}"
+                f"Unable to get size of dataset: `{self.dataset_name}`. "
+                "The dataset does not have any listed splits."
             )
