@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Any, Generator, Sequence
 
 from fed_rag.base.evals.benchmark import BaseBenchmark
 from fed_rag.data_structures import BenchmarkExample
@@ -18,6 +18,9 @@ class TestBenchmark(BaseBenchmark):
             BenchmarkExample(query="query 2", response="response 2"),
             BenchmarkExample(query="query 3", response="response 3"),
         ]
+
+    def as_stream(self) -> Generator[BenchmarkExample, None, None]:
+        raise NotImplementedError
 
 
 class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
