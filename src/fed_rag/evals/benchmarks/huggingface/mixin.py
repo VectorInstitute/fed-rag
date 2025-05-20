@@ -1,14 +1,22 @@
 """HuggingFaceBenchmarkMixin"""
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, ClassVar, Optional, Sequence
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Generator,
+    Optional,
+    Sequence,
+    Union,
+)
 
 from pydantic import BaseModel, PrivateAttr
 
 from fed_rag.data_structures.evals import BenchmarkExample
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datasets import Dataset
+    from datasets import Dataset, IterableDataset
 
 
 BENCHMARK_EXAMPLE_JSON_KEY = "__benchmark_example_json"
@@ -49,7 +57,7 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
         }
         return example
 
-    def _load_dataset(self) -> "Dataset":
+    def _load_dataset(self) -> Union["Dataset", "IterableDataset"]:
         from datasets import load_dataset
 
         loaded_dataset = load_dataset(
@@ -61,19 +69,40 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
         )
 
         # add BenchmarkExample to dataset
-        return loaded_dataset.map(
-            self._map_dataset_example, cache_file_name=None
-        )
+        return loaded_dataset.map(self._map_dataset_example)
 
     @property
-    def dataset(self) -> "Dataset":
+    def dataset(self) -> Union["Dataset", "IterableDataset"]:
         if self._dataset is None:
             self._dataset = self._load_dataset()
 
         return self._dataset
 
+    # Provide required implementations for ~BaseBenchmark
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
-        return [
-            BenchmarkExample.model_validate(el)
-            for el in self.dataset[BENCHMARK_EXAMPLE_JSON_KEY]
-        ]
+        from datasets import Dataset
+
+        if isinstance(self.dataset, Dataset):
+            return [
+                BenchmarkExample.model_validate(el)
+                for el in self.dataset[BENCHMARK_EXAMPLE_JSON_KEY]
+            ]
+        else:
+            return []  # examples should be streamed
+
+    def as_stream(self) -> Generator[BenchmarkExample, None, None]:
+        from datasets import IterableDataset
+
+        # check if dataset is an iterable one
+        if isinstance(self.dataset, IterableDataset):
+            iterable_dataset = self.dataset
+        else:
+            iterable_dataset = self.dataset.to_iterable_dataset()
+
+        # map the iterable_dataset to get the examples i
+        iterable_dataset = iterable_dataset.map(self._map_dataset_example)
+
+        for hf_example in iterable_dataset:
+            yield BenchmarkExample.model_validate(
+                hf_example[BENCHMARK_EXAMPLE_JSON_KEY]
+            )

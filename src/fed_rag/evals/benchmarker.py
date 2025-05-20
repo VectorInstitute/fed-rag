@@ -1,6 +1,7 @@
 """Base Benchmark and Benchmarker"""
 
-from typing import Any
+import contextlib
+from typing import Any, Generator
 
 from pydantic import BaseModel
 from typing_extensions import assert_never
@@ -8,7 +9,11 @@ from typing_extensions import assert_never
 from fed_rag import RAGSystem
 from fed_rag.base.evals.benchmark import BaseBenchmark
 from fed_rag.base.evals.metric import BaseEvaluationMetric
-from fed_rag.data_structures.evals import AggregationMode, BenchmarkResult
+from fed_rag.data_structures.evals import (
+    AggregationMode,
+    BenchmarkExample,
+    BenchmarkResult,
+)
 
 
 class Benchmarker(BaseModel):
@@ -58,10 +63,30 @@ class Benchmarker(BaseModel):
             case _:  # pragma: no cover
                 assert_never(agg)
 
+    @contextlib.contextmanager
+    def _get_examples_iterator(
+        self, benchmark: BaseBenchmark, is_streaming: bool
+    ) -> Generator[BenchmarkExample, None, None]:
+        """Wrapper over the iterator or stream.
+
+        To handle generator clean up safely.
+        """
+        if is_streaming:
+            examples_iterator = benchmark.as_stream()
+        else:
+            examples_iterator = benchmark.as_iterator()
+
+        try:
+            yield examples_iterator
+        finally:
+            if hasattr(examples_iterator, "close"):
+                examples_iterator.close()
+
     def run(
         self,
         benchmark: BaseBenchmark,
         metric: BaseEvaluationMetric,
+        is_streaming: bool = False,
         agg: AggregationMode | str = "avg",
         batch_size: int = 1,
         num_examples: int | None = None,
@@ -88,29 +113,32 @@ class Benchmarker(BaseModel):
         to be able to handle batches as well.
         """
 
-        if num_examples:
-            examples_iterator = iter(benchmark[:num_examples])
-        else:
-            examples_iterator = benchmark.as_iterator()
+        with self._get_examples_iterator(
+            benchmark, is_streaming
+        ) as examples_iterator:
+            running_score = None
+            num_seen = 0
+            for example in examples_iterator:
+                if num_seen == num_examples:
+                    break
 
-        running_score = None
-        num_seen = 0
-        for example in examples_iterator:
-            # prediction
-            result = self.rag_system.query(example.query)
+                # prediction
+                result = self.rag_system.query(example.query)
 
-            # evaluation
-            score = metric(prediction=result.response, actual=example.response)
+                # evaluation
+                score = metric(
+                    prediction=result.response, actual=example.response
+                )
 
-            # update running score
-            running_score = self._update_running_score(
-                agg=agg,
-                running_score=running_score,
-                next_score=score,
-                num_examples_seen=num_seen,
-            )
+                # update running score
+                running_score = self._update_running_score(
+                    agg=agg,
+                    running_score=running_score,
+                    next_score=score,
+                    num_examples_seen=num_seen,
+                )
 
-            num_seen += 1
+                num_seen += 1
 
         return BenchmarkResult(
             score=running_score,

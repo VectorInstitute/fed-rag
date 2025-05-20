@@ -144,3 +144,21 @@ def test_benchmarker_max_reversed(mock_rag_system: RAGSystem) -> None:
     assert result.num_examples_used == 3
     assert result.num_total_examples == 3
     assert result.metric_name == "MyMetric"
+
+
+def test_benchmarker_with_streaming_avg(mock_rag_system: RAGSystem) -> None:
+    # arrange
+    test_benchmark = benchmarks.TestBenchmark()
+    benchmarker = Benchmarker(rag_system=mock_rag_system)
+    metric = MyMetric()
+
+    # act
+    result = benchmarker.run(
+        benchmark=test_benchmark, metric=metric, agg="avg", is_streaming=True
+    )
+
+    # assert
+    assert result.score == 2
+    assert result.num_examples_used == 3
+    assert result.num_total_examples == 3
+    assert result.metric_name == "MyMetric"

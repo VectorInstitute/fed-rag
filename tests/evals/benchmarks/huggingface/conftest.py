@@ -1,5 +1,7 @@
+from typing import Any, Generator
+
 import pytest
-from datasets import Dataset, DatasetInfo, Split
+from datasets import Dataset, DatasetInfo, IterableDataset, Split
 
 
 @pytest.fixture
@@ -26,6 +28,28 @@ def dummy_dataset() -> Dataset:
         split=Split.TEST,
     )
     return benchmark
+
+
+@pytest.fixture
+def dummy_iterable_dataset() -> IterableDataset:
+    def example_gen() -> Generator[dict[str, Any], None, None]:
+        yield {
+            "query": "a query",
+            "response": "response to a query",
+            "context": "context for a query",
+        }
+        yield {
+            "query": "another query",
+            "response": "another response to another query",
+            "context": "another context for another query",
+        }
+        yield {
+            "query": "yet another query",
+            "response": "yet another response to yet another query",
+            "context": "yet another context for yet another query",
+        }
+
+    return IterableDataset.from_generator(example_gen, split=Split.TEST)
 
 
 @pytest.fixture

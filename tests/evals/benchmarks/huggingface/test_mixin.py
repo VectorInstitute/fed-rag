@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from datasets import Dataset
+import pytest
+from datasets import Dataset, IterableDataset
 
 from fed_rag.data_structures.evals import BenchmarkExample
 
@@ -20,3 +21,42 @@ def test_hf_mixin(
         == test_hf_benchmark._dataset.info.dataset_name
     )
     assert isinstance(test_hf_benchmark[0], BenchmarkExample)
+
+
+@patch("datasets.load_dataset")
+def test_hf_streaming(
+    mock_load_dataset: MagicMock, dummy_iterable_dataset: IterableDataset
+) -> None:
+    mock_load_dataset.return_value = dummy_iterable_dataset
+    test_hf_benchmark = benchmarks.TestHFBenchmark(streaming=True)
+
+    assert isinstance(test_hf_benchmark.dataset, IterableDataset)
+
+    example_stream = test_hf_benchmark.as_stream()
+    next(example_stream)
+    next(example_stream)
+    next(example_stream)
+    with pytest.raises(StopIteration):
+        next(example_stream)
+
+
+@patch("datasets.load_dataset")
+def test_hf_convert_to_streaming(
+    mock_load_dataset: MagicMock,
+    dummy_dataset: Dataset,
+    dummy_iterable_dataset: IterableDataset,
+) -> None:
+    mock_load_dataset.return_value = dummy_dataset
+    mock_to_iterable_dataset = MagicMock()
+    mock_to_iterable_dataset.return_value = dummy_iterable_dataset
+    dummy_dataset.to_iterable_dataset = mock_to_iterable_dataset
+    test_hf_benchmark = benchmarks.TestHFBenchmark()
+
+    assert isinstance(test_hf_benchmark.dataset, Dataset)
+
+    example_stream = test_hf_benchmark.as_stream()
+    next(example_stream)
+    next(example_stream)
+    next(example_stream)
+    with pytest.raises(StopIteration):
+        next(example_stream)
