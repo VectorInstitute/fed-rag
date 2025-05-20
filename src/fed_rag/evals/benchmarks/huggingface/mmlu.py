@@ -1,6 +1,6 @@
 """MMLU benchmark"""
 
-from typing import Any
+from typing import Any, ClassVar
 
 from pydantic import model_validator
 
@@ -28,6 +28,7 @@ class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
 
     dataset_name = "cais/mmlu"
     configuration_name: str = "all"
+    response_key: ClassVar[dict[int, str]] = {0: "A", 1: "B", 2: "C", 3: "D"}
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
         choices = example["choices"]
@@ -35,7 +36,7 @@ class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
         return f"{example['question']}\n\n{formatted_choices}"
 
     def _get_response_from_example(self, example: dict[str, Any]) -> str:
-        return str(example["answer"])
+        return self.response_key[example["answer"]]
 
     def _get_context_from_example(self, example: dict[str, Any]) -> str | None:
         return None
