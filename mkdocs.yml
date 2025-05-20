@@ -64,6 +64,7 @@ nav:
       - Federated Fine-tuning: examples/ra_dit/federated_finetune.md
   - Notebooks:
     - notebooks/basic_starter_hf.ipynb
+    - notebooks/rag_benchmarking_hf_mmlu.ipynb
     - Integrations:
       - notebooks/integrations/llama_index.ipynb
   - API Reference:
