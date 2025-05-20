@@ -20,7 +20,8 @@ class TestBenchmark(BaseBenchmark):
         ]
 
     def as_stream(self) -> Generator[BenchmarkExample, None, None]:
-        raise NotImplementedError
+        for ex in self._get_examples():
+            yield ex
 
 
 class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
