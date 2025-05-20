@@ -4619,7 +4619,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
@@ -4649,7 +4649,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="launch-a-local-qdrant-service-with-docker">Launch a Local Qdrant Service (with Docker)<a class="anchor-link" href="#launch-a-local-qdrant-service-with-docker">¶</a></h2><p><strong>IMPORTANT NOTE:</strong> if you are running this within a Google Colab, you won't be able to run a docker image. Instead, you can run the rest of this notebook by using an in-memory instance of Qdrant.</p>
+<h2 id="launch-a-local-qdrant-service-with-docker">Launch a Local Qdrant Service (with Docker)<a class="anchor-link" href="#launch-a-local-qdrant-service-with-docker">¶</a></h2><p>This step assumes that you have docker installed on your machine. If not installed, refer to the official Docker docs for installation found <a href="https://docs.docker.com/engine/install/">here</a>.</p>
+<p><strong>IMPORTANT NOTE:</strong> if you are running this within a Google Colab, you won't be able to run a docker image. Instead, you can run the rest of this notebook by using an in-memory instance of Qdrant.</p>
 <p>If using a Colab, set the <code>WITH_DOCKER</code> to <code>False</code></p>
 </div>
 </div>
@@ -4673,16 +4674,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">WITH_DOCKER</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">WITH_DOCKER</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">WITH_DOCKER = False</div>
+<div class="clipboard-copy-txt" id="cell-3">WITH_DOCKER = True</div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=599f4ae4-646d-4e31-b584-52f9d6151224">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=599f4ae4-646d-4e31-b584-52f9d6151224">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4793,6 +4794,43 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     print(f"Container status: {container.status}")
     print(f"Container logs:")
     print(container.logs().decode("utf-8"))</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Image 'qdrant/qdrant' already exists locally
+Container started with ID: 8e615fa4f54eeb349a1bd62fe3c9531104d0547b2390935ab9196a4090dcf692
+Container status: running
+Container logs:
+           _                 _    
+  __ _  __| |_ __ __ _ _ __ | |_  
+ / _` |/ _` | '__/ _` | '_ \| __| 
+| (_| | (_| | | | (_| | | | | |_  
+ \__, |\__,_|_|  \__,_|_| |_|\__| 
+    |_|                           
+
+Version: 1.14.0, build: 3617a011
+Access web UI at http://localhost:6333/dashboard
+
+2025-05-20T17:32:14.275811Z  INFO storage::content_manager::consensus::persistent: Loading raft state from ./storage/raft_state.json    
+2025-05-20T17:32:14.277018Z  INFO qdrant: Distributed mode disabled    
+2025-05-20T17:32:14.277054Z  INFO qdrant: Telemetry reporting enabled, id: 68306805-e05f-434f-9075-ebf937a54e6a    
+2025-05-20T17:32:14.277091Z  INFO qdrant: Inference service is not configured.    
+2025-05-20T17:32:14.278552Z  INFO qdrant::actix: TLS disabled for REST API    
+2025-05-20T17:32:14.278595Z  INFO qdrant::actix: Qdrant HTTP listening on 6333    
+2025-05-20T17:32:14.278603Z  INFO actix_server::builder: Starting 11 workers
+2025-05-20T17:32:14.278608Z  INFO actix_server::server: Actix runtime found; starting in Actix runtime
+2025-05-20T17:32:14.281871Z  INFO qdrant::tonic: Qdrant gRPC listening on 6334    
+2025-05-20T17:32:14.281879Z  INFO qdrant::tonic: TLS disabled for gRPC API    
+
+</pre>
 </div>
 </div>
 </div>
@@ -5062,7 +5100,7 @@ for jx, c in enumerate(text_chunks):
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
@@ -5089,7 +5127,7 @@ for jx, c in enumerate(text_chunks):
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
@@ -5114,7 +5152,7 @@ for jx, c in enumerate(text_chunks):
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
 <pre>3</pre>
 </div>
@@ -5139,7 +5177,7 @@ for jx, c in enumerate(text_chunks):
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
@@ -5168,7 +5206,7 @@ query_emb = retriever.encode_query(query).tolist()</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
@@ -5195,7 +5233,7 @@ query_emb = retriever.encode_query(query).tolist()</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
@@ -5226,7 +5264,7 @@ print("Text content: ", knowledge_node.text_content)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Similarity score:  0.4998410495227918
+<pre>Similarity score:  0.49984106
 Text content:  title: History of marine biology
 section: James Cook
 text:  James Cook is well known for his voyages of exploration for the British Navy in which he mapped out a significant amount of the world's uncharted waters. Cook's explorations took him around the world twice and led to countless descriptions of previously unknown plants and animals. Cook's explorations influenced many others and led to a number of scientists examining marine life more closely. Among those influenced was Charles Darwin who went on to make many contributions of his own. 
@@ -5253,7 +5291,7 @@ text:  James Cook is well known for his voyages of exploration for the British N
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-14">
