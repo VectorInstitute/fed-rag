@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Sequence,
     Union,
+    cast,
 )
 
 from pydantic import BaseModel, PrivateAttr
@@ -17,7 +18,7 @@ from fed_rag.data_structures.evals import BenchmarkExample
 from fed_rag.exceptions import EvalsError
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datasets import Dataset, IterableDataset
+    from datasets import Dataset, IterableDataset, SplitInfo
 
 
 BENCHMARK_EXAMPLE_JSON_KEY = "__benchmark_example_json"
@@ -84,7 +85,7 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
 
         return self._dataset
 
-    # Provide required implementations for ~BaseBenchmark
+    # Provide required implementations for abstractmethods in ~BaseBenchmark
     def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
         from datasets import Dataset
 
@@ -111,4 +112,17 @@ class HuggingFaceBenchmarkMixin(BaseModel, ABC):
         for hf_example in iterable_dataset:
             yield BenchmarkExample.model_validate(
                 hf_example[BENCHMARK_EXAMPLE_JSON_KEY]
+            )
+
+    @property
+    def num_examples(self) -> int:
+        if split_info := self.dataset.info.splits[self.split]:
+            split_info = cast(
+                SplitInfo,
+                split_info,
+            )
+            return int(split_info.num_examples)
+        else:
+            raise EvalsError(
+                f"Unable to get size of dataset: `{self.dataset_name}` for split: {self.split}"
             )
