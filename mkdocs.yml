@@ -73,10 +73,26 @@ nav:
     - Data Collators:
       - api_reference/data_collators/index.md
       - api_reference/data_collators/huggingface.md
+    - Data Structures:
+      - Bridge: api_reference/data_structures/bridge.md
+      - Evals: api_reference/data_structures/evals.md
+      - Knowledge Node: api_reference/data_structures/knowledge_node.md
+      - RAG: api_reference/data_structures/rag.md
+      - Results: api_reference/data_structures/results.md
     - Decorators:
       - api_reference/decorators/index.md
+    - Evals:
+      - api_reference/evals/index.md
+      - Benchmarker: api_reference/evals/benchmarker.md
+      - Benchmarks:
+        - HuggingFace:
+          - api_reference/evals/benchmarks/huggingface/mmlu.md
+      - Metrics:
+        - Exact Match: api_reference/evals/metrics/exact_match.md
     - Exceptions:
       - api_reference/exceptions/index.md
+      - Bridge: api_reference/exceptions/bridge.md
+      - Evals: api_reference/exceptions/evals.md
       - FL Tasks: api_reference/exceptions/fl_tasks.md
       - Inspectors: api_reference/exceptions/inspectors.md
       - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
