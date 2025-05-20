@@ -67,6 +67,7 @@ nav:
     - notebooks/rag_benchmarking_hf_mmlu.ipynb
     - Integrations:
       - notebooks/integrations/llama_index.ipynb
+      - notebooks/integrations/qdrant.ipynb
   - API Reference:
     - api_reference/index.md
     - Bridges:
