@@ -60,9 +60,8 @@ def _convert_knowledge_node_to_qdrant_point(
     from qdrant_client.models import PointStruct
 
     if node.embedding is None:
-        warnings.warn(
-            "Uploading a node that has embedding set to None.",
-            KnowledgeStoreWarning,
+        raise KnowledgeStoreError(
+            "Cannot load a node with embedding set to None."
         )
 
     return PointStruct(

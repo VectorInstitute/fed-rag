@@ -695,3 +695,35 @@ def test_private_check_if_collection_exists_otherwise_create_one_raises_error(
     mock_create_collection.assert_called_once_with(
         collection_name="test collection", vector_size=10, distance="Cosine"
     )
+
+
+@patch("qdrant_client.QdrantClient")
+def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_instance = MagicMock()
+    mock_qdrant_client_class.return_value = mock_instance
+    mock_instance.close.side_effect = RuntimeError("mock error from qdrant")
+
+    # act
+    with pytest.warns(
+        KnowledgeStoreWarning,
+        match="Unable to close client: mock error from qdrant",
+    ):
+        with knowledge_store.get_client() as _client:
+            pass
+
+
+def test_convert_knowledge_node_to_qdrant_point_raises_error_none_embedding() -> (
+    None
+):
+    node = KnowledgeNode(text_content="mock", node_type="text")
+
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Cannot load a node with embedding set to None.",
+    ):
+        _convert_knowledge_node_to_qdrant_point(node)
