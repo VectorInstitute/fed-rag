@@ -32,8 +32,9 @@ class KnowledgeNode(BaseModel):
         validate_default=True
     )
     node_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    embedding: list[float] = Field(
-        description="Encoded representation of node. If multimodal type, then this is shared embedding between image and text."
+    embedding: list[float] | None = Field(
+        description="Encoded representation of node. If multimodal type, then this is shared embedding between image and text.",
+        default=None,
     )
     node_type: NodeType = Field(description="Type of node.")
     text_content: str | None = Field(
@@ -136,3 +137,7 @@ class KnowledgeNode(BaseModel):
         if metadata is None:
             return {}
         return metadata
+
+    def model_dump_without_embeddings(self) -> dict[str, Any]:
+        """Seriliaze the node without the embedding."""
+        return self.model_dump(exclude={"embedding"})
