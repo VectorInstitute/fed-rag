@@ -14,7 +14,7 @@ quick start examples in order to get a better feeling of the library.
 - :material-hexagon-outline: [__Fine-tune a RAG System__](./rag_finetuning.md) — Fine-tune
   a RAG system on custom QA data, demonstrating both centralized training and
   optional federation capabilities.
-- :material-hexagon-outline: [__Benchmark a RAG System__](./rag_finetuning.md) —
+- :material-hexagon-outline: [__Benchmark a RAG System__](./benchmark_mmlu.md) —
   Evaluate a RAG system on popular benchmarks like MMLU.
 
 </div>
