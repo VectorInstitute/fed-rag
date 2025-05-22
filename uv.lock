@@ -901,6 +901,9 @@ qdrant = [
     { name = "qdrant-client", extra = ["fastembed"] },
 ]
 unsloth = [
+    { name = "peft" },
+    { name = "sentence-transformers" },
+    { name = "transformers" },
     { name = "unsloth" },
 ]
 
@@ -935,14 +938,17 @@ requires-dist = [
     { name = "grpcio", marker = "extra == 'qdrant'", specifier = ">=1.71.0" },
     { name = "llama-index-core", marker = "extra == 'llama-index'", specifier = ">=0.12.35" },
     { name = "peft", marker = "extra == 'huggingface'", specifier = ">=0.14.0" },
+    { name = "peft", marker = "extra == 'unsloth'", specifier = ">=0.14.0" },
     { name = "pyarrow", specifier = ">=19.0.1" },
     { name = "pydantic", specifier = ">=2.10.5" },
     { name = "pydantic-settings", specifier = ">=2.7.1" },
     { name = "qdrant-client", extras = ["fastembed"], marker = "extra == 'qdrant'", specifier = ">=1.14.2" },
     { name = "sentence-transformers", marker = "extra == 'huggingface'", specifier = ">=3.4.1" },
+    { name = "sentence-transformers", marker = "extra == 'unsloth'", specifier = ">=3.4.1" },
     { name = "torch", specifier = ">=2.5.1" },
     { name = "torchvision", specifier = ">=0.20.1" },
     { name = "transformers", marker = "extra == 'huggingface'", specifier = ">=4.49.0" },
+    { name = "transformers", marker = "extra == 'unsloth'", specifier = ">=4.49.0" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
     { name = "unsloth", marker = "extra == 'unsloth'", specifier = ">=2024.8" },
 ]

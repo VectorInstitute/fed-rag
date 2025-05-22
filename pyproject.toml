@@ -68,7 +68,10 @@ huggingface-evals = [
   "datasets>=3.1.0"
 ]
 unsloth = [
-  "unsloth>=2024.8"
+  "unsloth>=2024.8",
+  "peft>=0.14.0",
+  "transformers>=4.49.0",
+  "sentence-transformers>=3.4.1"
 ]
 
 [project.urls]
