@@ -29,7 +29,7 @@ class UnslothPretrainedTokenizer(HFPretrainedTokenizer):
     ):
         if not _has_unsloth:
             msg = (
-                f"`{self.__class__.__name__}` requires `unsloth` extra to be installed. "
+                f"`{self.__class__.__name__}` requires the `unsloth` extra to be installed. "
                 "To fix please run `pip install fed-rag[unsloth]`."
             )
             raise MissingExtraError(msg)
