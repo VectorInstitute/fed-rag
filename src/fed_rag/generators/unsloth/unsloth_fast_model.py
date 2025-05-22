@@ -36,6 +36,17 @@ you to create the most accurate response.
 
 
 class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
+    """Unsloth FastModel Integration.
+
+    System Requirements (see https://docs.unsloth.ai/get-started/beginner-start-here/unsloth-requirements)
+        - Operating System: Works on Linux and Windows.
+        - Supports NVIDIA GPUs since 2018+. Minimum CUDA Capability 7.0
+        (V100, T4, Titan V, RTX 20, 30, 40x, A100, H100, L40 etc)
+        Check your GPU! GTX 1070, 1080 works, but is slow.
+        - Your device must have xformers, torch, BitsandBytes and triton support.
+        - Unsloth only works if you have a NVIDIA GPU. Make sure you also have disk space to train & save your model
+    """
+
     model_config = ConfigDict(protected_namespaces=("pydantic_model_",))
     model_name: str = Field(
         description="Name of Unsloth model. Used for loading the model from HF hub or local."
