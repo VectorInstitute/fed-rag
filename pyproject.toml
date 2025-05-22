@@ -67,6 +67,9 @@ llama-index = [
 huggingface-evals = [
   "datasets>=3.1.0"
 ]
+unsloth = [
+  "unsloth>=2024.8"
+]
 
 [project.urls]
 Documentation = "https://vectorinstitute.github.io/fed-rag/"
