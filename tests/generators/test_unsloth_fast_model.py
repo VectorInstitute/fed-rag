@@ -9,7 +9,7 @@ from fed_rag.tokenizers.unsloth_pretrained_tokenizer import (
 )
 
 
-def test_hf_pretrained_generator_class() -> None:
+def test_unsloth_pretrained_generator_class() -> None:
     names_of_base_classes = [
         b.__name__ for b in UnslothFastModelGenerator.__mro__
     ]
@@ -17,7 +17,7 @@ def test_hf_pretrained_generator_class() -> None:
 
 
 @patch.object(UnslothFastModelGenerator, "_load_model_and_tokenizer")
-def test_hf_pretrained_generator_class_init_delayed_load(
+def test_unsloth_pretrained_generator_class_init_delayed_load(
     mock_load_model_and_tokenizer: MagicMock,
     dummy_pretrained_model_and_tokenizer: tuple[
         PreTrainedModel, PreTrainedTokenizer
@@ -40,6 +40,37 @@ def test_hf_pretrained_generator_class_init_delayed_load(
     args, kwargs = mock_load_model_and_tokenizer.call_args
 
     mock_load_model_and_tokenizer.assert_called_once()
+    assert generator.model == dummy_pretrained_model_and_tokenizer[0]
+    assert isinstance(generator.tokenizer, UnslothPretrainedTokenizer)
+    assert (
+        generator.tokenizer.unwrapped
+        == dummy_pretrained_model_and_tokenizer[1]
+    )
+    assert args == ()
+    assert kwargs == {}
+
+
+@patch.object(UnslothFastModelGenerator, "_load_model_and_tokenizer")
+def test_unsloth_pretrained_generator_class_init(
+    mock_load_model_and_tokenizer: MagicMock,
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+) -> None:
+    # arrange
+    mock_load_model_and_tokenizer.return_value = (
+        dummy_pretrained_model_and_tokenizer
+    )
+
+    # act
+    generator = UnslothFastModelGenerator(
+        model_name="fake_name",
+    )
+    args, kwargs = mock_load_model_and_tokenizer.call_args
+
+    # assert
+    mock_load_model_and_tokenizer.assert_called_once()
+    assert generator.model_name == "fake_name"
     assert generator.model == dummy_pretrained_model_and_tokenizer[0]
     assert isinstance(generator.tokenizer, UnslothPretrainedTokenizer)
     assert (
