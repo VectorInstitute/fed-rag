@@ -1,4 +1,5 @@
 import sys
+from contextlib import nullcontext as does_not_raise
 from unittest.mock import MagicMock, patch
 
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -120,3 +121,37 @@ def test_unsloth_load_model_and_tokenizer(
     finally:
         if original_module is not None:
             sys.modules[module_to_import] = original_module
+
+
+def test_prompt_setter() -> None:
+    # arrange
+    generator = UnslothFastModelGenerator(
+        model_name="fake_name", load_model_at_init=False
+    )
+
+    # act
+    generator.prompt_template = "query: {query} and context: {context}"
+
+    # assert
+    assert (
+        generator.prompt_template.format(query="a", context="b")
+        == "query: a and context: b"
+    )
+
+
+def test_unsloth_model_and_tokenizer_setter(
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+) -> None:
+    generator = UnslothFastModelGenerator(
+        model_name="fake_name", load_model_at_init=False
+    )
+    tokenizer = UnslothPretrainedTokenizer(
+        dummy_pretrained_model_and_tokenizer[1], "fake_name"
+    )
+
+    with does_not_raise():
+        # act
+        generator.model = dummy_pretrained_model_and_tokenizer[0]
+        generator.tokenizer = tokenizer
