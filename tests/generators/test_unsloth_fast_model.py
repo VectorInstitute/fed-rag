@@ -1,3 +1,4 @@
+import sys
 from unittest.mock import MagicMock, patch
 
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -79,3 +80,43 @@ def test_unsloth_pretrained_generator_class_init(
     )
     assert args == ()
     assert kwargs == {}
+
+
+def test_unsloth_load_model_and_tokenizer(
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+) -> None:
+    # mock unsloth module
+    mock_fast_lm_cls = MagicMock()
+    mock_fast_lm_cls.from_pretrained.return_value = (
+        dummy_pretrained_model_and_tokenizer
+    )
+
+    mock_unsloth_mod = MagicMock()
+    mock_unsloth_mod.__spec__ = (
+        MagicMock()
+    )  # needed due to Pydantic validations
+    mock_unsloth_mod.FastLanguageModel = mock_fast_lm_cls
+
+    modules = {"unsloth": mock_unsloth_mod}
+    module_to_import = "unsloth"
+
+    original_module = sys.modules.pop(module_to_import, None)
+
+    try:
+        with patch.dict("sys.modules", modules):
+            generator = UnslothFastModelGenerator(
+                model_name="fake_name",
+                load_model_at_init=False,
+                load_model_kwargs={"x": 1},
+            )
+
+            generator._load_model_and_tokenizer()
+
+            mock_fast_lm_cls.from_pretrained.assert_called_once_with(
+                "fake_name", x=1
+            )
+    finally:
+        if original_module is not None:
+            sys.modules[module_to_import] = original_module
