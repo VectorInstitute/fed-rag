@@ -13,6 +13,7 @@ def test_check_raises_error() -> None:
     modules = {"unsloth": None}
 
     with patch.dict("sys.modules", modules):
+        # without class name
         msg = (
             "Missing installation of the `unsloth` extra, yet is required "
             "by an imported class. To fix please run `pip install fed-rag[unsloth]`."
@@ -22,3 +23,14 @@ def test_check_raises_error() -> None:
             match=re.escape(msg),
         ):
             check_unsloth_installed()
+
+        # with class name
+        msg = (
+            "`FakeClass` requires the `unsloth` extra to be installed. "
+            "To fix please run `pip install fed-rag[unsloth]`."
+        )
+        with pytest.raises(
+            MissingExtraError,
+            match=re.escape(msg),
+        ):
+            check_unsloth_installed("FakeClass")
