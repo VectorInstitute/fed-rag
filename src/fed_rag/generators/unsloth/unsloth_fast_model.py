@@ -152,11 +152,13 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
 
         model = FastLanguageModel.get_peft_model(self.model, **kwargs)
 
-        # Fix any potential dtype mismatch with LoRA adapters and base model
+        # Fix any potential dtype mismatch with any adapters and base model
         base_dtype = next(model.parameters()).dtype
-        for name, param in model.named_parameters():
-            if "lora" in name.lower() and param.dtype != base_dtype:
+
+        for _name, param in model.named_parameters():
+            if param.requires_grad and param.dtype != base_dtype:
                 param.data = param.data.to(base_dtype)
+
         return model
 
     def to_peft(self, **kwargs: Any) -> Self:
