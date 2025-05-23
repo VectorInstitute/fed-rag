@@ -81,7 +81,7 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         try:
             model_dtype = rag_system.generator.model.dtype
         except AttributeError:
-            model_dtype = torch.float16  # fallback
+            model_dtype = torch.float32  # fallback
 
         super().__init__(
             rag_system=rag_system,
