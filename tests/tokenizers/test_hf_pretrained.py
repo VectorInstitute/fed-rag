@@ -160,3 +160,23 @@ def test_huggingface_extra_missing() -> None:
 
     # restore module so to not affect other tests
     sys.modules[module_to_import] = original_module
+
+
+def test_flatten_lists_if_necessary_within_encode() -> None:
+    # arrange
+    tokenizer = HFPretrainedTokenizer(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.return_value = {
+        "input_ids": [[1, 2]],
+        "attention_mask": [[1, 1]],
+    }
+    tokenizer.unwrapped = mock_tokenizer
+
+    # act
+    result = tokenizer.encode("fake input")
+
+    assert result["input_ids"] == [1, 2]
+    assert result["attention_mask"] == [1, 1]
+    mock_tokenizer.assert_called_once()
