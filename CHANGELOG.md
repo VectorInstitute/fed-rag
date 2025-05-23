@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.21] - 2025-05-23
+
+### Changed
+
+- Fix bug in `UnslothFastModelGenerator` when calling `to_peft` and LoRA adapters mismatch dtype with base (#360)
+- Fix bug in `HFPreTrainedTokenizer.encode()` where shape of raw encoder result `tokenizer()` is of dimension 2 i.e., batched (#360)
+- Improved `DataCollatorForRALT` final dtypes after padding is applied (#360)
+
 ## [0.0.20] - 2025-05-23
 
 ### Added
