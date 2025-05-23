@@ -1,15 +1,17 @@
 """Unsloth FastModel Generator"""
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from pydantic import ConfigDict, Field, PrivateAttr, model_validator
+from typing_extensions import Self
 
 if TYPE_CHECKING:  # pragma: no cover
-    from unsloth import FastLanguageModel
     from transformers import PreTrainedModel, PreTrainedTokenizer
+    from peft import PeftModel
     from transformers.generation.utils import GenerationConfig
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.exceptions import GeneratorError
 from fed_rag.tokenizers.unsloth_pretrained_tokenizer import (
     UnslothPretrainedTokenizer,
 )
@@ -59,7 +61,9 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
         default_factory=dict,
     )
     _prompt_template: str = PrivateAttr(default=DEFAULT_PROMPT_TEMPLATE)
-    _model: Optional["FastLanguageModel"] = PrivateAttr(default=None)
+    _model: Optional[Union["PreTrainedModel", "PeftModel"]] = PrivateAttr(
+        default=None
+    )
     _tokenizer: UnslothPretrainedTokenizer | None = PrivateAttr(default=None)
 
     def __init__(
@@ -99,7 +103,7 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
 
     def _load_model_and_tokenizer(
         self, **kwargs: Any
-    ) -> tuple["PreTrainedModel", "PreTrainedTokenizer"]:
+    ) -> tuple[Union["PreTrainedModel", "PeftModel"], "PreTrainedTokenizer"]:
         from unsloth import FastLanguageModel
 
         load_kwargs = self.load_model_kwargs
@@ -111,7 +115,7 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
         return model, tokenizer
 
     @property
-    def model(self) -> "PreTrainedModel":
+    def model(self) -> Union["PreTrainedModel", "PeftModel"]:
         if self._model is None:
             # load HF Pretrained Model
             model, tokenizer = self._load_model_and_tokenizer()
@@ -123,7 +127,7 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
         return self._model
 
     @model.setter
-    def model(self, value: "PreTrainedModel") -> None:
+    def model(self, value: Union["PreTrainedModel", "PeftModel"]) -> None:
         self._model = value
 
     @property
@@ -141,3 +145,29 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
     @prompt_template.setter
     def prompt_template(self, value: str) -> None:
         self._prompt_template = value
+
+    def _get_peft_model(self, **kwargs: Any) -> "PeftModel":
+        """A light wrapper over ~FastModel.get_peft_model()."""
+        from unsloth import FastLanguageModel
+
+        model = FastLanguageModel.get_peft_model(self.model, **kwargs)
+        return model
+
+    def to_peft(self, **kwargs: Any) -> Self:
+        """Sets the current model to PeftModel
+
+        NOTE: Pass params to underlying get_peft_model using **kwargs.
+
+        This returns Self to support fluent style:
+            `generator = UnslothFastModelGenerator(...).to_peft(...)`
+        """
+        from peft import PeftModel
+
+        if isinstance(self.model, PeftModel):
+            raise GeneratorError(
+                "Cannot use `to_peft` when underlying model is already a `~peft.PeftModel`."
+            )
+
+        # set model to new peft model
+        self.model = self._get_peft_model(**kwargs)
+        return self
