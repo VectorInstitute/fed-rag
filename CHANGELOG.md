@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+## [0.0.20] - 2025-05-23
+
+### Added
+
+- Support `get_peft_model` in `UnslothFastModelGenerator` (#356)
+- New integration: Unsloth 🦥 `UnslothFastModelGenerator` (#356)
+
+### Changed
+
+- Make knowledge node embedding optional and remove redundant embedding in Qdrant upserts (#353)
+
 ## [0.0.19] - 2025-05-20
 
 ### Added
