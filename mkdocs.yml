@@ -112,6 +112,7 @@ nav:
     - Generators:
       - api_reference/generators/index.md
       - api_reference/generators/huggingface.md
+      - api_reference/generators/unsloth.md
     - Inspectors:
       - api_reference/inspectors/index.md
       - api_reference/inspectors/pytorch.md
