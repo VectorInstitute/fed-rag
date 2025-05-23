@@ -68,6 +68,7 @@ nav:
     - Integrations:
       - notebooks/integrations/llama_index.ipynb
       - notebooks/integrations/qdrant.ipynb
+      - notebooks/integrations/unsloth.ipynb
   - API Reference:
     - api_reference/index.md
     - Bridges:

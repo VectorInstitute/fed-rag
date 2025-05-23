@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from pydantic import ConfigDict, Field, PrivateAttr
 
 from fed_rag.base.tokenizer import BaseTokenizer, EncodeResult
-from fed_rag.exceptions.common import MissingExtraError
+from fed_rag.exceptions import MissingExtraError, TokenizerError
 
 try:
     from transformers import AutoTokenizer, PreTrainedTokenizer
@@ -69,9 +69,26 @@ class HFPretrainedTokenizer(BaseTokenizer):
 
     def encode(self, input: str, **kwargs: Any) -> EncodeResult:
         tokenizer_result = self.unwrapped(text=input, **kwargs)
+        input_ids = tokenizer_result.get("input_ids")
+        attention_mask = tokenizer_result.get("attention_mask", None)
+
+        if not input_ids:
+            raise TokenizerError("Tokenizer returned empty input_ids")
+
+        # maybe flatten
+        if isinstance(input_ids[0], list):
+            if len(input_ids) == 1:
+                input_ids = input_ids[0]
+                if attention_mask is not None:
+                    attention_mask = attention_mask[0]
+            else:
+                raise TokenizerError(
+                    "Unexpected shape of `input_ids` from `tokenizer.__call__`."
+                )
+
         retval: EncodeResult = {
-            "input_ids": tokenizer_result.get("input_ids"),
-            "attention_mask": tokenizer_result.get("attention_mask", None),
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
         }
         return retval
 
