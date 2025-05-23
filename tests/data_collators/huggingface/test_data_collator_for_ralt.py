@@ -148,6 +148,8 @@ def test_init(
         base_model_name="fake_base_name",
         load_model_at_init=False,
     )
+    generator.model = MagicMock()
+    generator.model.dtype = torch.float32
     retriever = HFSentenceTransformerRetriever(
         model_name="fake_name", load_model_at_init=False
     )
@@ -325,6 +327,10 @@ def test_lsr_collator_apply_padding(
         rag_system=mock_rag_system,
     )
 
+    mock_generator = MagicMock()
+    mock_generator.model.dtype = torch.float32
+    mock_rag_system.generator = mock_generator
+
     # arrange mock tokenizer
     mock_tokenizer = MagicMock()
     mock_tokenizer.pad_token = "<PAD>"
@@ -340,9 +346,11 @@ def test_lsr_collator_apply_padding(
 
     # assert
     expected = {
-        "input_ids": torch.tensor([[1, 1, 1], [42, 2, 2]]),
-        "attention_mask": torch.tensor([[1, 1, 1], [0, 1, 1]]),
-        "labels": torch.tensor([[1, 1, 1], [-100, 2, 2]]),
+        "input_ids": torch.tensor([[1, 1, 1], [42, 2, 2]]).long(),
+        "attention_mask": torch.tensor([[1, 1, 1], [0, 1, 1]]).to(
+            torch.float32
+        ),
+        "labels": torch.tensor([[1, 1, 1], [-100, 2, 2]]).long(),
     }
     for k, v in batch.items():
         assert_close(v, expected[k])
@@ -359,6 +367,10 @@ def test_lsr_collator_apply_padding_with_eos_token(
         rag_system=mock_rag_system,
     )
 
+    mock_generator = MagicMock()
+    mock_generator.model.dtype = torch.float32
+    mock_rag_system.generator = mock_generator
+
     # arrange mock tokenizer
     mock_tokenizer = MagicMock()
     mock_tokenizer.pad_token = None
@@ -374,9 +386,11 @@ def test_lsr_collator_apply_padding_with_eos_token(
 
     # assert
     expected = {
-        "input_ids": torch.tensor([[1, 1, 1], [42, 2, 2]]),
-        "attention_mask": torch.tensor([[1, 1, 1], [0, 1, 1]]),
-        "labels": torch.tensor([[1, 1, 1], [-100, 2, 2]]),
+        "input_ids": torch.tensor([[1, 1, 1], [42, 2, 2]]).long(),
+        "attention_mask": torch.tensor([[1, 1, 1], [0, 1, 1]]).to(
+            torch.float32
+        ),
+        "labels": torch.tensor([[1, 1, 1], [-100, 2, 2]]).long(),
     }
     for k, v in batch.items():
         assert_close(v, expected[k])

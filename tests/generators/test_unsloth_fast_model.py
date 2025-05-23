@@ -3,6 +3,7 @@ from contextlib import nullcontext as does_not_raise
 from unittest.mock import MagicMock, patch
 
 import pytest
+import torch
 from peft import PeftModel
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
@@ -264,6 +265,74 @@ def test_private_get_peft_model(
                 dummy_pretrained_model_and_tokenizer[0], r=8
             )
             assert generator.model == dummy_peft_model_and_tokenizer[0]
+    finally:
+        if original_module is not None:
+            sys.modules[module_to_import] = original_module
+
+
+@patch.object(UnslothFastModelGenerator, "_load_model_and_tokenizer")
+def test_private_get_peft_model_adjusts_dtypes_if_necessary(
+    mock_load_model_and_tokenizer: MagicMock,
+    dummy_pretrained_model_and_tokenizer: tuple[
+        PreTrainedModel, PreTrainedTokenizer
+    ],
+    dummy_peft_model_and_tokenizer: tuple[PeftModel, PreTrainedTokenizer],
+) -> None:
+    mock_load_model_and_tokenizer.return_value = (
+        dummy_pretrained_model_and_tokenizer
+    )
+    generator = UnslothFastModelGenerator(
+        model_name="fake_name",
+    )
+
+    # Mock parameters with different dtypes
+    base_param = MagicMock()
+    base_param.dtype = torch.bfloat16
+    base_param.requires_grad = False
+
+    adapter_param = MagicMock()
+    adapter_param.dtype = torch.float32  # Different dtype
+    adapter_param.requires_grad = True
+    adapter_param.data = torch.tensor([1.0, 2.0], dtype=torch.float32)
+
+    peft_model = dummy_peft_model_and_tokenizer[0]
+    peft_model.named_parameters = MagicMock()
+    peft_model.named_parameters.return_value = [
+        ("base_model.layer.weight", base_param),
+        ("adapter.lora_A.weight", adapter_param),
+    ]
+
+    peft_model.parameters = MagicMock()
+    peft_model.parameters.return_value = iter([base_param])
+
+    # mock unsloth module
+    mock_fast_lm_cls = MagicMock()
+    mock_fast_lm_cls.get_peft_model.return_value = peft_model
+
+    mock_unsloth_mod = MagicMock()
+    mock_unsloth_mod.__spec__ = (
+        MagicMock()
+    )  # needed due to Pydantic validations
+    mock_unsloth_mod.FastLanguageModel = mock_fast_lm_cls
+
+    modules = {"unsloth": mock_unsloth_mod}
+    module_to_import = "unsloth"
+
+    original_module = sys.modules.pop(module_to_import, None)
+
+    try:
+        with patch.dict("sys.modules", modules):
+            # act
+            generator = UnslothFastModelGenerator(
+                model_name="fake_name",
+            ).to_peft(r=8)
+
+            # assert
+            mock_fast_lm_cls.get_peft_model.assert_called_once_with(
+                dummy_pretrained_model_and_tokenizer[0], r=8
+            )
+            assert generator.model == peft_model
+            assert adapter_param.data.dtype == torch.bfloat16
     finally:
         if original_module is not None:
             sys.modules[module_to_import] = original_module
