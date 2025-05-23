@@ -156,7 +156,7 @@ class UnslothFastModelGenerator(UnslothGeneratorMixin, BaseGenerator):
     def to_peft(self, **kwargs: Any) -> Self:
         """Sets the current model to PeftModel
 
-        NOTE: Pass the get_peft_model as **kwargs.
+        NOTE: Pass params to underlying get_peft_model using **kwargs.
 
         This returns Self to support fluent style:
             `generator = UnslothFastModelGenerator(...).to_peft(...)`
