@@ -9,6 +9,7 @@ from .fl_tasks import (
     MissingRequiredNetParam,
     NetTypeMismatch,
 )
+from .generator import GeneratorError, GeneratorWarning
 from .inspectors import (
     InspectorError,
     InspectorWarning,
@@ -59,6 +60,9 @@ __all__ = [
     "MissingFLTaskConfig",
     "MissingRequiredNetParam",
     "NetTypeMismatch",
+    # generators
+    "GeneratorError",
+    "GeneratorWarning",
     # inspectors
     "InspectorError",
     "InspectorWarning",
