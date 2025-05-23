@@ -6,7 +6,7 @@ import pytest
 from transformers import AutoTokenizer, PreTrainedTokenizer
 
 from fed_rag.base.tokenizer import BaseTokenizer
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import MissingExtraError, TokenizerError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -180,3 +180,42 @@ def test_flatten_lists_if_necessary_within_encode() -> None:
     assert result["input_ids"] == [1, 2]
     assert result["attention_mask"] == [1, 1]
     mock_tokenizer.assert_called_once()
+
+
+def test_encode_raises_error_if_input_ids_is_empty() -> None:
+    # arrange
+    tokenizer = HFPretrainedTokenizer(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.return_value = {
+        "input_ids": [],
+        "attention_mask": [],
+    }
+    tokenizer.unwrapped = mock_tokenizer
+
+    with pytest.raises(
+        TokenizerError, match="Tokenizer returned empty input_ids"
+    ):
+        # act
+        tokenizer.encode("fake input")
+
+
+def test_encode_raises_error_if_input_ids_has_unexpected_shape() -> None:
+    # arrange
+    tokenizer = HFPretrainedTokenizer(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_tokenizer = MagicMock()
+    mock_tokenizer.return_value = {
+        "input_ids": [[1, 2], [3, 4]],
+        "attention_mask": [[0, 0], [0, 0]],
+    }
+    tokenizer.unwrapped = mock_tokenizer
+
+    with pytest.raises(
+        TokenizerError,
+        match="Unexpected shape of `input_ids` from `tokenizer.__call__`.",
+    ):
+        # act
+        tokenizer.encode("fake input")
