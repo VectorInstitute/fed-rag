@@ -21,11 +21,13 @@ def dummy_pubmedqa() -> Dataset:
             "question": [
                 "Is increased time from neoadjuvant chemoradiation to surgery associated with higher pathologic complete response rates in esophageal cancer?"
             ],
-            "context": {
-                "contexts": ["Text A", "Text B", "Text C"],
-                "labels": ["OBJECTIVE", "METHODS", "RESULTS"],
-                "meshes": ["mesh1", "mesh2"],
-            },
+            "context": [
+                {
+                    "contexts": ["Text A", "Text B", "Text C"],
+                    "labels": ["OBJECTIVE", "METHODS", "RESULTS"],
+                    "meshes": ["mesh1", "mesh2"],
+                }
+            ],
             "long_answer": [
                 "Based on our analysis, increased time from neoadjuvant chemoradiation to surgery is associated with higher pathologic complete response rates."
             ],
