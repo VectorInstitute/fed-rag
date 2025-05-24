@@ -1,6 +1,6 @@
 """PubMedQA benchmark"""
 
-from typing import Any, ClassVar
+from typing import Any
 
 from pydantic import model_validator
 
@@ -28,25 +28,24 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
 
     dataset_name = "qiaojin/PubMedQA"
     configuration_name: str = "pqa_labeled"
-    response_key: ClassVar[dict[str, str]] = {
-        "yes": "yes",
-        "no": "no",
-        "maybe": "maybe",
-    }
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
         return str(example["question"])
 
     def _get_response_from_example(self, example: dict[str, Any]) -> str:
-        final_decision = example["final_decision"]
-        return self.response_key.get(final_decision, final_decision)
+        return str(example["final_decision"])
 
     def _get_context_from_example(self, example: dict[str, Any]) -> str:
         context = example.get("context", {})
         if isinstance(context, dict):
-            return " ".join(context.values())
-        elif isinstance(context, list):
-            return " ".join(context)
+            contexts_list = context.get("contexts")
+            if isinstance(contexts_list, list):
+                return " ".join(contexts_list)
+            # Fallback: join all values if "contexts" is missing
+            return " ".join(
+                " ".join(v) if isinstance(v, list) else str(v)
+                for v in context.values()
+            )
         elif isinstance(context, str):
             return context
         else:
