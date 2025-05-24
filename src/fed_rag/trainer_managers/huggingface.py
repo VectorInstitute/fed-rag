@@ -71,7 +71,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
     def _train_retriever(self, **kwargs: Any) -> TrainResult:
         if self.retriever_trainer:
             self._prepare_retriever_for_training()
-            return self.retriever_trainer.train()
+            return self.retriever_trainer.train(**kwargs)
         else:
             raise UnspecifiedRetrieverTrainer(
                 "Attempted to perform retriever trainer with an unspecified trainer."
@@ -80,7 +80,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
     def _train_generator(self, **kwargs: Any) -> TrainResult:
         if self.generator_trainer:
             self._prepare_generator_for_training()
-            return self.generator_trainer.train()
+            return self.generator_trainer.train(**kwargs)
         else:
             raise UnspecifiedGeneratorTrainer(
                 "Attempted to perform generator trainer with an unspecified trainer."
@@ -88,9 +88,9 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
 
     def train(self, **kwargs: Any) -> TrainResult:
         if self.mode == "retriever":
-            return self._train_retriever()
+            return self._train_retriever(**kwargs)
         elif self.mode == "generator":
-            return self._train_generator()
+            return self._train_generator(**kwargs)
         else:
             assert_never(self.mode)  # pragma: no cover
 

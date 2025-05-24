@@ -87,8 +87,8 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
 
         return self
 
-    def train(self) -> TrainResult:
-        output: TrainOutput = self.hf_trainer_obj.train()
+    def train(self, **kwargs: Any) -> TrainResult:
+        output: TrainOutput = self.hf_trainer_obj.train(**kwargs)
         return TrainResult(loss=output.training_loss)
 
     def evaluate(self) -> TestResult:
