@@ -151,6 +151,28 @@ def test_pubmedqa_context_as_list(mock_load_dataset: MagicMock) -> None:
     assert pubmedqa[0].context == "Sentence 1. Sentence 2. Sentence 3."
 
 
+@patch("datasets.load_dataset")
+def test_pubmedqa_context_unexpected_type(
+    mock_load_dataset: MagicMock,
+) -> None:
+    dataset = Dataset.from_dict(
+        {
+            "pubid": ["1"],
+            "question": ["Test question?"],
+            "context": [1234],  # Not a dict, list, or str
+            "long_answer": ["Test answer"],
+            "final_decision": ["yes"],
+        }
+    )
+
+    mock_load_dataset.return_value = dataset
+
+    with pytest.raises(
+        ValueError, match="Unexpected context type: <class 'int'>"
+    ):
+        _ = benchmarks.HuggingFacePubMedQA()[0].context
+
+
 def test_huggingface_evals_extra_missing() -> None:
     """Test that proper error is raised when huggingface-evals extra is missing."""
     modules = {
