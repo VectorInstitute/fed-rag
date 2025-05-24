@@ -68,6 +68,7 @@ nav:
     - Integrations:
       - notebooks/integrations/llama_index.ipynb
       - notebooks/integrations/qdrant.ipynb
+      - notebooks/integrations/unsloth.ipynb
   - API Reference:
     - api_reference/index.md
     - Bridges:
@@ -101,6 +102,7 @@ nav:
       - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
       - Loss: api_reference/exceptions/loss.md
       - RAG Trainer: api_reference/exceptions/rag_trainer.md
+      - Tokenizer: api_reference/exceptions/tokenizer.md
     - Finetuning Datasets:
       - api_reference/finetuning_datasets/index.md
       - api_reference/finetuning_datasets/pytorch.md

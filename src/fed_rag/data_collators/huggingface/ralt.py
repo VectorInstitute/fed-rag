@@ -58,6 +58,7 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
     example_template: str = Field(default=DEFAULT_EXAMPLE_TEMPLATE)
     default_return_tensors: str = Field(default="pt")
+    model_dtype: torch.dtype | None = None
 
     def __init__(
         self,
@@ -76,11 +77,17 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         _validate_rag_system(rag_system)
 
         example_template = example_template or DEFAULT_EXAMPLE_TEMPLATE
+        # get generator model type
+        try:
+            model_dtype = rag_system.generator.model.dtype
+        except AttributeError:
+            model_dtype = torch.float32  # fallback
 
         super().__init__(
             rag_system=rag_system,
             example_template=example_template,
             default_return_tensors=default_return_tensors,
+            model_dtype=model_dtype,
             **kwargs,
         )
 
@@ -155,9 +162,11 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
 
         # Stack into batch tensors
         return {
-            "input_ids": torch.stack(padded_input_ids),
-            "attention_mask": torch.stack(padded_attention_mask),
-            "labels": torch.stack(padded_labels),
+            "input_ids": torch.stack(padded_input_ids).long(),
+            "attention_mask": torch.stack(padded_attention_mask).to(
+                self.model_dtype
+            ),
+            "labels": torch.stack(padded_labels).long(),
         }
 
     def __call__(

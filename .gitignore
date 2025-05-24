@@ -39,6 +39,4 @@ dev_notebooks
 
 # trainer outputs
 trainer_output
-
-
-..bfg-report
+unsloth_compiled_cache

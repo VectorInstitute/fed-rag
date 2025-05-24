@@ -13,13 +13,19 @@ def _validate_rag_system(rag_system: RAGSystem) -> None:
         HFPeftModelGenerator,
         HFPretrainedModelGenerator,
     )
+    from fed_rag.generators.unsloth import UnslothFastModelGenerator
     from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
         HFSentenceTransformerRetriever,
     )
 
     if not isinstance(
-        rag_system.generator, HFPretrainedModelGenerator
-    ) and not isinstance(rag_system.generator, HFPeftModelGenerator):
+        rag_system.generator,
+        (
+            HFPretrainedModelGenerator,
+            HFPeftModelGenerator,
+            UnslothFastModelGenerator,
+        ),
+    ):
         raise FedRAGError(
             "Generator must be HFPretrainedModelGenerator or HFPeftModelGenerator"
         )

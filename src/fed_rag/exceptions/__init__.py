@@ -28,6 +28,7 @@ from .knowledge_stores import (
     KnowledgeStoreWarning,
     LoadNodeError,
 )
+from .tokenizer import TokenizerError, TokenizerWarning
 from .trainer import (
     InconsistentDatasetError,
     InvalidDataCollatorError,
@@ -85,6 +86,9 @@ __all__ = [
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",
     "InconsistentRAGSystems",
+    # tokenizer
+    "TokenizerError",
+    "TokenizerWarning",
     # trainer
     "TrainerError",
     "InvalidLossError",
