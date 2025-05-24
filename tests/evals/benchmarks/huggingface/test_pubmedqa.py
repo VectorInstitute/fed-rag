@@ -72,6 +72,41 @@ def test_pubmedqa_query_response_context_extractors(
 
 
 @patch("datasets.load_dataset")
+def test_pubmedqa_context_fallback(mock_load_dataset: MagicMock) -> None:
+    dataset = Dataset.from_dict(
+        {
+            "pubid": ["1"],
+            "question": ["Test question?"],
+            "context": [
+                {"foo": ["a", "b"], "bar": "baz"}
+            ],  # No "contexts" key
+            "long_answer": ["Test answer"],
+            "final_decision": ["yes"],
+        }
+    )
+    mock_load_dataset.return_value = dataset
+    pubmedqa = benchmarks.HuggingFacePubMedQA()
+    # Should join both lists and strings together
+    assert set(pubmedqa[0].context.split()) == set("a b baz".split())
+
+
+@patch("datasets.load_dataset")
+def test_pubmedqa_context_is_string(mock_load_dataset: MagicMock) -> None:
+    dataset = Dataset.from_dict(
+        {
+            "pubid": ["1"],
+            "question": ["Test question?"],
+            "context": ["This is just a string context."],
+            "long_answer": ["Test answer"],
+            "final_decision": ["yes"],
+        }
+    )
+    mock_load_dataset.return_value = dataset
+    pubmedqa = benchmarks.HuggingFacePubMedQA()
+    assert pubmedqa[0].context == "This is just a string context."
+
+
+@patch("datasets.load_dataset")
 def test_pubmedqa_different_response_types(
     mock_load_dataset: MagicMock,
 ) -> None:
