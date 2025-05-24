@@ -19,12 +19,20 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
     Example schema:
         {
             "pubid": "25429730",
-            "question": "Are group 2 innate lymphoid cells ( ILC2s ) increased in chronic rhinosinusitis with nasal polyps or eosinophilia?",
-            "context": "...",  # Abstract text
-            "long_answer": "...",  # Detailed answer
+            "question": "Are group 2 innate lymphoid cells (ILC2s) increased in chronic rhinosinusitis with nasal polyps or eosinophilia?",
+            "context": {
+                "contexts": [
+                    "Chronic rhinosinusitis is a heterogeneous disease with uncertain pathogenesis.",
+                    "The study aimed to identify ILC2s in sinus mucosa in patients with CRS.",
+                    "35 patients including 13 with eosinophilic CRS were recruited.",
+                    "ILC2 frequencies were associated with the presence of nasal polyps and increased blood eosinophilia."
+                ],
+                "labels": ["label1", "label2", "label3", "label4"],
+                "meshes": ["Chronic Disease", "Nasal Polyps", "Immunity, Innate"]
+            },
+            "long_answer": "Based on our analysis, increased ILC2s are associated with CRS with nasal polyps.",
             "final_decision": "yes"  # or "no" or "maybe"
-        }
-    """
+        }"""
 
     dataset_name = "qiaojin/PubMedQA"
     configuration_name: str = "pqa_labeled"
