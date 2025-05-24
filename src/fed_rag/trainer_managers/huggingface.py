@@ -68,7 +68,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
         if self.generator_trainer:
             self.generator_trainer.model.eval()
 
-    def _train_retriever(self,**kwargs: Any) -> TrainResult:
+    def _train_retriever(self, **kwargs: Any) -> TrainResult:
         if self.retriever_trainer:
             self._prepare_retriever_for_training()
             return self.retriever_trainer.train(**kwargs)
@@ -77,7 +77,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
                 "Attempted to perform retriever trainer with an unspecified trainer."
             )
 
-    def _train_generator(self,**kwargs: Any) -> TrainResult:
+    def _train_generator(self, **kwargs: Any) -> TrainResult:
         if self.generator_trainer:
             self._prepare_generator_for_training()
             return self.generator_trainer.train(**kwargs)
@@ -86,7 +86,7 @@ class HuggingFaceRAGTrainerManager(BaseRAGTrainerManager):
                 "Attempted to perform generator trainer with an unspecified trainer."
             )
 
-    def train(self,**kwargs: Any) -> TrainResult:
+    def train(self, **kwargs: Any) -> TrainResult:
         if self.mode == "retriever":
             return self._train_retriever(**kwargs)
         elif self.mode == "generator":

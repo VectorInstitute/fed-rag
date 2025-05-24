@@ -169,7 +169,7 @@ class HuggingFaceTrainerForLSR(HuggingFaceTrainerMixin, BaseRetrieverTrainer):
 
         return self
 
-    def train(self,**kwargs: Any) -> TrainResult:
+    def train(self, **kwargs: Any) -> TrainResult:
         output: TrainOutput = self.hf_trainer_obj.train(**kwargs)
         return TrainResult(loss=output.training_loss)
 
