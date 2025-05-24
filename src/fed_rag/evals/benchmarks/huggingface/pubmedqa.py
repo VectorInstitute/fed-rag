@@ -49,7 +49,10 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
             return " ".join(context)
         elif isinstance(context, str):
             return context
-        return ""
+        else:
+            raise ValueError(
+                f"Unexpected context type: {type(context)} in example: {example}"
+            )
 
     @model_validator(mode="before")
     @classmethod
