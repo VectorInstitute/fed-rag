@@ -41,7 +41,7 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
         final_decision = example["final_decision"]
         return self.response_key.get(final_decision, final_decision)
 
-    def _get_context_from_example(self, example: dict[str, Any]) -> str | None:
+    def _get_context_from_example(self, example: dict[str, Any]) -> str:
         context = example.get("context", {})
         if isinstance(context, dict):
             return " ".join(context.values())
@@ -49,7 +49,7 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
             return " ".join(context)
         elif isinstance(context, str):
             return context
-        return None
+        return ""
 
     @model_validator(mode="before")
     @classmethod
