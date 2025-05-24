@@ -13,7 +13,7 @@ from .utils import check_huggingface_evals_installed
 class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
     """HuggingFace PubMedQA Benchmark.
 
-    PubMedQA is a biomedical question answering dataset where each question 
+    PubMedQA is a biomedical question answering dataset where each question
     can be answered with "yes", "no", or "maybe" based on the given context.
 
     Example schema:
@@ -27,15 +27,15 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
     """
 
     dataset_name = "qiaojin/PubMedQA"
-    configuration_name: str = "pqa_labeled" 
+    configuration_name: str = "pqa_labeled"
     response_key: ClassVar[dict[str, str]] = {
         "yes": "yes",
-        "no": "no", 
-        "maybe": "maybe"
+        "no": "no",
+        "maybe": "maybe",
     }
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
-        return example["question"]
+        return str(example["question"])
 
     def _get_response_from_example(self, example: dict[str, Any]) -> str:
         final_decision = example["final_decision"]
