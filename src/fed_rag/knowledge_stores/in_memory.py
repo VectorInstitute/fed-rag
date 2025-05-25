@@ -20,7 +20,7 @@ DEFAULT_TOP_K = 2
 
 
 def _get_top_k_nodes(
-    nodes: Dict[str, list] ,
+    nodes: Dict[str, list],
     query_emb: list[float],
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
