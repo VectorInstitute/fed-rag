@@ -164,7 +164,7 @@ def test_pubmedqa_context_unexpected_type(
     with pytest.raises(
         BenchmarkGetExamplesError,
         match=re.escape(
-            "Failed to get examples: Unexpected context type: <class 'int'> "
+            "Failed to parse examples: Unexpected context type: <class 'int'> "
             "in example: {'pubid': '1', 'question': 'Test question?', 'context': 1234, "
             "'long_answer': 'Test answer', 'final_decision': 'yes'}"
         ),

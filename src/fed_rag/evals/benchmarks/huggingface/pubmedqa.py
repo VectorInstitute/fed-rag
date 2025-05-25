@@ -5,6 +5,7 @@ from typing import Any
 from pydantic import model_validator
 
 from fed_rag.base.evals.benchmark import BaseBenchmark
+from fed_rag.exceptions import BenchmarkParseError
 
 from .mixin import HuggingFaceBenchmarkMixin
 from .utils import check_huggingface_evals_installed
@@ -57,7 +58,7 @@ class HuggingFacePubMedQA(HuggingFaceBenchmarkMixin, BaseBenchmark):
         elif isinstance(context, str):
             return context
         else:
-            raise ValueError(
+            raise BenchmarkParseError(
                 f"Unexpected context type: {type(context)} in example: {example}"
             )
 
