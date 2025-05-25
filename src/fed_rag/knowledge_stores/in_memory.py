@@ -20,7 +20,7 @@ DEFAULT_TOP_K = 2
 
 
 def _get_top_k_nodes(
-    nodes: list[KnowledgeNode],
+    nodes: Dict[str, list] ,
     query_emb: list[float],
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
@@ -40,8 +40,6 @@ def _get_top_k_nodes(
         return torch.mm(norm_a, norm_b.transpose(0, 1))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(query_emb)
-    print(nodes["embeddings"])
     query_tensor = torch.tensor(query_emb).to(device)
     if not torch.is_tensor(nodes["embeddings"]):
         nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
