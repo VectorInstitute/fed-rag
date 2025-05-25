@@ -30,19 +30,23 @@ def _get_top_k_nodes(
         list[tuple[float, str]] — the node_ids and similarity scores of top-k nodes
     """
 
-    def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor::
+    def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
         """Compute cosine similarity between two embeddings."""
+        a = a.unsqueeze(0) if a.dim()==1 else a
+        b = b.unsqueeze(0) if b.dim()==1 else b
         norm_a = torch.nn.functional.normalize(a, p=2, dim=1)
         norm_b = torch.nn.functional.normalize(b, p=2, dim=1)
         
-        return torch.mm(a_norm, b_norm.transpose(0, 1))
+        return torch.mm(norm_a, norm_b.transpose(0, 1))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(query_emb)
+    print(nodes["embeddings"])
     query_tensor = torch.tensor(query_emb).to(device)
     if not torch.is_tensor(nodes["embeddings"]):
         nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
-    similarities = cos_sim(query_tensor,nodes["embeddings"])
-     if similarities.device==device:
+    similarities = cosine_sim(query_tensor,nodes["embeddings"])
+    if similarities.device==device:
         similarities = similarities.to("cpu")
     similarities = similarities.tolist()[0]
     zipped = list(zip(nodes["node_ids"], similarities))
