@@ -12,7 +12,7 @@ from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.base.trainer import BaseRetrieverTrainer, BaseTrainer
 from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.types.knowledge_node import KnowledgeNode
+from fed_rag.data_structures import KnowledgeNode
 
 
 class MockRetriever(BaseRetriever):
