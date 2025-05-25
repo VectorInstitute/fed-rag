@@ -3,10 +3,9 @@
 from pathlib import Path
 from typing import Any, Dict, cast
 
-import numpy as np
-import torch
 import pyarrow as pa
 import pyarrow.parquet as pq
+import torch
 from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
@@ -32,24 +31,24 @@ def _get_top_k_nodes(
 
     def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
         """Compute cosine similarity between two embeddings."""
-        a = a.unsqueeze(0) if a.dim()==1 else a
-        b = b.unsqueeze(0) if b.dim()==1 else b
+        a = a.unsqueeze(0) if a.dim() == 1 else a
+        b = b.unsqueeze(0) if b.dim() == 1 else b
         norm_a = torch.nn.functional.normalize(a, p=2, dim=1)
         norm_b = torch.nn.functional.normalize(b, p=2, dim=1)
-        
+
         return torch.mm(norm_a, norm_b.transpose(0, 1))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     query_tensor = torch.tensor(query_emb).to(device)
     if not torch.is_tensor(nodes["embeddings"]):
         nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
-    similarities = cosine_sim(query_tensor,nodes["embeddings"])
-    if similarities.device==device:
+    similarities = cosine_sim(query_tensor, nodes["embeddings"])
+    if similarities.device == device:
         similarities = similarities.to("cpu")
     similarities = similarities.tolist()[0]
     zipped = list(zip(nodes["node_ids"], similarities))
-    #scores.sort(key=lambda tup: tup[1], reverse=True)
-    sorted_similarities = sorted(zipped, key=lambda row: row[1],reverse=True)
+    # scores.sort(key=lambda tup: tup[1], reverse=True)
+    sorted_similarities = sorted(zipped, key=lambda row: row[1], reverse=True)
     return sorted_similarities[:top_k]
 
 
@@ -59,10 +58,12 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
     _data_storage: torch.Tensor
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
-    _data_list: Dict[str, list] = PrivateAttr(default_factory=lambda: {
-        "node_ids": [],  # Empty KnowledgeNode for key1
-        "embeddings": []   # Empty KnowledgeNode for key2
-    })
+    _data_list: Dict[str, list] = PrivateAttr(
+        default_factory=lambda: {
+            "node_ids": [],  # Empty KnowledgeNode for key1
+            "embeddings": [],  # Empty KnowledgeNode for key2
+        }
+    )
 
     @classmethod
     def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
@@ -83,7 +84,7 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
-        all_nodes = list(self._data.values())
+        # all_nodes = list(self._data.values())
         node_ids_and_scores = _get_top_k_nodes(
             nodes=self._data_list, query_emb=query_emb, top_k=top_k
         )
