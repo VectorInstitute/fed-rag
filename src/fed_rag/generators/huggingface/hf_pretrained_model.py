@@ -8,28 +8,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers import PreTrainedModel
     from transformers.generation.utils import GenerationConfig
 
-from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.generator import DEFAULT_PROMPT_TEMPLATE, BaseGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 from .mixin import HuggingFaceGeneratorMixin
 from .utils import check_huggingface_installed
-
-DEFAULT_PROMPT_TEMPLATE = """
-You are a helpful assistant. Given the user's query, provide a succinct
-and accurate response. If context is provided, use it in your answer if it helps
-you to create the most accurate response.
-
-<query>
-{query}
-</query>
-
-<context>
-{context}
-</context>
-
-<response>
-
-"""
 
 
 class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
@@ -59,47 +42,39 @@ class HFPretrainedModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         # if reaches here, then passed checks for extra
         from transformers.generation.utils import GenerationConfig
 
-        generation_config = (
-            generation_config if generation_config else GenerationConfig()
-        )
+        generation_config = generation_config or GenerationConfig()
         super().__init__(
             model_name=model_name,
             generation_config=generation_config,
-            load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
+            load_model_kwargs=load_model_kwargs or {},
         )
         self._tokenizer = HFPretrainedTokenizer(
             model_name=model_name, load_model_at_init=load_model_at_init
         )
-        self._prompt_template = (
-            prompt_template if prompt_template else DEFAULT_PROMPT_TEMPLATE
-        )
+        self._prompt_template = prompt_template or DEFAULT_PROMPT_TEMPLATE
         if load_model_at_init:
             self._model = self._load_model_from_hf()
 
     @model_validator(mode="before")
     @classmethod
     def check_dependencies(cls, data: Any) -> Any:
-        """Validate that qdrant dependencies are installed."""
+        """Validate that huggingface dependencies are installed."""
         check_huggingface_installed(cls.__name__)
         return data
 
     def _load_model_from_hf(self, **kwargs: Any) -> "PreTrainedModel":
         from transformers import AutoModelForCausalLM
 
-        load_kwargs = self.load_model_kwargs
-        load_kwargs.update(kwargs)
-        self.load_model_kwargs = load_kwargs
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, **load_kwargs
+        self.load_model_kwargs.update(kwargs)
+        return AutoModelForCausalLM.from_pretrained(
+            self.model_name, **self.load_model_kwargs
         )
-        return model
 
     @property
     def model(self) -> "PreTrainedModel":
         if self._model is None:
             # load HF Pretrained Model
-            model = self._load_model_from_hf()
-            self._model = model
+            self._model = self._load_model_from_hf()
         return self._model
 
     @model.setter

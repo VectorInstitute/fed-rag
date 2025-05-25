@@ -8,28 +8,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from peft import PeftModel
     from transformers.generation.utils import GenerationConfig
 
-from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.generator import DEFAULT_PROMPT_TEMPLATE, BaseGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 from .mixin import HuggingFaceGeneratorMixin
 from .utils import check_huggingface_installed
-
-DEFAULT_PROMPT_TEMPLATE = """
-You are a helpful assistant. Given the user's query, provide a succinct
-and accurate response. If context is provided, use it in your answer if it helps
-you to create the most accurate response.
-
-<query>
-{query}
-</query>
-
-<context>
-{context}
-</context>
-
-<response>
-
-"""
 
 
 class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
@@ -74,48 +57,21 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         # if reaches here, then passed checks for huggingface extra installation
         from transformers.generation.utils import GenerationConfig
 
-        generation_config = (
-            generation_config if generation_config else GenerationConfig()
-        )
+        generation_config = generation_config or GenerationConfig()
         super().__init__(
             model_name=model_name,
             base_model_name=base_model_name,
             generation_config=generation_config,
             prompt_template=prompt_template,
-            load_model_kwargs=load_model_kwargs if load_model_kwargs else {},
-            load_base_model_kwargs=(
-                load_base_model_kwargs if load_base_model_kwargs else {}
-            ),
+            load_model_kwargs=load_model_kwargs or {},
+            load_base_model_kwargs=load_base_model_kwargs or {},
         )
         self._tokenizer = HFPretrainedTokenizer(
             model_name=base_model_name, load_model_at_init=load_model_at_init
         )
-        self._prompt_template = (
-            prompt_template if prompt_template else DEFAULT_PROMPT_TEMPLATE
-        )
+        self._prompt_template = prompt_template or DEFAULT_PROMPT_TEMPLATE
         if load_model_at_init:
             self._model = self._load_model_from_hf()
-
-    def _load_model_from_hf(self, **kwargs: Any) -> "PeftModel":
-        from peft import PeftModel, prepare_model_for_kbit_training
-        from transformers import AutoModelForCausalLM
-
-        load_base_kwargs = self.load_base_model_kwargs
-        load_kwargs = self.load_model_kwargs
-        load_kwargs.update(kwargs)
-        self.load_model_kwargs = load_kwargs  # update load_model_kwargs
-        base_model = AutoModelForCausalLM.from_pretrained(
-            self.base_model_name, **load_base_kwargs
-        )
-
-        if "quantization_config" in load_base_kwargs:
-            # preprocess model for kbit fine-tuning
-            # https://huggingface.co/docs/peft/developer_guides/quantization
-            base_model = prepare_model_for_kbit_training(base_model)
-
-        return PeftModel.from_pretrained(
-            base_model, self.model_name, **load_kwargs
-        )
 
     @model_validator(mode="before")
     @classmethod
@@ -123,6 +79,24 @@ class HFPeftModelGenerator(HuggingFaceGeneratorMixin, BaseGenerator):
         """Validate that huggingface dependencies are installed."""
         check_huggingface_installed(cls.__name__)
         return data
+
+    def _load_model_from_hf(self, **kwargs: Any) -> "PeftModel":
+        from peft import PeftModel, prepare_model_for_kbit_training
+        from transformers import AutoModelForCausalLM
+
+        self.load_model_kwargs.update(kwargs)  # update load_model_kwargs
+        base_model = AutoModelForCausalLM.from_pretrained(
+            self.base_model_name, **self.load_base_model_kwargs
+        )
+
+        if "quantization_config" in self.load_base_model_kwargs:
+            # preprocess model for kbit fine-tuning
+            # https://huggingface.co/docs/peft/developer_guides/quantization
+            base_model = prepare_model_for_kbit_training(base_model)
+
+        return PeftModel.from_pretrained(
+            base_model, self.model_name, **self.load_model_kwargs
+        )
 
     @property
     def model(self) -> "PeftModel":
