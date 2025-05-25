@@ -45,4 +45,21 @@ class TestHFBenchmark(HuggingFaceBenchmarkMixin, BaseBenchmark):
         return str(example["context"])
 
 
+class TestBenchmarkBadExamples(BaseBenchmark):
+    __test__ = (
+        False  # needed for Pytest collision. Avoids PytestCollectionWarning
+    )
+
+    def _get_examples(self, **kwargs: Any) -> Sequence[BenchmarkExample]:
+        raise RuntimeError("Too bad, so sad.")
+
+    def as_stream(self) -> Generator[BenchmarkExample, None, None]:
+        for ex in self._get_examples():
+            yield ex
+
+    @property
+    def num_examples(self) -> int:
+        return len(self._get_examples())
+
+
 __all__ = ["TestBenchmark", "TestHFBenchmark"]

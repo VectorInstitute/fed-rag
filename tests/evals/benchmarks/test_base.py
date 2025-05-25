@@ -1,3 +1,9 @@
+import re
+
+import pytest
+
+from fed_rag.exceptions import BenchmarkGetExamplesError
+
 from . import _benchmarks as benchmarks
 
 
@@ -11,3 +17,13 @@ def test_sequence_interface() -> None:
         assert test_benchmark[ix] == test_benchmark._examples[ix]
     example_iter = iter(test_benchmark.as_iterator())
     assert next(example_iter) == test_benchmark[0]
+
+
+def test_get_example_raises_exception() -> None:
+    # typical pattern
+
+    with pytest.raises(
+        BenchmarkGetExamplesError,
+        match=re.escape("Failed to get examples: Too bad, so sad."),
+    ):
+        _ = benchmarks.TestBenchmarkBadExamples()
