@@ -6,6 +6,7 @@ from typing import Any, Generator, Iterator, Sequence
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 
 from fed_rag.data_structures.evals import BenchmarkExample
+from fed_rag.exceptions import BenchmarkGetExamplesError, BenchmarkParseError
 
 
 class BaseBenchmark(BaseModel, ABC):
@@ -28,7 +29,16 @@ class BaseBenchmark(BaseModel, ABC):
 
     @model_validator(mode="after")
     def set_examples(self) -> "BaseBenchmark":
-        self._examples = self._get_examples()
+        try:
+            self._examples = self._get_examples()
+        except BenchmarkParseError as e:
+            raise BenchmarkGetExamplesError(
+                f"Failed to parse examples: {str(e)}"
+            ) from e
+        except Exception as e:
+            raise (
+                BenchmarkGetExamplesError(f"Failed to get examples: {str(e)}")
+            ) from e
         return self
 
     # abstractmethods

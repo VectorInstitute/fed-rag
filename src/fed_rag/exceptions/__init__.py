@@ -2,7 +2,12 @@ from .bridge import BridgeError, MissingSpecifiedConversionMethod
 from .common import MissingExtraError
 from .core import FedRAGError
 from .data_collator import DataCollatorError
-from .evals import EvalsError, EvalsWarning
+from .evals import (
+    BenchmarkGetExamplesError,
+    BenchmarkParseError,
+    EvalsError,
+    EvalsWarning,
+)
 from .fl_tasks import (
     FLTaskError,
     MissingFLTaskConfig,
@@ -56,6 +61,8 @@ __all__ = [
     # evals
     "EvalsError",
     "EvalsWarning",
+    "BenchmarkGetExamplesError",
+    "BenchmarkParseError",
     # fl_tasks
     "FLTaskError",
     "MissingFLTaskConfig",

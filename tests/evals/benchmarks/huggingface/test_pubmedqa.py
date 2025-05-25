@@ -9,7 +9,7 @@ from datasets import Dataset
 
 import fed_rag.evals.benchmarks as benchmarks
 from fed_rag.data_structures.evals import BenchmarkExample
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import BenchmarkGetExamplesError, MissingExtraError
 
 
 @pytest.fixture
@@ -162,7 +162,12 @@ def test_pubmedqa_context_unexpected_type(
     mock_load_dataset.return_value = dataset
 
     with pytest.raises(
-        ValueError, match="Unexpected context type: <class 'int'>"
+        BenchmarkGetExamplesError,
+        match=re.escape(
+            "Failed to get examples: Unexpected context type: <class 'int'> "
+            "in example: {'pubid': '1', 'question': 'Test question?', 'context': 1234, "
+            "'long_answer': 'Test answer', 'final_decision': 'yes'}"
+        ),
     ):
         _ = benchmarks.HuggingFacePubMedQA()[0].context
 

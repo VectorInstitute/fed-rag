@@ -13,3 +13,11 @@ class EvalsWarning(FedRAGWarning):
     """Base inspector warning for all evals-related warnings."""
 
     pass
+
+
+class BenchmarkGetExamplesError(EvalsError):
+    pass
+
+
+class BenchmarkParseError(EvalsError):
+    pass
