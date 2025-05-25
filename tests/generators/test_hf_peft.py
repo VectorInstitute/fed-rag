@@ -179,7 +179,7 @@ def test_generate() -> None:
     mock_tokenizer = MagicMock()
     mock_model = MagicMock()
     mock_model.device = torch.device("cpu")
-    mock_model.generate.return_value = torch.Tensor([1, 2, 3])
+    mock_model.generate.return_value = torch.Tensor([[1, 2, 3]])
     mock_tokenizer_result = MagicMock()
     mock_tokenizer_result.input_ids = torch.ones(2)
     mock_tokenizer.batch_decode.return_value = ["Mock output"]
