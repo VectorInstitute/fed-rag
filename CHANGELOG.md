@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - ...
 
+### Changed
+
+- Fix bug in `HuggingFaceGeneratorMixin.generate()` to return newly generated tokens only (#345)
+
 ## [0.0.21] - 2025-05-23
 
 ### Changed

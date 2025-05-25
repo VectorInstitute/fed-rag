@@ -45,6 +45,9 @@ class HuggingFaceGeneratorMixin:
             **kwargs,
         )
 
+        # skip the input tokens
+        generated_ids = generated_ids[:, inputs.shape[-1] :]
+
         # decode tokens
         outputs: list[str] = self.tokenizer.unwrapped.batch_decode(
             generated_ids, skip_special_tokens=True
