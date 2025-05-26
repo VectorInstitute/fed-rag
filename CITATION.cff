@@ -8,7 +8,7 @@ authors:
     given-names: "David"
     email: "david.emerson@vectorinstitute.ai"
 title: "fed-rag"
-version: "0.0.21"
+version: "0.0.22"
 abstract: "Simplified fine-tuning of retrieval-augmented generation (RAG) systems."
 keywords:
   - machine learning
