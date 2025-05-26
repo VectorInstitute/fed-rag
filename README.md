@@ -15,7 +15,7 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/VectorInstitute/fed-rag)
 
 FedRAG is an open-source framework for fine-tuning Retrieval-Augmented
-Generation (RAG) systems across both cebtralized and federated architectures.
+Generation (RAG) systems across both centralized and federated architectures.
 
 ## Simplified RAG fine-tuning across centralized or federated architectures
 
