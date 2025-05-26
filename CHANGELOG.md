@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
-- ...
+### Added
 
-## [0.0.22] - 2025-05-23
+- Add `BaseAsyncKnowledgeStore` (#262)
+
+## [0.0.22] - 2025-05-26
 
 ### Added
 
