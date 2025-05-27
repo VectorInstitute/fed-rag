@@ -4,6 +4,8 @@ from enum import Enum
 
 from pydantic import BaseModel
 
+from .rag import RAGResponse
+
 
 class BenchmarkExample(BaseModel):
     """Benchmark example data class."""
@@ -20,6 +22,24 @@ class BenchmarkResult(BaseModel):
     metric_name: str
     num_examples_used: int
     num_total_examples: int
+    evaluations_file: str | None
+
+
+class BenchmarkEvaluatedExample(BaseModel):
+    """Evaluated benchmark example data class."""
+
+    score: float
+    example: BenchmarkExample
+    rag_response: RAGResponse
+
+    def model_dump_json_without_embeddings(self) -> str:
+        return self.model_dump_json(
+            exclude={
+                "rag_response": {
+                    "source_nodes": {"__all__": {"node": {"embedding"}}}
+                }
+            }
+        )
 
 
 class AggregationMode(str, Enum):

@@ -1,3 +1,4 @@
+import tempfile
 from typing import Any
 
 from fed_rag import RAGSystem
@@ -162,3 +163,28 @@ def test_benchmarker_with_streaming_avg(mock_rag_system: RAGSystem) -> None:
     assert result.num_examples_used == 3
     assert result.num_total_examples == 3
     assert result.metric_name == "MyMetric"
+
+
+def test_benchmarker_save_evaluations(mock_rag_system: RAGSystem) -> None:
+    # arrange
+    test_benchmark = benchmarks.TestBenchmark()
+    benchmarker = Benchmarker(rag_system=mock_rag_system)
+    metric = MyMetric()
+
+    # act
+    with tempfile.TemporaryDirectory() as tempdir:
+        result = benchmarker.run(
+            benchmark=test_benchmark,
+            metric=metric,
+            agg="avg",
+            is_streaming=True,
+            save_evaluations=True,
+            output_dir=tempdir,
+        )
+
+        # assert
+        assert result.evaluations_file.startswith(tempdir)
+        assert result.score == 2
+        assert result.num_examples_used == 3
+        assert result.num_total_examples == 3
+        assert result.metric_name == "MyMetric"
