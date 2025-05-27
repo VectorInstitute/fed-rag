@@ -1,6 +1,8 @@
 """Base Benchmark and Benchmarker"""
 
 import contextlib
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Generator
 
 from pydantic import BaseModel
@@ -11,9 +13,12 @@ from fed_rag.base.evals.benchmark import BaseBenchmark
 from fed_rag.base.evals.metric import BaseEvaluationMetric
 from fed_rag.data_structures.evals import (
     AggregationMode,
+    BenchmarkEvaluatedExample,
     BenchmarkExample,
     BenchmarkResult,
 )
+
+DEFAULT_OUTPUT_DIR = Path(".fed_rag") / "benchmark_results"
 
 
 class Benchmarker(BaseModel):
@@ -91,6 +96,8 @@ class Benchmarker(BaseModel):
         batch_size: int = 1,
         num_examples: int | None = None,
         num_workers: int = 1,
+        output_dir: Path = DEFAULT_OUTPUT_DIR,
+        save_evaluations: bool = False,
         **kwargs: Any,
     ) -> BenchmarkResult:
         """Execute the benchmark using the associated `RAGSystem`.
@@ -105,6 +112,7 @@ class Benchmarker(BaseModel):
                 the benchmark. If None, then the entire collection of examples of
                 the benchmark are ran. Defaults to None.
             num_workers (int, optional): concurrent execution via threads.
+            output_dir (Path | None): the output directory for saving evaluations. Defaults to None.
 
         Returns:
             BenchmarkResult: the benchmark result
@@ -113,36 +121,62 @@ class Benchmarker(BaseModel):
         to be able to handle batches as well.
         """
 
-        with self._get_examples_iterator(
-            benchmark, is_streaming
-        ) as examples_iterator:
-            running_score = None
-            num_seen = 0
-            for example in examples_iterator:
-                if num_seen == num_examples:
-                    break
+        # create file for saving evaluations
+        if save_evaluations:
+            output_dir.mkdir(parents=True, exist_ok=True)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = (
+                output_dir
+                / f"{benchmark.__class__.__name__}-{timestamp}.jsonl"
+            )
+            f = open(filename, "w")
+        else:
+            filename = None
+            f = None
 
-                # prediction
-                result = self.rag_system.query(example.query)
+        try:
+            with self._get_examples_iterator(
+                benchmark, is_streaming
+            ) as examples_iterator:
+                running_score = None
+                num_seen = 0
+                for example in examples_iterator:
+                    if num_seen == num_examples:
+                        break
 
-                # evaluation
-                score = metric(
-                    prediction=result.response, actual=example.response
-                )
+                    # prediction
+                    result = self.rag_system.query(example.query)
 
-                # update running score
-                running_score = self._update_running_score(
-                    agg=agg,
-                    running_score=running_score,
-                    next_score=score,
-                    num_examples_seen=num_seen,
-                )
+                    # evaluation
+                    score = metric(
+                        prediction=result.response, actual=example.response
+                    )
 
-                num_seen += 1
+                    # evaluated benchmark example
+                    evaluated_example = BenchmarkEvaluatedExample(
+                        score=score, example=example
+                    )
+                    if f is not None:
+                        f.write(evaluated_example.model_dump_json() + "\n")
+                        f.flush()
+
+                    # update running score
+                    running_score = self._update_running_score(
+                        agg=agg,
+                        running_score=running_score,
+                        next_score=score,
+                        num_examples_seen=num_seen,
+                    )
+
+                    num_seen += 1
+        finally:
+            if f:
+                f.close()
 
         return BenchmarkResult(
             score=running_score,
             metric_name=metric.__class__.__name__,
             num_examples_used=num_seen,
             num_total_examples=benchmark.num_examples,
+            evaluations_file=filename.as_posix() if filename else None,
         )
