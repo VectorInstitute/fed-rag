@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
+
 ## [0.0.23] - 2025-05-27
 
 ### Added

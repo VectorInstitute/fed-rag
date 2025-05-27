@@ -1,5 +1,5 @@
 from .bridge import BridgeError, MissingSpecifiedConversionMethod
-from .common import MissingExtraError
+from .common import IncompatibleVersionError, MissingExtraError
 from .core import FedRAGError
 from .data_collator import DataCollatorError
 from .evals import (
@@ -54,6 +54,7 @@ __all__ = [
     # core
     "FedRAGError",
     # common
+    "IncompatibleVersionError",
     "MissingExtraError",
     "DataCollatorError",
     # bridges
