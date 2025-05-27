@@ -1,5 +1,4 @@
 import tempfile
-from pathlib import Path
 from typing import Any
 
 from fed_rag import RAGSystem
@@ -180,7 +179,7 @@ def test_benchmarker_save_evaluations(mock_rag_system: RAGSystem) -> None:
             agg="avg",
             is_streaming=True,
             save_evaluations=True,
-            output_dir=Path(tempdir),
+            output_dir=str(tempdir),
         )
 
         # assert
