@@ -18,12 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Feature/348 onboard pubmedqa (#363)
 
-## [0.0.22] - 2025-05-23
-
-### Added
-
-- Feature/348 onboard pubmedqa (#363)
-
 ### Changed
 
 - Fix bug in `HuggingFaceGeneratorMixin.generate()` to return newly generated tokens only (#345)
