@@ -10,6 +10,7 @@ from fed_rag.data_structures import (
     SourceNode,
 )
 from fed_rag.evals.utils import load_evaluations
+from fed_rag.exceptions import EvaluationsFileNotFoundError
 
 
 @pytest.fixture()
@@ -60,3 +61,11 @@ def test_load_evaluations(
         assert (
             loaded_evals[0].rag_response.source_nodes[0].node.embedding is None
         )
+
+
+def test_load_evaluations_raises_error_file_not_found() -> None:
+    with pytest.raises(
+        EvaluationsFileNotFoundError,
+        match="Evaluation file not found: __test.jsonl",
+    ):
+        load_evaluations("__test.jsonl")

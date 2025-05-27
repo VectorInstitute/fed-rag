@@ -21,3 +21,7 @@ class BenchmarkGetExamplesError(EvalsError):
 
 class BenchmarkParseError(EvalsError):
     pass
+
+
+class EvaluationsFileNotFoundError(EvalsError, FileNotFoundError):
+    """Benchmark evaluations file not found error."""

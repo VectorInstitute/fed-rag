@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from fed_rag.data_structures.evals import BenchmarkEvaluatedExample
+from fed_rag.exceptions import EvaluationsFileNotFoundError
 
 
 def load_evaluations(filename: str | Path) -> list[BenchmarkEvaluatedExample]:
@@ -13,7 +14,9 @@ def load_evaluations(filename: str | Path) -> list[BenchmarkEvaluatedExample]:
         filename = Path(filename)
 
     if not filename.exists():
-        raise FileNotFoundError(f"Evaluation file not found: {filename}")
+        raise EvaluationsFileNotFoundError(
+            f"Evaluation file not found: {filename}"
+        )
 
     with open(filename, "r") as f:
         data = [json.loads(line) for line in f]

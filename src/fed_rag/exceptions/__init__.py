@@ -7,6 +7,7 @@ from .evals import (
     BenchmarkParseError,
     EvalsError,
     EvalsWarning,
+    EvaluationsFileNotFoundError,
 )
 from .fl_tasks import (
     FLTaskError,
@@ -61,6 +62,7 @@ __all__ = [
     # evals
     "EvalsError",
     "EvalsWarning",
+    "EvaluationsFileNotFoundError",
     "BenchmarkGetExamplesError",
     "BenchmarkParseError",
     # fl_tasks
