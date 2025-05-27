@@ -20,6 +20,14 @@ class BenchmarkResult(BaseModel):
     metric_name: str
     num_examples_used: int
     num_total_examples: int
+    evaluations_file: str | None
+
+
+class BenchmarkEvaluatedExample(BaseModel):
+    """Evaluated benchmark example data class."""
+
+    score: float
+    example: BenchmarkExample
 
 
 class AggregationMode(str, Enum):
