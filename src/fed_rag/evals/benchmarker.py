@@ -96,7 +96,7 @@ class Benchmarker(BaseModel):
         batch_size: int = 1,
         num_examples: int | None = None,
         num_workers: int = 1,
-        output_dir: Path = DEFAULT_OUTPUT_DIR,
+        output_dir: Path | str = DEFAULT_OUTPUT_DIR,
         save_evaluations: bool = False,
         **kwargs: Any,
     ) -> BenchmarkResult:
@@ -120,6 +120,8 @@ class Benchmarker(BaseModel):
         TODO: implement concurrent as well as batch execution. Need RAGSystem
         to be able to handle batches as well.
         """
+        if isinstance(output_dir, str):
+            output_dir = Path(output_dir)
 
         # create file for saving evaluations
         if save_evaluations:
@@ -154,10 +156,15 @@ class Benchmarker(BaseModel):
 
                     # evaluated benchmark example
                     evaluated_example = BenchmarkEvaluatedExample(
-                        score=score, example=example
+                        score=score,
+                        rag_response=result,
+                        example=example,
                     )
                     if f is not None:
-                        f.write(evaluated_example.model_dump_json() + "\n")
+                        f.write(
+                            evaluated_example.model_dump_json_without_embeddings()
+                            + "\n"
+                        )
                         f.flush()
 
                     # update running score
