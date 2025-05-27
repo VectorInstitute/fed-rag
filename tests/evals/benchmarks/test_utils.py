@@ -41,20 +41,22 @@ def test_load_evaluations(
     evaluations: list[BenchmarkEvaluatedExample],
 ) -> None:
     # arrange
-    temp = tempfile.NamedTemporaryFile()
-    with open(temp.name, "w") as f:
-        for ev in evaluations:
-            f.write(ev.model_dump_json_without_embeddings() + "\n")
-            f.flush()
+    with tempfile.NamedTemporaryFile() as temp:
+        with open(temp.name, "w") as f:
+            for ev in evaluations:
+                f.write(ev.model_dump_json_without_embeddings() + "\n")
+                f.flush()
 
-    # act
-    loaded_evals = load_evaluations(temp.name)
+        # act
+        loaded_evals = load_evaluations(temp.name)
 
-    # assert
-    assert loaded_evals[0].score == evaluations[0].score
-    assert loaded_evals[0].example == evaluations[0].example
-    assert (
-        loaded_evals[0].rag_response.response
-        == evaluations[0].rag_response.response
-    )
-    assert loaded_evals[0].rag_response.source_nodes[0].node.embedding is None
+        # assert
+        assert loaded_evals[0].score == evaluations[0].score
+        assert loaded_evals[0].example == evaluations[0].example
+        assert (
+            loaded_evals[0].rag_response.response
+            == evaluations[0].rag_response.response
+        )
+        assert (
+            loaded_evals[0].rag_response.source_nodes[0].node.embedding is None
+        )
