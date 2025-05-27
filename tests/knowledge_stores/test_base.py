@@ -1,6 +1,12 @@
 import inspect
 
-from fed_rag.base.knowledge_store import BaseKnowledgeStore
+import pytest
+
+from fed_rag.base.knowledge_store import (
+    BaseAsyncKnowledgeStore,
+    BaseKnowledgeStore,
+)
+from fed_rag.data_structures.knowledge_node import KnowledgeNode, NodeType
 
 
 def test_base_abstract_attr() -> None:
@@ -13,3 +19,57 @@ def test_base_abstract_attr() -> None:
     assert "delete_node" in abstract_methods
     assert "clear" in abstract_methods
     assert "count" in abstract_methods
+    assert "persist" in abstract_methods
+    assert "load" in abstract_methods
+
+
+def test_base_async_abstract_attr() -> None:
+    abstract_methods = BaseAsyncKnowledgeStore.__abstractmethods__
+
+    assert inspect.isabstract(BaseAsyncKnowledgeStore)
+    assert "load_node" in abstract_methods
+    assert "retrieve" in abstract_methods
+    assert "delete_node" in abstract_methods
+    assert "clear" in abstract_methods
+    assert "count" in abstract_methods
+    assert "persist" in abstract_methods
+    assert "load" in abstract_methods
+
+
+@pytest.mark.asyncio
+async def test_base_async_load_nodes() -> None:
+    # create a dummy store
+    class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
+        nodes: list[KnowledgeNode] = []
+
+        async def load_node(self, node: KnowledgeNode) -> None:
+            self.nodes.append(node)
+
+        async def retrieve(
+            self, query_emb: list[float], top_k: int
+        ) -> list[tuple[float, KnowledgeNode]]:
+            return []
+
+        async def delete_node(self, node_id: str) -> bool:
+            return True
+
+        async def clear(self) -> None:
+            self.nodes.clear()
+
+        async def count(self) -> int:
+            return len(self.nodes)
+
+        async def persist(self) -> None:
+            pass
+
+        async def load(self) -> None:
+            pass
+
+    dummy_store = DummyAsyncKnowledgeStore()
+    nodes = [
+        KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
+        for _ in range(5)
+    ]
+
+    await dummy_store.load_nodes(nodes)
+    assert dummy_store.nodes == nodes
