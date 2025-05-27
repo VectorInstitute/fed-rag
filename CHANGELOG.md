@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+## [0.0.23] - 2025-05-27
+
 ### Added
 
 - Add `BaseAsyncKnowledgeStore` (#262)
+- Add ability to save benchmark evaluations to a JSONL file of `BenchmarkEvaluationExamples` (#377)
 
 ## [0.0.22] - 2025-05-26
 
