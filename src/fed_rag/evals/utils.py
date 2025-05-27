@@ -14,9 +14,7 @@ def load_evaluations(filename: str | Path) -> list[BenchmarkEvaluatedExample]:
         filename = Path(filename)
 
     if not filename.exists():
-        raise EvaluationsFileNotFoundError(
-            f"Evaluation file not found: {filename}"
-        )
+        raise EvaluationsFileNotFoundError(str(filename))
 
     with open(filename, "r") as f:
         data = [json.loads(line) for line in f]

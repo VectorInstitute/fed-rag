@@ -66,6 +66,6 @@ def test_load_evaluations(
 def test_load_evaluations_raises_error_file_not_found() -> None:
     with pytest.raises(
         EvaluationsFileNotFoundError,
-        match="Evaluation file not found: __test.jsonl",
+        match="__test.jsonl",
     ):
         load_evaluations("__test.jsonl")
