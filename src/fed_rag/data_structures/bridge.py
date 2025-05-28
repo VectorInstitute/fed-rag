@@ -4,7 +4,10 @@ from typing import TypedDict
 
 
 class CompatibleVersions(TypedDict, total=False):
-    """Type definition for compatible versions."""
+    """Type definition for compatible versions.
+
+    Defines optional, inclusive version bounds for compatibility checks.
+    """
 
     min: str
     max: str
