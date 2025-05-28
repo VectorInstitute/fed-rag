@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from fed_rag import NoEncodeRAGSystem, RAGConfig
+from fed_rag.base.bridge import BaseBridgeMixin
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.no_encode_knowledge_store import BaseNoEncodeKnowledgeStore
 from fed_rag.data_structures import KnowledgeNode, NodeType, SourceNode
@@ -163,3 +164,41 @@ def test_rag_system_format_context(
 
     # assert
     assert formatted_context == "Dummy text\nDummy text"
+
+
+def test_bridging_no_encode_rag_system(
+    mock_generator: MockGenerator,
+    dummy_store: BaseNoEncodeKnowledgeStore,
+) -> None:
+    # arrange
+
+    # create test/mock bridge
+    class _TestBridgeMixin(BaseBridgeMixin):
+        _bridge_version = "0.1.0"
+        _bridge_extra = "my-bridge"
+        _framework = "my-bridge-framework"
+        _compatible_versions = ["0.1.x"]
+        _method_name = "to_bridge"
+
+        def to_bridge(self) -> None:
+            self._validate_framework_installed()
+            return None
+
+    class BridgedNoEncodeRAGSystem(_TestBridgeMixin, NoEncodeRAGSystem):
+        pass
+
+    # build bridged rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = BridgedNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    assert _TestBridgeMixin._framework in BridgedNoEncodeRAGSystem.bridges
+    assert (
+        rag_system.bridges["my-bridge-framework"]
+        == _TestBridgeMixin.get_bridge_metadata()
+    )
