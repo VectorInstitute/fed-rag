@@ -1,13 +1,14 @@
 """Base Bridge"""
 
-import importlib
-import importlib.util
+import importlib.metadata
 from typing import Any, ClassVar, Optional
 
+from packaging.version import Version
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.data_structures import BridgeMetadata
+from fed_rag.data_structures import BridgeMetadata, CompatibleVersions
 from fed_rag.exceptions import (
+    IncompatibleVersionError,
     MissingExtraError,
     MissingSpecifiedConversionMethod,
 )
@@ -16,11 +17,11 @@ from fed_rag.exceptions import (
 class BaseBridgeMixin(BaseModel):
     """Base Bridge Class."""
 
-    # Version of the bridge implementaiton
+    # Version of the bridge implementation.
     _bridge_version: ClassVar[str]
     _bridge_extra: ClassVar[Optional[str | None]]
     _framework: ClassVar[str]
-    _compatible_versions: ClassVar[list[str]]
+    _compatible_versions: ClassVar[CompatibleVersions]
     _method_name: ClassVar[str]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -57,7 +58,14 @@ class BaseBridgeMixin(BaseModel):
 
     @classmethod
     def _validate_framework_installed(cls) -> None:
-        if importlib.util.find_spec(cls._framework.replace("-", "_")) is None:
+        """Check if the framework is installed and compatible."""
+        try:
+            installed_version = Version(
+                importlib.metadata.version(cls._framework.replace("-", "_"))
+            )
+            cls._check_bound("min", installed_version)
+            cls._check_bound("max", installed_version)
+        except importlib.metadata.PackageNotFoundError:
             missing_package_or_extra = (
                 f"fed-rag[{cls._bridge_extra}]"
                 if cls._bridge_extra
@@ -68,3 +76,23 @@ class BaseBridgeMixin(BaseModel):
                 f"To fix please run `pip install {missing_package_or_extra}`."
             )
             raise MissingExtraError(msg)
+
+    @classmethod
+    def _check_bound(
+        cls,
+        bound_name: str,
+        installed: Version,
+    ) -> None:
+        """Check one side of compatibility and raise if it fails."""
+        if bound_name not in cls._compatible_versions:
+            return
+
+        req = Version(cls._compatible_versions[bound_name])
+        if (bound_name == "min" and installed < req) or (
+            bound_name == "max" and installed > req
+        ):
+            direction = "Minimum" if bound_name == "min" else "Maximum"
+            raise IncompatibleVersionError(
+                f"`{cls._framework}` version {installed} is incompatible. "
+                f"{direction} required is {req}."
+            )

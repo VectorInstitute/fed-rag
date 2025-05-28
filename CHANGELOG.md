@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
 - Add `NoEncodeRAGSystem` (#386)
 - Add `NoEncodeBaseKnowledgeStore` and `NoEncodeAsyncBaseKnowledgeStore` (#385)
 

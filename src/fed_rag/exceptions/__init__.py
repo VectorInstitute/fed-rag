@@ -1,4 +1,8 @@
-from .bridge import BridgeError, MissingSpecifiedConversionMethod
+from .bridge import (
+    BridgeError,
+    IncompatibleVersionError,
+    MissingSpecifiedConversionMethod,
+)
 from .common import MissingExtraError
 from .core import FedRAGError
 from .data_collator import DataCollatorError
@@ -58,6 +62,7 @@ __all__ = [
     "DataCollatorError",
     # bridges
     "BridgeError",
+    "IncompatibleVersionError",
     "MissingSpecifiedConversionMethod",
     # evals
     "EvalsError",

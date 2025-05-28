@@ -1,5 +1,6 @@
 import re
 from contextlib import nullcontext as does_not_raise
+from importlib.metadata import PackageNotFoundError
 from typing import ClassVar
 from unittest.mock import MagicMock, patch
 
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 
 from fed_rag.base.bridge import BaseBridgeMixin, BridgeMetadata
 from fed_rag.exceptions import (
+    IncompatibleVersionError,
     MissingExtraError,
     MissingSpecifiedConversionMethod,
 )
@@ -17,7 +19,7 @@ class _TestBridgeMixin(BaseBridgeMixin):
     _bridge_version = "0.1.0"
     _bridge_extra = "my-bridge"
     _framework = "my-bridge-framework"
-    _compatible_versions = ["0.1.x"]
+    _compatible_versions = {"min": "0.1.0", "max": "0.2.0"}
     _method_name = "to_bridge"
 
     def to_bridge(self) -> None:
@@ -49,7 +51,7 @@ def test_bridge_get_metadata() -> None:
     metadata = bridge_mixin.get_bridge_metadata()
 
     assert metadata["bridge_version"] == "0.1.0"
-    assert metadata["compatible_versions"] == ["0.1.x"]
+    assert metadata["compatible_versions"] == {"min": "0.1.0", "max": "0.2.0"}
     assert metadata["framework"] == "my-bridge-framework"
     assert metadata["method_name"] == "to_bridge"
 
@@ -64,10 +66,13 @@ def test_rag_system_registry() -> None:
     assert metadata == _TestBridgeMixin.get_bridge_metadata()
 
 
-@patch("fed_rag.base.bridge.importlib.util")
-def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
-    mock_importlib_util.find_spec.return_value = None
-
+@patch(
+    "fed_rag.base.bridge.importlib.metadata.version",
+    side_effect=PackageNotFoundError(),
+)
+def test_validate_framework_not_installed_error(
+    mock_version: MagicMock,
+) -> None:
     # with bridge-extra
     msg = (
         "`my-bridge-framework` module is missing but needs to be installed. "
@@ -88,6 +93,41 @@ def test_validate_framework_installed(mock_importlib_util: MagicMock) -> None:
         rag_system.to_bridge()
 
 
+@patch("fed_rag.base.bridge.importlib.metadata.version")
+def test_validate_framework_incompatible_error(
+    mock_version: MagicMock,
+) -> None:
+    rag_system = _RAGSystem()
+    # too low versions
+    for ver in ["0.0.9", "0.0.10", "0.1.0b1", "0.1.0rc1"]:
+        mock_version.return_value = ver
+        msg = (
+            f"`my-bridge-framework` version {ver} is incompatible. "
+            "Minimum required is 0.1.0."
+        )
+        with pytest.raises(IncompatibleVersionError, match=re.escape(msg)):
+            rag_system.to_bridge()
+
+    # too high versions
+    for ver in ["0.2.1", "0.3.0", "1.0.0"]:
+        mock_version.return_value = ver
+        msg = (
+            f"`my-bridge-framework` version {ver} is incompatible. "
+            "Maximum required is 0.2.0."
+        )
+        with pytest.raises(IncompatibleVersionError, match=re.escape(msg)):
+            rag_system.to_bridge()
+
+
+@patch("fed_rag.base.bridge.importlib.metadata.version")
+def test_validate_framework_success(mock_version: MagicMock) -> None:
+    rag_system = _RAGSystem()
+    for ver in ["0.1.0", "0.1.1", "0.2.0b1", "0.2.0rc1", "0.2.0"]:
+        mock_version.return_value = ver
+        with does_not_raise():
+            rag_system.to_bridge()
+
+
 def test_invalid_mixin_raises_error() -> None:
     msg = "Bridge mixin for `mock` is missing conversion method `missing_method`."
     with pytest.raises(MissingSpecifiedConversionMethod, match=re.escape(msg)):
@@ -96,7 +136,7 @@ def test_invalid_mixin_raises_error() -> None:
             _bridge_version = "0.1.0"
             _bridge_extra = None
             _framework = "mock"
-            _compatible_versions = ["0.1.x"]
+            _compatible_versions = {"min": "0.1.0"}
             _method_name = "missing_method"
 
         # overwrite RAGSystem for this test

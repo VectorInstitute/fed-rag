@@ -19,7 +19,7 @@ from fed_rag.exceptions import BridgeError
 def test_rag_system_bridges(mock_rag_system: _RAGSystem) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
 
-    assert "llama-index" in mock_rag_system.bridges
+    assert "llama-index-core" in mock_rag_system.bridges
     assert mock_rag_system.bridges[metadata["framework"]] == metadata
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
 

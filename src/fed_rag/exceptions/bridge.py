@@ -11,3 +11,7 @@ class BridgeError(FedRAGError):
 
 class MissingSpecifiedConversionMethod(BridgeError):
     pass
+
+
+class IncompatibleVersionError(FedRAGError):
+    """Raised when a fed-rag component is not compatible with the current version."""
