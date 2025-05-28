@@ -85,7 +85,6 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
     async def load_node(self, node: "KnowledgeNode") -> None:
         """Asynchronously load a "KnowledgeNode" into the KnowledgeStore."""
 
-    @abstractmethod
     async def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
         """Default batch loader via concurrent load_node calls."""
         await asyncio.gather(*(self.load_node(n) for n in nodes))
