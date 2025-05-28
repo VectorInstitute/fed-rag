@@ -32,9 +32,10 @@ class BaseBridgeMixin(BaseModel):
 
         # Register this bridge's metadata to the parent RAGSystem
         for base in cls.__mro__:
-            if base.__name__ == "_RAGSystem" and hasattr(
-                base, "_register_bridge"
-            ):
+            if base.__name__ in [
+                "_RAGSystem",
+                "_NoEncodeRAGSystem",
+            ] and hasattr(base, "_register_bridge"):
                 metadata = cls.get_bridge_metadata()
 
                 # validate method exists
