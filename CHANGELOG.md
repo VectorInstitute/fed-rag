@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add `NoEncodeRAGSystem` (#386)
 - Add `NoEncodeBaseKnowledgeStore` and `NoEncodeAsyncBaseKnowledgeStore` (#385)
 
 ## [0.0.23] - 2025-05-27
