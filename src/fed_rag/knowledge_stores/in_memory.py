@@ -3,9 +3,9 @@
 from pathlib import Path
 from typing import Any, Dict, cast
 
-import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
+import torch
 from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
@@ -19,7 +19,7 @@ DEFAULT_TOP_K = 2
 
 
 def _get_top_k_nodes(
-    nodes: list[KnowledgeNode],
+    nodes: Dict[str, list],
     query_emb: list[float],
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
@@ -29,27 +29,41 @@ def _get_top_k_nodes(
         list[tuple[float, str]] — the node_ids and similarity scores of top-k nodes
     """
 
-    def cosine_sim(a: list[float], b: list[float]) -> float:
+    def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
         """Compute cosine similarity between two embeddings."""
-        np_a = np.array(a)
-        np_b = np.array(b)
-        cosine_sim: float = np.dot(np_a, np_b) / (
-            np.linalg.norm(np_a) * np.linalg.norm(np_b)
-        )
-        return cosine_sim
+        a = a.unsqueeze(0) if a.dim() == 1 else a
+        b = b.unsqueeze(0) if b.dim() == 1 else b
+        norm_a = torch.nn.functional.normalize(a, p=2, dim=1)
+        norm_b = torch.nn.functional.normalize(b, p=2, dim=1)
 
-    scores = [
-        (node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes
-    ]
-    scores.sort(key=lambda tup: tup[1], reverse=True)
-    return scores[:top_k]
+        return torch.mm(norm_a, norm_b.transpose(0, 1))
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    query_tensor = torch.tensor(query_emb).to(device)
+    if not torch.is_tensor(nodes["embeddings"]):
+        nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
+    similarities = cosine_sim(query_tensor, nodes["embeddings"])
+    if similarities.device == device:
+        similarities = similarities.to("cpu")
+    similarities = similarities.tolist()[0]
+    zipped = list(zip(nodes["node_ids"], similarities))
+    # scores.sort(key=lambda tup: tup[1], reverse=True)
+    sorted_similarities = sorted(zipped, key=lambda row: row[1], reverse=True)
+    return sorted_similarities[:top_k]
 
 
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
+    _data_storage: torch.Tensor
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
+    _data_list: Dict[str, list] = PrivateAttr(
+        default_factory=lambda: {
+            "node_ids": [],  # Empty KnowledgeNode for key1
+            "embeddings": [],  # Empty KnowledgeNode for key2
+        }
+    )
 
     @classmethod
     def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
@@ -60,6 +74,8 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def load_node(self, node: KnowledgeNode) -> None:
         if node.node_id not in self._data:
             self._data[node.node_id] = node
+            self._data_list["node_ids"].append(node.node_id)
+            self._data_list["embeddings"].append(node.embedding)
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
@@ -68,9 +84,9 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
-        all_nodes = list(self._data.values())
+        # all_nodes = list(self._data.values())
         node_ids_and_scores = _get_top_k_nodes(
-            nodes=all_nodes, query_emb=query_emb, top_k=top_k
+            nodes=self._data_list, query_emb=query_emb, top_k=top_k
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
