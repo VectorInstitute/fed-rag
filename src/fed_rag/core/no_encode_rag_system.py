@@ -5,7 +5,7 @@ from fed_rag.core._no_encode_rag_system import _NoEncodeRAGSystem
 
 # Define the public NoEncodeRAGSystem with all available bridges
 class NoEncodeRAGSystem(_NoEncodeRAGSystem):
-    """No Encode RAG System with all available bridge functionality.
+    """NoEncode RAG System with all available bridge functionality.
 
     The NoEncodeRAGSystem is the main entry point for creating and managing
     retrieval-augmented generation systems that skip encoding altogether,
@@ -14,7 +14,7 @@ class NoEncodeRAGSystem(_NoEncodeRAGSystem):
 
     Unlike traditional RAG systems that require separate retriever components
     and pre-computed embeddings, NoEncode RAG systems perform direct queries
-    against live knowledge sources.
+    against NoEncode knowledge sources.
     """
 
     pass
