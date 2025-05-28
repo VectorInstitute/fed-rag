@@ -28,6 +28,7 @@ class BaseNoEncodeKnowledgeStore(BaseModel, ABC):
     def load_node(self, node: "KnowledgeNode") -> None:
         """Load a "KnowledgeNode" into the KnowledgeStore."""
 
+    @abstractmethod
     def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
         """Load multiple "KnowledgeNode"s in batch."""
 
