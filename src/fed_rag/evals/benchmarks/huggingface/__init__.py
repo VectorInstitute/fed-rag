@@ -1,3 +1,5 @@
+from .boolq import HuggingFaceBoolQ
+from .hellaswag import HuggingFaceHellaSwag
 from .hotpotqa import HuggingFaceHotpotQA
 from .mixin import HuggingFaceBenchmarkMixin
 from .mmlu import HuggingFaceMMLU
@@ -12,4 +14,6 @@ __all__ = [
     "HuggingFaceHotpotQA",
     "HuggingFaceSQuADv2",
     "HuggingFaceNaturalQuestions",
+    "HuggingFaceBoolQ",
+    "HuggingFaceHellaSwag",
 ]
