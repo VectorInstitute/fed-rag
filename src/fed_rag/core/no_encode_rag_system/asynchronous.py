@@ -1,13 +1,15 @@
-"""No Encode RAG System Module"""
+"""Async No Encode RAG System Module"""
 
-from fed_rag.core._no_encode_rag_system import _NoEncodeRAGSystem
+from fed_rag.core.no_encode_rag_system._asynchronous import (
+    _AsyncNoEncodeRAGSystem,
+)
 
 
 # Define the public NoEncodeRAGSystem with all available bridges
-class NoEncodeRAGSystem(_NoEncodeRAGSystem):
-    """NoEncode RAG System with all available bridge functionality.
+class AsyncNoEncodeRAGSystem(_AsyncNoEncodeRAGSystem):
+    """Async NoEncode RAG System with all available bridge functionality.
 
-    The NoEncodeRAGSystem is the main entry point for creating and managing
+    The AsyncNoEncodeRAGSystem is the main entry point for creating and managing
     retrieval-augmented generation systems that skip encoding altogether,
     enabling direct natural language queries to knowledge sources like MCP
     servers, APIs, and databases.

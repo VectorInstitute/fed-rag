@@ -8,7 +8,9 @@ from fed_rag.base.bridge import BaseBridgeMixin
 if TYPE_CHECKING:  # pragma: no cover
     from llama_index.core.indices.managed.base import BaseManagedIndex
 
-    from fed_rag.core._rag_system import _RAGSystem  # avoids circular import
+    from fed_rag.core.rag_system._synchronous import (  # avoids circular import
+        _RAGSystem,
+    )
 
 
 class LlamaIndexBridgeMixin(BaseBridgeMixin):

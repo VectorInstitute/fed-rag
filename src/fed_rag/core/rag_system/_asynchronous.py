@@ -1,38 +1,33 @@
-"""Internal RAG System Module"""
+"""Internal Async RAG System Module"""
 
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeMetadata
-from fed_rag.data_structures import (
-    KnowledgeNode,
-    RAGConfig,
-    RAGResponse,
-    SourceNode,
-)
+from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
 
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs
     from fed_rag.base.generator import BaseGenerator
-    from fed_rag.base.knowledge_store import BaseKnowledgeStore
+    from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
     from fed_rag.base.retriever import BaseRetriever
 
 
-class _RAGSystem(BaseModel):
-    """Unbridged implementation of RAGSystem.
+class _AsyncRAGSystem(BaseModel):
+    """Unbridged implementation of AsyncRAGSystem.
 
     IMPORTANT: This is an internal implementation class.
     It should only be used by bridge mixins and never referenced directly
     by user code or other parts of the library.
 
-    All interaction with RAG systems should be through the public RAGSystem class.
+    All interaction with RAG systems should be through the public AsyncRAGSystem class.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     generator: "BaseGenerator"
     retriever: "BaseRetriever"
-    knowledge_store: "BaseKnowledgeStore"
+    knowledge_store: "BaseAsyncKnowledgeStore"
     rag_config: RAGConfig
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
@@ -42,24 +37,24 @@ class _RAGSystem(BaseModel):
         if metadata["framework"] not in cls.bridges:
             cls.bridges[metadata["framework"]] = metadata
 
-    def query(self, query: str) -> RAGResponse:
+    async def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""
-        source_nodes = self.retrieve(query)
+        source_nodes = await self.retrieve(query)
         context = self._format_context(source_nodes)
-        response = self.generate(query=query, context=context)
+        response = await self.generate(query=query, context=context)
         return RAGResponse(source_nodes=source_nodes, response=response)
 
-    def retrieve(self, query: str) -> list[SourceNode]:
+    async def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from KnowledgeStore."""
         query_emb: list[float] = self.retriever.encode_query(query).tolist()
-        raw_retrieval_result = self.knowledge_store.retrieve(
+        raw_retrieval_result = await self.knowledge_store.retrieve(
             query_emb=query_emb, top_k=self.rag_config.top_k
         )
         return [
             SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
         ]
 
-    def generate(self, query: str, context: str) -> str:
+    async def generate(self, query: str, context: str) -> str:
         """Generate response to query with context."""
         return self.generator.generate(query=query, context=context)  # type: ignore
 
@@ -79,11 +74,11 @@ def _resolve_forward_refs() -> None:
     # These imports are needed for Pydantic to resolve forward references
     # ruff: noqa: F401
     from fed_rag.base.generator import BaseGenerator
-    from fed_rag.base.knowledge_store import BaseKnowledgeStore
+    from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
     from fed_rag.base.retriever import BaseRetriever
 
     # Update forward references
-    _RAGSystem.model_rebuild()
+    _AsyncRAGSystem.model_rebuild()
 
 
 _resolve_forward_refs()
