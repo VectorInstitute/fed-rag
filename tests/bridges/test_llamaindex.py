@@ -268,6 +268,6 @@ def test_async_rag_system_bridges(
 ) -> None:
     metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
 
-    assert "llama-index" in mock_async_rag_system.bridges
+    assert "llama-index-core" in mock_async_rag_system.bridges
     assert mock_async_rag_system.bridges[metadata["framework"]] == metadata
     assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
