@@ -34,7 +34,9 @@ class BaseBridgeMixin(BaseModel):
         for base in cls.__mro__:
             if base.__name__ in [
                 "_RAGSystem",
+                "_AsyncRAGSystem",
                 "_NoEncodeRAGSystem",
+                "_AsyncNoEncodeRAGSystem,",
             ] and hasattr(base, "_register_bridge"):
                 metadata = cls.get_bridge_metadata()
 

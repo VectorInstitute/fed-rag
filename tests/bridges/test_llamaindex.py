@@ -12,8 +12,9 @@ from fed_rag._bridges.llamaindex._managed_index import (
     convert_source_node_to_llama_index_node_with_score,
 )
 from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-from fed_rag.core.rag_system._synchronous import SourceNode, _RAGSystem
-from fed_rag.data_structures import KnowledgeNode
+from fed_rag.core.rag_system._asynchronous import _AsyncRAGSystem
+from fed_rag.core.rag_system._synchronous import _RAGSystem
+from fed_rag.data_structures import KnowledgeNode, SourceNode
 from fed_rag.exceptions import BridgeError
 
 
@@ -259,3 +260,14 @@ def test_fedrag_managed_index_raises_not_implemented_error(
         match="delete_ref_doc not implemented for `FedRAGManagedIndex`.",
     ):
         index.delete_ref_doc(ref_doc_id="1")
+
+
+## async
+def test_async_rag_system_bridges(
+    mock_async_rag_system: _AsyncRAGSystem,
+) -> None:
+    metadata = LlamaIndexBridgeMixin.get_bridge_metadata()
+
+    assert "llama-index" in mock_async_rag_system.bridges
+    assert mock_async_rag_system.bridges[metadata["framework"]] == metadata
+    assert LlamaIndexBridgeMixin._bridge_extra == "llama-index"
