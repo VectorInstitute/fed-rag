@@ -1,3 +1,3 @@
-from .sync import RAGSystem
+from .synchronous import RAGSystem
 
 __all__ = ["RAGSystem"]
