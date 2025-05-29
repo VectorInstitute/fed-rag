@@ -6,9 +6,10 @@ from pydantic import PrivateAttr
 from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
-from fed_rag.data_structures.knowledge_node import KnowledgeNode
+from fed_rag.data_structures import KnowledgeNode
 
 
 class MockRetriever(BaseRetriever):
@@ -58,6 +59,33 @@ class MockDualRetriever(BaseRetriever):
     @property
     def context_encoder(self) -> torch.nn.Module | None:
         return self._context_encoder
+
+
+class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
+    nodes: list[KnowledgeNode] = []
+
+    async def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    async def retrieve(
+        self, query_emb: list[float], top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return []
+
+    async def delete_node(self, node_id: str) -> bool:
+        return True
+
+    async def clear(self) -> None:
+        self.nodes.clear()
+
+    async def count(self) -> int:
+        return len(self.nodes)
+
+    async def persist(self) -> None:
+        pass
+
+    async def load(self) -> None:
+        pass
 
 
 @pytest.fixture
