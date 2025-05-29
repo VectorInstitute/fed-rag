@@ -9,23 +9,25 @@
       
       
       
+        <link rel="prev" href="../natural_questions/">
       
-        <link rel="next" href="getting_started/essentials/">
+      
+        <link rel="next" href="../boolq/">
       
       
-      <link rel="icon" href="assets/favicon-48x48.svg">
+      <link rel="icon" href="../../../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>FedRAG</title>
+        <title>SQuAD v2 - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -44,11 +46,11 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#fedrag" class="md-skip">
+        <a href="#squad-v2" class="md-skip">
           Skip to content
         </a>
       
@@ -88,15 +90,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="assets/logo.svg"
+  src="../../../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="assets/logo-dark.svg"
+  src="../../../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -114,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              SQuAD v2
             
           </span>
         </div>
@@ -222,11 +224,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="getting_started/essentials/" class="md-tabs__link">
+        <a href="../../../../../getting_started/essentials/" class="md-tabs__link">
           
   
   
@@ -269,7 +269,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="examples/" class="md-tabs__link">
+        <a href="../../../../../examples/" class="md-tabs__link">
           
   
   
@@ -291,7 +291,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="notebooks/basic_starter_hf/" class="md-tabs__link">
+        <a href="../../../../../notebooks/basic_starter_hf/" class="md-tabs__link">
           
   
   
@@ -309,11 +309,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="api_reference/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
           
   
   
@@ -342,7 +344,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="community/contributing/" class="md-tabs__link">
+        <a href="../../../../../community/contributing/" class="md-tabs__link">
           
   
   
@@ -370,9 +372,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -383,15 +383,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="assets/logo.svg"
+  src="../../../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="assets/logo-dark.svg"
+  src="../../../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -416,32 +416,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
         
   
   
@@ -452,35 +430,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#simplified-rag-fine-tuning-across-centralized-or-federated-architectures" class="md-nav__link">
-    <span class="md-ellipsis">
-      Simplified RAG fine-tuning across centralized or federated architectures
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -549,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/essentials/" class="md-nav__link">
+      <a href="../../../../../getting_started/essentials/" class="md-nav__link">
         
   
   
@@ -601,7 +550,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="getting_started/quick_starts/" class="md-nav__link ">
+            <a href="../../../../../getting_started/quick_starts/" class="md-nav__link ">
               
   
   
@@ -636,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/quick_starts/federated/" class="md-nav__link">
+      <a href="../../../../../getting_started/quick_starts/federated/" class="md-nav__link">
         
   
   
@@ -659,7 +608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/quick_starts/rag_inference/" class="md-nav__link">
+      <a href="../../../../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
         
   
   
@@ -682,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/quick_starts/rag_finetuning/" class="md-nav__link">
+      <a href="../../../../../getting_started/quick_starts/rag_finetuning/" class="md-nav__link">
         
   
   
@@ -705,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/quick_starts/benchmark_mmlu/" class="md-nav__link">
+      <a href="../../../../../getting_started/quick_starts/benchmark_mmlu/" class="md-nav__link">
         
   
   
@@ -736,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/installation/" class="md-nav__link">
+      <a href="../../../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -759,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/standard_usage/" class="md-nav__link">
+      <a href="../../../../../getting_started/standard_usage/" class="md-nav__link">
         
   
   
@@ -782,7 +731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/import_patterns/" class="md-nav__link">
+      <a href="../../../../../getting_started/import_patterns/" class="md-nav__link">
         
   
   
@@ -830,7 +779,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="getting_started/tutorials/" class="md-nav__link ">
+            <a href="../../../../../getting_started/tutorials/" class="md-nav__link ">
               
   
   
@@ -865,7 +814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/tutorials/lsr/" class="md-nav__link">
+      <a href="../../../../../getting_started/tutorials/lsr/" class="md-nav__link">
         
   
   
@@ -888,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/tutorials/ralt/" class="md-nav__link">
+      <a href="../../../../../getting_started/tutorials/ralt/" class="md-nav__link">
         
   
   
@@ -919,7 +868,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting_started/integrations/" class="md-nav__link">
+      <a href="../../../../../getting_started/integrations/" class="md-nav__link">
         
   
   
@@ -972,7 +921,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="examples/" class="md-nav__link ">
+            <a href="../../../../../examples/" class="md-nav__link ">
               
   
   
@@ -1036,7 +985,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="examples/ra_dit/" class="md-nav__link ">
+            <a href="../../../../../examples/ra_dit/" class="md-nav__link ">
               
   
   
@@ -1071,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/ra_dit/qdrant_knowledge_store_wikipedia/" class="md-nav__link">
+      <a href="../../../../../examples/ra_dit/qdrant_knowledge_store_wikipedia/" class="md-nav__link">
         
   
   
@@ -1094,7 +1043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/ra_dit/finetune/" class="md-nav__link">
+      <a href="../../../../../examples/ra_dit/finetune/" class="md-nav__link">
         
   
   
@@ -1117,7 +1066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/ra_dit/benchmarking/" class="md-nav__link">
+      <a href="../../../../../examples/ra_dit/benchmarking/" class="md-nav__link">
         
   
   
@@ -1140,7 +1089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/ra_dit/federated_finetune/" class="md-nav__link">
+      <a href="../../../../../examples/ra_dit/federated_finetune/" class="md-nav__link">
         
   
   
@@ -1227,7 +1176,7 @@
   
   
     <li class="md-nav__item">
-      <a href="notebooks/basic_starter_hf/" class="md-nav__link">
+      <a href="../../../../../notebooks/basic_starter_hf/" class="md-nav__link">
         
   
   
@@ -1250,7 +1199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="notebooks/rag_benchmarking_hf_mmlu/" class="md-nav__link">
+      <a href="../../../../../notebooks/rag_benchmarking_hf_mmlu/" class="md-nav__link">
         
   
   
@@ -1322,7 +1271,7 @@
   
   
     <li class="md-nav__item">
-      <a href="notebooks/integrations/llama_index/" class="md-nav__link">
+      <a href="../../../../../notebooks/integrations/llama_index/" class="md-nav__link">
         
   
   
@@ -1345,7 +1294,7 @@
   
   
     <li class="md-nav__item">
-      <a href="notebooks/integrations/qdrant/" class="md-nav__link">
+      <a href="../../../../../notebooks/integrations/qdrant/" class="md-nav__link">
         
   
   
@@ -1368,7 +1317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="notebooks/integrations/unsloth/" class="md-nav__link">
+      <a href="../../../../../notebooks/integrations/unsloth/" class="md-nav__link">
         
   
   
@@ -1403,6 +1352,8 @@
       
   
   
+    
+  
   
   
     
@@ -1452,18 +1403,21 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/" class="md-nav__link ">
+            <a href="../../../../" class="md-nav__link ">
               
   
   
@@ -1476,13 +1430,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             API Reference
@@ -1521,7 +1475,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/bridges/" class="md-nav__link ">
+            <a href="../../../../bridges/" class="md-nav__link ">
               
   
   
@@ -1556,7 +1510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/bridges/llamaindex/" class="md-nav__link">
+      <a href="../../../../bridges/llamaindex/" class="md-nav__link">
         
   
   
@@ -1610,7 +1564,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/data_collators/" class="md-nav__link ">
+            <a href="../../../../data_collators/" class="md-nav__link ">
               
   
   
@@ -1645,7 +1599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_collators/huggingface/" class="md-nav__link">
+      <a href="../../../../data_collators/huggingface/" class="md-nav__link">
         
   
   
@@ -1729,7 +1683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_structures/bridge/" class="md-nav__link">
+      <a href="../../../../data_structures/bridge/" class="md-nav__link">
         
   
   
@@ -1752,7 +1706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_structures/evals/" class="md-nav__link">
+      <a href="../../../../data_structures/evals/" class="md-nav__link">
         
   
   
@@ -1775,7 +1729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_structures/knowledge_node/" class="md-nav__link">
+      <a href="../../../../data_structures/knowledge_node/" class="md-nav__link">
         
   
   
@@ -1798,7 +1752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_structures/rag/" class="md-nav__link">
+      <a href="../../../../data_structures/rag/" class="md-nav__link">
         
   
   
@@ -1821,7 +1775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/data_structures/results/" class="md-nav__link">
+      <a href="../../../../data_structures/results/" class="md-nav__link">
         
   
   
@@ -1873,7 +1827,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/decorators/" class="md-nav__link ">
+            <a href="../../../../decorators/" class="md-nav__link ">
               
   
   
@@ -1908,6 +1862,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1930,15 +1886,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/evals/" class="md-nav__link ">
+            <a href="../../../" class="md-nav__link ">
               
   
   
@@ -1957,7 +1913,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_6">
             <span class="md-nav__icon md-icon"></span>
             Evals
@@ -1973,7 +1929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarker/" class="md-nav__link">
+      <a href="../../../benchmarker/" class="md-nav__link">
         
   
   
@@ -1993,8 +1949,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -2007,11 +1965,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6_3" checked>
         
           
           <label class="md-nav__link" for="__nav_5_6_3" id="__nav_5_6_3_label" tabindex="0">
@@ -2027,7 +1985,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_6_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_6_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_6_3">
             <span class="md-nav__icon md-icon"></span>
             Benchmarks
@@ -2038,8 +1996,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -2064,11 +2024,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6_3_1" checked>
         
           
           <label class="md-nav__link" for="__nav_5_6_3_1" id="__nav_5_6_3_1_label" tabindex="0">
@@ -2084,7 +2044,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_6_3_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_6_3_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_6_3_1">
             <span class="md-nav__icon md-icon"></span>
             HuggingFace
@@ -2098,7 +2058,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/mmlu/" class="md-nav__link">
+      <a href="../mmlu/" class="md-nav__link">
         
   
   
@@ -2121,7 +2081,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/pubmedqa/" class="md-nav__link">
+      <a href="../pubmedqa/" class="md-nav__link">
         
   
   
@@ -2144,7 +2104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/hotpotqa/" class="md-nav__link">
+      <a href="../hotpotqa/" class="md-nav__link">
         
   
   
@@ -2167,7 +2127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/natural_questions/" class="md-nav__link">
+      <a href="../natural_questions/" class="md-nav__link">
         
   
   
@@ -2187,10 +2147,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/squad_v2/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    SQuAD v2
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2201,6 +2183,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.evals.benchmarks.huggingface.squad_v2.HuggingFaceSQuADv2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceSQuADv2
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2213,7 +2224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/boolq/" class="md-nav__link">
+      <a href="../boolq/" class="md-nav__link">
         
   
   
@@ -2236,7 +2247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/benchmarks/huggingface/hellaswag/" class="md-nav__link">
+      <a href="../hellaswag/" class="md-nav__link">
         
   
   
@@ -2320,7 +2331,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/evals/metrics/exact_match/" class="md-nav__link">
+      <a href="../../../metrics/exact_match/" class="md-nav__link">
         
   
   
@@ -2396,7 +2407,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/exceptions/" class="md-nav__link ">
+            <a href="../../../../exceptions/" class="md-nav__link ">
               
   
   
@@ -2431,7 +2442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/bridge/" class="md-nav__link">
+      <a href="../../../../exceptions/bridge/" class="md-nav__link">
         
   
   
@@ -2454,7 +2465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/evals/" class="md-nav__link">
+      <a href="../../../../exceptions/evals/" class="md-nav__link">
         
   
   
@@ -2477,7 +2488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/fl_tasks/" class="md-nav__link">
+      <a href="../../../../exceptions/fl_tasks/" class="md-nav__link">
         
   
   
@@ -2500,7 +2511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/inspectors/" class="md-nav__link">
+      <a href="../../../../exceptions/inspectors/" class="md-nav__link">
         
   
   
@@ -2523,7 +2534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/knowledge_stores/" class="md-nav__link">
+      <a href="../../../../exceptions/knowledge_stores/" class="md-nav__link">
         
   
   
@@ -2546,7 +2557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/loss/" class="md-nav__link">
+      <a href="../../../../exceptions/loss/" class="md-nav__link">
         
   
   
@@ -2569,7 +2580,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/rag_trainer/" class="md-nav__link">
+      <a href="../../../../exceptions/rag_trainer/" class="md-nav__link">
         
   
   
@@ -2592,7 +2603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/exceptions/tokenizer/" class="md-nav__link">
+      <a href="../../../../exceptions/tokenizer/" class="md-nav__link">
         
   
   
@@ -2648,7 +2659,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/finetuning_datasets/" class="md-nav__link ">
+            <a href="../../../../finetuning_datasets/" class="md-nav__link ">
               
   
   
@@ -2683,7 +2694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/finetuning_datasets/pytorch/" class="md-nav__link">
+      <a href="../../../../finetuning_datasets/pytorch/" class="md-nav__link">
         
   
   
@@ -2706,7 +2717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/finetuning_datasets/huggingface/" class="md-nav__link">
+      <a href="../../../../finetuning_datasets/huggingface/" class="md-nav__link">
         
   
   
@@ -2762,7 +2773,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/fl_tasks/" class="md-nav__link ">
+            <a href="../../../../fl_tasks/" class="md-nav__link ">
               
   
   
@@ -2797,7 +2808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../../../fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -2820,7 +2831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../../../fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -2876,7 +2887,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/generators/" class="md-nav__link ">
+            <a href="../../../../generators/" class="md-nav__link ">
               
   
   
@@ -2911,7 +2922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/generators/huggingface/" class="md-nav__link">
+      <a href="../../../../generators/huggingface/" class="md-nav__link">
         
   
   
@@ -2934,7 +2945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/generators/unsloth/" class="md-nav__link">
+      <a href="../../../../generators/unsloth/" class="md-nav__link">
         
   
   
@@ -2990,7 +3001,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/inspectors/" class="md-nav__link ">
+            <a href="../../../../inspectors/" class="md-nav__link ">
               
   
   
@@ -3025,7 +3036,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/inspectors/pytorch/" class="md-nav__link">
+      <a href="../../../../inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -3048,7 +3059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/inspectors/huggingface/" class="md-nav__link">
+      <a href="../../../../inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -3100,7 +3111,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/knowledge_nodes/" class="md-nav__link ">
+            <a href="../../../../knowledge_nodes/" class="md-nav__link ">
               
   
   
@@ -3165,7 +3176,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/knowledge_stores/" class="md-nav__link ">
+            <a href="../../../../knowledge_stores/" class="md-nav__link ">
               
   
   
@@ -3200,7 +3211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="../../../../knowledge_stores/in_memory/" class="md-nav__link">
         
   
   
@@ -3223,7 +3234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/knowledge_stores/qdrant/" class="md-nav__link">
+      <a href="../../../../knowledge_stores/qdrant/" class="md-nav__link">
         
   
   
@@ -3246,7 +3257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/knowledge_stores/mixins/" class="md-nav__link">
+      <a href="../../../../knowledge_stores/mixins/" class="md-nav__link">
         
   
   
@@ -3322,7 +3333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/loss/pytorch/" class="md-nav__link">
+      <a href="../../../../loss/pytorch/" class="md-nav__link">
         
   
   
@@ -3374,7 +3385,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/rag_system/" class="md-nav__link ">
+            <a href="../../../../rag_system/" class="md-nav__link ">
               
   
   
@@ -3437,7 +3448,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/trainer_managers/" class="md-nav__link ">
+            <a href="../../../../trainer_managers/" class="md-nav__link ">
               
   
   
@@ -3472,7 +3483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/trainer_managers/pytorch/" class="md-nav__link">
+      <a href="../../../../trainer_managers/pytorch/" class="md-nav__link">
         
   
   
@@ -3495,7 +3506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/trainer_managers/huggingface/" class="md-nav__link">
+      <a href="../../../../trainer_managers/huggingface/" class="md-nav__link">
         
   
   
@@ -3549,7 +3560,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/retrievers/" class="md-nav__link ">
+            <a href="../../../../retrievers/" class="md-nav__link ">
               
   
   
@@ -3584,7 +3595,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/retrievers/huggingface/" class="md-nav__link">
+      <a href="../../../../retrievers/huggingface/" class="md-nav__link">
         
   
   
@@ -3638,7 +3649,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/tokenizers/" class="md-nav__link ">
+            <a href="../../../../tokenizers/" class="md-nav__link ">
               
   
   
@@ -3673,7 +3684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/tokenizers/huggingface/" class="md-nav__link">
+      <a href="../../../../tokenizers/huggingface/" class="md-nav__link">
         
   
   
@@ -3729,7 +3740,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="api_reference/trainers/" class="md-nav__link ">
+            <a href="../../../../trainers/" class="md-nav__link ">
               
   
   
@@ -3764,7 +3775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/trainers/pytorch/" class="md-nav__link">
+      <a href="../../../../trainers/pytorch/" class="md-nav__link">
         
   
   
@@ -3787,7 +3798,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_reference/trainers/huggingface/" class="md-nav__link">
+      <a href="../../../../trainers/huggingface/" class="md-nav__link">
         
   
   
@@ -3901,7 +3912,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="community/contributing/" class="md-nav__link ">
+            <a href="../../../../../community/contributing/" class="md-nav__link ">
               
   
   
@@ -3936,7 +3947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="community/contributing/ask_question/" class="md-nav__link">
+      <a href="../../../../../community/contributing/ask_question/" class="md-nav__link">
         
   
   
@@ -3959,7 +3970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="community/contributing/submit_issue/" class="md-nav__link">
+      <a href="../../../../../community/contributing/submit_issue/" class="md-nav__link">
         
   
   
@@ -3982,7 +3993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="community/contributing/submit_pr/" class="md-nav__link">
+      <a href="../../../../../community/contributing/submit_pr/" class="md-nav__link">
         
   
   
@@ -4013,7 +4024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="community/changelog/" class="md-nav__link">
+      <a href="../../../../../community/changelog/" class="md-nav__link">
         
   
   
@@ -4081,7 +4092,7 @@
   
   
     <li class="md-nav__item">
-      <a href="community/resources/pocket_references/" class="md-nav__link">
+      <a href="../../../../../community/resources/pocket_references/" class="md-nav__link">
         
   
   
@@ -4120,9 +4131,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -4141,9 +4150,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#simplified-rag-fine-tuning-across-centralized-or-federated-architectures" class="md-nav__link">
+  <a href="#src.fed_rag.evals.benchmarks.huggingface.squad_v2.HuggingFaceSQuADv2" class="md-nav__link">
     <span class="md-ellipsis">
-      Simplified RAG fine-tuning across centralized or federated architectures
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;HuggingFaceSQuADv2
     </span>
   </a>
   
@@ -4162,41 +4171,231 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
-
 
 
   
   
 
 
-<!-- markdownlint-disable-file MD041 MD033 MD042 -->
+<h1 id="squad-v2">SQuAD v2<a class="headerlink" href="#squad-v2" title="Permanent link">&para;</a></h1>
 
-<h1 id="fedrag">
-<span class="twemoji vector-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.25 2c.19 0 .36.11.44.26l2.22 3.96.09.28-.09.28-2.22 3.96c-.08.15-.25.26-.44.26h-4.5c-.19 0-.36-.11-.44-.26L3.09 6.78 3 6.5l.09-.28 2.22-3.96c.08-.15.25-.26.44-.26zm0 11c.19 0 .36.11.44.26l2.22 3.96.09.28-.09.28-2.22 3.96c-.08.15-.25.26-.44.26h-4.5c-.19 0-.36-.11-.44-.26l-2.22-3.96L3 17.5l.09-.28 2.22-3.96c.08-.15.25-.26.44-.26zm9.25-5.5c.19 0 .36.11.44.26l2.22 3.96.09.28-.09.28-2.22 3.96c-.08.15-.25.26-.44.26H15c-.19 0-.36-.11-.44-.26l-2.22-3.96-.09-.28.09-.28 2.22-3.96c.08-.15.25-.26.44-.26z"/></svg></span> FedRAG
-<a class="headerlink" href="#fedrag" title="Permanent link">&para;</a></h1>
-<h2 id="simplified-rag-fine-tuning-across-centralized-or-federated-architectures">Simplified RAG fine-tuning across centralized or federated architectures<a class="headerlink" href="#simplified-rag-fine-tuning-across-centralized-or-federated-architectures" title="Permanent link">&para;</a></h2>
-<div class="grid cards">
-<ul>
-<li>
-<p><h2><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M234.7 42.7 197 56.8c-3 1.1-5 4-5 7.2s2 6.1 5 7.2l37.7 14.1 14.1 37.7c1.1 3 4 5 7.2 5s6.1-2 7.2-5l14.1-37.7L315 71.2c3-1.1 5-4 5-7.2s-2-6.1-5-7.2l-37.7-14.1L263.2 5c-1.1-3-4-5-7.2-5s-6.1 2-7.2 5zM46.1 395.4c-18.7 18.7-18.7 49.1 0 67.9l34.6 34.6c18.7 18.7 49.1 18.7 67.9 0l381.3-381.4c18.7-18.7 18.7-49.1 0-67.9l-34.6-34.5c-18.7-18.7-49.1-18.7-67.9 0zM484.6 82.6l-105 105-23.3-23.3 105-105zM7.5 117.2C3 118.9 0 123.2 0 128s3 9.1 7.5 10.8L64 160l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L128 160l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L128 96l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L64 96zm352 256c-4.5 1.7-7.5 6-7.5 10.8s3 9.1 7.5 10.8L416 416l21.2 56.5c1.7 4.5 6 7.5 10.8 7.5s9.1-3 10.8-7.5L480 416l56.5-21.2c4.5-1.7 7.5-6 7.5-10.8s-3-9.1-7.5-10.8L480 352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1 3-10.8 7.5L416 352z"/></svg></span> Advanced RAG fine-tuning</h2></p>
-<p>Comprehensive support for state-of-the-art RAG fine-tuning methods that can
-be federated with ease.</p>
-<p><a href="getting_started/essentials/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Getting started</a></p>
-</li>
-<li>
-<p><h2><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M192 64v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V64c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32M82.7 207c-15.3 8.8-20.5 28.4-11.7 43.7l32 55.4c8.8 15.3 28.4 20.5 43.7 11.7l55.4-32c15.3-8.8 20.5-28.4 11.7-43.7l-32-55.4c-8.8-15.3-28.4-20.5-43.7-11.7zM288 192c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-64c0-17.7-14.3-32-32-32zm64 160c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-64c0-17.7-14.3-32-32-32zm-192 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-64c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32M32 352c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-64c0-17.7-14.3-32-32-32z"/></svg></span> Work with your tools</h2></p>
-<p>Seamlessly integrates with popular frameworks including HuggingFace,
-and LlamaIndex — use the tools you already know.</p>
-<p><a href="examples/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> In-Depth Examples</a></p>
-</li>
-<li>
-<p><h2><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M278.5 215.6 23 471c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l57-57h68c49.7 0 97.9-14.4 139-41 11.1-7.2 5.5-23-7.8-23-5.1 0-9.2-4.1-9.2-9.2 0-4.1 2.7-7.6 6.5-8.8l81-24.3c2.5-.8 4.8-2.1 6.7-4l22.4-22.4c10.1-10.1 2.9-27.3-11.3-27.3H377c-5.1 0-9.2-4.1-9.2-9.2 0-4.1 2.7-7.6 6.5-8.8l112-33.6c4-1.2 7.4-3.9 9.3-7.7 10.8-21 16.4-44.5 16.4-68.6 0-41-16.3-80.3-45.3-109.3l-5.5-5.5C432.3 16.3 393 0 352 0s-80.3 16.3-109.3 45.3L139 149c-48 48-75 113.1-75 181v55.3l189.6-189.5c6.2-6.2 16.4-6.2 22.6 0 5.4 5.4 6.1 13.6 2.2 19.8z"/></svg></span> Lightweight abstractions</h2></p>
-<p>Clean, intuitive abstractions that simplify RAG fine-tuning while
-maintaining full flexibility and control.</p>
-<p><a href="api_reference/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> API Reference</a></p>
-</li>
-</ul>
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>SQuAD 2.0 benchmark</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.evals.benchmarks.huggingface.squad_v2.HuggingFaceSQuADv2" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">HuggingFaceSQuADv2</span>
+
+
+<a href="#src.fed_rag.evals.benchmarks.huggingface.squad_v2.HuggingFaceSQuADv2" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="src.fed_rag.evals.benchmarks.huggingface.mixin.HuggingFaceBenchmarkMixin">HuggingFaceBenchmarkMixin</span></code>, <code><span title="fed_rag.base.evals.benchmark.BaseBenchmark">BaseBenchmark</span></code></p>
+
+
+        <p>HuggingFace SQuAD 2.0 Benchmark.</p>
+<p>Stanford Question Answering Dataset (SQuAD) 2.0 combines 100,000 questions
+from SQuAD 1.1 with over 50,000 unanswerable questions. Systems must not
+only answer questions when possible, but also determine when no answer is
+supported by the paragraph.</p>
+
+
+<details class="example-schema" open>
+  <summary>Example schema</summary>
+  <p>{
+    "id": "56ddde2d66d3e219004dad4d",
+    "title": "Symbiosis",
+    "context": "Symbiotic relationships include those associations in which one organism lives on another (ectosymbiosis, such as...",
+    "question": "What is an example of ectosymbiosis?",
+    "answers": {
+        "text": ["mistletoe"],
+        "answer_start": [114]
+    }
+}</p>
+</details>        <p>For unanswerable questions, the answers field has empty lists:
+    {
+        "answers": {
+            "text": [],
+            "answer_start": []
+        }
+    }</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/evals/benchmarks/huggingface/squad_v2.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">class</span><span class="w"> </span><span class="nc">HuggingFaceSQuADv2</span><span class="p">(</span><span class="n">HuggingFaceBenchmarkMixin</span><span class="p">,</span> <span class="n">BaseBenchmark</span><span class="p">):</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;HuggingFace SQuAD 2.0 Benchmark.</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    Stanford Question Answering Dataset (SQuAD) 2.0 combines 100,000 questions</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    from SQuAD 1.1 with over 50,000 unanswerable questions. Systems must not</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    only answer questions when possible, but also determine when no answer is</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">    supported by the paragraph.</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Example schema:</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">        {</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">            &quot;id&quot;: &quot;56ddde2d66d3e219004dad4d&quot;,</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">            &quot;title&quot;: &quot;Symbiosis&quot;,</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">            &quot;context&quot;: &quot;Symbiotic relationships include those associations in which one organism lives on another (ectosymbiosis, such as...&quot;,</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">            &quot;question&quot;: &quot;What is an example of ectosymbiosis?&quot;,</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">            &quot;answers&quot;: {</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">                &quot;text&quot;: [&quot;mistletoe&quot;],</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">                &quot;answer_start&quot;: [114]</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">            }</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        }</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    For unanswerable questions, the answers field has empty lists:</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        {</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">            &quot;answers&quot;: {</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">                &quot;text&quot;: [],</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">                &quot;answer_start&quot;: []</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">            }</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        }</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;squad_v2&quot;</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="n">configuration_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_query_from_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">])</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_response_from_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="n">answers</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;answers&quot;</span><span class="p">,</span> <span class="p">{})</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="n">answer_texts</span> <span class="o">=</span> <span class="n">answers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="k">if</span> <span class="n">answer_texts</span><span class="p">:</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="c1"># Return the first answer (they are typically variations of the same answer)</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">answer_texts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="c1"># For unanswerable questions, return a special token</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a>            <span class="k">return</span> <span class="s2">&quot;[NO ANSWER]&quot;</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_context_from_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">])</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="nd">@classmethod</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_extra_installed</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that huggingface-evals dependencies are installed.&quot;&quot;&quot;</span>
+</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="n">check_huggingface_evals_installed</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="k">return</span> <span class="n">data</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
 </div>
 
 
@@ -4205,13 +4404,8 @@ maintaining full flexibility and control.</p>
 
 
 
-  
-  
 
 
-
-
-  
 
 
 
@@ -4237,19 +4431,33 @@ maintaining full flexibility and control.</p>
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../natural_questions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Natural Questions">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Natural Questions
+              </div>
+            </div>
+          </a>
         
         
           
-          <a href="getting_started/essentials/" class="md-footer__link md-footer__link--next" aria-label="Next: Essentials">
+          <a href="../boolq/" class="md-footer__link md-footer__link--next" aria-label="Next: BoolQ">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Essentials
+                BoolQ
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -4267,7 +4475,7 @@ maintaining full flexibility and control.</p>
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="assets/vector-logo.svg"
+        src="../../../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -4336,12 +4544,12 @@ maintaining full flexibility and control.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
-        <script src="javascripts/mathjax.js"></script>
+        <script src="../../../../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
