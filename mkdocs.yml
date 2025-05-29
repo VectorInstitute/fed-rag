@@ -91,6 +91,12 @@ nav:
       - Benchmarks:
         - HuggingFace:
           - api_reference/evals/benchmarks/huggingface/mmlu.md
+          - api_reference/evals/benchmarks/huggingface/pubmedqa.md
+          - api_reference/evals/benchmarks/huggingface/hotpotqa.md
+          - api_reference/evals/benchmarks/huggingface/natural_questions.md
+          - api_reference/evals/benchmarks/huggingface/squad_v2.md
+          - api_reference/evals/benchmarks/huggingface/boolq.md
+          - api_reference/evals/benchmarks/huggingface/hellaswag.md
       - Metrics:
         - Exact Match: api_reference/evals/metrics/exact_match.md
     - Exceptions:
