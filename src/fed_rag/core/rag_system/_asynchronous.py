@@ -10,25 +10,24 @@ from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs
     from fed_rag.base.generator import BaseGenerator
-    from fed_rag.base.no_encode_knowledge_store import (
-        BaseAsyncNoEncodeKnowledgeStore,
-    )
+    from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
+    from fed_rag.base.retriever import BaseRetriever
 
 
-class _AsyncNoEncodeRAGSystem(BaseModel):
-    """Unbridged implementation of NoEncodeRAGSystem.
+class _AsyncRAGSystem(BaseModel):
+    """Unbridged implementation of AsyncRAGSystem.
 
     IMPORTANT: This is an internal implementation class.
     It should only be used by bridge mixins and never referenced directly
     by user code or other parts of the library.
 
-    All interaction with RAG systems should be through the public NoEncodeRAGSystem
-    class.
+    All interaction with RAG systems should be through the public RAGSystem class.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     generator: "BaseGenerator"
-    knowledge_store: "BaseAsyncNoEncodeKnowledgeStore"
+    retriever: "BaseRetriever"
+    knowledge_store: "BaseAsyncKnowledgeStore"
     rag_config: RAGConfig
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
@@ -46,9 +45,10 @@ class _AsyncNoEncodeRAGSystem(BaseModel):
         return RAGResponse(source_nodes=source_nodes, response=response)
 
     async def retrieve(self, query: str) -> list[SourceNode]:
-        """Retrieve from AsyncNoEncodeKnowledgeStore."""
+        """Retrieve from KnowledgeStore."""
+        query_emb: list[float] = self.retriever.encode_query(query).tolist()
         raw_retrieval_result = await self.knowledge_store.retrieve(
-            query=query, top_k=self.rag_config.top_k
+            query_emb=query_emb, top_k=self.rag_config.top_k
         )
         return [
             SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
@@ -74,12 +74,11 @@ def _resolve_forward_refs() -> None:
     # These imports are needed for Pydantic to resolve forward references
     # ruff: noqa: F401
     from fed_rag.base.generator import BaseGenerator
-    from fed_rag.base.no_encode_knowledge_store import (
-        BaseAsyncNoEncodeKnowledgeStore,
-    )
+    from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
+    from fed_rag.base.retriever import BaseRetriever
 
     # Update forward references
-    _AsyncNoEncodeRAGSystem.model_rebuild()
+    _AsyncRAGSystem.model_rebuild()
 
 
 _resolve_forward_refs()

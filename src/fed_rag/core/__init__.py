@@ -1,6 +1,11 @@
 """Public Core API"""
 
-from .no_encode_rag_system import NoEncodeRAGSystem
-from .rag_system import RAGSystem
+from .no_encode_rag_system import AsyncNoEncodeRAGSystem, NoEncodeRAGSystem
+from .rag_system import AsyncRAGSystem, RAGSystem
 
-__all__ = ["RAGSystem", "NoEncodeRAGSystem"]
+__all__ = [
+    "AsyncNoEncodeRAGSystem",
+    "AsyncRAGSystem",
+    "NoEncodeRAGSystem",
+    "RAGSystem",
+]

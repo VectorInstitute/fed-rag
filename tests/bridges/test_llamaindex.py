@@ -12,11 +12,8 @@ from fed_rag._bridges.llamaindex._managed_index import (
     convert_source_node_to_llama_index_node_with_score,
 )
 from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-from fed_rag.core.rag_system._synchronous import (
-    KnowledgeNode,
-    SourceNode,
-    _RAGSystem,
-)
+from fed_rag.core.rag_system._synchronous import SourceNode, _RAGSystem
+from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import BridgeError
 
 
