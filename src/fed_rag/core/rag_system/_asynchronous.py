@@ -21,7 +21,7 @@ class _AsyncRAGSystem(BaseModel):
     It should only be used by bridge mixins and never referenced directly
     by user code or other parts of the library.
 
-    All interaction with RAG systems should be through the public RAGSystem class.
+    All interaction with RAG systems should be through the public AsyncRAGSystem class.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)

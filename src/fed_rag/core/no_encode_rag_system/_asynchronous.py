@@ -22,7 +22,7 @@ class _AsyncNoEncodeRAGSystem(BaseModel):
     It should only be used by bridge mixins and never referenced directly
     by user code or other parts of the library.
 
-    All interaction with RAG systems should be through the public NoEncodeRAGSystem
+    All interaction with RAG systems should be through the public AsyncNoEncodeRAGSystem
     class.
     """
 
@@ -39,14 +39,14 @@ class _AsyncNoEncodeRAGSystem(BaseModel):
             cls.bridges[metadata["framework"]] = metadata
 
     async def query(self, query: str) -> RAGResponse:
-        """Query the RAG system."""
+        """Asynchronously query the RAG system."""
         source_nodes = await self.retrieve(query)
         context = self._format_context(source_nodes)
         response = await self.generate(query=query, context=context)
         return RAGResponse(source_nodes=source_nodes, response=response)
 
     async def retrieve(self, query: str) -> list[SourceNode]:
-        """Retrieve from AsyncNoEncodeKnowledgeStore."""
+        """Asynchronously retrieve from AsyncNoEncodeKnowledgeStore."""
         raw_retrieval_result = await self.knowledge_store.retrieve(
             query=query, top_k=self.rag_config.top_k
         )
@@ -55,7 +55,7 @@ class _AsyncNoEncodeRAGSystem(BaseModel):
         ]
 
     async def generate(self, query: str, context: str) -> str:
-        """Generate response to query with context."""
+        """Asynchronously generate response to query with context."""
         return self.generator.generate(query=query, context=context)  # type: ignore
 
     def _format_context(self, source_nodes: list[SourceNode]) -> str:
