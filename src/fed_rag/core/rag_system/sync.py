@@ -1,7 +1,7 @@
 """RAG System Module"""
 
 from fed_rag._bridges.llamaindex.bridge import LlamaIndexBridgeMixin
-from fed_rag.core._rag_system import _RAGSystem
+from fed_rag.core.rag_system._sync import _RAGSystem
 
 
 # Define the public RAGSystem with all available bridges

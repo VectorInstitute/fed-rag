@@ -1,6 +1,6 @@
 """No Encode RAG System Module"""
 
-from fed_rag.core._no_encode_rag_system import _NoEncodeRAGSystem
+from fed_rag.core.no_encode_rag_system._sync import _NoEncodeRAGSystem
 
 
 # Define the public NoEncodeRAGSystem with all available bridges
