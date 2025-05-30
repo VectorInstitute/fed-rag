@@ -32,11 +32,13 @@ from .inspectors import (
     UnequalNetParamWarning,
 )
 from .knowledge_stores import (
+    CallToolResultConversionError,
     InvalidDistanceError,
     KnowledgeStoreError,
     KnowledgeStoreNotFoundError,
     KnowledgeStoreWarning,
     LoadNodeError,
+    MCPKnowledgeStoreError,
 )
 from .tokenizer import TokenizerError, TokenizerWarning
 from .trainer import (
@@ -94,6 +96,8 @@ __all__ = [
     "KnowledgeStoreNotFoundError",
     "InvalidDistanceError",
     "LoadNodeError",
+    "MCPKnowledgeStoreError",
+    "CallToolResultConversionError",
     # rag trainer manager
     "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",

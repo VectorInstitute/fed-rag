@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.data_structures import KnowledgeNode
-from fed_rag.exceptions import KnowledgeStoreError
+from fed_rag.exceptions import CallToolResultConversionError
 
 
 class CallToolResultConverter(Protocol):
@@ -66,8 +66,8 @@ class MCPKnowledgeSource(BaseModel):
 
     def default_converter(self, result: CallToolResult) -> KnowledgeNode:
         if result.isError:
-            raise KnowledgeStoreError(
-                "Failed to convert `CallToolResult` to a `KnowledgeNode`: result has error status."
+            raise CallToolResultConversionError(
+                "Cannot convert a `CallToolResult` with `isError` set to `True`."
             )
 
         text_content = "\n".join(

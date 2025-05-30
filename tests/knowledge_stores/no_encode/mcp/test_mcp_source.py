@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
 from mcp.types import CallToolResult, ImageContent, TextContent
 
 from fed_rag.data_structures import KnowledgeNode
+from fed_rag.exceptions import CallToolResultConversionError
 from fed_rag.knowledge_stores.no_encode import MCPKnowledgeSource
 
 
@@ -76,3 +78,18 @@ def test_source_default_convert() -> None:
 
     assert node.text_content == node_from_default.text_content
     assert node.metadata == node_from_default.metadata
+
+
+def test_source_default_convert_raises_error() -> None:
+    mcp_source = MCPKnowledgeSource(
+        url="https://fake_url", tool_name="fake_tool"
+    )
+
+    # act
+    result = CallToolResult(content=[], isError=True)
+
+    with pytest.raises(
+        CallToolResultConversionError,
+        match="Cannot convert a `CallToolResult` with `isError` set to `True`.",
+    ):
+        _ = mcp_source.call_tool_result_to_knowledge_node(result=result)
