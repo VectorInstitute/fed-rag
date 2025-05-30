@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add LangChain bridge (#291)
 - Add `AsyncRAGSystem` and `AsyncNoEncodeRAGSystem` (#392)
 - Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
 - Add `NoEncodeRAGSystem` (#386)
