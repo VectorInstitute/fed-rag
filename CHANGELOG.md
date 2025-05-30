@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add `MCPKnowledgeStore` and `MCPKnowledgeSource` (#393)
 - Add `AsyncRAGSystem` and `AsyncNoEncodeRAGSystem` (#392)
 - Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
 - Add `NoEncodeRAGSystem` (#386)
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Changed `load`, `count`, and `persist` methods in `AsyncNoEncodeRAGSystem` to sync (#393)
 - Modified private API for `_RAGSystem`, `_AsyncRAGSystem` and no-encode versions (#392)
 
 ## [0.0.23] - 2025-05-27
