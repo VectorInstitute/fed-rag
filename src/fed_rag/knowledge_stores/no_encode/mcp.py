@@ -1,6 +1,5 @@
 """MCP Knowledge Store"""
 
-
 from fed_rag.base.no_encode_knowledge_store import (
     BaseAsyncNoEncodeKnowledgeStore,
 )
