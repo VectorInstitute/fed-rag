@@ -25,3 +25,15 @@ class InvalidDistanceError(KnowledgeStoreError):
 
 class LoadNodeError(KnowledgeStoreError):
     pass
+
+
+class MCPKnowledgeStoreError(KnowledgeStoreError):
+    """Base knowledge store error for all knowledge-store-related exceptions."""
+
+    pass
+
+
+class CallToolResultConversionError(MCPKnowledgeStoreError):
+    """Raised when trying to convert a ~mcp.CallToolResult that has error status."""
+
+    pass
