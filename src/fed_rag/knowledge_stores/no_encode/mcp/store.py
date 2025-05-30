@@ -13,6 +13,7 @@ from fed_rag.exceptions import KnowledgeStoreError
 from .source import MCPKnowledgeSource
 
 DEFAULT_SCORE = 1.0
+DEFAULT_KNOWLEDGE_STORE_NAME = "default-mcp"
 
 
 class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
@@ -21,6 +22,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     Retrieve knowledge from attached MCP servers.
     """
 
+    name: str = DEFAULT_KNOWLEDGE_STORE_NAME
     sources: dict[str, MCPKnowledgeSource]
 
     def __init__(self, sources: list[MCPKnowledgeSource] = []):
