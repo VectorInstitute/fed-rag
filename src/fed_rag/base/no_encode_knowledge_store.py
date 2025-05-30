@@ -114,13 +114,13 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
 
     @property
     @abstractmethod
-    async def count(self) -> int:
+    def count(self) -> int:
         """Return the number of nodes in the store."""
 
     @abstractmethod
-    async def persist(self) -> None:
+    def persist(self) -> None:
         """Save the KnowledgeStore nodes to a permanent storage."""
 
     @abstractmethod
-    async def load(self) -> None:
+    def load(self) -> None:
         """Load the KnowledgeStore nodes from a permanent storage using `name`."""

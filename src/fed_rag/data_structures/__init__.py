@@ -12,7 +12,6 @@ from .evals import (
     BenchmarkResult,
 )
 from .knowledge_node import KnowledgeNode, NodeContent, NodeType
-from .knowledge_stores import MCPServerMetadata
 from .rag import RAGConfig, RAGResponse, SourceNode
 from .results import TestResult, TrainResult
 
@@ -32,8 +31,6 @@ __all__ = [
     "KnowledgeNode",
     "NodeType",
     "NodeContent",
-    # knowledge stores
-    "MCPServerMetadata",
     # rag
     "RAGConfig",
     "RAGResponse",

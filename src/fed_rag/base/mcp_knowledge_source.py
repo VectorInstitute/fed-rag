@@ -2,28 +2,22 @@
 
 from abc import ABC, abstractmethod
 
-from mcp.types import CallToolResult, ReadResourceResult
+from mcp.types import CallToolResult
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.data_structures import KnowledgeNode
-
-type KnowledgeStoreRetrievalResult = list[tuple[float, KnowledgeNode]]
 
 
 class BaseMCPKnowledgeSource(BaseModel, ABC):
     """A base model for MCP knowledge sources (i.e., server) for MCPKnowledgeStore."""
 
+    name: str
     url: str
+    tool_name: str | None = None
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abstractmethod
-    def read_resource_result_to_knowledge_store_retrieval_result(
-        resource_result: ReadResourceResult,
-    ) -> KnowledgeStoreRetrievalResult:
-        """Convert a resource result to a knowledge store retrieval result."""
-
-    @abstractmethod
-    def call_tool_result_to_knowledge_store_retrieval_result(
+    def call_tool_result_to_knowledge_node(
         resource_result: CallToolResult,
-    ) -> KnowledgeStoreRetrievalResult:
-        """Convert a call tool result to a knowledge store retrieval result."""
+    ) -> KnowledgeNode:
+        """Convert a call tool result to a knowledge node."""
