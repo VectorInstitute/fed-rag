@@ -1,7 +1,9 @@
+import uuid
 from typing import Protocol
 
 from mcp.types import CallToolResult
 from pydantic import BaseModel, ConfigDict, PrivateAttr
+from typing_extensions import Self
 
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreError
@@ -31,8 +33,26 @@ class MCPKnowledgeSource(BaseModel):
         name: str | None = None,
         converter_fn: CallToolResultConverter | None = None,
     ):
+        name = name or f"source-{str(uuid.uuid4())}"
         super().__init__(name=name, url=url, tool_name=tool_name)
         self._converter_fn = converter_fn
+
+    def with_converter(self, converter_fn: CallToolResultConverter) -> Self:
+        """Setter for converter_fn.
+
+        Supports fluent pattern: `source = MCPKnowledgeSource(...).with_converter()`
+        """
+        self._converter_fn = converter_fn
+        return self
+
+    def with_name(self, name: str) -> Self:
+        """Setter for name.
+
+        For convenience and users who prefer the fluent style.
+        """
+
+        self.name = name
+        return self
 
     def call_tool_result_to_knowledge_node(
         self,
