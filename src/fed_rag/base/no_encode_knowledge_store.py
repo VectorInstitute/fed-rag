@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.data_structures.knowledge_node import KnowledgeNode
 
-DEFAULT_KNOWLEDGE_STORE_NAME = "default"
+DEFAULT_KNOWLEDGE_STORE_NAME = "default-mcp"
 
 
 class BaseNoEncodeKnowledgeStore(BaseModel, ABC):

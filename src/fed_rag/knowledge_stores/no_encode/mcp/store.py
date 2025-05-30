@@ -23,13 +23,13 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
 
     sources: dict[str, MCPKnowledgeSource]
 
-    def __init__(self, name: str, sources: list[MCPKnowledgeSource]):
+    def __init__(self, sources: list[MCPKnowledgeSource] = []):
         if len(sources) > 1:
             raise KnowledgeStoreError(
                 "Currently MCPKnowledgeStore supports connection to a only single MCP source."
             )
         sources_dict = {s.name: s for s in sources}
-        super().__init__(name=name, sources=sources_dict)
+        super().__init__(sources=sources_dict)
 
     def add_source(self, source: MCPKnowledgeSource) -> Self:
         """Add a source to knowledge store.
