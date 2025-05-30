@@ -24,10 +24,6 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     sources: dict[str, MCPKnowledgeSource]
 
     def __init__(self, sources: list[MCPKnowledgeSource] = []):
-        if len(sources) > 1:
-            raise KnowledgeStoreError(
-                "Currently MCPKnowledgeStore supports connection to a only single MCP source."
-            )
         sources_dict = {s.name: s for s in sources}
         super().__init__(sources=sources_dict)
 
@@ -70,12 +66,23 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     async def retrieve(
         self, query: str, top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
+        """Retrieve from all MCP knowledge sources.
+
+        Args:
+            query (str): query to send to each MCP source
+            top_k (int): number of nodes to retrieve
+
+        Returns:
+            list[tuple[float, KnowledgeNode]]: _description_
+        """
         knowledge_nodes: list[KnowledgeNode] = []
         for source_id in self.sources.keys():
             knowledge_node = await self._retrieve_from_source(query, source_id)
             knowledge_nodes.append(knowledge_node)
 
-        return [(DEFAULT_SCORE, node) for node in knowledge_nodes]
+        # TODO: apply smarter logic here to only share top k nodes
+        # perhaps use re-rankers?
+        return [(DEFAULT_SCORE, node) for node in knowledge_nodes[:top_k]]
 
     # Not implemented methods
     async def load_node(self, node: KnowledgeNode) -> None:
