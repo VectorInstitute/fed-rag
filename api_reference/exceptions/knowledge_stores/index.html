@@ -2542,6 +2542,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MCPKnowledgeStoreError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.knowledge_stores.CallToolResultConversionError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;CallToolResultConversionError
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4166,6 +4184,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MCPKnowledgeStoreError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.knowledge_stores.CallToolResultConversionError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;CallToolResultConversionError
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4290,6 +4326,86 @@
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base knowledge store error for all knowledge-store-related warnings.&quot;&quot;&quot;</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="k">pass</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MCPKnowledgeStoreError</span>
+
+
+<a href="#src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            KnowledgeStoreError (src.fed_rag.exceptions.knowledge_stores.KnowledgeStoreError)" href="#src.fed_rag.exceptions.knowledge_stores.KnowledgeStoreError">KnowledgeStoreError</a></code></p>
+
+
+        <p>Base knowledge store error for all knowledge-store-related exceptions.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/exceptions/knowledge_stores.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">class</span><span class="w"> </span><span class="nc">MCPKnowledgeStoreError</span><span class="p">(</span><span class="n">KnowledgeStoreError</span><span class="p">):</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base knowledge store error for all knowledge-store-related exceptions.&quot;&quot;&quot;</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="k">pass</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.exceptions.knowledge_stores.CallToolResultConversionError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CallToolResultConversionError</span>
+
+
+<a href="#src.fed_rag.exceptions.knowledge_stores.CallToolResultConversionError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            MCPKnowledgeStoreError (src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError)" href="#src.fed_rag.exceptions.knowledge_stores.MCPKnowledgeStoreError">MCPKnowledgeStoreError</a></code></p>
+
+
+        <p>Raised when trying to convert a ~mcp.CallToolResult that has error status.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/exceptions/knowledge_stores.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="k">class</span><span class="w"> </span><span class="nc">CallToolResultConversionError</span><span class="p">(</span><span class="n">MCPKnowledgeStoreError</span><span class="p">):</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when trying to convert a ~mcp.CallToolResult that has error status.&quot;&quot;&quot;</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="k">pass</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
