@@ -11,7 +11,7 @@ from fed_rag.exceptions import KnowledgeStoreError
 
 class CallToolResultConverter(Protocol):
     def __call__(self, result: CallToolResult) -> KnowledgeNode:
-        pass
+        pass  # pragma: no cover
 
 
 class MCPKnowledgeSource(BaseModel):
