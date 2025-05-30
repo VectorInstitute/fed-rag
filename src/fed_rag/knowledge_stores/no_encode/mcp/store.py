@@ -3,12 +3,13 @@
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
-from fed_rag.base.mcp_knowledge_source import BaseMCPKnowledgeSource
 from fed_rag.base.no_encode_knowledge_store import (
     BaseAsyncNoEncodeKnowledgeStore,
 )
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreError
+
+from .source import MCPKnowledgeSource
 
 DEFAULT_SCORE = 1.0
 
@@ -19,9 +20,9 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     Retrieve knowledge from attached MCP servers.
     """
 
-    sources: dict[str, BaseMCPKnowledgeSource]
+    sources: dict[str, MCPKnowledgeSource]
 
-    def __init__(self, name: str, sources: list[BaseMCPKnowledgeSource]):
+    def __init__(self, name: str, sources: list[MCPKnowledgeSource]):
         if len(sources) > 1:
             raise KnowledgeStoreError(
                 "Currently MCPKnowledgeStore supports connection to a only single MCP source."

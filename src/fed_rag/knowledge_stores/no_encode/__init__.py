@@ -1,3 +1,3 @@
-from .mcp import MCPKnowledgeStore
+from .mcp import MCPKnowledgeSource, MCPKnowledgeStore
 
-__all__ = ["MCPKnowledgeStore"]
+__all__ = ["MCPKnowledgeStore", "MCPKnowledgeSource"]
