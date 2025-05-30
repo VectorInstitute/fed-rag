@@ -2,6 +2,7 @@
 
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
+from typing_extensions import Self
 
 from fed_rag.base.no_encode_knowledge_store import (
     BaseAsyncNoEncodeKnowledgeStore,
@@ -29,6 +30,20 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
             )
         sources_dict = {s.name: s for s in sources}
         super().__init__(name=name, sources=sources_dict)
+
+    def add_source(self, source: MCPKnowledgeSource) -> Self:
+        """Add a source to knowledge store.
+
+        Support fluent chaining.
+        """
+
+        if source.name in self.sources:
+            raise KnowledgeStoreError(
+                f"A source with the same name, {source.name}, already exists."
+            )
+
+        self.sources[source.name] = source
+        return self
 
     async def _retrieve_from_source(
         self, query: str, source_id: str
