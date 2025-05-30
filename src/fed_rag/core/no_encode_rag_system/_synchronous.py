@@ -1,10 +1,10 @@
 """Internal RAG System Module"""
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.base.bridge import BridgeMetadata
+from fed_rag.base.bridge import BridgeMetadata, BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
 
 
-class _NoEncodeRAGSystem(BaseModel):
+class _NoEncodeRAGSystem(BaseModel, BridgeRegistryMixin):
     """Unbridged implementation of NoEncodeRAGSystem.
 
     IMPORTANT: This is an internal implementation class.
@@ -30,13 +30,6 @@ class _NoEncodeRAGSystem(BaseModel):
     generator: "BaseGenerator"
     knowledge_store: "BaseNoEncodeKnowledgeStore"
     rag_config: RAGConfig
-    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
-
-    @classmethod
-    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """To be used only by `BaseBridgeMixin`."""
-        if metadata["framework"] not in cls.bridges:
-            cls.bridges[metadata["framework"]] = metadata
 
     def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""

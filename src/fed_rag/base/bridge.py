@@ -1,17 +1,36 @@
 """Base Bridge"""
 
 import importlib.metadata
-from typing import Any, ClassVar, Optional
+from typing import ClassVar, Optional
 
 from packaging.version import Version
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.data_structures import BridgeMetadata, CompatibleVersions
-from fed_rag.exceptions import (
-    IncompatibleVersionError,
-    MissingExtraError,
-    MissingSpecifiedConversionMethod,
-)
+from fed_rag.exceptions import IncompatibleVersionError, MissingExtraError
+
+
+class BridgeRegistryMixin:
+    """Mixin to manage bridge registration."""
+
+    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
+
+    @classmethod
+    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
+        """Register a bridge's metadata."""
+        if metadata["framework"] not in cls.bridges:
+            cls.bridges[metadata["framework"]] = metadata
+
+    def __init_subclass__(cls) -> None:
+        """Register bridges on subclass creation."""
+        super().__init_subclass__()
+        for base in cls.__mro__:
+            if issubclass(base, BaseBridgeMixin) and hasattr(
+                base, "_method_name"
+            ):
+                metadata = base.get_bridge_metadata()
+                if hasattr(base, metadata["method_name"]):
+                    cls._register_bridge(metadata)
 
 
 class BaseBridgeMixin(BaseModel):
@@ -25,28 +44,6 @@ class BaseBridgeMixin(BaseModel):
     _method_name: ClassVar[str]
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    def __init_subclass__(cls, **kwargs: Any):
-        """Register bridge into ~RAGSystem bridge registry."""
-        super().__init_subclass__(**kwargs)
-
-        # Register this bridge's metadata to the parent RAGSystem
-        for base in cls.__mro__:
-            if base.__name__ in [
-                "_RAGSystem",
-                "_AsyncRAGSystem",
-                "_NoEncodeRAGSystem",
-                "_AsyncNoEncodeRAGSystem",
-            ] and hasattr(base, "_register_bridge"):
-                metadata = cls.get_bridge_metadata()
-
-                # validate method exists
-                if not hasattr(cls, metadata["method_name"]):
-                    raise MissingSpecifiedConversionMethod(
-                        f"Bridge mixin for `{metadata['framework']}` is missing conversion method `{metadata['method_name']}`."
-                    )
-                base._register_bridge(metadata)
-                break
 
     @classmethod
     def get_bridge_metadata(cls) -> BridgeMetadata:

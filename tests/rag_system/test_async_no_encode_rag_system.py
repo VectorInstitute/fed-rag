@@ -112,9 +112,7 @@ async def test_rag_system_query(
     # assert
     mock_retrieve.assert_called_with("fake query")
     mock_format_context.assert_called_with(source_nodes)
-    mock_generate.assert_called_with(
-        query="fake query", context="fake context"
-    )
+    mock_generate.assert_called_with(query="fake query", context="fake context")
     assert rag_response.source_nodes == source_nodes
     assert rag_response.response == "fake generation response"
     assert str(rag_response) == "fake generation response"
@@ -144,9 +142,7 @@ async def test_rag_system_generate(
     res = await rag_system.generate(query="fake query", context="fake context")
 
     # assert
-    mock_generate.assert_called_once_with(
-        query="fake query", context="fake context"
-    )
+    mock_generate.assert_called_once_with(query="fake query", context="fake context")
     assert res == "fake generate response"
 
 
@@ -184,16 +180,14 @@ def test_bridging_no_encode_rag_system(
         _bridge_version = "0.1.0"
         _bridge_extra = "my-bridge"
         _framework = "my-bridge-framework"
-        _compatible_versions = ["0.1.x"]
+        _compatible_versions = {"min": "0.1.1", "max": "0.2.0"}
         _method_name = "to_bridge"
 
         def to_bridge(self) -> None:
             self._validate_framework_installed()
             return None
 
-    class BridgedAsyncNoEncodeRAGSystem(
-        _TestBridgeMixin, _AsyncNoEncodeRAGSystem
-    ):
+    class BridgedAsyncNoEncodeRAGSystem(_TestBridgeMixin, _AsyncNoEncodeRAGSystem):
         pass
 
     # build bridged rag system
@@ -211,6 +205,9 @@ def test_bridging_no_encode_rag_system(
         rag_system.bridges["my-bridge-framework"]
         == _TestBridgeMixin.get_bridge_metadata()
     )
+
+    # cleanup
+    del BridgedAsyncNoEncodeRAGSystem.bridges[_TestBridgeMixin._framework]
 
 
 def test_rag_system_to_sync(

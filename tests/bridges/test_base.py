@@ -1,49 +1,48 @@
 import re
 from contextlib import nullcontext as does_not_raise
 from importlib.metadata import PackageNotFoundError
-from typing import ClassVar
+from typing import Iterator
 from unittest.mock import MagicMock, patch
 
 import pytest
 from pydantic import BaseModel
 
-from fed_rag.base.bridge import BaseBridgeMixin, BridgeMetadata
-from fed_rag.exceptions import (
-    IncompatibleVersionError,
-    MissingExtraError,
-    MissingSpecifiedConversionMethod,
-)
+from fed_rag.base.bridge import BaseBridgeMixin, BridgeRegistryMixin
+from fed_rag.exceptions import IncompatibleVersionError, MissingExtraError
+
+ST_TYPE = tuple[type[BaseBridgeMixin], type[BridgeRegistryMixin]]
 
 
-class _TestBridgeMixin(BaseBridgeMixin):
-    _bridge_version = "0.1.0"
-    _bridge_extra = "my-bridge"
-    _framework = "my-bridge-framework"
-    _compatible_versions = {"min": "0.1.0", "max": "0.2.0"}
-    _method_name = "to_bridge"
+@pytest.fixture(autouse=True)
+def setup_and_teardown() -> Iterator[ST_TYPE]:
+    class _TestBridgeMixin(BaseBridgeMixin):
+        _bridge_version = "0.1.0"
+        _bridge_extra = "my-bridge"
+        _framework = "my-bridge-framework"
+        _compatible_versions = {"min": "0.1.0", "max": "0.2.0"}
+        _method_name = "to_bridge"
 
-    def to_bridge(self) -> None:
-        self._validate_framework_installed()
-        return None
+        def to_bridge(self) -> None:
+            self._validate_framework_installed()
+            return None
+
+    # overwrite RAGSystem for this test
+    class _RAGSystem(_TestBridgeMixin, BridgeRegistryMixin, BaseModel):
+        pass
+
+    yield _TestBridgeMixin, _RAGSystem
+
+    del BridgeRegistryMixin.bridges[_TestBridgeMixin._framework]
 
 
-# overwrite RAGSystem for this test
-class _RAGSystem(_TestBridgeMixin, BaseModel):
-    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
-
-    @classmethod
-    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """To be used only by `BaseBridgeMixin`."""
-        if metadata["framework"] not in cls.bridges:
-            cls.bridges[metadata["framework"]] = metadata
-
-
-def test_bridge_init() -> None:
+def test_bridge_init(setup_and_teardown: ST_TYPE) -> None:
+    _TestBridgeMixin, _ = setup_and_teardown
     with does_not_raise():
         _TestBridgeMixin()
 
 
-def test_bridge_get_metadata() -> None:
+def test_bridge_get_metadata(setup_and_teardown: ST_TYPE) -> None:
+    _TestBridgeMixin, _ = setup_and_teardown
     bridge_mixin = (
         _TestBridgeMixin()
     )  # not really supposed to be instantiated on own
@@ -56,7 +55,8 @@ def test_bridge_get_metadata() -> None:
     assert metadata["method_name"] == "to_bridge"
 
 
-def test_rag_system_registry() -> None:
+def test_rag_system_registry(setup_and_teardown: ST_TYPE) -> None:
+    _TestBridgeMixin, _RAGSystem = setup_and_teardown
     rag_system = _RAGSystem()
 
     assert _TestBridgeMixin._framework in _RAGSystem.bridges
@@ -72,7 +72,9 @@ def test_rag_system_registry() -> None:
 )
 def test_validate_framework_not_installed_error(
     mock_version: MagicMock,
+    setup_and_teardown: ST_TYPE,
 ) -> None:
+    _, _RAGSystem = setup_and_teardown
     # with bridge-extra
     msg = (
         "`my-bridge-framework` module is missing but needs to be installed. "
@@ -96,7 +98,9 @@ def test_validate_framework_not_installed_error(
 @patch("fed_rag.base.bridge.importlib.metadata.version")
 def test_validate_framework_incompatible_error(
     mock_version: MagicMock,
+    setup_and_teardown: ST_TYPE,
 ) -> None:
+    _, _RAGSystem = setup_and_teardown
     rag_system = _RAGSystem()
     # too low versions
     for ver in ["0.0.9", "0.0.10", "0.1.0b1", "0.1.0rc1"]:
@@ -120,7 +124,10 @@ def test_validate_framework_incompatible_error(
 
 
 @patch("fed_rag.base.bridge.importlib.metadata.version")
-def test_validate_framework_success(mock_version: MagicMock) -> None:
+def test_validate_framework_success(
+    mock_version: MagicMock, setup_and_teardown: ST_TYPE
+) -> None:
+    _, _RAGSystem = setup_and_teardown
     rag_system = _RAGSystem()
     for ver in ["0.1.0", "0.1.1", "0.2.0b1", "0.2.0rc1", "0.2.0"]:
         mock_version.return_value = ver
@@ -128,23 +135,25 @@ def test_validate_framework_success(mock_version: MagicMock) -> None:
             rag_system.to_bridge()
 
 
-def test_invalid_mixin_raises_error() -> None:
-    msg = "Bridge mixin for `mock` is missing conversion method `missing_method`."
-    with pytest.raises(MissingSpecifiedConversionMethod, match=re.escape(msg)):
+def test_invalid_mixin_not_registered() -> None:
+    class InvalidMixin(BaseBridgeMixin):
+        _bridge_version = "0.1.0"
+        _bridge_extra = None
+        _framework = "mock"
+        _compatible_versions = {"min": "0.1.0"}
+        _method_name = "missing_method"
 
-        class InvalidMixin(BaseBridgeMixin):
-            _bridge_version = "0.1.0"
-            _bridge_extra = None
-            _framework = "mock"
-            _compatible_versions = {"min": "0.1.0"}
-            _method_name = "missing_method"
+    # backup the registry
+    _bridges = BridgeRegistryMixin.bridges.copy()
+    try:
+        # clear the registry for this test
+        BridgeRegistryMixin.bridges = {}
 
         # overwrite RAGSystem for this test
-        class _RAGSystem(InvalidMixin, BaseModel):
-            bridges: ClassVar[dict[str, BridgeMetadata]] = {}
+        class _RAGSystem(InvalidMixin, BridgeRegistryMixin, BaseModel):
+            pass
 
-            @classmethod
-            def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-                """To be used only by `BaseBridgeMixin`."""
-                if metadata["framework"] not in cls.bridges:
-                    cls.bridges[metadata["framework"]] = metadata
+        assert InvalidMixin._framework not in BridgeRegistryMixin.bridges
+    finally:
+        # restore the original registry
+        BridgeRegistryMixin.bridges = _bridges
