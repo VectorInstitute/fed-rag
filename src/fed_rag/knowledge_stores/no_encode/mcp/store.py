@@ -9,7 +9,7 @@ from fed_rag.base.no_encode_knowledge_store import (
     BaseAsyncNoEncodeKnowledgeStore,
 )
 from fed_rag.data_structures import KnowledgeNode
-from fed_rag.exceptions import KnowledgeStoreError
+from fed_rag.exceptions import MCPKnowledgeStoreError
 
 from .sources import MCPStdioKnowledgeSource, MCPStreamableHttpKnowledgeSource
 
@@ -39,8 +39,15 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
         Support fluent chaining.
         """
 
+        if not isinstance(source, MCPStdioKnowledgeSource) and not isinstance(
+            source, MCPStreamableHttpKnowledgeSource
+        ):
+            raise MCPKnowledgeStoreError(
+                f"Cannot add source of type: {type(source)}"
+            )
+
         if source.name in self.sources:
-            raise KnowledgeStoreError(
+            raise MCPKnowledgeStoreError(
                 f"A source with the same name, {source.name}, already exists."
             )
 
@@ -85,7 +92,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
                         source.tool_name, arguments=tool_arguments
                     )
         else:
-            raise KnowledgeStoreError(
+            raise MCPKnowledgeStoreError(
                 f"Unsupported source type: {type(source)}"
             )
 
@@ -105,6 +112,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
         """
         knowledge_nodes: list[KnowledgeNode] = []
         for source_id in self.sources:
+            print(f"source_id: {source_id}")
             knowledge_node = await self._retrieve_from_source(query, source_id)
             knowledge_nodes.append(knowledge_node)
 

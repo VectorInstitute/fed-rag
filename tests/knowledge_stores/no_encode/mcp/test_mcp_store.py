@@ -7,7 +7,7 @@ from fed_rag.base.no_encode_knowledge_store import (
     BaseAsyncNoEncodeKnowledgeStore,
 )
 from fed_rag.data_structures import KnowledgeNode
-from fed_rag.exceptions import KnowledgeStoreError
+from fed_rag.exceptions import MCPKnowledgeStoreError
 from fed_rag.knowledge_stores.no_encode import (
     MCPKnowledgeStore,
     MCPStreamableHttpKnowledgeSource,
@@ -140,11 +140,33 @@ async def test_mcp_knowledge_store_retrieve_stdio(
     assert result[0][1].metadata == mcp_source.model_dump()
 
 
+@pytest.mark.asyncio
+async def test_add_unsupported_source_type_raises_error() -> None:
+    with pytest.raises(
+        MCPKnowledgeStoreError,
+        match="Cannot add source of type: <class 'int'>",
+    ):
+        _ = MCPKnowledgeStore().add_source(1)
+
+
+@pytest.mark.asyncio
+async def test_retrieve_raises_error_with_unsupported_source_type() -> None:
+    store = MCPKnowledgeStore()
+    store.sources["oops"] = 1
+    print(store.sources)
+
+    with pytest.raises(
+        MCPKnowledgeStoreError,
+        match="Unsupported source type: <class 'int'>",
+    ):
+        _ = await store.retrieve("mock query", top_k=2)
+
+
 def test_add_source_raises_error_with_existing_name(
     mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     with pytest.raises(
-        KnowledgeStoreError,
+        MCPKnowledgeStoreError,
         match=f"A source with the same name, {mcp_source.name}, already exists.",
     ):
         _ = MCPKnowledgeStore().add_source(mcp_source).add_source(mcp_source)
