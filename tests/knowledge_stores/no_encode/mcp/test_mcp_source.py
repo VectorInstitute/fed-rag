@@ -15,10 +15,13 @@ from fed_rag.knowledge_stores.no_encode.mcp.sources.utils import (
 def test_source_init(mock_uuid: MagicMock) -> None:
     mock_uuid.uuid4.return_value = "mock_uuid"
     mcp_source = MCPStreamableHttpKnowledgeSource(
-        url="https://fake_url", tool_name="fake_tool"
+        url="https://fake_url",
+        tool_name="fake_tool",
+        query_param_name="query",
     )
 
     assert mcp_source.name == "source-mock_uuid"
+    assert mcp_source.query_param_name == "query"
     assert mcp_source.url == "https://fake_url"
     assert mcp_source.tool_name == "fake_tool"
     assert mcp_source._converter_fn == default_converter
@@ -27,7 +30,9 @@ def test_source_init(mock_uuid: MagicMock) -> None:
 def test_source_init_with_fluent_style() -> None:
     mcp_source = (
         MCPStreamableHttpKnowledgeSource(
-            url="https://fake_url", tool_name="fake_tool"
+            url="https://fake_url",
+            tool_name="fake_tool",
+            query_param_name="query",
         )
         .with_name("fake-name")
         .with_converter(
@@ -38,6 +43,7 @@ def test_source_init_with_fluent_style() -> None:
     )
 
     assert mcp_source.name == "fake-name"
+    assert mcp_source.query_param_name == "query"
     assert mcp_source.url == "https://fake_url"
     assert mcp_source.tool_name == "fake_tool"
     assert mcp_source._converter_fn is not None
@@ -45,7 +51,7 @@ def test_source_init_with_fluent_style() -> None:
 
 def test_source_custom_convert() -> None:
     mcp_source = MCPStreamableHttpKnowledgeSource(
-        url="https://fake_url", tool_name="fake_tool"
+        url="https://fake_url", tool_name="fake_tool", query_param_name="query"
     )
     mcp_source.with_converter(
         lambda result, metadata: KnowledgeNode(
@@ -67,7 +73,7 @@ def test_source_custom_convert() -> None:
 
 def test_source_default_convert() -> None:
     mcp_source = MCPStreamableHttpKnowledgeSource(
-        url="https://fake_url", tool_name="fake_tool"
+        url="https://fake_url", tool_name="fake_tool", query_param_name="query"
     )
 
     # act
@@ -89,7 +95,7 @@ def test_source_default_convert() -> None:
 
 def test_source_default_convert_raises_error() -> None:
     mcp_source = MCPStreamableHttpKnowledgeSource(
-        url="https://fake_url", tool_name="fake_tool"
+        url="https://fake_url", tool_name="fake_tool", query_param_name="query"
     )
 
     # act

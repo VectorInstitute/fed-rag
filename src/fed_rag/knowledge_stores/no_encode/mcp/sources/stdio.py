@@ -1,10 +1,11 @@
 """MCP Knowledge Source with stdio Transport"""
 
 import uuid
+from typing import Any
 
 from mcp import StdioServerParameters
 from mcp.types import CallToolResult
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.data_structures import KnowledgeNode
@@ -22,6 +23,8 @@ class MCPStdioKnowledgeSource(BaseModel):
     server_params: StdioServerParameters
     name: str
     tool_name: str | None = None
+    query_param_name: str
+    tool_call_kwargs: dict[str, Any] = Field(default_factory=dict)
     model_config = ConfigDict(arbitrary_types_allowed=True)
     _converter_fn: CallToolResultConverter = PrivateAttr()
 
@@ -29,12 +32,19 @@ class MCPStdioKnowledgeSource(BaseModel):
         self,
         server_params: StdioServerParameters,
         tool_name: str,
+        query_param_name: str,
+        tool_call_kwargs: dict[str, Any] | None = None,
         name: str | None = None,
         converter_fn: CallToolResultConverter | None = None,
     ):
         name = name or f"source-stdio-{str(uuid.uuid4())}"
+        tool_call_kwargs = tool_call_kwargs or {}
         super().__init__(
-            name=name, server_params=server_params, tool_name=tool_name
+            name=name,
+            server_params=server_params,
+            tool_name=tool_name,
+            query_param_name=query_param_name,
+            tool_call_kwargs=tool_call_kwargs,
         )
         self._converter_fn = converter_fn or default_converter
 
@@ -53,6 +63,24 @@ class MCPStdioKnowledgeSource(BaseModel):
         """
 
         self.name = name
+        return self
+
+    def with_query_param_name(self, v: str) -> Self:
+        """Setter for query param name.
+
+        For convenience and users who prefer the fluent style.
+        """
+
+        self.query_param_name = v
+        return self
+
+    def with_tool_call_kwargs(self, v: dict[str, Any]) -> Self:
+        """Setter for tool call kwargs.
+
+        For convenience and users who prefer the fluent style.
+        """
+
+        self.tool_call_kwargs = v
         return self
 
     def with_server_params(self, server_params: StdioServerParameters) -> Self:

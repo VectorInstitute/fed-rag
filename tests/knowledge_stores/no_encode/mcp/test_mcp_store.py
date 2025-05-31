@@ -17,7 +17,10 @@ from fed_rag.knowledge_stores.no_encode import (
 @pytest.fixture
 def mcp_source() -> MCPStreamableHttpKnowledgeSource:
     return MCPStreamableHttpKnowledgeSource(
-        url="https://fake-mcp-url.io", tool_name="fake_tool"
+        url="https://fake-mcp-url.io",
+        tool_name="fake_tool",
+        query_param_name="query",
+        tool_call_kwargs={"param_1": 1, "param_2": "value 2"},
     )
 
 
@@ -83,7 +86,11 @@ async def test_mcp_knowledge_store_retrieve(
     assert result[0][0] == 1.0  # Default similiarity score
     assert result[0][1].text_content == "fake text"
     mock_session_instance.call_tool.assert_called_once_with(
-        mcp_source.tool_name, {"message": "mock_query"}
+        mcp_source.tool_name,
+        arguments={
+            mcp_source.query_param_name: "mock_query",
+            **mcp_source.tool_call_kwargs,
+        },
     )
     assert result[0][1].metadata == mcp_source.model_dump()
 
