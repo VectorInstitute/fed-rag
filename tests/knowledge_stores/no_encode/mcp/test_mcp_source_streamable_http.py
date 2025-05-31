@@ -35,6 +35,8 @@ def test_source_init_with_fluent_style() -> None:
             query_param_name="query",
         )
         .with_name("fake-name")
+        .with_query_param_name("question")
+        .with_tool_call_kwargs({"param": 1})
         .with_converter(
             lambda result: KnowledgeNode(
                 text_content="fake text", node_type="text"
@@ -43,9 +45,10 @@ def test_source_init_with_fluent_style() -> None:
     )
 
     assert mcp_source.name == "fake-name"
-    assert mcp_source.query_param_name == "query"
+    assert mcp_source.query_param_name == "question"
     assert mcp_source.url == "https://fake_url"
     assert mcp_source.tool_name == "fake_tool"
+    assert mcp_source.tool_call_kwargs == {"param": 1}
     assert mcp_source._converter_fn is not None
 
 
