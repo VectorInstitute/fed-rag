@@ -16,7 +16,7 @@ from .sources import MCPStdioKnowledgeSource, MCPStreamableHttpKnowledgeSource
 DEFAULT_SCORE = 1.0
 DEFAULT_KNOWLEDGE_STORE_NAME = "default-mcp"
 
-type MCPKnowledgeSource = MCPStdioKnowledgeSource | MCPStreamableHttpKnowledgeSource
+MCPKnowledgeSource = MCPStdioKnowledgeSource | MCPStreamableHttpKnowledgeSource
 
 
 class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
