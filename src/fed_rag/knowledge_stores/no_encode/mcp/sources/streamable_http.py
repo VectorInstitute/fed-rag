@@ -12,7 +12,8 @@ from .utils import CallToolResultConverter, default_converter
 class MCPStreamableHttpKnowledgeSource(BaseModel):
     """The MCPStreamableHttpKnowledgeSource class.
 
-    Users can easily connect MCP tools as their source of knowledge in RAG systems.
+    Users can easily connect MCP tools as their source of knowledge in RAG systems
+    via the Streamable Http transport.
     """
 
     name: str
@@ -54,4 +55,4 @@ class MCPStreamableHttpKnowledgeSource(BaseModel):
         result: CallToolResult,
     ) -> KnowledgeNode:
         """Convert a call tool result to a knowledge node."""
-        return self._converter_fn(result=result)
+        return self._converter_fn(result=result, metadata=self.model_dump())

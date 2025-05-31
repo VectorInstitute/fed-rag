@@ -73,8 +73,8 @@ async def test_mcp_knowledge_store_retrieve(
     )
 
     mcp_source.with_converter(
-        lambda result: KnowledgeNode(
-            text_content="fake text", node_type="text"
+        lambda result, metadata: KnowledgeNode(
+            text_content="fake text", node_type="text", metadata=metadata
         )
     )
     store = MCPKnowledgeStore().add_source(mcp_source)
@@ -85,6 +85,7 @@ async def test_mcp_knowledge_store_retrieve(
     mock_session_instance.call_tool.assert_called_once_with(
         mcp_source.tool_name, {"message": "mock_query"}
     )
+    assert result[0][1].metadata == mcp_source.model_dump()
 
 
 def test_add_source_raises_error_with_existing_name(

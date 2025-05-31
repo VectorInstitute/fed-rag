@@ -48,7 +48,7 @@ def test_source_custom_convert() -> None:
         url="https://fake_url", tool_name="fake_tool"
     )
     mcp_source.with_converter(
-        lambda result: KnowledgeNode(
+        lambda result, metadata: KnowledgeNode(
             text_content="fake text", node_type="text"
         )
     )
@@ -79,7 +79,9 @@ def test_source_default_convert() -> None:
     result = CallToolResult(content=content)
     node = mcp_source.call_tool_result_to_knowledge_node(result=result)
 
-    node_from_default = default_converter(result)
+    node_from_default = default_converter(
+        result, metadata=mcp_source.model_dump()
+    )
 
     assert node.text_content == node_from_default.text_content
     assert node.metadata == node_from_default.metadata
