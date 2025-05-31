@@ -10,7 +10,7 @@ from fed_rag.base.no_encode_knowledge_store import (
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreError
 
-from .source import MCPStreamableHttpKnowledgeSource
+from .sources import MCPStreamableHttpKnowledgeSource
 
 DEFAULT_SCORE = 1.0
 DEFAULT_KNOWLEDGE_STORE_NAME = "default-mcp"

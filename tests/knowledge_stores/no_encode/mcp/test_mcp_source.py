@@ -8,7 +8,7 @@ from fed_rag.exceptions import CallToolResultConversionError
 from fed_rag.knowledge_stores.no_encode import MCPStreamableHttpKnowledgeSource
 
 
-@patch("fed_rag.knowledge_stores.no_encode.mcp.source.uuid")
+@patch("fed_rag.knowledge_stores.no_encode.mcp.sources.streamable_http.uuid")
 def test_source_init(mock_uuid: MagicMock) -> None:
     mock_uuid.uuid4.return_value = "mock_uuid"
     mcp_source = MCPStreamableHttpKnowledgeSource(
