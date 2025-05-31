@@ -51,7 +51,7 @@ def test_mcp_knowledge_store_init(
 @pytest.mark.asyncio
 @patch("fed_rag.knowledge_stores.no_encode.mcp.store.ClientSession")
 @patch("fed_rag.knowledge_stores.no_encode.mcp.store.streamablehttp_client")
-async def test_mcp_knowledge_store_retrieve(
+async def test_mcp_knowledge_store_retrieve_streamable_http(
     mock_streamable_client: AsyncMock,
     mock_session_class: AsyncMock,
     mcp_source: MCPStreamableHttpKnowledgeSource,
@@ -74,6 +74,51 @@ async def test_mcp_knowledge_store_retrieve(
     mock_streamable_client.return_value.__aexit__ = AsyncMock(
         return_value=None
     )
+
+    mcp_source.with_converter(
+        lambda result, metadata: KnowledgeNode(
+            text_content="fake text", node_type="text", metadata=metadata
+        )
+    )
+    store = MCPKnowledgeStore().add_source(mcp_source)
+    result = await store.retrieve(query="mock_query", top_k=10)
+
+    assert result[0][0] == 1.0  # Default similiarity score
+    assert result[0][1].text_content == "fake text"
+    mock_session_instance.call_tool.assert_called_once_with(
+        mcp_source.tool_name,
+        arguments={
+            mcp_source.query_param_name: "mock_query",
+            **mcp_source.tool_call_kwargs,
+        },
+    )
+    assert result[0][1].metadata == mcp_source.model_dump()
+
+
+@pytest.mark.asyncio
+@patch("fed_rag.knowledge_stores.no_encode.mcp.store.ClientSession")
+@patch("fed_rag.knowledge_stores.no_encode.mcp.store.stdio_client")
+async def test_mcp_knowledge_store_retrieve_stdio(
+    mock_stdio_client: AsyncMock,
+    mock_session_class: AsyncMock,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
+    call_tool_result: CallToolResult,
+) -> None:
+    # arrange mocks
+    mock_session_instance = AsyncMock()
+    mock_session_instance.initialize = AsyncMock()
+    mock_session_instance.call_tool = AsyncMock(return_value=call_tool_result)
+
+    # mock context managers
+    mock_session_class.return_value.__aenter__ = AsyncMock(
+        return_value=mock_session_instance
+    )
+    mock_session_class.return_value.__aexit__ = AsyncMock(return_value=None)
+
+    mock_stdio_client.return_value.__aenter__ = AsyncMock(
+        return_value=(None, None, None)
+    )
+    mock_stdio_client.return_value.__aexit__ = AsyncMock(return_value=None)
 
     mcp_source.with_converter(
         lambda result, metadata: KnowledgeNode(
