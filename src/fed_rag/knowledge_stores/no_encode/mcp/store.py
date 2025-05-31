@@ -112,7 +112,6 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
         """
         knowledge_nodes: list[KnowledgeNode] = []
         for source_id in self.sources:
-            print(f"source_id: {source_id}")
             knowledge_node = await self._retrieve_from_source(query, source_id)
             knowledge_nodes.append(knowledge_node)
 

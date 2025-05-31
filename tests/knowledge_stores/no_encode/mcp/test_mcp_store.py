@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from mcp import StdioServerParameters
 from mcp.types import CallToolResult, ImageContent, TextContent
 
 from fed_rag.base.no_encode_knowledge_store import (
@@ -10,14 +11,28 @@ from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import MCPKnowledgeStoreError
 from fed_rag.knowledge_stores.no_encode import (
     MCPKnowledgeStore,
+    MCPStdioKnowledgeSource,
     MCPStreamableHttpKnowledgeSource,
 )
 
 
 @pytest.fixture
-def mcp_source() -> MCPStreamableHttpKnowledgeSource:
+def mcp_streamable_http_source() -> MCPStreamableHttpKnowledgeSource:
     return MCPStreamableHttpKnowledgeSource(
         url="https://fake-mcp-url.io",
+        tool_name="fake_tool",
+        query_param_name="query",
+        tool_call_kwargs={"param_1": 1, "param_2": "value 2"},
+    )
+
+
+@pytest.fixture
+def mcp_stdio_source() -> MCPStdioKnowledgeSource:
+    return MCPStdioKnowledgeSource(
+        server_params=StdioServerParameters(
+            command="uv run",
+            args=["fake.py"],
+        ),
         tool_name="fake_tool",
         query_param_name="query",
         tool_call_kwargs={"param_1": 1, "param_2": "value 2"},
@@ -40,12 +55,14 @@ def test_mcp_knowledge_store_class() -> None:
 
 
 def test_mcp_knowledge_store_init(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     assert store.name == "default-mcp"
-    assert store.sources == {mcp_source.name: mcp_source}
+    assert store.sources == {
+        mcp_streamable_http_source.name: mcp_streamable_http_source
+    }
 
 
 @pytest.mark.asyncio
@@ -54,7 +71,7 @@ def test_mcp_knowledge_store_init(
 async def test_mcp_knowledge_store_retrieve_streamable_http(
     mock_streamable_client: AsyncMock,
     mock_session_class: AsyncMock,
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStdioKnowledgeSource,
     call_tool_result: CallToolResult,
 ) -> None:
     # arrange mocks
@@ -75,24 +92,24 @@ async def test_mcp_knowledge_store_retrieve_streamable_http(
         return_value=None
     )
 
-    mcp_source.with_converter(
+    mcp_streamable_http_source.with_converter(
         lambda result, metadata: KnowledgeNode(
             text_content="fake text", node_type="text", metadata=metadata
         )
     )
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
     result = await store.retrieve(query="mock_query", top_k=10)
 
     assert result[0][0] == 1.0  # Default similiarity score
     assert result[0][1].text_content == "fake text"
     mock_session_instance.call_tool.assert_called_once_with(
-        mcp_source.tool_name,
+        mcp_streamable_http_source.tool_name,
         arguments={
-            mcp_source.query_param_name: "mock_query",
-            **mcp_source.tool_call_kwargs,
+            mcp_streamable_http_source.query_param_name: "mock_query",
+            **mcp_streamable_http_source.tool_call_kwargs,
         },
     )
-    assert result[0][1].metadata == mcp_source.model_dump()
+    assert result[0][1].metadata == mcp_streamable_http_source.model_dump()
 
 
 @pytest.mark.asyncio
@@ -101,7 +118,7 @@ async def test_mcp_knowledge_store_retrieve_streamable_http(
 async def test_mcp_knowledge_store_retrieve_stdio(
     mock_stdio_client: AsyncMock,
     mock_session_class: AsyncMock,
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_stdio_source: MCPStreamableHttpKnowledgeSource,
     call_tool_result: CallToolResult,
 ) -> None:
     # arrange mocks
@@ -116,28 +133,28 @@ async def test_mcp_knowledge_store_retrieve_stdio(
     mock_session_class.return_value.__aexit__ = AsyncMock(return_value=None)
 
     mock_stdio_client.return_value.__aenter__ = AsyncMock(
-        return_value=(None, None, None)
+        return_value=(None, None)
     )
     mock_stdio_client.return_value.__aexit__ = AsyncMock(return_value=None)
 
-    mcp_source.with_converter(
+    mcp_stdio_source.with_converter(
         lambda result, metadata: KnowledgeNode(
             text_content="fake text", node_type="text", metadata=metadata
         )
     )
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_stdio_source)
     result = await store.retrieve(query="mock_query", top_k=10)
 
     assert result[0][0] == 1.0  # Default similiarity score
     assert result[0][1].text_content == "fake text"
     mock_session_instance.call_tool.assert_called_once_with(
-        mcp_source.tool_name,
+        mcp_stdio_source.tool_name,
         arguments={
-            mcp_source.query_param_name: "mock_query",
-            **mcp_source.tool_call_kwargs,
+            mcp_stdio_source.query_param_name: "mock_query",
+            **mcp_stdio_source.tool_call_kwargs,
         },
     )
-    assert result[0][1].metadata == mcp_source.model_dump()
+    assert result[0][1].metadata == mcp_stdio_source.model_dump()
 
 
 @pytest.mark.asyncio
@@ -153,7 +170,6 @@ async def test_add_unsupported_source_type_raises_error() -> None:
 async def test_retrieve_raises_error_with_unsupported_source_type() -> None:
     store = MCPKnowledgeStore()
     store.sources["oops"] = 1
-    print(store.sources)
 
     with pytest.raises(
         MCPKnowledgeStoreError,
@@ -163,21 +179,25 @@ async def test_retrieve_raises_error_with_unsupported_source_type() -> None:
 
 
 def test_add_source_raises_error_with_existing_name(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     with pytest.raises(
         MCPKnowledgeStoreError,
-        match=f"A source with the same name, {mcp_source.name}, already exists.",
+        match=f"A source with the same name, {mcp_streamable_http_source.name}, already exists.",
     ):
-        _ = MCPKnowledgeStore().add_source(mcp_source).add_source(mcp_source)
+        _ = (
+            MCPKnowledgeStore()
+            .add_source(mcp_streamable_http_source)
+            .add_source(mcp_streamable_http_source)
+        )
 
 
 # test not implemented
 @pytest.mark.asyncio
 async def test_load_node_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         await store.load_node(
@@ -187,9 +207,9 @@ async def test_load_node_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_load_nodes_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         await store.load_nodes(
@@ -199,9 +219,9 @@ async def test_load_nodes_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_delete_node_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         await store.delete_node("")
@@ -209,36 +229,36 @@ async def test_delete_node_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_clear_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         await store.clear()
 
 
 def test_count_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         store.count
 
 
 def test_persist_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         store.persist()
 
 
 def test_load_raises_not_implemented_error(
-    mcp_source: MCPStreamableHttpKnowledgeSource,
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
-    store = MCPKnowledgeStore().add_source(mcp_source)
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
 
     with pytest.raises(NotImplementedError):
         store.load()
