@@ -65,6 +65,9 @@ qdrant = [
 llama-index = [
   "llama-index-core>=0.12.35"
 ]
+langchain = [
+  "langchain-core>=0.3.62"
+]
 huggingface-evals = [
   "datasets>=3.1.0"
 ]
