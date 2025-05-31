@@ -14,8 +14,8 @@ class CallToolResultConverter(Protocol):
         pass  # pragma: no cover
 
 
-class MCPKnowledgeSource(BaseModel):
-    """The MCPKnowledgeSource class.
+class MCPStreamableHttpKnowledgeSource(BaseModel):
+    """The MCPStreamableHttpKnowledgeSource class.
 
     Users can easily connect MCP tools as their source of knowledge in RAG systems.
     """
@@ -40,7 +40,7 @@ class MCPKnowledgeSource(BaseModel):
     def with_converter(self, converter_fn: CallToolResultConverter) -> Self:
         """Setter for converter_fn.
 
-        Supports fluent pattern: `source = MCPKnowledgeSource(...).with_converter()`
+        Supports fluent pattern: `source = MCPStreamableHttpKnowledgeSource(...).with_converter()`
         """
         self._converter_fn = converter_fn
         return self

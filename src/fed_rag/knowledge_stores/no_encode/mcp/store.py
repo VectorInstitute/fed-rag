@@ -10,7 +10,7 @@ from fed_rag.base.no_encode_knowledge_store import (
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreError
 
-from .source import MCPKnowledgeSource
+from .source import MCPStreamableHttpKnowledgeSource
 
 DEFAULT_SCORE = 1.0
 DEFAULT_KNOWLEDGE_STORE_NAME = "default-mcp"
@@ -23,13 +23,13 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     """
 
     name: str = DEFAULT_KNOWLEDGE_STORE_NAME
-    sources: dict[str, MCPKnowledgeSource]
+    sources: dict[str, MCPStreamableHttpKnowledgeSource]
 
-    def __init__(self, sources: list[MCPKnowledgeSource] = []):
+    def __init__(self, sources: list[MCPStreamableHttpKnowledgeSource] = []):
         sources_dict = {s.name: s for s in sources}
         super().__init__(sources=sources_dict)
 
-    def add_source(self, source: MCPKnowledgeSource) -> Self:
+    def add_source(self, source: MCPStreamableHttpKnowledgeSource) -> Self:
         """Add a source to knowledge store.
 
         Support fluent chaining.

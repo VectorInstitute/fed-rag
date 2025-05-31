@@ -1,4 +1,4 @@
-from .source import MCPKnowledgeSource
+from .source import MCPStreamableHttpKnowledgeSource
 from .store import MCPKnowledgeStore
 
-__all__ = ["MCPKnowledgeStore", "MCPKnowledgeSource"]
+__all__ = ["MCPKnowledgeStore", "MCPStreamableHttpKnowledgeSource"]

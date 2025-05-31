@@ -5,13 +5,13 @@ from mcp.types import CallToolResult, ImageContent, TextContent
 
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import CallToolResultConversionError
-from fed_rag.knowledge_stores.no_encode import MCPKnowledgeSource
+from fed_rag.knowledge_stores.no_encode import MCPStreamableHttpKnowledgeSource
 
 
 @patch("fed_rag.knowledge_stores.no_encode.mcp.source.uuid")
 def test_source_init(mock_uuid: MagicMock) -> None:
     mock_uuid.uuid4.return_value = "mock_uuid"
-    mcp_source = MCPKnowledgeSource(
+    mcp_source = MCPStreamableHttpKnowledgeSource(
         url="https://fake_url", tool_name="fake_tool"
     )
 
@@ -23,7 +23,9 @@ def test_source_init(mock_uuid: MagicMock) -> None:
 
 def test_source_init_with_fluent_style() -> None:
     mcp_source = (
-        MCPKnowledgeSource(url="https://fake_url", tool_name="fake_tool")
+        MCPStreamableHttpKnowledgeSource(
+            url="https://fake_url", tool_name="fake_tool"
+        )
         .with_name("fake-name")
         .with_converter(
             lambda result: KnowledgeNode(
@@ -39,7 +41,7 @@ def test_source_init_with_fluent_style() -> None:
 
 
 def test_source_custom_convert() -> None:
-    mcp_source = MCPKnowledgeSource(
+    mcp_source = MCPStreamableHttpKnowledgeSource(
         url="https://fake_url", tool_name="fake_tool"
     )
     mcp_source.with_converter(
@@ -61,7 +63,7 @@ def test_source_custom_convert() -> None:
 
 
 def test_source_default_convert() -> None:
-    mcp_source = MCPKnowledgeSource(
+    mcp_source = MCPStreamableHttpKnowledgeSource(
         url="https://fake_url", tool_name="fake_tool"
     )
 
@@ -81,7 +83,7 @@ def test_source_default_convert() -> None:
 
 
 def test_source_default_convert_raises_error() -> None:
-    mcp_source = MCPKnowledgeSource(
+    mcp_source = MCPStreamableHttpKnowledgeSource(
         url="https://fake_url", tool_name="fake_tool"
     )
 

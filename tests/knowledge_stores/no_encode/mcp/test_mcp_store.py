@@ -9,14 +9,14 @@ from fed_rag.base.no_encode_knowledge_store import (
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import KnowledgeStoreError
 from fed_rag.knowledge_stores.no_encode import (
-    MCPKnowledgeSource,
     MCPKnowledgeStore,
+    MCPStreamableHttpKnowledgeSource,
 )
 
 
 @pytest.fixture
-def mcp_source() -> MCPKnowledgeSource:
-    return MCPKnowledgeSource(
+def mcp_source() -> MCPStreamableHttpKnowledgeSource:
+    return MCPStreamableHttpKnowledgeSource(
         url="https://fake-mcp-url.io", tool_name="fake_tool"
     )
 
@@ -36,7 +36,9 @@ def test_mcp_knowledge_store_class() -> None:
     assert BaseAsyncNoEncodeKnowledgeStore.__name__ in names_of_base_classes
 
 
-def test_mcp_knowledge_store_init(mcp_source: MCPKnowledgeSource) -> None:
+def test_mcp_knowledge_store_init(
+    mcp_source: MCPStreamableHttpKnowledgeSource,
+) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
     assert store.name == "default-mcp"
@@ -49,7 +51,7 @@ def test_mcp_knowledge_store_init(mcp_source: MCPKnowledgeSource) -> None:
 async def test_mcp_knowledge_store_retrieve(
     mock_streamable_client: AsyncMock,
     mock_session_class: AsyncMock,
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
     call_tool_result: CallToolResult,
 ) -> None:
     # arrange mocks
@@ -86,7 +88,7 @@ async def test_mcp_knowledge_store_retrieve(
 
 
 def test_add_source_raises_error_with_existing_name(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     with pytest.raises(
         KnowledgeStoreError,
@@ -98,7 +100,7 @@ def test_add_source_raises_error_with_existing_name(
 # test not implemented
 @pytest.mark.asyncio
 async def test_load_node_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -110,7 +112,7 @@ async def test_load_node_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_load_nodes_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -122,7 +124,7 @@ async def test_load_nodes_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_delete_node_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -132,7 +134,7 @@ async def test_delete_node_raises_not_implemented_error(
 
 @pytest.mark.asyncio
 async def test_clear_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -141,7 +143,7 @@ async def test_clear_raises_not_implemented_error(
 
 
 def test_count_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -150,7 +152,7 @@ def test_count_raises_not_implemented_error(
 
 
 def test_persist_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 
@@ -159,7 +161,7 @@ def test_persist_raises_not_implemented_error(
 
 
 def test_load_raises_not_implemented_error(
-    mcp_source: MCPKnowledgeSource,
+    mcp_source: MCPStreamableHttpKnowledgeSource,
 ) -> None:
     store = MCPKnowledgeStore().add_source(mcp_source)
 

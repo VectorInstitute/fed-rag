@@ -1,3 +1,3 @@
-from .mcp import MCPKnowledgeSource, MCPKnowledgeStore
+from .mcp import MCPKnowledgeStore, MCPStreamableHttpKnowledgeSource
 
-__all__ = ["MCPKnowledgeStore", "MCPKnowledgeSource"]
+__all__ = ["MCPKnowledgeStore", "MCPStreamableHttpKnowledgeSource"]
