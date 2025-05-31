@@ -1,17 +1,12 @@
 import uuid
-from typing import Protocol
 
 from mcp.types import CallToolResult
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 from typing_extensions import Self
 
 from fed_rag.data_structures import KnowledgeNode
-from fed_rag.exceptions import CallToolResultConversionError
 
-
-class CallToolResultConverter(Protocol):
-    def __call__(self, result: CallToolResult) -> KnowledgeNode:
-        pass  # pragma: no cover
+from .utils import CallToolResultConverter, default_converter
 
 
 class MCPStreamableHttpKnowledgeSource(BaseModel):
@@ -24,7 +19,7 @@ class MCPStreamableHttpKnowledgeSource(BaseModel):
     url: str
     tool_name: str | None = None
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    _converter_fn: CallToolResultConverter | None = PrivateAttr(default=None)
+    _converter_fn: CallToolResultConverter = PrivateAttr()
 
     def __init__(
         self,
@@ -35,7 +30,7 @@ class MCPStreamableHttpKnowledgeSource(BaseModel):
     ):
         name = name or f"source-{str(uuid.uuid4())}"
         super().__init__(name=name, url=url, tool_name=tool_name)
-        self._converter_fn = converter_fn
+        self._converter_fn = converter_fn or default_converter
 
     def with_converter(self, converter_fn: CallToolResultConverter) -> Self:
         """Setter for converter_fn.
@@ -59,22 +54,4 @@ class MCPStreamableHttpKnowledgeSource(BaseModel):
         result: CallToolResult,
     ) -> KnowledgeNode:
         """Convert a call tool result to a knowledge node."""
-        converter: CallToolResultConverter = (
-            self._converter_fn or self.default_converter
-        )
-        return converter(result=result)
-
-    def default_converter(self, result: CallToolResult) -> KnowledgeNode:
-        if result.isError:
-            raise CallToolResultConversionError(
-                "Cannot convert a `CallToolResult` with `isError` set to `True`."
-            )
-
-        text_content = "\n".join(
-            c.text for c in result.content if c.type == "text"
-        )
-        return KnowledgeNode(
-            node_type="text",
-            text_content=text_content,
-            metadata=self.model_dump(),
-        )
+        return self._converter_fn(result=result)

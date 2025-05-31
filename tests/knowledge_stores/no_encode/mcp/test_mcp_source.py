@@ -6,6 +6,9 @@ from mcp.types import CallToolResult, ImageContent, TextContent
 from fed_rag.data_structures import KnowledgeNode
 from fed_rag.exceptions import CallToolResultConversionError
 from fed_rag.knowledge_stores.no_encode import MCPStreamableHttpKnowledgeSource
+from fed_rag.knowledge_stores.no_encode.mcp.sources.utils import (
+    default_converter,
+)
 
 
 @patch("fed_rag.knowledge_stores.no_encode.mcp.sources.streamable_http.uuid")
@@ -18,7 +21,7 @@ def test_source_init(mock_uuid: MagicMock) -> None:
     assert mcp_source.name == "source-mock_uuid"
     assert mcp_source.url == "https://fake_url"
     assert mcp_source.tool_name == "fake_tool"
-    assert mcp_source._converter_fn is None
+    assert mcp_source._converter_fn == default_converter
 
 
 def test_source_init_with_fluent_style() -> None:
@@ -76,7 +79,7 @@ def test_source_default_convert() -> None:
     result = CallToolResult(content=content)
     node = mcp_source.call_tool_result_to_knowledge_node(result=result)
 
-    node_from_default = mcp_source.default_converter(result)
+    node_from_default = default_converter(result)
 
     assert node.text_content == node_from_default.text_content
     assert node.metadata == node_from_default.metadata
