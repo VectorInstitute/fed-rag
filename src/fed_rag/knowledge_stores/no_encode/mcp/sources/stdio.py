@@ -25,7 +25,9 @@ class MCPStdioKnowledgeSource(BaseModel):
     tool_name: str | None = None
     query_param_name: str
     tool_call_kwargs: dict[str, Any] = Field(default_factory=dict)
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True, validate_assignment=True
+    )
     _converter_fn: CallToolResultConverter = PrivateAttr()
 
     def __init__(
