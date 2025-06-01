@@ -75,7 +75,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
 
     async def _retrieve_from_source(
         self, query: str, source_id: str
-    ) -> KnowledgeNode:
+    ) -> list[KnowledgeNode]:
         source = self.sources[source_id]
         call_tool_result = await source.retrieve(query)
         return source.call_tool_result_to_knowledge_node(call_tool_result)
@@ -121,12 +121,16 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
             >>> results = await store.retrieve("machine learning algorithms", top_k=5)
             >>> # Returns nodes ranked by keyword overlap, not limited to top_k
         """
-        knowledge_nodes: list[KnowledgeNode] = []
         tasks = []
         for source_id in self.sources:
             tasks.append(self._retrieve_from_source(query, source_id))
 
-        knowledge_nodes = await asyncio.gather(*tasks)
+        all_node_lists = await asyncio.gather(*tasks)
+        # flatten nested list
+        knowledge_nodes = [
+            node for node_list in all_node_lists for node in node_list
+        ]
+        print(f"knowledge_nodes: {knowledge_nodes}")
 
         if self.reranker_callback:
             # user can supply their own re-ranker here

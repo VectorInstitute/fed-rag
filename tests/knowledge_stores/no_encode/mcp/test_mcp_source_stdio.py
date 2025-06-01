@@ -109,14 +109,17 @@ def test_source_default_convert() -> None:
         ImageContent(data="fakeimage", mimeType="image/png", type="image"),
     ]
     result = CallToolResult(content=content)
-    node = mcp_source.call_tool_result_to_knowledge_node(result=result)
+    nodes = mcp_source.call_tool_result_to_knowledge_node(result=result)
 
-    node_from_default = default_converter(
+    nodes_from_default = default_converter(
         result, metadata=mcp_source.model_dump()
     )
 
-    assert node.text_content == node_from_default.text_content
-    assert node.metadata == node_from_default.metadata
+    assert len(nodes) == len(nodes_from_default)
+    assert all(
+        x.text_content == y.text_content
+        for x, y in zip(nodes, nodes_from_default)
+    )
 
 
 def test_source_default_convert_raises_error() -> None:

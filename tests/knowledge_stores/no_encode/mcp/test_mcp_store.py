@@ -96,16 +96,15 @@ async def test_mcp_knowledge_store_retrieve_streamable_http(
         return_value=None
     )
 
-    mcp_streamable_http_source.with_converter(
-        lambda result, metadata: KnowledgeNode(
-            text_content="fake text", node_type="text", metadata=metadata
-        )
-    )
     store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
     result = await store.retrieve(query="mock_query", top_k=10)
 
     assert result[0][0] == 1.0  # Default similiarity score
-    assert result[0][1].text_content == "fake text"
+    assert result[1][0] == 1.0  # Default similiarity score
+    assert result[0][1].text_content == "text 1"
+    assert result[1][1].text_content == "text 2"
+    assert result[0][1].metadata == mcp_streamable_http_source.model_dump()
+    assert result[1][1].metadata == mcp_streamable_http_source.model_dump()
     mock_session_instance.call_tool.assert_called_once_with(
         mcp_streamable_http_source.tool_name,
         arguments={
@@ -113,7 +112,6 @@ async def test_mcp_knowledge_store_retrieve_streamable_http(
             **mcp_streamable_http_source.tool_call_kwargs,
         },
     )
-    assert result[0][1].metadata == mcp_streamable_http_source.model_dump()
 
 
 @pytest.mark.asyncio
@@ -141,16 +139,15 @@ async def test_mcp_knowledge_store_retrieve_stdio(
     )
     mock_stdio_client.return_value.__aexit__ = AsyncMock(return_value=None)
 
-    mcp_stdio_source.with_converter(
-        lambda result, metadata: KnowledgeNode(
-            text_content="fake text", node_type="text", metadata=metadata
-        )
-    )
     store = MCPKnowledgeStore().add_source(mcp_stdio_source)
     result = await store.retrieve(query="mock_query", top_k=10)
 
     assert result[0][0] == 1.0  # Default similiarity score
-    assert result[0][1].text_content == "fake text"
+    assert result[1][0] == 1.0  # Default similiarity score
+    assert result[0][1].text_content == "text 1"
+    assert result[1][1].text_content == "text 2"
+    assert result[0][1].metadata == mcp_stdio_source.model_dump()
+    assert result[1][1].metadata == mcp_stdio_source.model_dump()
     mock_session_instance.call_tool.assert_called_once_with(
         mcp_stdio_source.tool_name,
         arguments={
@@ -158,7 +155,6 @@ async def test_mcp_knowledge_store_retrieve_stdio(
             **mcp_stdio_source.tool_call_kwargs,
         },
     )
-    assert result[0][1].metadata == mcp_stdio_source.model_dump()
 
 
 @pytest.mark.asyncio

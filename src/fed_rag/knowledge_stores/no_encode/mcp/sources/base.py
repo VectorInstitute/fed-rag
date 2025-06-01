@@ -23,13 +23,13 @@ class BaseMCPKnowledgeSource(BaseModel, ABC):
     _converter_fn: CallToolResultConverter = PrivateAttr()
 
     @abstractmethod
-    async def retrieve(self, query: str) -> KnowledgeNode:
+    async def retrieve(self, query: str) -> CallToolResult:
         """Asynchronously retrieve knowledge from this source."""
 
     # Common methods all sources share
     def call_tool_result_to_knowledge_node(
         self, result: CallToolResult
-    ) -> KnowledgeNode:
+    ) -> list[KnowledgeNode]:
         return self._converter_fn(result=result, metadata=self.model_dump())
 
     def with_converter(self, converter_fn: CallToolResultConverter) -> Self:
