@@ -130,7 +130,6 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
         knowledge_nodes = [
             node for node_list in all_node_lists for node in node_list
         ]
-        print(f"knowledge_nodes: {knowledge_nodes}")
 
         if self.reranker_callback:
             # user can supply their own re-ranker here
