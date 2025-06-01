@@ -87,7 +87,7 @@ def test_source_custom_convert() -> None:
         ImageContent(data="fakeimage", mimeType="image/png", type="image"),
     ]
     result = CallToolResult(content=content)
-    node = mcp_source.call_tool_result_to_knowledge_node(result=result)
+    node = mcp_source.call_tool_result_to_knowledge_nodes_list(result=result)
 
     assert node.text_content == "fake text"
 
@@ -109,7 +109,7 @@ def test_source_default_convert() -> None:
         ImageContent(data="fakeimage", mimeType="image/png", type="image"),
     ]
     result = CallToolResult(content=content)
-    nodes = mcp_source.call_tool_result_to_knowledge_node(result=result)
+    nodes = mcp_source.call_tool_result_to_knowledge_nodes_list(result=result)
 
     nodes_from_default = default_converter(
         result, metadata=mcp_source.model_dump()
@@ -139,7 +139,7 @@ def test_source_default_convert_raises_error() -> None:
         CallToolResultConversionError,
         match="Cannot convert a `CallToolResult` with `isError` set to `True`.",
     ):
-        _ = mcp_source.call_tool_result_to_knowledge_node(result=result)
+        _ = mcp_source.call_tool_result_to_knowledge_nodes_list(result=result)
 
 
 def test_mutate_server_params() -> None:

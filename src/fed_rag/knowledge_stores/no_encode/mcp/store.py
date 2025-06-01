@@ -78,7 +78,9 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     ) -> list[KnowledgeNode]:
         source = self.sources[source_id]
         call_tool_result = await source.retrieve(query)
-        return source.call_tool_result_to_knowledge_node(call_tool_result)
+        return source.call_tool_result_to_knowledge_nodes_list(
+            call_tool_result
+        )
 
     async def retrieve(
         self, query: str, top_k: int = DEFAULT_TOP_K

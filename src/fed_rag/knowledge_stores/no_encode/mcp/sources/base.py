@@ -27,7 +27,7 @@ class BaseMCPKnowledgeSource(BaseModel, ABC):
         """Asynchronously retrieve knowledge from this source."""
 
     # Common methods all sources share
-    def call_tool_result_to_knowledge_node(
+    def call_tool_result_to_knowledge_nodes_list(
         self, result: CallToolResult
     ) -> list[KnowledgeNode]:
         return self._converter_fn(result=result, metadata=self.model_dump())
