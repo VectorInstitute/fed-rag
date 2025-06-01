@@ -5,9 +5,8 @@ from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.types import CallToolResult
 from typing_extensions import Self
-
-from fed_rag.data_structures import KnowledgeNode
 
 from .base import BaseMCPKnowledgeSource
 from .utils import CallToolResultConverter, default_converter
@@ -51,7 +50,7 @@ class MCPStdioKnowledgeSource(BaseMCPKnowledgeSource):
         self.server_params = server_params
         return self
 
-    async def retrieve(self, query: str) -> KnowledgeNode:
+    async def retrieve(self, query: str) -> CallToolResult:
         async with stdio_client(self.server_params) as (read, write):
             async with ClientSession(read, write) as session:
                 # Initialize the connection
@@ -64,6 +63,4 @@ class MCPStdioKnowledgeSource(BaseMCPKnowledgeSource):
                 tool_result = await session.call_tool(
                     self.tool_name, arguments=tool_arguments
                 )
-        return self._converter_fn(
-            result=tool_result, metadata=self.model_dump()
-        )
+        return tool_result

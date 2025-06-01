@@ -3,9 +3,8 @@ from typing import Any
 
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
+from mcp.types import CallToolResult
 from pydantic import Field
-
-from fed_rag.data_structures import KnowledgeNode
 
 from .base import BaseMCPKnowledgeSource
 from .utils import CallToolResultConverter, default_converter
@@ -40,7 +39,7 @@ class MCPStreamableHttpKnowledgeSource(BaseMCPKnowledgeSource):
         )
         self._converter_fn = converter_fn or default_converter
 
-    async def retrieve(self, query: str) -> KnowledgeNode:
+    async def retrieve(self, query: str) -> CallToolResult:
         # Connect to a streamable HTTP server
         async with streamablehttp_client(self.url) as (
             read_stream,
@@ -59,6 +58,4 @@ class MCPStreamableHttpKnowledgeSource(BaseMCPKnowledgeSource):
                 tool_result = await session.call_tool(
                     self.tool_name, arguments=tool_arguments
                 )
-        return self._converter_fn(
-            result=tool_result, metadata=self.model_dump()
-        )
+        return tool_result

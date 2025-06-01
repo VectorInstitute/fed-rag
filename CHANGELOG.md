@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add `rerank_callback` to `MCPKnowledgeStore` (#402)
 - Add `BaseMCPKnowledgeStore` (#400)
 - Add `MCPKnowledgeStore` and `MCPKnowledgeSource` (#393)
 - Add `AsyncRAGSystem` and `AsyncNoEncodeRAGSystem` (#392)
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Change return type of converter functions to `list[KnowledgeNode]` and source.retriever() return `~mcp.CallToolResult` (#402)
 - Refactor `MCPKnowledgeStore` and `MCPKnowledgeSource`to use new base and have `retrieve` method (#400)
 - Changed `load`, `count`, and `persist` methods in `AsyncNoEncodeRAGSystem` to sync (#393)
 - Modified private API for `_RAGSystem`, `_AsyncRAGSystem` and no-encode versions (#392)
