@@ -5604,6 +5604,7 @@ and this project adheres to <a href="https://semver.org/">Semantic Versioning</a
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
+<li>Add <code>rerank_callback</code> to <code>MCPKnowledgeStore</code> (#402)</li>
 <li>Add <code>BaseMCPKnowledgeStore</code> (#400)</li>
 <li>Add <code>MCPKnowledgeStore</code> and <code>MCPKnowledgeSource</code> (#393)</li>
 <li>Add <code>AsyncRAGSystem</code> and <code>AsyncNoEncodeRAGSystem</code> (#392)</li>
@@ -5613,6 +5614,7 @@ and this project adheres to <a href="https://semver.org/">Semantic Versioning</a
 </ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>Change return type of converter functions to <code>list[KnowledgeNode]</code> and source.retriever() return <code>~mcp.CallToolResult</code> (#402)</li>
 <li>Refactor <code>MCPKnowledgeStore</code> and <code>MCPKnowledgeSource</code>to use new base and have <code>retrieve</code> method (#400)</li>
 <li>Changed <code>load</code>, <code>count</code>, and <code>persist</code> methods in <code>AsyncNoEncodeRAGSystem</code> to sync (#393)</li>
 <li>Modified private API for <code>_RAGSystem</code>, <code>_AsyncRAGSystem</code> and no-encode versions (#392)</li>
