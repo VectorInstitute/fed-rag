@@ -158,6 +158,58 @@ async def test_mcp_knowledge_store_retrieve_stdio(
 
 
 @pytest.mark.asyncio
+@patch("fed_rag.knowledge_stores.no_encode.mcp.sources.stdio.ClientSession")
+@patch("fed_rag.knowledge_stores.no_encode.mcp.sources.stdio.stdio_client")
+async def test_mcp_knowledge_store_retrieve_with_reranker(
+    mock_stdio_client: AsyncMock,
+    mock_session_class: AsyncMock,
+    mcp_stdio_source: MCPStreamableHttpKnowledgeSource,
+    call_tool_result: CallToolResult,
+) -> None:
+    # arrange mocks
+    mock_session_instance = AsyncMock()
+    mock_session_instance.initialize = AsyncMock()
+    mock_session_instance.call_tool = AsyncMock(return_value=call_tool_result)
+
+    # mock context managers
+    mock_session_class.return_value.__aenter__ = AsyncMock(
+        return_value=mock_session_instance
+    )
+    mock_session_class.return_value.__aexit__ = AsyncMock(return_value=None)
+
+    mock_stdio_client.return_value.__aenter__ = AsyncMock(
+        return_value=(None, None)
+    )
+    mock_stdio_client.return_value.__aexit__ = AsyncMock(return_value=None)
+
+    store = (
+        MCPKnowledgeStore()
+        .add_source(mcp_stdio_source)
+        .with_reranker(
+            lambda nodes, query: [
+                (len(query) / len(n.text_content), n) for n in nodes
+            ]
+        )
+    )
+
+    result = await store.retrieve(query="mock_query", top_k=10)
+
+    assert result[0][0] == len("mock_query") / len(result[0][1].text_content)
+    assert result[1][0] == len("mock_query") / len(result[1][1].text_content)
+    assert result[0][1].text_content == "text 1"
+    assert result[1][1].text_content == "text 2"
+    assert result[0][1].metadata == mcp_stdio_source.model_dump()
+    assert result[1][1].metadata == mcp_stdio_source.model_dump()
+    mock_session_instance.call_tool.assert_called_once_with(
+        mcp_stdio_source.tool_name,
+        arguments={
+            mcp_stdio_source.query_param_name: "mock_query",
+            **mcp_stdio_source.tool_call_kwargs,
+        },
+    )
+
+
+@pytest.mark.asyncio
 async def test_add_unsupported_source_type_raises_error() -> None:
     with pytest.raises(
         MCPKnowledgeStoreError,
