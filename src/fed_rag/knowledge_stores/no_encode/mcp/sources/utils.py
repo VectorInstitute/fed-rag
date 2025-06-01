@@ -21,7 +21,7 @@ def default_converter(
             "Cannot convert a `CallToolResult` with `isError` set to `True`."
         )
 
-    text_content = "\n".join(
+    text_content = "<<<CONTENT_SEPARATOR>>>".join(
         c.text for c in result.content if c.type == "text"
     )
     metadata = metadata or {}

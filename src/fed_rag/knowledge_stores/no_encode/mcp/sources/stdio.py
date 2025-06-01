@@ -3,7 +3,8 @@
 import uuid
 from typing import Any
 
-from mcp import StdioServerParameters
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
 from mcp.types import CallToolResult
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 from typing_extensions import Self
@@ -100,3 +101,20 @@ class MCPStdioKnowledgeSource(BaseModel):
     ) -> KnowledgeNode:
         """Convert a call tool result to a knowledge node."""
         return self._converter_fn(result=result, metadata=self.model_dump())
+
+    async def retrieve(self, query: str) -> KnowledgeNode:
+        async with stdio_client(self.server_params) as (read, write):
+            async with ClientSession(read, write) as session:
+                # Initialize the connection
+                await session.initialize()
+                # Call a tool
+                tool_arguments = {
+                    self.query_param_name: query,
+                    **self.tool_call_kwargs,
+                }
+                tool_result = await session.call_tool(
+                    self.tool_name, arguments=tool_arguments
+                )
+        return self._converter_fn(
+            result=tool_result, metadata=self.model_dump()
+        )

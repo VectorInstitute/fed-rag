@@ -1,8 +1,5 @@
 """MCP Knowledge Store"""
 
-from mcp import ClientSession
-from mcp.client.stdio import stdio_client
-from mcp.client.streamable_http import streamablehttp_client
 from typing_extensions import Self
 
 from fed_rag.base.no_encode_knowledge_store import (
@@ -59,44 +56,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     ) -> KnowledgeNode:
         source = self.sources[source_id]
 
-        if isinstance(source, MCPStdioKnowledgeSource):
-            async with stdio_client(source.server_params) as (read, write):
-                async with ClientSession(read, write) as session:
-                    # Initialize the connection
-                    await session.initialize()
-                    # Call a tool
-                    tool_arguments = {
-                        source.query_param_name: query,
-                        **source.tool_call_kwargs,
-                    }
-                    tool_result = await session.call_tool(
-                        source.tool_name, arguments=tool_arguments
-                    )
-        elif isinstance(source, MCPStreamableHttpKnowledgeSource):
-            # Connect to a streamable HTTP server
-            async with streamablehttp_client(source.url) as (
-                read_stream,
-                write_stream,
-                _,
-            ):
-                # Create a session using the client streams
-                async with ClientSession(read_stream, write_stream) as session:
-                    # Initialize the connection
-                    await session.initialize()
-                    # Call a tool
-                    tool_arguments = {
-                        source.query_param_name: query,
-                        **source.tool_call_kwargs,
-                    }
-                    tool_result = await session.call_tool(
-                        source.tool_name, arguments=tool_arguments
-                    )
-        else:
-            raise MCPKnowledgeStoreError(
-                f"Unsupported source type: {type(source)}"
-            )
-
-        return source.call_tool_result_to_knowledge_node(tool_result)
+        return await source.retrieve(query)
 
     async def retrieve(
         self, query: str, top_k: int
