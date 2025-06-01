@@ -66,8 +66,12 @@ def test_mcp_knowledge_store_init(
 
 
 @pytest.mark.asyncio
-@patch("fed_rag.knowledge_stores.no_encode.mcp.store.ClientSession")
-@patch("fed_rag.knowledge_stores.no_encode.mcp.store.streamablehttp_client")
+@patch(
+    "fed_rag.knowledge_stores.no_encode.mcp.sources.streamable_http.ClientSession"
+)
+@patch(
+    "fed_rag.knowledge_stores.no_encode.mcp.sources.streamable_http.streamablehttp_client"
+)
 async def test_mcp_knowledge_store_retrieve_streamable_http(
     mock_streamable_client: AsyncMock,
     mock_session_class: AsyncMock,
@@ -113,8 +117,8 @@ async def test_mcp_knowledge_store_retrieve_streamable_http(
 
 
 @pytest.mark.asyncio
-@patch("fed_rag.knowledge_stores.no_encode.mcp.store.ClientSession")
-@patch("fed_rag.knowledge_stores.no_encode.mcp.store.stdio_client")
+@patch("fed_rag.knowledge_stores.no_encode.mcp.sources.stdio.ClientSession")
+@patch("fed_rag.knowledge_stores.no_encode.mcp.sources.stdio.stdio_client")
 async def test_mcp_knowledge_store_retrieve_stdio(
     mock_stdio_client: AsyncMock,
     mock_session_class: AsyncMock,
@@ -164,18 +168,6 @@ async def test_add_unsupported_source_type_raises_error() -> None:
         match="Cannot add source of type: <class 'int'>",
     ):
         _ = MCPKnowledgeStore().add_source(1)
-
-
-@pytest.mark.asyncio
-async def test_retrieve_raises_error_with_unsupported_source_type() -> None:
-    store = MCPKnowledgeStore()
-    store.sources["oops"] = 1
-
-    with pytest.raises(
-        MCPKnowledgeStoreError,
-        match="Unsupported source type: <class 'int'>",
-    ):
-        _ = await store.retrieve("mock query", top_k=2)
 
 
 def test_add_source_raises_error_with_existing_name(

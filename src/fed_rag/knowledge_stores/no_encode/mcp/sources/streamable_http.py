@@ -1,31 +1,24 @@
 import uuid
 from typing import Any
 
-from mcp.types import CallToolResult
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
-from typing_extensions import Self
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+from pydantic import Field
 
 from fed_rag.data_structures import KnowledgeNode
 
+from .base import BaseMCPKnowledgeSource
 from .utils import CallToolResultConverter, default_converter
 
 
-class MCPStreamableHttpKnowledgeSource(BaseModel):
+class MCPStreamableHttpKnowledgeSource(BaseMCPKnowledgeSource):
     """The MCPStreamableHttpKnowledgeSource class.
 
     Users can easily connect MCP tools as their source of knowledge in RAG systems
     via the Streamable Http transport.
     """
 
-    name: str
-    url: str
-    tool_name: str | None = None
-    query_param_name: str
-    tool_call_kwargs: dict[str, Any] = Field(default_factory=dict)
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True, validate_assignment=True
-    )
-    _converter_fn: CallToolResultConverter = PrivateAttr()
+    url: str = Field("Url for streamable http MCP server.")
 
     def __init__(
         self,
@@ -47,44 +40,25 @@ class MCPStreamableHttpKnowledgeSource(BaseModel):
         )
         self._converter_fn = converter_fn or default_converter
 
-    def with_converter(self, converter_fn: CallToolResultConverter) -> Self:
-        """Setter for converter_fn.
-
-        Supports fluent pattern: `source = MCPStreamableHttpKnowledgeSource(...).with_converter()`
-        """
-        self._converter_fn = converter_fn
-        return self
-
-    def with_name(self, name: str) -> Self:
-        """Setter for name.
-
-        For convenience and users who prefer the fluent style.
-        """
-
-        self.name = name
-        return self
-
-    def with_query_param_name(self, v: str) -> Self:
-        """Setter for query param name.
-
-        For convenience and users who prefer the fluent style.
-        """
-
-        self.query_param_name = v
-        return self
-
-    def with_tool_call_kwargs(self, v: dict[str, Any]) -> Self:
-        """Setter for tool call kwargs.
-
-        For convenience and users who prefer the fluent style.
-        """
-
-        self.tool_call_kwargs = v
-        return self
-
-    def call_tool_result_to_knowledge_node(
-        self,
-        result: CallToolResult,
-    ) -> KnowledgeNode:
-        """Convert a call tool result to a knowledge node."""
-        return self._converter_fn(result=result, metadata=self.model_dump())
+    async def retrieve(self, query: str) -> KnowledgeNode:
+        # Connect to a streamable HTTP server
+        async with streamablehttp_client(self.url) as (
+            read_stream,
+            write_stream,
+            _,
+        ):
+            # Create a session using the client streams
+            async with ClientSession(read_stream, write_stream) as session:
+                # Initialize the connection
+                await session.initialize()
+                # Call a tool
+                tool_arguments = {
+                    self.query_param_name: query,
+                    **self.tool_call_kwargs,
+                }
+                tool_result = await session.call_tool(
+                    self.tool_name, arguments=tool_arguments
+                )
+        return self._converter_fn(
+            result=tool_result, metadata=self.model_dump()
+        )
