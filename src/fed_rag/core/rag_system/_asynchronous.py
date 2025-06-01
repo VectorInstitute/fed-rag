@@ -14,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.base.retriever import BaseRetriever
 
 
-class _AsyncRAGSystem(BaseModel, BridgeRegistryMixin):
+class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
     """Unbridged implementation of AsyncRAGSystem.
 
     IMPORTANT: This is an internal implementation class.

@@ -1,6 +1,6 @@
 """Internal Async RAG System Module"""
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
 
 
-class _AsyncNoEncodeRAGSystem(BaseModel, BridgeRegistryMixin):
+class _AsyncNoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
     """Unbridged implementation of NoEncodeRAGSystem.
 
     IMPORTANT: This is an internal implementation class.

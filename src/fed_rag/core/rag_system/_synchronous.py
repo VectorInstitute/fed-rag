@@ -14,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.base.retriever import BaseRetriever
 
 
-class _RAGSystem(BaseModel, BridgeRegistryMixin):
+class _RAGSystem(BridgeRegistryMixin, BaseModel):
     """Unbridged implementation of RAGSystem.
 
     IMPORTANT: This is an internal implementation class.

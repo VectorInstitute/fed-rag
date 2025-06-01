@@ -1,10 +1,10 @@
 """Internal RAG System Module"""
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.base.bridge import BridgeMetadata, BridgeRegistryMixin
+from fed_rag.base.bridge import BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
     )
 
 
-class _NoEncodeRAGSystem(BaseModel, BridgeRegistryMixin):
+class _NoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
     """Unbridged implementation of NoEncodeRAGSystem.
 
     IMPORTANT: This is an internal implementation class.
