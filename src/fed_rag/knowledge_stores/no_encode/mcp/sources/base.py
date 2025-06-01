@@ -9,7 +9,7 @@ from typing_extensions import Self
 
 from fed_rag.data_structures import KnowledgeNode
 
-from .utils import CallToolResultConverter, default_converter
+from .utils import CallToolResultConverter
 
 
 class BaseMCPKnowledgeSource(BaseModel, ABC):
@@ -20,9 +20,7 @@ class BaseMCPKnowledgeSource(BaseModel, ABC):
     tool_name: str | None = None
     query_param_name: str
     tool_call_kwargs: dict[str, Any] = Field(default_factory=dict)
-    _converter_fn: CallToolResultConverter = PrivateAttr(
-        default=default_converter
-    )
+    _converter_fn: CallToolResultConverter = PrivateAttr()
 
     @abstractmethod
     async def retrieve(self, query: str) -> KnowledgeNode:
