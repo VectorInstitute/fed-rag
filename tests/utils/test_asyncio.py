@@ -25,3 +25,28 @@ def test_coroutine_with_default_args() -> None:
     """Test running a coroutine with default arguments."""
     result = asyncio_run(simple_async_function())
     assert result == 42
+
+
+def test_existing_but_not_running_loop() -> None:
+    """Test behavior with an existing but not running loop."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    try:
+        # Loop exists but is not running
+        result = asyncio_run(simple_async_function(789))
+        assert result == 789
+    finally:
+        loop.close()
+
+
+def test_nested_asyncio_run_calls() -> None:
+    """Test that nested calls work correctly."""
+
+    async def outer_async() -> int:
+        # This will run in a separate thread due to nested context
+        inner_result = asyncio_run(simple_async_function(111))
+        return int(inner_result * 2)
+
+    result = asyncio_run(outer_async())
+    assert result == 222
