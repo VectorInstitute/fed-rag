@@ -119,8 +119,40 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
         _async_ks: "BaseAsyncKnowledgeStore" = PrivateAttr()
 
         def __init__(self, async_ks: "BaseAsyncKnowledgeStore"):
-            super().__init__(name=async_ks.name)
+            # Get all field values from the async store
+            field_values = {
+                field_name: getattr(async_ks, field_name)
+                for field_name in type(async_ks).model_fields.keys()
+            }
+
+            super().__init__(**field_values)
             self._async_ks = async_ks
+
+            # Copy all fields from async store
+            self._copy_async_fields()
+
+        def _copy_async_fields(self) -> None:
+            """Copy field definitions and values from async store."""
+            for field_name, field_info in type(
+                self._async_ks
+            ).model_fields.items():
+                # Add field definition to model fields
+                self.__class__.model_fields[field_name] = field_info
+
+                # Also add to class annotations for better type support
+                if not hasattr(self.__class__, "__annotations__"):
+                    self.__class__.__annotations__ = {}
+                self.__class__.__annotations__[
+                    field_name
+                ] = field_info.annotation
+
+                if hasattr(self._async_ks, field_name):
+                    value = getattr(self._async_ks, field_name)
+                    setattr(self, field_name, value)
+                elif (
+                    field_info.default is not ...
+                ):  # Pydantic meaning required
+                    setattr(self, field_name, field_info.default)
 
         def load_node(self, node: "KnowledgeNode") -> None:
             asyncio_run(self._async_ks.load_node(node))
@@ -151,4 +183,5 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
 
     def to_sync(self) -> BaseKnowledgeStore:
         """Convert this async knowledge store to a sync version."""
+
         return BaseAsyncKnowledgeStore.SyncConvertedKnowledgeStore(self)
