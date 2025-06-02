@@ -20,5 +20,6 @@ class AsyncRAGSystem(LlamaIndexBridgeMixin, _AsyncRAGSystem):
         return RAGSystem(
             knowledge_store=self.knowledge_store.to_sync(),
             generator=self.generator,  # NOTE: this should actually be sync!
+            retriever=self.retriever,  # NOTE: this should actually be sync!
             rag_config=self.rag_config,
         )
