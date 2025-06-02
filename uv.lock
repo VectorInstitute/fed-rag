@@ -959,7 +959,7 @@ requires-dist = [
     { name = "typing-extensions", specifier = ">=4.12.2" },
     { name = "unsloth", marker = "extra == 'unsloth'", specifier = ">=2024.8" },
 ]
-provides-extras = ["huggingface", "qdrant", "llama-index", "huggingface-evals", "unsloth"]
+provides-extras = ["huggingface", "qdrant", "llama-index", "langchain", "huggingface-evals", "unsloth"]
 
 [package.metadata.requires-dev]
 dev = [

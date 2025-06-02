@@ -245,7 +245,7 @@ class FedRAGLLM(BaseLLM):
     @property
     def _llm_type(self) -> str:
         """Return the type of the LLM."""
-        return "fedrag.generator"
+        return "fed_rag.generator"
 
     @contextmanager
     def _generator(
