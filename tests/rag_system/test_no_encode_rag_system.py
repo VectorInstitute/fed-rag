@@ -177,7 +177,7 @@ def test_bridging_no_encode_rag_system(
         _bridge_version = "0.1.0"
         _bridge_extra = "my-bridge"
         _framework = "my-bridge-framework"
-        _compatible_versions = ["0.1.x"]
+        _compatible_versions = {"min": "0.1.2", "max": "0.2.0"}
         _method_name = "to_bridge"
 
         def to_bridge(self) -> None:
@@ -202,3 +202,6 @@ def test_bridging_no_encode_rag_system(
         rag_system.bridges["my-bridge-framework"]
         == _TestBridgeMixin.get_bridge_metadata()
     )
+
+    # cleanup
+    del BridgedNoEncodeRAGSystem.bridges[_TestBridgeMixin._framework]

@@ -1,10 +1,10 @@
 """Internal Async RAG System Module"""
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict
 
-from fed_rag.base.bridge import BridgeMetadata
+from fed_rag.base.bridge import BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -14,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.base.retriever import BaseRetriever
 
 
-class _AsyncRAGSystem(BaseModel):
+class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
     """Unbridged implementation of AsyncRAGSystem.
 
     IMPORTANT: This is an internal implementation class.
@@ -29,13 +29,6 @@ class _AsyncRAGSystem(BaseModel):
     retriever: "BaseRetriever"
     knowledge_store: "BaseAsyncKnowledgeStore"
     rag_config: RAGConfig
-    bridges: ClassVar[dict[str, BridgeMetadata]] = {}
-
-    @classmethod
-    def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """To be used only by `BaseBridgeMixin`."""
-        if metadata["framework"] not in cls.bridges:
-            cls.bridges[metadata["framework"]] = metadata
 
     async def query(self, query: str) -> RAGResponse:
         """Query the RAG system."""

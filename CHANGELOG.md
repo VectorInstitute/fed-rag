@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Add `rerank_callback` to `MCPKnowledgeStore` (#402)
 - Add `BaseMCPKnowledgeStore` (#400)
 - Add `MCPKnowledgeStore` and `MCPKnowledgeSource` (#393)
+- Add LangChain bridge (#291)
 - Add `AsyncRAGSystem` and `AsyncNoEncodeRAGSystem` (#392)
 - Feature/364 onboard more benchmarks (#391)
 - Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
