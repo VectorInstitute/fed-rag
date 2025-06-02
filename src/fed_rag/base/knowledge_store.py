@@ -113,19 +113,13 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
     def load(self) -> None:
         """Load the KnowledgeStore nodes from a permanent storage using `name`."""
 
-    class SyncConvertedKnowledgeStore(BaseKnowledgeStore):
+    class _SyncConvertedKnowledgeStore(BaseKnowledgeStore):
         """A nested class for converting this store to a sync version."""
 
         _async_ks: "BaseAsyncKnowledgeStore" = PrivateAttr()
 
         def __init__(self, async_ks: "BaseAsyncKnowledgeStore"):
-            # Get all field values from the async store
-            field_values = {
-                field_name: getattr(async_ks, field_name)
-                for field_name in type(async_ks).model_fields.keys()
-            }
-
-            super().__init__(**field_values)
+            super().__init__(name=async_ks.name)
             self._async_ks = async_ks
 
             # Copy all fields from async store
@@ -174,4 +168,4 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
     def to_sync(self) -> BaseKnowledgeStore:
         """Convert this async knowledge store to a sync version."""
 
-        return BaseAsyncKnowledgeStore.SyncConvertedKnowledgeStore(self)
+        return BaseAsyncKnowledgeStore._SyncConvertedKnowledgeStore(self)
