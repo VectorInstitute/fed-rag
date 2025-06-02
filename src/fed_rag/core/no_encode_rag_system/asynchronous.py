@@ -4,6 +4,8 @@ from fed_rag.core.no_encode_rag_system._asynchronous import (
     _AsyncNoEncodeRAGSystem,
 )
 
+from .synchronous import NoEncodeRAGSystem
+
 
 # Define the public NoEncodeRAGSystem with all available bridges
 class AsyncNoEncodeRAGSystem(_AsyncNoEncodeRAGSystem):
@@ -19,4 +21,11 @@ class AsyncNoEncodeRAGSystem(_AsyncNoEncodeRAGSystem):
     against NoEncode knowledge sources.
     """
 
-    pass
+    def to_sync(
+        self,
+    ) -> NoEncodeRAGSystem:
+        return NoEncodeRAGSystem(
+            knowledge_store=self.knowledge_store.to_sync(),
+            generator=self.generator,
+            rag_config=self.rag_config,
+        )
