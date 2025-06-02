@@ -4223,7 +4223,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="fed_rag._bridges.llamaindex.bridge.LlamaIndexBridgeMixin">LlamaIndexBridgeMixin</span></code>, <code><span title="fed_rag.core.rag_system._synchronous._RAGSystem">_RAGSystem</span></code></p>
+              Bases: <code><span title="fed_rag._bridges.llamaindex.bridge.LlamaIndexBridgeMixin">LlamaIndexBridgeMixin</span></code>, <code><span title="fed_rag._bridges.langchain.bridge.LangChainBridgeMixin">LangChainBridgeMixin</span></code>, <code><span title="fed_rag.core.rag_system._synchronous._RAGSystem">_RAGSystem</span></code></p>
 
 
         <p>RAG System with all available bridge functionality.</p>
@@ -4238,21 +4238,21 @@ retrieval-augmented generation systems.</p>
 
               <details class="quote">
                 <summary>Source code in <code>src/fed_rag/core/rag_system/synchronous.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
 <span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">RAGSystem</span><span class="p">(</span><span class="n">LlamaIndexBridgeMixin</span><span class="p">,</span> <span class="n">_RAGSystem</span><span class="p">):</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;RAG System with all available bridge functionality.</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="sd">    The RAGSystem is the main entry point for creating and managing</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="sd">    retrieval-augmented generation systems.</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="k">pass</span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="k">class</span><span class="w"> </span><span class="nc">RAGSystem</span><span class="p">(</span><span class="n">LlamaIndexBridgeMixin</span><span class="p">,</span> <span class="n">LangChainBridgeMixin</span><span class="p">,</span> <span class="n">_RAGSystem</span><span class="p">):</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;RAG System with all available bridge functionality.</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="sd">    The RAGSystem is the main entry point for creating and managing</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">    retrieval-augmented generation systems.</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="k">pass</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
@@ -4273,7 +4273,7 @@ retrieval-augmented generation systems.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="fed_rag._bridges.llamaindex.bridge.LlamaIndexBridgeMixin">LlamaIndexBridgeMixin</span></code>, <code><span title="fed_rag.core.rag_system._asynchronous._AsyncRAGSystem">_AsyncRAGSystem</span></code></p>
+              Bases: <code><span title="fed_rag._bridges.llamaindex.bridge.LlamaIndexBridgeMixin">LlamaIndexBridgeMixin</span></code>, <code><span title="fed_rag._bridges.langchain.bridge.LangChainBridgeMixin">LangChainBridgeMixin</span></code>, <code><span title="fed_rag.core.rag_system._asynchronous._AsyncRAGSystem">_AsyncRAGSystem</span></code></p>
 
 
         <p>Async RAG System with all available bridge functionality.</p>
@@ -4288,8 +4288,7 @@ retrieval-augmented generation systems.</p>
 
               <details class="quote">
                 <summary>Source code in <code>src/fed_rag/core/rag_system/asynchronous.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
 <span class="normal"><a href="#__codelineno-0-14">14</a></span>
@@ -4303,22 +4302,27 @@ retrieval-augmented generation systems.</p>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span>
 <span class="normal"><a href="#__codelineno-0-23">23</a></span>
 <span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="k">class</span><span class="w"> </span><span class="nc">AsyncRAGSystem</span><span class="p">(</span><span class="n">LlamaIndexBridgeMixin</span><span class="p">,</span> <span class="n">_AsyncRAGSystem</span><span class="p">):</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Async RAG System with all available bridge functionality.</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">    The RAGSystem is the main entry point for creating and managing</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    retrieval-augmented generation systems.</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_sync</span><span class="p">(</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RAGSystem</span><span class="p">:</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="k">return</span> <span class="n">RAGSystem</span><span class="p">(</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>            <span class="n">knowledge_store</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">to_sync</span><span class="p">(),</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>            <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span>  <span class="c1"># NOTE: this should actually be sync!</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>            <span class="n">retriever</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retriever</span><span class="p">,</span>  <span class="c1"># NOTE: this should actually be sync!</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>            <span class="n">rag_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rag_config</span><span class="p">,</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="k">class</span><span class="w"> </span><span class="nc">AsyncRAGSystem</span><span class="p">(</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="n">LlamaIndexBridgeMixin</span><span class="p">,</span> <span class="n">LangChainBridgeMixin</span><span class="p">,</span> <span class="n">_AsyncRAGSystem</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="p">):</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Async RAG System with all available bridge functionality.</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    The RAGSystem is the main entry point for creating and managing</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    retrieval-augmented generation systems.</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_sync</span><span class="p">(</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RAGSystem</span><span class="p">:</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="k">return</span> <span class="n">RAGSystem</span><span class="p">(</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>            <span class="n">knowledge_store</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">to_sync</span><span class="p">(),</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>            <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span>  <span class="c1"># NOTE: this should actually be sync!</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>            <span class="n">retriever</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retriever</span><span class="p">,</span>  <span class="c1"># NOTE: this should actually be sync!</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>            <span class="n">rag_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rag_config</span><span class="p">,</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
