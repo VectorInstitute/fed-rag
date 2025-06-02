@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
+from fed_rag.utils.asyncio import asyncio_run
+
 if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.data_structures.knowledge_node import KnowledgeNode
 
@@ -135,23 +137,21 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
             self._async_ks = async_ks
 
         def load_node(self, node: "KnowledgeNode") -> None:
-            asyncio.run(self._async_ks.load_node(node))
+            asyncio_run(self._async_ks.load_node(node))
 
         def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
-            asyncio.run(self._async_ks.load_nodes(nodes))
+            asyncio_run(self._async_ks.load_nodes(nodes))
 
         def retrieve(
             self, query: str, top_k: int
         ) -> list[tuple[float, "KnowledgeNode"]]:
-            return asyncio.run(
-                self._async_ks.retrieve(query=query, top_k=top_k)
-            )
+            return asyncio_run(self._async_ks.retrieve(query=query, top_k=top_k))  # type: ignore [no-any-return]
 
         def delete_node(self, node_id: str) -> bool:
-            return asyncio.run(self._async_ks.delete_node(node_id))
+            return asyncio_run(self._async_ks.delete_node(node_id))  # type: ignore [no-any-return]
 
         def clear(self) -> None:
-            asyncio.run(self._async_ks.clear())
+            asyncio_run(self._async_ks.clear())
 
         @property
         def count(self) -> int:

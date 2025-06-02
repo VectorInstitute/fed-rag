@@ -26,6 +26,6 @@ class AsyncNoEncodeRAGSystem(_AsyncNoEncodeRAGSystem):
     ) -> NoEncodeRAGSystem:
         return NoEncodeRAGSystem(
             knowledge_store=self.knowledge_store.to_sync(),
-            generator=self.generator,
+            generator=self.generator,  # NOTE: this should actually be sync!
             rag_config=self.rag_config,
         )
