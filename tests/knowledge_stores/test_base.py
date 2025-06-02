@@ -1,4 +1,5 @@
 import inspect
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 
@@ -54,13 +55,14 @@ class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
     async def clear(self) -> None:
         self.nodes.clear()
 
-    async def count(self) -> int:
+    @property
+    def count(self) -> int:
         return len(self.nodes)
 
-    async def persist(self) -> None:
+    def persist(self) -> None:
         pass
 
-    async def load(self) -> None:
+    def load(self) -> None:
         pass
 
 
@@ -85,5 +87,19 @@ def test_to_sync_methods() -> None:
         for _ in range(5)
     ]
 
-    sync_store.load_nodes(nodes)
-    assert sync_store.nodes == nodes
+    with does_not_raise():
+        sync_store.load_nodes(nodes[1:])
+        assert sync_store.nodes == nodes[1:]
+
+        sync_store.retrieve([1, 2, 3], 1)
+        sync_store.delete_node("fake id")  # doesn't actually delete
+        sync_store.load_node(nodes[0])
+
+        # no-ops
+        sync_store.load()
+        sync_store.persist()
+
+        assert sync_store.count == len(nodes)
+
+        sync_store.clear()
+        assert sync_store.count == 0
