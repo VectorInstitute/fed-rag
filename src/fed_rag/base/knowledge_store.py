@@ -129,30 +129,20 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
             self._async_ks = async_ks
 
             # Copy all fields from async store
-            self._copy_async_fields()
+            self._copy_async_ks_fields()
 
-        def _copy_async_fields(self) -> None:
+        def _copy_async_ks_fields(self) -> None:
             """Copy field definitions and values from async store."""
             for field_name, field_info in type(
                 self._async_ks
             ).model_fields.items():
-                # Add field definition to model fields
+                # add field definition to model fields
                 self.__class__.model_fields[field_name] = field_info
 
-                # Also add to class annotations for better type support
-                if not hasattr(self.__class__, "__annotations__"):
-                    self.__class__.__annotations__ = {}
-                self.__class__.__annotations__[
-                    field_name
-                ] = field_info.annotation
-
+                # set fields
                 if hasattr(self._async_ks, field_name):
                     value = getattr(self._async_ks, field_name)
                     setattr(self, field_name, value)
-                elif (
-                    field_info.default is not ...
-                ):  # Pydantic meaning required
-                    setattr(self, field_name, field_info.default)
 
         def load_node(self, node: "KnowledgeNode") -> None:
             asyncio_run(self._async_ks.load_node(node))
