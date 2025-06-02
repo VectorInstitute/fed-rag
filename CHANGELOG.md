@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+...
+
+## [0.0.24] - 2025-06-02
+
 ### Added
 
 - [Feature] Add to_sync() methods for AsyncKnowledgeStore and AsyncRAGSystem and their NoEncode variants. (#404)
