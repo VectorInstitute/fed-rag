@@ -5429,7 +5429,7 @@ print(
 <pre>Number of knowledge nodes created:  1 
 
 Text content of first created node:
- {"query": "What is RAFT?", "total_results_count": 4, "results": [{"id": "1881517b-ad6c-4c37-8fd1-f71018fe3f7c-02036f99-420a-457b-8bb3-edd7114d173d", "type": "ANSWER", "document_title": "raft.pdf", "document_uri": "https://fed-rag-mcp-cookbook.s3.ca-central-1.amazonaws.com/raft.pdf", "score": "HIGH", "excerpt": "In this paper, we present Retrieval Augmented\nFine Tuning (RAFT), a training recipe which improves the model\u2019s ability\nto answer questions in \"open-book\" in-domain settings. In t
+ {"query": "What is RAFT?", "total_results_count": 4, "results": [{"id": "fa859564-abe5-4a34-8624-1e0b2ae59b41-62e4b0af-d3dd-426b-9cbc-b141855e8397", "type": "ANSWER", "document_title": "raft.pdf", "document_uri": "https://fed-rag-mcp-cookbook.s3.ca-central-1.amazonaws.com/raft.pdf", "score": "HIGH", "excerpt": "In this paper, we present Retrieval Augmented\nFine Tuning (RAFT), a training recipe which improves the model\u2019s ability\nto answer questions in \"open-book\" in-domain settings. In t
 </pre>
 </div>
 </div>
@@ -5886,7 +5886,7 @@ llama_cloud_mcp_source = MCPStdioKnowledgeSource(
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[12]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>CallToolResult(meta=None, content=[TextContent(type='text', text='RALT stands for Retrieval-Augmented Language Model. It is a model that combines traditional language models with a retrieval mechanism to enhance performance on various natural language processing tasks. By incorporating a retrieval component, RALT models can access external knowledge sources to improve their understanding and generation capabilities.\n\nHere is an example of how a RALT model can be implemented using Python and the Hugging Face Transformers library:\n\n```python\nfrom transformers import AutoModelForSeq2SeqLM, AutoTokenizer\n\n# Load the RALT model and tokenizer\nmodel_name = "your_RALT_model_name"\nmodel = AutoModelForSeq2SeqLM.from_pretrained(model_name)\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\n# Define a prompt for the RALT model\nprompt = "Your prompt here"\n\n# Tokenize the prompt\ninputs = tokenizer(prompt, return_tensors="pt")\n\n# Generate output from the RALT model\noutput = model.generate(**inputs)\n\n# Decode the output tokens back to text\noutput_text = tokenizer.decode(output[0], skip_special_tokens=True)\nprint(output_text)\n```\n\nBy utilizing a RALT model, you can leverage both the power of language modeling and the richness of external knowledge sources to improve the performance of various NLP tasks.', annotations=None)], isError=False)</pre>
+<pre>CallToolResult(meta=None, content=[TextContent(type='text', text='RALT stands for Retrieval-Augmented Language Model. It is a model that combines traditional language models with a retrieval mechanism to enhance performance on various natural language processing tasks. By incorporating a retrieval component, RALT models can access external knowledge sources to improve their understanding and generation of text.\n\nHere is an example of how a RALT model can be implemented using Python and the Hugging Face Transformers library:\n\n```python\nfrom transformers import RagTokenizer, RagRetriever, RagTokenForGeneration\n\n# Initialize the RAG tokenizer\ntokenizer = RagTokenizer.from_pretrained("facebook/rag-token-base")\n\n# Initialize the retriever component\nretriever = RagRetriever.from_pretrained("facebook/rag-token-base")\n\n# Initialize the generator component\ngenerator = RagTokenForGeneration.from_pretrained("facebook/rag-token-base")\n\n# Encode the input text\ninput_text = "Question: Who is the president of the United States?"\ninput_ids = tokenizer(input_text, return_tensors="pt").input_ids\n\n# Retrieve relevant passages\nretrieved_docs = retriever(input_ids)\n\n# Generate an answer based on the retrieved passages\noutput = generator(input_ids, retrieved_docs=retrieved_docs)\n\n# Decode and print the generated answer\ngenerated_text = tokenizer.decode(output["generated_tokens"][0], skip_special_tokens=True)\nprint(generated_text)\n```\n\nIn this code snippet, the RALT model is used to answer a question by retrieving relevant passages and generating a response based on the retrieved information. The model combines the power of language modeling with the ability to retrieve external knowledge, making it effective for a wide range of NLP tasks.', annotations=None)], isError=False)</pre>
 </div>
 </div>
 </div>
@@ -5944,12 +5944,12 @@ print(
 <pre>Number of results returned:  1 
 
 Text content of first returned node:
- RALT stands for Retrieval-Augmented Language Model. It is a model that combines traditional language models with a retrieval mechanism to enhance performance on various natural language processing tasks. By incorporating a retrieval component, RALT models can access external knowledge sources to improve their understanding and generation capabilities.
+ RALT stands for Retrieval-Augmented Language Model. It is a model that combines traditional language models with a retrieval mechanism to enhance performance on various natural language processing tasks. By incorporating a retrieval component, RALT models can access external knowledge sources to improve their understanding and generation of text.
 
 Here is an example of how a RALT model can be implemented using Python and the Hugging Face Transformers library:
 
 ```python
-from transformers im
+from transformers import 
 </pre>
 </div>
 </div>
@@ -6155,9 +6155,9 @@ knowledge_store = (
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
 <pre>[(0.7772398,
-  KnowledgeNode(node_id='4a032b54-4037-4ba8-ad6c-7cc9f810bcc0', embedding=None, node_type=&lt;NodeType.TEXT: 'text'&gt;, text_content='...Fine Tuning (RAFT), a training recipe which improves the model’s ability to answer questions in "open-book" in-domain settings. In training RAFT, given a question, and a set of retrieved documents, we train the model to ignore those documents that don’t help in answering the question, which...', image_content=None, metadata={'name': 'awslabs.amazon-kendra-index-mcp-server', 'tool_name': 'KendraQueryTool', 'query_param_name': 'query', 'tool_call_kwargs': {'indexId': '572aca26-16be-44df-84d3-4d96d778f120', 'region': 'ca-central-1'}, 'server_params': {'command': 'docker', 'args': ['run', '--rm', '--interactive', '--init', '--env-file', '/home/nerdai/Projects/fed-rag/docs/notebooks/.env', 'awslabs/amazon-kendra-index-mcp-server:latest'], 'env': None, 'cwd': None, 'encoding': 'utf-8', 'encoding_error_handler': 'strict'}})),
- (0.18298462,
-  KnowledgeNode(node_id='1fe637c3-f69f-4d3e-abb6-f80cd20ed1af', embedding=None, node_type=&lt;NodeType.TEXT: 'text'&gt;, text_content='RAFT stands for Retrieval-Augmented Fine-Tuning. It is a technique used in natural language processing that combines retrieval-based methods with fine-tuning of large language models to enhance performance on various tasks. \n\nIn RAFT, a large language model is fine-tuned on a specific task while also incorporating information retrieved from external sources. This retrieval augmentation helps the model to access relevant external knowledge during inference, improving its ability to generate accurate responses.\n\nHere is an example of how RAFT can be implemented using a Python code snippet:\n\n```python\nfrom transformers import AutoModelForSeq2SeqLM, AutoTokenizer\n\n# Load the pre-trained model and tokenizer\nmodel = AutoModelForSeq2SeqLM.from_pretrained("model_name")\ntokenizer = AutoTokenizer.from_pretrained("model_name")\n\n# Fine-tune the model using RAFT\n# Include retrieval-augmented data during fine-tuning\n\n# Generate predictions using the fine-tuned model\ninput_text = "Input text for inference"\nretrieved_info = "Information retrieved from external source"\ninput_data = tokenizer(input_text, retrieved_info, return_tensors="pt", padding=True, truncation=True)\noutput = model.generate(**input_data)\n\n# Decode the output\ndecoded_output = tokenizer.decode(output[0], skip_special_tokens=True)\nprint(decoded_output)\n```\n\nIn this code snippet, the model is fine-tuned using RAFT by incorporating retrieved information during training. During inference, the model uses both the input text and retrieved information to generate predictions. The final output is decoded and printed for further analysis.', image_content=None, metadata={'name': 'llama-index-server', 'tool_name': 'LlamaCloudQueryTool', 'query_param_name': 'query', 'tool_call_kwargs': {}, 'server_params': {'command': 'sh', 'args': ['-c', 'cd /home/nerdai/OSS/llamacloud-mcp &amp;&amp; poetry install &amp;&amp; exec poetry run python mcp-server.py'], 'env': None, 'cwd': None, 'encoding': 'utf-8', 'encoding_error_handler': 'strict'}}))]</pre>
+  KnowledgeNode(node_id='32cdd16d-4a71-450b-bbc5-46f6220b0e82', embedding=None, node_type=&lt;NodeType.TEXT: 'text'&gt;, text_content='...Fine Tuning (RAFT), a training recipe which improves the model’s ability to answer questions in "open-book" in-domain settings. In training RAFT, given a question, and a set of retrieved documents, we train the model to ignore those documents that don’t help in answering the question, which...', image_content=None, metadata={'name': 'awslabs.amazon-kendra-index-mcp-server', 'tool_name': 'KendraQueryTool', 'query_param_name': 'query', 'tool_call_kwargs': {'indexId': '572aca26-16be-44df-84d3-4d96d778f120', 'region': 'ca-central-1'}, 'server_params': {'command': 'docker', 'args': ['run', '--rm', '--interactive', '--init', '--env-file', '/home/nerdai/Projects/fed-rag/docs/notebooks/.env', 'awslabs/amazon-kendra-index-mcp-server:latest'], 'env': None, 'cwd': None, 'encoding': 'utf-8', 'encoding_error_handler': 'strict'}})),
+ (0.16266058,
+  KnowledgeNode(node_id='ff999d42-3c8a-4be0-a65b-998dec7ad728', embedding=None, node_type=&lt;NodeType.TEXT: 'text'&gt;, text_content='RAFT stands for Retrieval-Augmented Fine-Tuning. It is a technique used in natural language processing that involves combining retrieval-based methods with fine-tuning of large language models. This approach aims to enhance the performance of language models on knowledge-intensive tasks by leveraging external knowledge sources through retrieval mechanisms.\n\nIn RAFT, a large language model is fine-tuned on a specific task while also incorporating information retrieved from external sources. By integrating retrieved passages into the training process, the model can access a broader range of information beyond what is present in the training data, leading to improved performance on tasks that require external knowledge.\n\nHere is a simplified example of how RAFT can be implemented using a Python code snippet:\n\n```python\n# Pseudo-code example of RAFT implementation\nfrom transformers import T5ForConditionalGeneration, T5Tokenizer\n\n# Load the large language model\nmodel = T5ForConditionalGeneration.from_pretrained(\'t5-large\')\ntokenizer = T5Tokenizer.from_pretrained(\'t5-large\')\n\n# Fine-tune the model with retrieval-augmentation\n# Incorporate retrieved passages into the training data\n\n# Use the fine-tuned model for inference\ninput_text = "Question: What is the capital of France?"\nretrieved_passage = retrieve_passage("France capital information")\ninput_text_with_retrieval = f"Background: {retrieved_passage} {input_text}"\n\ninput_ids = tokenizer(input_text_with_retrieval, return_tensors=\'pt\').input_ids\noutputs = model.generate(input_ids)\n\n# Decode the model output\ndecoded_output = tokenizer.decode(outputs[0], skip_special_tokens=True)\nprint(decoded_output)\n```\n\nIn this example, the RAFT process involves fine-tuning a T5 model with retrieval-augmentation and then using the model to generate answers to questions by incorporating retrieved passages into the input text. This allows the model to benefit from external knowledge during inference, leading to more accurate and informed responses.', image_content=None, metadata={'name': 'llama-index-server', 'tool_name': 'LlamaCloudQueryTool', 'query_param_name': 'query', 'tool_call_kwargs': {}, 'server_params': {'command': 'sh', 'args': ['-c', 'cd /home/nerdai/OSS/llamacloud-mcp &amp;&amp; poetry install &amp;&amp; exec poetry run python mcp-server.py'], 'env': None, 'cwd': None, 'encoding': 'utf-8', 'encoding_error_handler': 'strict'}}))]</pre>
 </div>
 </div>
 </div>
@@ -6260,7 +6260,7 @@ generator = HFPretrainedModelGenerator(
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncNoEncodeRAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
 
-<span class="n">rag_config</span> <span class="o">=</span> <span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">rag_config</span> <span class="o">=</span> <span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">rag_system</span> <span class="o">=</span> <span class="n">AsyncNoEncodeRAGSystem</span><span class="p">(</span>
     <span class="n">knowledge_store</span><span class="o">=</span><span class="n">knowledge_store</span><span class="p">,</span>
     <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
@@ -6269,7 +6269,7 @@ generator = HFPretrainedModelGenerator(
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-20">from fed_rag import AsyncNoEncodeRAGSystem, RAGConfig
 
-rag_config = RAGConfig(top_k=2)
+rag_config = RAGConfig(top_k=3)
 rag_system = AsyncNoEncodeRAGSystem(
     knowledge_store=knowledge_store,
     generator=generator,
@@ -6363,7 +6363,8 @@ print(res)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>RAFT stands for Retrieval-Augmented Fine-Tuning, a training recipe that enhances a language model's ability to answer questions in "open-book" in-domain settings. It involves fine-tuning the model using a combination of in-context retrieval augmentation and instruction tuning methods. By incorporating relevant information from external sources, RAFT improves the model's understanding of the context and generates more accurate responses.
+<pre>RAFT stands for Retrieval-Augmented Fine-Tuning. It is a technique used in natural language processing that combines the power of retrieval-based methods with fine-tuning language models. This approach involves augmenting language models with retrieved information from external sources to enhance their performance on various NLP tasks.
+&lt;/response&gt;
 </pre>
 </div>
 </div>
@@ -6418,11 +6419,17 @@ TEXT: ...Fine Tuning (RAFT), a training recipe which improves the model’s abil
 
 
 SOURCE NODE 1:
-SCORE: 0.6331754326820374
-SOURCE: llama-index-server
-TEXT: RAFT stands for Retrieval-Augmented Fine-Tuning. It is a technique used in natural language processing to enhance language models by incorporating retrieved information during the fine-tuning process. This approach involves leveraging external knowledge sources to improve the model's performance on various tasks.
+SCORE: 0.1268322467803955
+SOURCE: awslabs.amazon-kendra-index-mcp-server
+TEXT: In this paper, we present Retrieval Augmented Fine Tuning (RAFT), a training recipe which improves the model’s ability to answer questions in "open-book" in-domain settings. In training RAFT, given a question, and a set of retrieved documents, we train the model to ignore those documents that don’t
 
-In RAFT, the language model is fine-tuned using a combination of in-context retrieval augmentation and instruction tuning methods. By retrieving relevant information from external sour
+
+SOURCE NODE 2:
+SCORE: 0.052663445472717285
+SOURCE: llama-index-server
+TEXT: RAFT stands for Retrieval-Augmented Fine-Tuning. It is a technique used in natural language processing that combines the power of retrieval-based methods with fine-tuning language models. This approach involves augmenting language models with retrieved information from external sources to enhance their performance on various NLP tasks.
+
+In RAFT, the language model is fine-tuned on a specific task while also incorporating information retrieved from external knowledge sources. This retrieved infor
 
 
 </pre>
@@ -6446,6 +6453,116 @@ In RAFT, the language model is fine-tuned using a combination of in-context retr
 <li>How to define and use a reranker callback to better prioritize the retrieved knowledge nodes from the multiple MCP sources</li>
 </ul>
 <h2 id="whats-next">What's Next<a class="anchor-link" href="#whats-next">¶</a></h2><p>After assembling the <code>NoEncodeRAGSystem</code>, you can use it with any <code>GeneratorTrainers</code> (e.g., <a href="http://127.0.0.1:8000/api_reference/trainers/huggingface/#src.fed_rag.trainers.huggingface.ralt.HuggingFaceTrainerForRALT">HuggingFaceTrainerForRALT</a>) to fine-tune the RAG system to better adapt to your MCP knowledge store.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ec3cab8a-9944-43f9-b893-ceab2af46e56">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-24">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.trainers.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="n">HuggingFaceTrainerForRALT</span>
+
+<span class="c1"># define a train dataset</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+    <span class="c1"># examples from Commonsense QA</span>
+    <span class="p">{</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"The sanctions against the school were a punishing blow, and they seemed to what the efforts the school had made to change?"</span><span class="p">,</span>
+            <span class="s2">"Sammy wanted to go to where the people were.  Where might he go?"</span><span class="p">,</span>
+            <span class="s2">"To locate a choker not located in a jewelry box or boutique where would you go?"</span><span class="p">,</span>
+            <span class="s2">"Google Maps and other highway and street GPS services have replaced what?"</span><span class="p">,</span>
+            <span class="s2">"The fox walked from the city into the forest, what was it looking for?"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">"response"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"ignore"</span><span class="p">,</span>
+            <span class="s2">"populated areas"</span><span class="p">,</span>
+            <span class="s2">"jewelry store"</span><span class="p">,</span>
+            <span class="s2">"atlas"</span><span class="p">,</span>
+            <span class="s2">"natural habitat"</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># the trainer object</span>
+<span class="n">generator_trainer</span> <span class="o">=</span> <span class="n">HuggingFaceTrainerForRALT</span><span class="p">(</span>
+    <span class="n">rag_system</span><span class="o">=</span><span class="n">rag_system</span><span class="o">.</span><span class="n">to_sync</span><span class="p">(),</span>  <span class="c1"># trainers only work with sync objects</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-24">from datasets import Dataset
+from fed_rag.trainers.huggingface import HuggingFaceTrainerForRALT
+
+# define a train dataset
+train_dataset = Dataset.from_dict(
+    # examples from Commonsense QA
+    {
+        "query": [
+            "The sanctions against the school were a punishing blow, and they seemed to what the efforts the school had made to change?",
+            "Sammy wanted to go to where the people were.  Where might he go?",
+            "To locate a choker not located in a jewelry box or boutique where would you go?",
+            "Google Maps and other highway and street GPS services have replaced what?",
+            "The fox walked from the city into the forest, what was it looking for?",
+        ],
+        "response": [
+            "ignore",
+            "populated areas",
+            "jewelry store",
+            "atlas",
+            "natural habitat",
+        ],
+    }
+)
+
+# the trainer object
+generator_trainer = HuggingFaceTrainerForRALT(
+    rag_system=rag_system.to_sync(),  # trainers only work with sync objects
+    train_dataset=train_dataset,
+)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=dea521d3-1c6c-4617-9c33-453e49bfff42">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-25">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">train_result</span> <span class="o">=</span> <span class="n">generator_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-25">train_result = generator_trainer.train()</div>
+</div>
+</div>
 </div>
 </div>
 </div>
