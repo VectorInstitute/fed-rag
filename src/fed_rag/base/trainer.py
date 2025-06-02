@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 
-from fed_rag import RAGSystem
+from fed_rag import NoEncodeRAGSystem, RAGSystem
 from fed_rag.data_structures.results import TestResult, TrainResult
 
 
@@ -59,6 +59,8 @@ class BaseRetrieverTrainer(BaseTrainer, ABC):
 
 class BaseGeneratorTrainer(BaseTrainer, ABC):
     """Base Retriever Trainer Class."""
+
+    rag_system: RAGSystem | NoEncodeRAGSystem
 
     def _get_model_from_rag_system(self) -> Any:
         return self.rag_system.generator.model
