@@ -1,4 +1,5 @@
 import inspect
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 
@@ -36,35 +37,37 @@ def test_base_async_abstract_attr() -> None:
     assert "load" in abstract_methods
 
 
+# create a dummy store
+class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
+    nodes: list[KnowledgeNode] = []
+
+    async def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    async def retrieve(
+        self, query_emb: list[float], top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return []
+
+    async def delete_node(self, node_id: str) -> bool:
+        return True
+
+    async def clear(self) -> None:
+        self.nodes.clear()
+
+    @property
+    def count(self) -> int:
+        return len(self.nodes)
+
+    def persist(self) -> None:
+        pass
+
+    def load(self) -> None:
+        pass
+
+
 @pytest.mark.asyncio
 async def test_base_async_load_nodes() -> None:
-    # create a dummy store
-    class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
-        nodes: list[KnowledgeNode] = []
-
-        async def load_node(self, node: KnowledgeNode) -> None:
-            self.nodes.append(node)
-
-        async def retrieve(
-            self, query_emb: list[float], top_k: int
-        ) -> list[tuple[float, KnowledgeNode]]:
-            return []
-
-        async def delete_node(self, node_id: str) -> bool:
-            return True
-
-        async def clear(self) -> None:
-            self.nodes.clear()
-
-        async def count(self) -> int:
-            return len(self.nodes)
-
-        async def persist(self) -> None:
-            pass
-
-        async def load(self) -> None:
-            pass
-
     dummy_store = DummyAsyncKnowledgeStore()
     nodes = [
         KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
@@ -73,3 +76,30 @@ async def test_base_async_load_nodes() -> None:
 
     await dummy_store.load_nodes(nodes)
     assert dummy_store.nodes == nodes
+
+
+def test_to_sync_methods() -> None:
+    dummy_store = DummyAsyncKnowledgeStore()
+    sync_store = dummy_store.to_sync()
+
+    nodes = [
+        KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
+        for _ in range(5)
+    ]
+
+    with does_not_raise():
+        sync_store.load_nodes(nodes[1:])
+        assert sync_store.nodes == nodes[1:]
+
+        sync_store.retrieve([1, 2, 3], 1)
+        sync_store.delete_node("fake id")  # doesn't actually delete
+        sync_store.load_node(nodes[0])
+
+        # no-ops
+        sync_store.load()
+        sync_store.persist()
+
+        assert sync_store.count == len(nodes)
+
+        sync_store.clear()
+        assert sync_store.count == 0

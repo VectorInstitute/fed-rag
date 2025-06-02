@@ -10,16 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- [Feature] Add to_sync() methods for AsyncKnowledgeStore and AsyncRAGSystem and their NoEncode variants. (#404)
 - Add `rerank_callback` to `MCPKnowledgeStore` (#402)
 - Add `BaseMCPKnowledgeStore` (#400)
 - Add `MCPKnowledgeStore` and `MCPKnowledgeSource` (#393)
 - Add `AsyncRAGSystem` and `AsyncNoEncodeRAGSystem` (#392)
+- Feature/364 onboard more benchmarks (#391)
 - Validate installed version of bridge framework to confirm compatibility based on `BridgeMetadata` (#323)
 - Add `NoEncodeRAGSystem` (#386)
 - Add `NoEncodeBaseKnowledgeStore` and `NoEncodeAsyncBaseKnowledgeStore` (#385)
 
 ### Changed
 
+- Change RALT and DataCollatorForRALT to allow for union RAGSystem | NoEncodeRAGSystem (#404)
 - Change return type of converter functions to `list[KnowledgeNode]` and source.retriever() return `~mcp.CallToolResult` (#402)
 - Refactor `MCPKnowledgeStore` and `MCPKnowledgeSource`to use new base and have `retrieve` method (#400)
 - Changed `load`, `count`, and `persist` methods in `AsyncNoEncodeRAGSystem` to sync (#393)

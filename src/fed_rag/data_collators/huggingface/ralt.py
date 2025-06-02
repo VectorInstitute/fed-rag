@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 import torch
 from pydantic import Field
 
-from fed_rag import RAGSystem
+from fed_rag import NoEncodeRAGSystem, RAGSystem
 from fed_rag.base.data_collator import BaseDataCollator
 from fed_rag.exceptions import DataCollatorError, MissingExtraError
 from fed_rag.utils.huggingface import _validate_rag_system
@@ -59,10 +59,11 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
     example_template: str = Field(default=DEFAULT_EXAMPLE_TEMPLATE)
     default_return_tensors: str = Field(default="pt")
     model_dtype: torch.dtype | None = None
+    rag_system: RAGSystem | NoEncodeRAGSystem
 
     def __init__(
         self,
-        rag_system: RAGSystem,
+        rag_system: RAGSystem | NoEncodeRAGSystem,
         example_template: str | None = None,
         default_return_tensors: str = "pt",
         **kwargs: Any,

@@ -4,7 +4,9 @@ import asyncio
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+
+from fed_rag.utils.asyncio import asyncio_run
 
 if TYPE_CHECKING:  # pragma: no cover
     from fed_rag.data_structures.knowledge_node import KnowledgeNode
@@ -124,3 +126,61 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
     @abstractmethod
     def load(self) -> None:
         """Load the KnowledgeStore nodes from a permanent storage using `name`."""
+
+    class SyncConvertedKnowledgeStore(BaseNoEncodeKnowledgeStore):
+        """A nested class for converting this store to a sync version."""
+
+        _async_ks: "BaseAsyncNoEncodeKnowledgeStore" = PrivateAttr()
+
+        def __init__(self, async_ks: "BaseAsyncNoEncodeKnowledgeStore"):
+            super().__init__(name=async_ks.name)
+            self._async_ks = async_ks
+
+            # Copy all fields from async store
+            self._copy_async_ks_fields()
+
+        def _copy_async_ks_fields(self) -> None:
+            """Copy field definitions and values from async store."""
+            for field_name, field_info in type(
+                self._async_ks
+            ).model_fields.items():
+                # add field definition to model fields
+                self.__class__.model_fields[field_name] = field_info
+
+                # set fields
+                if hasattr(self._async_ks, field_name):
+                    value = getattr(self._async_ks, field_name)
+                    setattr(self, field_name, value)
+
+        def load_node(self, node: "KnowledgeNode") -> None:
+            asyncio_run(self._async_ks.load_node(node))
+
+        def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
+            asyncio_run(self._async_ks.load_nodes(nodes))
+
+        def retrieve(
+            self, query: str, top_k: int
+        ) -> list[tuple[float, "KnowledgeNode"]]:
+            return asyncio_run(self._async_ks.retrieve(query=query, top_k=top_k))  # type: ignore [no-any-return]
+
+        def delete_node(self, node_id: str) -> bool:
+            return asyncio_run(self._async_ks.delete_node(node_id))  # type: ignore [no-any-return]
+
+        def clear(self) -> None:
+            asyncio_run(self._async_ks.clear())
+
+        @property
+        def count(self) -> int:
+            return self._async_ks.count
+
+        def persist(self) -> None:
+            self._async_ks.persist()
+
+        def load(self) -> None:
+            self._async_ks.load()
+
+    def to_sync(self) -> BaseNoEncodeKnowledgeStore:
+        """Convert this async knowledge store to a sync version."""
+        return BaseAsyncNoEncodeKnowledgeStore.SyncConvertedKnowledgeStore(
+            self
+        )

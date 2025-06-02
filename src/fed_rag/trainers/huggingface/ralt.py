@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from pydantic import PrivateAttr, model_validator
 
-from fed_rag import RAGSystem
+from fed_rag import NoEncodeRAGSystem, RAGSystem
 from fed_rag.base.trainer import BaseGeneratorTrainer
 from fed_rag.data_collators.huggingface.ralt import DataCollatorForRALT
 from fed_rag.data_structures.results import TestResult, TrainResult
@@ -44,7 +44,7 @@ class HuggingFaceTrainerForRALT(HuggingFaceTrainerMixin, BaseGeneratorTrainer):
 
     def __init__(
         self,
-        rag_system: RAGSystem,
+        rag_system: RAGSystem | NoEncodeRAGSystem,
         train_dataset: "Dataset",
         training_arguments: Optional["TrainingArguments"] = None,
         **kwargs: Any,

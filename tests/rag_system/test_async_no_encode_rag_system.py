@@ -211,3 +211,23 @@ def test_bridging_no_encode_rag_system(
         rag_system.bridges["my-bridge-framework"]
         == _TestBridgeMixin.get_bridge_metadata()
     )
+
+
+def test_rag_system_to_sync(
+    mock_generator: BaseGenerator,
+    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    sync_rag_system = rag_system.to_sync()
+
+    assert sync_rag_system.generator == rag_system.generator
+    assert sync_rag_system.rag_config == rag_system.rag_config
+    assert sync_rag_system.knowledge_store.name == dummy_store.name

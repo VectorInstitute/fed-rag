@@ -203,3 +203,27 @@ def test_rag_system_format_context(
 
     # assert
     assert formatted_context == "node 1\nnode 2\nnode 3"
+
+
+def test_rag_system_to_sync(
+    mock_generator: BaseGenerator,
+    mock_retriever: BaseRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    knowledge_store = DummyAsyncKnowledgeStore()
+    knowledge_store.load_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncRAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    sync_rag_system = rag_system.to_sync()
+
+    assert sync_rag_system.generator == rag_system.generator
+    assert sync_rag_system.rag_config == rag_system.rag_config
+    assert sync_rag_system.knowledge_store.name == knowledge_store.name
