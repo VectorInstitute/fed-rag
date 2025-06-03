@@ -11,7 +11,7 @@ This page documents currently supported integrations and our roadmap for future 
 ## Deep learning libraries
 
 | Framework  |         Status        |
-|------------|:---------------------:|
+|------------| --------------------- |
 | PyTorch    | :material-check-bold: |
 | Keras      |                       |
 | TensorFlow |                       |
@@ -19,18 +19,18 @@ This page documents currently supported integrations and our roadmap for future 
 
 ## Fine-tuning frameworks
 
-| Framework   |                                  Status                                 |
-|-------------|:-----------------------------------------------------------------------:|
-| HuggingFace | :material-check-bold:                                                    |
-| Unsloth     | [:material-clock:](https://github.com/VectorInstitute/fed-rag/issues/94) |
+| Framework   | Status                |
+| ----------- | --------------------- |
+| HuggingFace | :material-check-bold: |
+| Unsloth     | :material-check-bold: |
 
 ## RAG inference frameworks
 
-| Framework  |                                  Status                                   |
-|------------|:-------------------------------------------------------------------------:|
-| LlamaIndex | :material-check-bold:                                                     |
-| LangChain  | [:material-clock:](https://github.com/VectorInstitute/fed-rag/issues/291) |
-| Haystack   |                                                                           |
+| Framework  | Status                |
+| ---------- | --------------------- |
+| LlamaIndex | :material-check-bold: |
+| LangChain  | :material-check-bold: |
+| Haystack   |                       |
 
 ## Knowledge Stores
 
