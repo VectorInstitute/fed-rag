@@ -4,4 +4,5 @@
     options:
       members:
         - BaseBridgeMixin
+        - BridgeRegistryMixin
         - BridgeMetadata
