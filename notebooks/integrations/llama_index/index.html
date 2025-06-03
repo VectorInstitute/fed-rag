@@ -12,7 +12,7 @@
         <link rel="prev" href="../../no_encode_rag_with_mcp/">
       
       
-        <link rel="next" href="../qdrant/">
+        <link rel="next" href="../langchain/">
       
       
       <link rel="icon" href="../../../assets/favicon-48x48.svg">
@@ -1262,6 +1262,8 @@
       
         
       
+        
+      
     
     
     
@@ -1458,6 +1460,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../langchain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Using LangChain for Inference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../qdrant/" class="md-nav__link">
         
   
@@ -1619,6 +1644,8 @@
       
         
       
+        
+      
     
     
     
@@ -1675,6 +1702,29 @@
   
   <span class="md-ellipsis">
     LlamaIndex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api_reference/bridges/langchain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LangChain
     
   </span>
   
@@ -4903,7 +4953,7 @@ Streaming and async functionalities are not yet supported.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
@@ -4951,7 +5001,7 @@ Streaming and async functionalities are not yet supported.</p>
     <span class="n">stop_strings</span><span class="o">=</span><span class="s2">"&lt;/response&gt;"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">generator</span> <span class="o">=</span> <span class="n">HFPretrainedModelGenerator</span><span class="p">(</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">"Qwen/Qwen2.5-1.5B"</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="n">PRETRAINED_MODEL_NAME</span><span class="p">,</span>
     <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">load_model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"device_map"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"torch_dtype"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">},</span>
     <span class="n">generation_config</span><span class="o">=</span><span class="n">generation_cfg</span><span class="p">,</span>
@@ -5004,7 +5054,7 @@ generation_cfg = GenerationConfig(
     stop_strings="",
 )
 generator = HFPretrainedModelGenerator(
-    model_name="Qwen/Qwen2.5-1.5B",
+    model_name=PRETRAINED_MODEL_NAME,
     load_model_at_init=False,
     load_model_kwargs={"device_map": "auto", "torch_dtype": torch.float16},
     generation_config=generation_cfg,
@@ -5565,7 +5615,7 @@ Answer: 1. Retrieval-Augmented Generation (RAG) systems combine retrieval and ge
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
@@ -5582,13 +5632,13 @@ Answer: 1. Retrieval-Augmented Generation (RAG) systems combine retrieval and ge
 <span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">)</span>
 
 <span class="c1"># see the LlamaIndex bridge metadata</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">[</span><span class="s2">"llama-index"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">[</span><span class="s2">"llama-index-core"</span><span class="p">])</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-12"># see available bridges
 print(RAGSystem.bridges)
 
 # see the LlamaIndex bridge metadata
-print(RAGSystem.bridges["llama-index"])</div>
+print(RAGSystem.bridges["llama-index-core"])</div>
 </div>
 </div>
 </div>
@@ -5670,13 +5720,13 @@ print(RAGSystem.bridges["llama-index"])</div>
         
         
           
-          <a href="../qdrant/" class="md-footer__link md-footer__link--next" aria-label="Next: Using Qdrant for Knowledge Storage">
+          <a href="../langchain/" class="md-footer__link md-footer__link--next" aria-label="Next: Using LangChain for Inference">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Using Qdrant for Knowledge Storage
+                Using LangChain for Inference
               </div>
             </div>
             <div class="md-footer__button md-icon">

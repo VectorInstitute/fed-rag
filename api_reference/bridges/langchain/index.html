@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../evals/">
+        <link rel="prev" href="../llamaindex/">
       
       
-        <link rel="next" href="../inspectors/">
+        <link rel="next" href="../../data_collators/">
       
       
       <link rel="icon" href="../../../assets/favicon-48x48.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>FL Tasks - FedRAG</title>
+        <title>LangChain - FedRAG</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#src.fed_rag.exceptions.fl_tasks.FLTaskError" class="md-skip">
+        <a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              FL Tasks
+              LangChain
             
           </span>
         </div>
@@ -1499,6 +1499,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1519,15 +1521,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../bridges/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1546,7 +1548,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             Bridges
@@ -1562,7 +1564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../bridges/llamaindex/" class="md-nav__link">
+      <a href="../llamaindex/" class="md-nav__link">
         
   
   
@@ -1582,10 +1584,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../bridges/langchain/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    LangChain
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1596,6 +1618,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LangChainBridgeMixin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" LangChainBridgeMixin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin.to_langchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;to_langchain
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2385,8 +2449,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2419,15 +2481,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../exceptions/" class="md-nav__link ">
               
   
   
@@ -2446,7 +2508,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_7">
             <span class="md-nav__icon md-icon"></span>
             Exceptions
@@ -2462,7 +2524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bridge/" class="md-nav__link">
+      <a href="../../exceptions/bridge/" class="md-nav__link">
         
   
   
@@ -2485,7 +2547,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evals/" class="md-nav__link">
+      <a href="../../exceptions/evals/" class="md-nav__link">
         
   
   
@@ -2505,30 +2567,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    FL Tasks
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../exceptions/fl_tasks/" class="md-nav__link">
         
   
   
@@ -2539,51 +2581,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.FLTaskError" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FLTaskError
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.MissingRequiredNetParam" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MissingRequiredNetParam
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.NetTypeMismatch" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;NetTypeMismatch
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2596,7 +2593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inspectors/" class="md-nav__link">
+      <a href="../../exceptions/inspectors/" class="md-nav__link">
         
   
   
@@ -2619,7 +2616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../knowledge_stores/" class="md-nav__link">
+      <a href="../../exceptions/knowledge_stores/" class="md-nav__link">
         
   
   
@@ -2642,7 +2639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../loss/" class="md-nav__link">
+      <a href="../../exceptions/loss/" class="md-nav__link">
         
   
   
@@ -2665,7 +2662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rag_trainer/" class="md-nav__link">
+      <a href="../../exceptions/rag_trainer/" class="md-nav__link">
         
   
   
@@ -2688,7 +2685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tokenizer/" class="md-nav__link">
+      <a href="../../exceptions/tokenizer/" class="md-nav__link">
         
   
   
@@ -4233,29 +4230,26 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.FLTaskError" class="md-nav__link">
+  <a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FLTaskError
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LangChainBridgeMixin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" LangChainBridgeMixin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin.to_langchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;to_langchain
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.MissingRequiredNetParam" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MissingRequiredNetParam
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#src.fed_rag.exceptions.fl_tasks.NetTypeMismatch" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;NetTypeMismatch
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4278,7 +4272,7 @@
   
 
 
-  <h1>FL Tasks</h1>
+  <h1>LangChain</h1>
 
 <!-- markdownlint-disable-file MD041 -->
 
@@ -4290,8 +4284,6 @@
 
 
     <div class="doc doc-contents first">
-
-        <p>Exceptions for FL Tasks.</p>
 
 
 
@@ -4314,19 +4306,22 @@
 
 
 
-<h2 id="src.fed_rag.exceptions.fl_tasks.FLTaskError" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FLTaskError</span>
+<h2 id="src.fed_rag._bridges.langchain.LangChainBridgeMixin" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">LangChainBridgeMixin</span>
 
 
-<a href="#src.fed_rag.exceptions.fl_tasks.FLTaskError" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            FedRAGError (src.fed_rag.exceptions.core.FedRAGError)" href="../#src.fed_rag.exceptions.core.FedRAGError">FedRAGError</a></code></p>
+              Bases: <code><span title="fed_rag.base.bridge.BaseBridgeMixin">BaseBridgeMixin</span></code></p>
 
 
-        <p>Base fl task error for all fl-task-related exceptions.</p>
+        <p>LangChain Bridge.</p>
+<p>This mixin adds LangChain conversion capabilities to _RAGSystem.
+When mixed with an unbridged _RAGSystem, it allows direct conversion to
+LangChain's VectorStore and BaseLLM through the to_langchain() method.</p>
 
 
 
@@ -4335,103 +4330,115 @@
 
 
               <details class="quote">
-                <summary>Source code in <code>src/fed_rag/exceptions/fl_tasks.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-6">6</a></span>
-<span class="normal"><a href="#__codelineno-0-7">7</a></span>
-<span class="normal"><a href="#__codelineno-0-8">8</a></span>
-<span class="normal"><a href="#__codelineno-0-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">FLTaskError</span><span class="p">(</span><span class="n">FedRAGError</span><span class="p">):</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base fl task error for all fl-task-related exceptions.&quot;&quot;&quot;</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>    <span class="k">pass</span>
-</span></code></pre></div></td></tr></table></div>
-              </details>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="src.fed_rag.exceptions.fl_tasks.MissingRequiredNetParam" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MissingRequiredNetParam</span>
-
-
-<a href="#src.fed_rag.exceptions.fl_tasks.MissingRequiredNetParam" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            FLTaskError (src.fed_rag.exceptions.fl_tasks.FLTaskError)" href="#src.fed_rag.exceptions.fl_tasks.FLTaskError">FLTaskError</a></code></p>
-
-
-        <p>Raised when invoking fl_task.server without passing the specified model/net param.</p>
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>src/fed_rag/exceptions/fl_tasks.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+                <summary>Source code in <code>src/fed_rag/_bridges/langchain/bridge.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-17">17</a></span>
 <span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="k">class</span><span class="w"> </span><span class="nc">MissingRequiredNetParam</span><span class="p">(</span><span class="n">FLTaskError</span><span class="p">):</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when invoking fl_task.server without passing the specified model/net param.&quot;&quot;&quot;</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="k">pass</span>
-</span></code></pre></div></td></tr></table></div>
-              </details>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="src.fed_rag.exceptions.fl_tasks.NetTypeMismatch" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">NetTypeMismatch</span>
-
-
-<a href="#src.fed_rag.exceptions.fl_tasks.NetTypeMismatch" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            FLTaskError (src.fed_rag.exceptions.fl_tasks.FLTaskError)" href="#src.fed_rag.exceptions.fl_tasks.FLTaskError">FLTaskError</a></code></p>
-
-
-        <p>Raised when a <code>trainer</code> and <code>tester</code> spec have differing <code>net_parameter_class_name</code>.</p>
-<p>This indicates that the these methods have different types for the <code>net_parameter</code>.</p>
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>src/fed_rag/exceptions/fl_tasks.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
 <span class="normal"><a href="#__codelineno-0-23">23</a></span>
 <span class="normal"><a href="#__codelineno-0-24">24</a></span>
 <span class="normal"><a href="#__codelineno-0-25">25</a></span>
 <span class="normal"><a href="#__codelineno-0-26">26</a></span>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="k">class</span><span class="w"> </span><span class="nc">NetTypeMismatch</span><span class="p">(</span><span class="n">FLTaskError</span><span class="p">):</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a `trainer` and `tester` spec have differing `net_parameter_class_name`.</span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="k">class</span><span class="w"> </span><span class="nc">LangChainBridgeMixin</span><span class="p">(</span><span class="n">BaseBridgeMixin</span><span class="p">):</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;LangChain Bridge.</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    This mixin adds LangChain conversion capabilities to _RAGSystem.</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    When mixed with an unbridged _RAGSystem, it allows direct conversion to</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    LangChain&#39;s VectorStore and BaseLLM through the to_langchain() method.</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    This indicates that the these methods have different types for the `net_parameter`.</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">pass</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="n">_bridge_version</span> <span class="o">=</span> <span class="n">__version__</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">_bridge_extra</span> <span class="o">=</span> <span class="s2">&quot;langchain&quot;</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">_framework</span> <span class="o">=</span> <span class="s2">&quot;langchain-core&quot;</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">_compatible_versions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.62&quot;</span><span class="p">}</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="n">_method_name</span> <span class="o">=</span> <span class="s2">&quot;to_langchain&quot;</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_langchain</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="s2">&quot;_RAGSystem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;VectorStore&quot;</span><span class="p">,</span> <span class="s2">&quot;BaseLLM&quot;</span><span class="p">]:</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the _RAGSystem to a tuple of ~langchain_core.vectorstores.VectorStore and ~langchain_core.language_models.BaseLLM.&quot;&quot;&quot;</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_framework_installed</span><span class="p">()</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag._bridges.langchain._bridge_classes</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>            <span class="n">FedRAGLLM</span><span class="p">,</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>            <span class="n">FedRAGVectorStore</span><span class="p">,</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="p">)</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="k">return</span> <span class="n">FedRAGVectorStore</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">FedRAGLLM</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="src.fed_rag._bridges.langchain.LangChainBridgeMixin.to_langchain" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">to_langchain</span>
+
+
+<a href="#src.fed_rag._bridges.langchain.LangChainBridgeMixin.to_langchain" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_langchain</span><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Converts the _RAGSystem to a tuple of ~langchain_core.vectorstores.VectorStore and ~langchain_core.language_models.BaseLLM.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/fed_rag/_bridges/langchain/bridge.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="k">def</span><span class="w"> </span><span class="nf">to_langchain</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="s2">&quot;_RAGSystem&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;VectorStore&quot;</span><span class="p">,</span> <span class="s2">&quot;BaseLLM&quot;</span><span class="p">]:</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the _RAGSystem to a tuple of ~langchain_core.vectorstores.VectorStore and ~langchain_core.language_models.BaseLLM.&quot;&quot;&quot;</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_validate_framework_installed</span><span class="p">()</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag._bridges.langchain._bridge_classes</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="n">FedRAGLLM</span><span class="p">,</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">FedRAGVectorStore</span><span class="p">,</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="p">)</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="k">return</span> <span class="n">FedRAGVectorStore</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">FedRAGLLM</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
 
     </div>
 
@@ -4482,7 +4489,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../evals/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Evals">
+          <a href="../llamaindex/" class="md-footer__link md-footer__link--prev" aria-label="Previous: LlamaIndex">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4492,20 +4499,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Evals
+                LlamaIndex
               </div>
             </div>
           </a>
         
         
           
-          <a href="../inspectors/" class="md-footer__link md-footer__link--next" aria-label="Next: Inspectors">
+          <a href="../../data_collators/" class="md-footer__link md-footer__link--next" aria-label="Next: Base Data Collator">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Inspectors
+                Base Data Collator
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../../examples/ra_dit/federated_finetune/">
+        <link rel="prev" href="../llama_index/">
       
       
-        <link rel="next" href="../rag_benchmarking_hf_mmlu/">
+        <link rel="next" href="../qdrant/">
       
       
-      <link rel="icon" href="../../assets/favicon-48x48.svg">
+      <link rel="icon" href="../../../assets/favicon-48x48.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
     
     
       
-        <title>Basic Starter Example - FedRAG</title>
+        <title>Using LangChain for Inference - FedRAG</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +46,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#basic-starter-example" class="md-skip">
+        <a href="#using-langchain-for-inference" class="md-skip">
           Skip to content
         </a>
       
@@ -90,15 +90,15 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-header__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Basic Starter Example
+              Using LangChain for Inference
             
           </span>
         </div>
@@ -226,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting_started/essentials/" class="md-tabs__link">
+        <a href="../../../getting_started/essentials/" class="md-tabs__link">
           
   
   
@@ -269,7 +269,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/" class="md-tabs__link">
+        <a href="../../../examples/" class="md-tabs__link">
           
   
   
@@ -293,7 +293,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../../basic_starter_hf/" class="md-tabs__link">
           
   
   
@@ -315,7 +315,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../api_reference/" class="md-tabs__link">
+        <a href="../../../api_reference/" class="md-tabs__link">
           
   
   
@@ -344,7 +344,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../community/contributing/" class="md-tabs__link">
+        <a href="../../../community/contributing/" class="md-tabs__link">
           
   
   
@@ -383,15 +383,15 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
+    <a href="../../.." title="FedRAG" class="md-nav__button md-logo" aria-label="FedRAG" data-md-component="logo">
       <img
   id="logo_light_mode"
-  src="../../assets/logo.svg"
+  src="../../../assets/logo.svg"
   alt="logo"
 />
 <img
   id="logo_dark_mode"
-  src="../../assets/logo-dark.svg"
+  src="../../../assets/logo-dark.svg"
   alt="logo"
 />
     </a>
@@ -419,7 +419,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -498,7 +498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/essentials/" class="md-nav__link">
+      <a href="../../../getting_started/essentials/" class="md-nav__link">
         
   
   
@@ -550,7 +550,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting_started/quick_starts/" class="md-nav__link ">
+            <a href="../../../getting_started/quick_starts/" class="md-nav__link ">
               
   
   
@@ -585,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/federated/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/federated/" class="md-nav__link">
         
   
   
@@ -608,7 +608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/rag_inference/" class="md-nav__link">
         
   
   
@@ -631,7 +631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/rag_finetuning/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/rag_finetuning/" class="md-nav__link">
         
   
   
@@ -654,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/quick_starts/benchmark_mmlu/" class="md-nav__link">
+      <a href="../../../getting_started/quick_starts/benchmark_mmlu/" class="md-nav__link">
         
   
   
@@ -685,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/installation/" class="md-nav__link">
+      <a href="../../../getting_started/installation/" class="md-nav__link">
         
   
   
@@ -708,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/standard_usage/" class="md-nav__link">
+      <a href="../../../getting_started/standard_usage/" class="md-nav__link">
         
   
   
@@ -731,7 +731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/import_patterns/" class="md-nav__link">
+      <a href="../../../getting_started/import_patterns/" class="md-nav__link">
         
   
   
@@ -779,7 +779,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting_started/tutorials/" class="md-nav__link ">
+            <a href="../../../getting_started/tutorials/" class="md-nav__link ">
               
   
   
@@ -814,7 +814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/tutorials/lsr/" class="md-nav__link">
+      <a href="../../../getting_started/tutorials/lsr/" class="md-nav__link">
         
   
   
@@ -837,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/tutorials/ralt/" class="md-nav__link">
+      <a href="../../../getting_started/tutorials/ralt/" class="md-nav__link">
         
   
   
@@ -868,7 +868,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/integrations/" class="md-nav__link">
+      <a href="../../../getting_started/integrations/" class="md-nav__link">
         
   
   
@@ -921,7 +921,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../examples/" class="md-nav__link ">
+            <a href="../../../examples/" class="md-nav__link ">
               
   
   
@@ -985,7 +985,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../examples/ra_dit/" class="md-nav__link ">
+            <a href="../../../examples/ra_dit/" class="md-nav__link ">
               
   
   
@@ -1020,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/ra_dit/qdrant_knowledge_store_wikipedia/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/qdrant_knowledge_store_wikipedia/" class="md-nav__link">
         
   
   
@@ -1043,7 +1043,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/ra_dit/finetune/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/finetune/" class="md-nav__link">
         
   
   
@@ -1066,7 +1066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/ra_dit/benchmarking/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/benchmarking/" class="md-nav__link">
         
   
   
@@ -1089,7 +1089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/ra_dit/federated_finetune/" class="md-nav__link">
+      <a href="../../../examples/ra_dit/federated_finetune/" class="md-nav__link">
         
   
   
@@ -1180,32 +1180,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Basic Starter Example
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../basic_starter_hf/" class="md-nav__link">
         
   
   
@@ -1216,137 +1194,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#install-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Install dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#build-the-rag-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Build the RAG System
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Build the RAG System">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#knowledge-store-and-retriever" class="md-nav__link">
-    <span class="md-ellipsis">
-      Knowledge Store and Retriever
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lets-add-some-knowledge" class="md-nav__link">
-    <span class="md-ellipsis">
-      Let's Add Some Knowledge
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-an-llm-generator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Define an LLM Generator
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#assemble-the-rag-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Assemble the RAG System
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rag-fine-tuning" class="md-nav__link">
-    <span class="md-ellipsis">
-      RAG Fine-tuning
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="RAG Fine-tuning">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#the-train-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      The Train Dataset
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#retriever-fine-tuning-lsr" class="md-nav__link">
-    <span class="md-ellipsis">
-      Retriever Fine-Tuning (LSR)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generator-fine-tuning-ralt" class="md-nav__link">
-    <span class="md-ellipsis">
-      Generator Fine-tuning (RALT)
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#closing-remarks" class="md-nav__link">
-    <span class="md-ellipsis">
-      Closing Remarks
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1359,7 +1206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../rag_benchmarking_hf_mmlu/" class="md-nav__link">
+      <a href="../../rag_benchmarking_hf_mmlu/" class="md-nav__link">
         
   
   
@@ -1382,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../no_encode_rag_with_mcp/" class="md-nav__link">
+      <a href="../../no_encode_rag_with_mcp/" class="md-nav__link">
         
   
   
@@ -1402,8 +1249,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1422,11 +1271,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
@@ -1442,7 +1291,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_4">
             <span class="md-nav__icon md-icon"></span>
             Integrations
@@ -1456,7 +1305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/llama_index/" class="md-nav__link">
+      <a href="../llama_index/" class="md-nav__link">
         
   
   
@@ -1476,10 +1325,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../integrations/langchain/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Using LangChain for Inference
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1490,6 +1361,107 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install dependencies
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-the-rag-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setup — The RAG System
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup — The RAG System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-some-knowledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Add some knowledge
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-the-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using the Bridge
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using the Bridge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modifying-knowledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modifying Knowledge
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bridge-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Metadata
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1502,7 +1474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/qdrant/" class="md-nav__link">
+      <a href="../qdrant/" class="md-nav__link">
         
   
   
@@ -1525,7 +1497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/unsloth/" class="md-nav__link">
+      <a href="../unsloth/" class="md-nav__link">
         
   
   
@@ -1620,7 +1592,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/" class="md-nav__link ">
+            <a href="../../../api_reference/" class="md-nav__link ">
               
   
   
@@ -1680,7 +1652,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/bridges/" class="md-nav__link ">
+            <a href="../../../api_reference/bridges/" class="md-nav__link ">
               
   
   
@@ -1715,7 +1687,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/bridges/llamaindex/" class="md-nav__link">
+      <a href="../../../api_reference/bridges/llamaindex/" class="md-nav__link">
         
   
   
@@ -1738,7 +1710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/bridges/langchain/" class="md-nav__link">
+      <a href="../../../api_reference/bridges/langchain/" class="md-nav__link">
         
   
   
@@ -1792,7 +1764,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/data_collators/" class="md-nav__link ">
+            <a href="../../../api_reference/data_collators/" class="md-nav__link ">
               
   
   
@@ -1827,7 +1799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_collators/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/data_collators/huggingface/" class="md-nav__link">
         
   
   
@@ -1911,7 +1883,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_structures/bridge/" class="md-nav__link">
+      <a href="../../../api_reference/data_structures/bridge/" class="md-nav__link">
         
   
   
@@ -1934,7 +1906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_structures/evals/" class="md-nav__link">
+      <a href="../../../api_reference/data_structures/evals/" class="md-nav__link">
         
   
   
@@ -1957,7 +1929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_structures/knowledge_node/" class="md-nav__link">
+      <a href="../../../api_reference/data_structures/knowledge_node/" class="md-nav__link">
         
   
   
@@ -1980,7 +1952,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_structures/rag/" class="md-nav__link">
+      <a href="../../../api_reference/data_structures/rag/" class="md-nav__link">
         
   
   
@@ -2003,7 +1975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/data_structures/results/" class="md-nav__link">
+      <a href="../../../api_reference/data_structures/results/" class="md-nav__link">
         
   
   
@@ -2055,7 +2027,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/decorators/" class="md-nav__link ">
+            <a href="../../../api_reference/decorators/" class="md-nav__link ">
               
   
   
@@ -2120,7 +2092,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/evals/" class="md-nav__link ">
+            <a href="../../../api_reference/evals/" class="md-nav__link ">
               
   
   
@@ -2155,7 +2127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarker/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarker/" class="md-nav__link">
         
   
   
@@ -2280,7 +2252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/mmlu/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/mmlu/" class="md-nav__link">
         
   
   
@@ -2303,7 +2275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/pubmedqa/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/pubmedqa/" class="md-nav__link">
         
   
   
@@ -2326,7 +2298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/hotpotqa/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/hotpotqa/" class="md-nav__link">
         
   
   
@@ -2349,7 +2321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/natural_questions/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/natural_questions/" class="md-nav__link">
         
   
   
@@ -2372,7 +2344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/squad_v2/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/squad_v2/" class="md-nav__link">
         
   
   
@@ -2395,7 +2367,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/boolq/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/boolq/" class="md-nav__link">
         
   
   
@@ -2418,7 +2390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/benchmarks/huggingface/hellaswag/" class="md-nav__link">
+      <a href="../../../api_reference/evals/benchmarks/huggingface/hellaswag/" class="md-nav__link">
         
   
   
@@ -2502,7 +2474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/evals/metrics/exact_match/" class="md-nav__link">
+      <a href="../../../api_reference/evals/metrics/exact_match/" class="md-nav__link">
         
   
   
@@ -2578,7 +2550,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/exceptions/" class="md-nav__link ">
+            <a href="../../../api_reference/exceptions/" class="md-nav__link ">
               
   
   
@@ -2613,7 +2585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/bridge/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/bridge/" class="md-nav__link">
         
   
   
@@ -2636,7 +2608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/evals/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/evals/" class="md-nav__link">
         
   
   
@@ -2659,7 +2631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/fl_tasks/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/fl_tasks/" class="md-nav__link">
         
   
   
@@ -2682,7 +2654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/inspectors/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/inspectors/" class="md-nav__link">
         
   
   
@@ -2705,7 +2677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/knowledge_stores/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/knowledge_stores/" class="md-nav__link">
         
   
   
@@ -2728,7 +2700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/loss/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/loss/" class="md-nav__link">
         
   
   
@@ -2751,7 +2723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/rag_trainer/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/rag_trainer/" class="md-nav__link">
         
   
   
@@ -2774,7 +2746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/exceptions/tokenizer/" class="md-nav__link">
+      <a href="../../../api_reference/exceptions/tokenizer/" class="md-nav__link">
         
   
   
@@ -2830,7 +2802,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/finetuning_datasets/" class="md-nav__link ">
+            <a href="../../../api_reference/finetuning_datasets/" class="md-nav__link ">
               
   
   
@@ -2865,7 +2837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/finetuning_datasets/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/finetuning_datasets/pytorch/" class="md-nav__link">
         
   
   
@@ -2888,7 +2860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/finetuning_datasets/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/finetuning_datasets/huggingface/" class="md-nav__link">
         
   
   
@@ -2944,7 +2916,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/fl_tasks/" class="md-nav__link ">
+            <a href="../../../api_reference/fl_tasks/" class="md-nav__link ">
               
   
   
@@ -2979,7 +2951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/fl_tasks/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/fl_tasks/pytorch/" class="md-nav__link">
         
   
   
@@ -3002,7 +2974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/fl_tasks/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/fl_tasks/huggingface/" class="md-nav__link">
         
   
   
@@ -3058,7 +3030,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/generators/" class="md-nav__link ">
+            <a href="../../../api_reference/generators/" class="md-nav__link ">
               
   
   
@@ -3093,7 +3065,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/generators/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/generators/huggingface/" class="md-nav__link">
         
   
   
@@ -3116,7 +3088,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/generators/unsloth/" class="md-nav__link">
+      <a href="../../../api_reference/generators/unsloth/" class="md-nav__link">
         
   
   
@@ -3172,7 +3144,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/inspectors/" class="md-nav__link ">
+            <a href="../../../api_reference/inspectors/" class="md-nav__link ">
               
   
   
@@ -3207,7 +3179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/inspectors/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/inspectors/pytorch/" class="md-nav__link">
         
   
   
@@ -3230,7 +3202,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/inspectors/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/inspectors/huggingface/" class="md-nav__link">
         
   
   
@@ -3282,7 +3254,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/knowledge_nodes/" class="md-nav__link ">
+            <a href="../../../api_reference/knowledge_nodes/" class="md-nav__link ">
               
   
   
@@ -3347,7 +3319,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/knowledge_stores/" class="md-nav__link ">
+            <a href="../../../api_reference/knowledge_stores/" class="md-nav__link ">
               
   
   
@@ -3382,7 +3354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/knowledge_stores/in_memory/" class="md-nav__link">
+      <a href="../../../api_reference/knowledge_stores/in_memory/" class="md-nav__link">
         
   
   
@@ -3405,7 +3377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/knowledge_stores/qdrant/" class="md-nav__link">
+      <a href="../../../api_reference/knowledge_stores/qdrant/" class="md-nav__link">
         
   
   
@@ -3428,7 +3400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/knowledge_stores/mixins/" class="md-nav__link">
+      <a href="../../../api_reference/knowledge_stores/mixins/" class="md-nav__link">
         
   
   
@@ -3504,7 +3476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/loss/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/loss/pytorch/" class="md-nav__link">
         
   
   
@@ -3556,7 +3528,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/rag_system/" class="md-nav__link ">
+            <a href="../../../api_reference/rag_system/" class="md-nav__link ">
               
   
   
@@ -3619,7 +3591,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/trainer_managers/" class="md-nav__link ">
+            <a href="../../../api_reference/trainer_managers/" class="md-nav__link ">
               
   
   
@@ -3654,7 +3626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/trainer_managers/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/trainer_managers/pytorch/" class="md-nav__link">
         
   
   
@@ -3677,7 +3649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/trainer_managers/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/trainer_managers/huggingface/" class="md-nav__link">
         
   
   
@@ -3731,7 +3703,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/retrievers/" class="md-nav__link ">
+            <a href="../../../api_reference/retrievers/" class="md-nav__link ">
               
   
   
@@ -3766,7 +3738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/retrievers/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/retrievers/huggingface/" class="md-nav__link">
         
   
   
@@ -3820,7 +3792,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/tokenizers/" class="md-nav__link ">
+            <a href="../../../api_reference/tokenizers/" class="md-nav__link ">
               
   
   
@@ -3855,7 +3827,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/tokenizers/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/tokenizers/huggingface/" class="md-nav__link">
         
   
   
@@ -3911,7 +3883,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api_reference/trainers/" class="md-nav__link ">
+            <a href="../../../api_reference/trainers/" class="md-nav__link ">
               
   
   
@@ -3946,7 +3918,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/trainers/pytorch/" class="md-nav__link">
+      <a href="../../../api_reference/trainers/pytorch/" class="md-nav__link">
         
   
   
@@ -3969,7 +3941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_reference/trainers/huggingface/" class="md-nav__link">
+      <a href="../../../api_reference/trainers/huggingface/" class="md-nav__link">
         
   
   
@@ -4083,7 +4055,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../community/contributing/" class="md-nav__link ">
+            <a href="../../../community/contributing/" class="md-nav__link ">
               
   
   
@@ -4118,7 +4090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/ask_question/" class="md-nav__link">
+      <a href="../../../community/contributing/ask_question/" class="md-nav__link">
         
   
   
@@ -4141,7 +4113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/submit_issue/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_issue/" class="md-nav__link">
         
   
   
@@ -4164,7 +4136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/contributing/submit_pr/" class="md-nav__link">
+      <a href="../../../community/contributing/submit_pr/" class="md-nav__link">
         
   
   
@@ -4195,7 +4167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/changelog/" class="md-nav__link">
+      <a href="../../../community/changelog/" class="md-nav__link">
         
   
   
@@ -4263,7 +4235,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../community/resources/pocket_references/" class="md-nav__link">
+      <a href="../../../community/resources/pocket_references/" class="md-nav__link">
         
   
   
@@ -4321,6 +4293,16 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introduction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#install-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       Install dependencies
@@ -4328,48 +4310,26 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#build-the-rag-system" class="md-nav__link">
+  <a href="#setup-the-rag-system" class="md-nav__link">
     <span class="md-ellipsis">
-      Build the RAG System
+      Setup — The RAG System
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Build the RAG System">
+    <nav class="md-nav" aria-label="Setup — The RAG System">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#knowledge-store-and-retriever" class="md-nav__link">
+  <a href="#add-some-knowledge" class="md-nav__link">
     <span class="md-ellipsis">
-      Knowledge Store and Retriever
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lets-add-some-knowledge" class="md-nav__link">
-    <span class="md-ellipsis">
-      Let's Add Some Knowledge
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define-an-llm-generator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Define an LLM Generator
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#assemble-the-rag-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Assemble the RAG System
+      Add some knowledge
     </span>
   </a>
   
@@ -4381,37 +4341,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rag-fine-tuning" class="md-nav__link">
+  <a href="#using-the-bridge" class="md-nav__link">
     <span class="md-ellipsis">
-      RAG Fine-tuning
+      Using the Bridge
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="RAG Fine-tuning">
+    <nav class="md-nav" aria-label="Using the Bridge">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-train-dataset" class="md-nav__link">
+  <a href="#modifying-knowledge" class="md-nav__link">
     <span class="md-ellipsis">
-      The Train Dataset
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#retriever-fine-tuning-lsr" class="md-nav__link">
-    <span class="md-ellipsis">
-      Retriever Fine-Tuning (LSR)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generator-fine-tuning-ralt" class="md-nav__link">
-    <span class="md-ellipsis">
-      Generator Fine-tuning (RALT)
+      Modifying Knowledge
     </span>
   </a>
   
@@ -4423,9 +4365,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#closing-remarks" class="md-nav__link">
+  <a href="#bridge-metadata" class="md-nav__link">
     <span class="md-ellipsis">
-      Closing Remarks
+      Bridge Metadata
     </span>
   </a>
   
@@ -4886,13 +4828,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=70a570c4-60fe-47f2-8693-a827f9d361c6">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=78004a67-2dea-4da4-a87f-819fde322364">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<a href="https://colab.research.google.com/github/VectorInstitute/fed-rag/blob/main/docs/notebooks/basic_starter_hf.ipynb" target="_blank">
+<a href="https://colab.research.google.com/github/VectorInstitute/fed-rag/blob/main/docs/notebooks/integrations/langchain.ipynb" target="_blank">
 <img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/>
 </a>
 <p><em>(NOTE: if running on Colab, you will need to supply a WandB API Key in addition to your HFToken. Also, you'll need to change the runtime to a T4.)</em></p>
@@ -4900,18 +4842,26 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3ec903c3-7500-44c4-9593-d87e2cfebdb5">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f31024c3-3f4f-4909-94c2-ef5bc7de1f5a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="basic-starter-example">Basic Starter Example<a class="anchor-link" href="#basic-starter-example">¶</a></h1><p>In this notebook, we'll build a <code>RAGSystem</code> and fine-tune both the generator and retriever using the <code>huggingface</code> extra.</p>
+<h1 id="using-langchain-for-inference">Using LangChain for Inference<a class="anchor-link" href="#using-langchain-for-inference">¶</a></h1><h2 id="introduction">Introduction<a class="anchor-link" href="#introduction">¶</a></h2><p>After fine-tuning your RAG system to achieve desired performance, you'll want to
+deploy it for inference. While FedRAG's <code>RAGSystem</code> provides complete inference
+capabilities out of the box, you may need additional features for production deployments
+or want to leverage the ecosystem of existing RAG frameworks.</p>
+<p>FedRAG offers a seamless integration into <a href="https://github.com/langchain-ai/langchain">LangChain</a> through our bridges system, giving you the best of both worlds: FedRAG's fine-tuning capabilities combined
+with the extensive inference features of LangChain.</p>
+<p>In this example, we demonstrate how you can convert a <code>RAGSystem</code> into a tuple consisting of <code>~langchain_core.vectorstores.VectorStore</code> and <code>~langchain_core.language_models.BaseLLM</code>. The former can then be transformed into a <code>~langchain_core.vectorestores.VectorStoreRetriever</code> using the <code>as_retriever()</code> method, enabling the creation of a complete QA pipeline whith LangChain's LCEL.</p>
+<p><strong>NOTE:</strong>
+Streaming and async functionalities are not yet supported.</p>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7497c18e-0c8d-4e24-9faa-b19bed277087">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=248dec17-5225-4d16-8aad-00c0101c7a4b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4922,7 +4872,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=254d8fc1-90a3-4f8d-a68a-cd6a43572913">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=65ad8f32-d63a-4b9f-8406-79130df4945e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -4942,45 +4892,34 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># If running in a Google Colab, the first attempt at installing fed-rag may fail,</span>
 <span class="c1"># though for reasons unknown to me yet, if you try a second time, it magically works...</span>
-<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">fed</span><span class="o">-</span><span class="n">rag</span><span class="p">[</span><span class="n">huggingface</span><span class="p">]</span> <span class="o">-</span><span class="n">q</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">fed</span><span class="o">-</span><span class="n">rag</span><span class="p">[</span><span class="n">huggingface</span><span class="p">,</span><span class="n">langchain</span><span class="p">]</span> <span class="o">-</span><span class="n">q</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1"># If running in a Google Colab, the first attempt at installing fed-rag may fail,
 # though for reasons unknown to me yet, if you try a second time, it magically works...
-!pip install fed-rag[huggingface] -q</div>
+!pip install fed-rag[huggingface,langchain] -q</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=587dc55e-d6f2-40f2-a3d2-64e304e6193d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8db0e246-6757-4c67-98b8-347173d186b7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="build-the-rag-system">Build the RAG System<a class="anchor-link" href="#build-the-rag-system">¶</a></h2>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=92e11c5b-bd44-43c2-8150-0b3be22946de">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="knowledge-store-and-retriever">Knowledge Store and Retriever<a class="anchor-link" href="#knowledge-store-and-retriever">¶</a></h3>
+<h2 id="setup-the-rag-system">Setup — The RAG System<a class="anchor-link" href="#setup-the-rag-system">¶</a></h2>
 </div>
 </div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7753c3f4-7a84-4197-b5a0-83908308797c">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=edf7eae4-e5c8-4f97-8a82-a8c4ddbaea83">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
@@ -4993,27 +4932,134 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.knowledge_stores.in_memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryKnowledgeStore</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.retrievers.huggingface.hf_sentence_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers.generation.configuration_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerationConfig</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.generators.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFPretrainedModelGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.retrievers.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">HFSentenceTransformerRetriever</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.knowledge_stores</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryKnowledgeStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.data_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span>
+
+
+<span class="n">QUERY_ENCODER_NAME</span> <span class="o">=</span> <span class="s2">"nthakur/dragon-plus-query-encoder"</span>
+<span class="n">CONTEXT_ENCODER_NAME</span> <span class="o">=</span> <span class="s2">"nthakur/dragon-plus-context-encoder"</span>
+<span class="n">PRETRAINED_MODEL_NAME</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen3-0.6B"</span>
+
+<span class="c1"># Retriever</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">HFSentenceTransformerRetriever</span><span class="p">(</span>
+    <span class="n">query_model_name</span><span class="o">=</span><span class="n">QUERY_ENCODER_NAME</span><span class="p">,</span>
+    <span class="n">context_model_name</span><span class="o">=</span><span class="n">CONTEXT_ENCODER_NAME</span><span class="p">,</span>
+    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Generator</span>
+<span class="n">generation_cfg</span> <span class="o">=</span> <span class="n">GenerationConfig</span><span class="p">(</span>
+    <span class="n">do_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">eos_token_id</span><span class="o">=</span><span class="mi">151643</span><span class="p">,</span>
+    <span class="n">bos_token_id</span><span class="o">=</span><span class="mi">151643</span><span class="p">,</span>
+    <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+    <span class="n">cache_implementation</span><span class="o">=</span><span class="s2">"offloaded"</span><span class="p">,</span>
+    <span class="n">stop_strings</span><span class="o">=</span><span class="s2">"&lt;/response&gt;"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">generator</span> <span class="o">=</span> <span class="n">HFPretrainedModelGenerator</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="n">PRETRAINED_MODEL_NAME</span><span class="p">,</span>
+    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">load_model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"device_map"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"torch_dtype"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">},</span>
+    <span class="n">generation_config</span><span class="o">=</span><span class="n">generation_cfg</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Knowledge store</span>
+<span class="n">knowledge_store</span> <span class="o">=</span> <span class="n">InMemoryKnowledgeStore</span><span class="p">()</span>
+
+
+<span class="c1"># Create the RAG system</span>
+<span class="n">rag_system</span> <span class="o">=</span> <span class="n">RAGSystem</span><span class="p">(</span>
+    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+    <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
+    <span class="n">knowledge_store</span><span class="o">=</span><span class="n">knowledge_store</span><span class="p">,</span>
+    <span class="n">rag_config</span><span class="o">=</span><span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
-from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
+<div class="clipboard-copy-txt" id="cell-2">import torch
+from transformers.generation.configuration_utils import GenerationConfig
+
+from fed_rag import RAGSystem, RAGConfig
+from fed_rag.generators.huggingface import HFPretrainedModelGenerator
+from fed_rag.retrievers.huggingface import (
     HFSentenceTransformerRetriever,
+)
+from fed_rag.knowledge_stores import InMemoryKnowledgeStore
+from fed_rag.data_structures import KnowledgeNode
+
+
+QUERY_ENCODER_NAME = "nthakur/dragon-plus-query-encoder"
+CONTEXT_ENCODER_NAME = "nthakur/dragon-plus-context-encoder"
+PRETRAINED_MODEL_NAME = "Qwen/Qwen3-0.6B"
+
+# Retriever
+retriever = HFSentenceTransformerRetriever(
+    query_model_name=QUERY_ENCODER_NAME,
+    context_model_name=CONTEXT_ENCODER_NAME,
+    load_model_at_init=False,
+)
+
+# Generator
+generation_cfg = GenerationConfig(
+    do_sample=True,
+    eos_token_id=151643,
+    bos_token_id=151643,
+    max_new_tokens=2048,
+    top_p=0.9,
+    temperature=0.6,
+    cache_implementation="offloaded",
+    stop_strings="",
+)
+generator = HFPretrainedModelGenerator(
+    model_name=PRETRAINED_MODEL_NAME,
+    load_model_at_init=False,
+    load_model_kwargs={"device_map": "auto", "torch_dtype": torch.float16},
+    generation_config=generation_cfg,
+)
+
+# Knowledge store
+knowledge_store = InMemoryKnowledgeStore()
+
+
+# Create the RAG system
+rag_system = RAGSystem(
+    retriever=retriever,
+    generator=generator,
+    knowledge_store=knowledge_store,
+    rag_config=RAGConfig(top_k=1),
 )</div>
 </div>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3ba2f188-5a6c-4092-834e-b45d321a1eba">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="add-some-knowledge">Add some knowledge<a class="anchor-link" href="#add-some-knowledge">¶</a></h3>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e3a94db7-82be-4ee2-82f4-a8d68166959d">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3c13ca5a-83da-44af-9bc9-c75274856248">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
@@ -5026,44 +5072,45 @@ from fed_rag.retrievers.huggingface.hf_sentence_transformer import (
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">knowledge_store</span> <span class="o">=</span> <span class="n">InMemoryKnowledgeStore</span><span class="p">()</span>
-
-<span class="n">retriever</span> <span class="o">=</span> <span class="n">HFSentenceTransformerRetriever</span><span class="p">(</span>
-    <span class="n">query_model_name</span><span class="o">=</span><span class="s2">"nthakur/dragon-plus-query-encoder"</span><span class="p">,</span>
-    <span class="n">context_model_name</span><span class="o">=</span><span class="s2">"nthakur/dragon-plus-context-encoder"</span><span class="p">,</span>
-    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">text_chunks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Retrieval-Augmented Generation (RAG) combines retrieval with generation."</span><span class="p">,</span>
+    <span class="s2">"LLMs can hallucinate information when they lack context."</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">knowledge_nodes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">KnowledgeNode</span><span class="p">(</span>
+        <span class="n">node_type</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
+        <span class="n">embedding</span><span class="o">=</span><span class="n">retriever</span><span class="o">.</span><span class="n">encode_context</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="n">text_content</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">text_chunks</span>
+<span class="p">]</span>
+<span class="n">knowledge_store</span><span class="o">.</span><span class="n">load_nodes</span><span class="p">(</span><span class="n">knowledge_nodes</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">knowledge_store = InMemoryKnowledgeStore()
-
-retriever = HFSentenceTransformerRetriever(
-    query_model_name="nthakur/dragon-plus-query-encoder",
-    context_model_name="nthakur/dragon-plus-context-encoder",
-    load_model_at_init=False,
-)</div>
+<div class="clipboard-copy-txt" id="cell-3">text_chunks = [
+    "Retrieval-Augmented Generation (RAG) combines retrieval with generation.",
+    "LLMs can hallucinate information when they lack context.",
+]
+knowledge_nodes = [
+    KnowledgeNode(
+        node_type="text",
+        embedding=retriever.encode_context(ct).tolist(),
+        text_content=ct,
+    )
+    for ct in text_chunks
+]
+knowledge_store.load_nodes(knowledge_nodes)</div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d31e5aac-6615-4df1-a0a9-62d3da3a0195">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="lets-add-some-knowledge">Let's Add Some Knowledge<a class="anchor-link" href="#lets-add-some-knowledge">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8dfff24c-1286-4db7-a144-b2104b9320ac">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6c0389b3-da82-4e37-915a-1326a4573b1c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
@@ -5076,192 +5123,48 @@ retriever = HFSentenceTransformerRetriever(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># a small sample from the Dec 2021 Wikipedia dump</span>
-<span class="n">text_chunks</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"140"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"James Cook"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" James Cook is well known for his voyages of exploration for the British Navy in which he mapped out a significant amount of the world's uncharted waters. Cook's explorations took him around the world twice and led to countless descriptions of previously unknown plants and animals. Cook's explorations influenced many others and led to a number of scientists examining marine life more closely. Among those influenced was Charles Darwin who went on to make many contributions of his own. "</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"141"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Charles Darwin"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" Charles Darwin, best known for his theory of evolution, made many significant contributions to the early study of marine biology. He spent much of his time from 1831 to 1836 on the voyage of HMS Beagle collecting and studying specimens from a variety of marine organisms. It was also on this expedition where Darwin began to study coral reefs and their formation. He came up with the theory that the overall growth of corals is a balance between the growth of corals upward and the sinking of the sea floor. He then came up with the idea that wherever coral atolls would be found, the central island where the coral had started to grow would be gradually subsiding"</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"142"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Charles Wyville Thomson"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" Another influential expedition was the voyage of HMS Challenger from 1872 to 1876, organized and later led by Charles Wyville Thomson. It was the first expedition purely devoted to marine science. The expedition collected and analyzed thousands of marine specimens, laying the foundation for present knowledge about life near the deep-sea floor. The findings from the expedition were a summary of the known natural, physical and chemical ocean science to that time."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"143"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Later exploration"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" This era of marine exploration came to a close with the first and second round-the-world voyages of the Danish Galathea expeditions and Atlantic voyages by the USS Albatross, the first research vessel purpose built for marine research. These voyages further cleared the way for modern marine biology by building a base of knowledge about marine biology. This was followed by the progressive development of more advanced technologies which began to allow more extensive explorations of ocean depths that were once thought too deep to sustain life."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"144"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Marine biology labs"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" In the 1960s and 1970s, ecological research into the life of the ocean was undertaken at institutions set up specifically to study marine biology. Notable was the Woods Hole Oceanographic Institution in America, which established a model for other marine laboratories subsequently set up around the world. Their findings of unexpectedly high species diversity in places thought to be inhabitable stimulated much theorizing by population ecologists on how high diversification could be maintained in such a food-poor and seemingly hostile environment. "</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"145"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Exploration technology"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" In the past, the study of marine biology has been limited by a lack of technology as researchers could only go so deep to examine life in the ocean. Before the mid-twentieth century, the deep-sea bottom could not be seen unless one dredged a piece of it and brought it to the surface. This has changed dramatically due to the development of new technologies in both the laboratory and the open sea. These new technological developments have allowed scientists to explore parts of the ocean they didn't even know existed. The development of scuba gear allowed researchers to visually explore the oceans as it contains a self-contained underwater breathing apparatus allowing a person to breathe while being submerged 100 to 200 feet "</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"146"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Exploration technology"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" the ocean. Submersibles were built like small submarines with the purpose of taking marine scientists to deeper depths of the ocean while protecting them from increasing atmospheric pressures that cause complications deep under water. The first models could hold several individuals and allowed limited visibility but enabled marine biologists to see and photograph the deeper portions of the oceans. Remotely operated underwater vehicles are now used with and without submersibles to see the deepest areas of the ocean that would be too dangerous for humans. ROVs are fully equipped with cameras and sampling equipment which allows researchers to see and control everything the vehicle does. ROVs have become the dominant type of technology used to view the deepest parts of the ocean."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"147"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"History of marine biology"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Romanticization"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s1">' In the late 20th century and into the 21st, marine biology was "glorified and romanticized through films and television shows," leading to an influx in interested students who required a damping on their enthusiasm with the day-to-day realities of the field.'</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"148"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Wynthryth"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" Wynthryth of March was an early medieval saint of Anglo Saxon England. He is known to history from the Secgan Hagiography and The Confraternity Book of  St Gallen. Very little is known of his life or career. However, he was associated with the town of March, Cambridgeshire, and he may have been a relative of King Ethelstan."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"149"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"James M. Safford"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" James Merrill Safford (1822–1907) was an American geologist, chemist and university professor."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"150"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"James M. Safford"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Early life"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" James M. Safford was born in Putnam, Ohio on August 13, 1822. He received an M.D. and a PhD. He was trained as a chemist at Yale University. He married Catherine K. Owens in 1859, and they had two children."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"151"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"James M. Safford"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Career"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" Safford taught at Cumberland University in Lebanon, Tennessee from 1848 to 1873. He served as a Professor of Mineralogy, Botany, and Economical Geology at Vanderbilt University in Nashville, Tennessee from 1875 to 1900. He was a Presbyterian, and often started his lessons with a prayer. He served on the Tennessee Board of Health. Additionally, he acted as a chemist for the Tennessee Bureau of Agriculture in the 1870s and 1880s. He published fifty-four books, reports, and maps."</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"152"</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"James M. Safford"</span><span class="p">,</span>
-        <span class="s2">"section"</span><span class="p">:</span> <span class="s2">"Death"</span><span class="p">,</span>
-        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" He died in Dallas on July 2, 1907."</span><span class="p">,</span>
-    <span class="p">},</span>
-<span class="p">]</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">rag_system</span><span class="o">.</span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">count</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4"># a small sample from the Dec 2021 Wikipedia dump
-text_chunks = [
-    {
-        "id": "140",
-        "title": "History of marine biology",
-        "section": "James Cook",
-        "text": " James Cook is well known for his voyages of exploration for the British Navy in which he mapped out a significant amount of the world's uncharted waters. Cook's explorations took him around the world twice and led to countless descriptions of previously unknown plants and animals. Cook's explorations influenced many others and led to a number of scientists examining marine life more closely. Among those influenced was Charles Darwin who went on to make many contributions of his own. ",
-    },
-    {
-        "id": "141",
-        "title": "History of marine biology",
-        "section": "Charles Darwin",
-        "text": " Charles Darwin, best known for his theory of evolution, made many significant contributions to the early study of marine biology. He spent much of his time from 1831 to 1836 on the voyage of HMS Beagle collecting and studying specimens from a variety of marine organisms. It was also on this expedition where Darwin began to study coral reefs and their formation. He came up with the theory that the overall growth of corals is a balance between the growth of corals upward and the sinking of the sea floor. He then came up with the idea that wherever coral atolls would be found, the central island where the coral had started to grow would be gradually subsiding",
-    },
-    {
-        "id": "142",
-        "title": "History of marine biology",
-        "section": "Charles Wyville Thomson",
-        "text": " Another influential expedition was the voyage of HMS Challenger from 1872 to 1876, organized and later led by Charles Wyville Thomson. It was the first expedition purely devoted to marine science. The expedition collected and analyzed thousands of marine specimens, laying the foundation for present knowledge about life near the deep-sea floor. The findings from the expedition were a summary of the known natural, physical and chemical ocean science to that time.",
-    },
-    {
-        "id": "143",
-        "title": "History of marine biology",
-        "section": "Later exploration",
-        "text": " This era of marine exploration came to a close with the first and second round-the-world voyages of the Danish Galathea expeditions and Atlantic voyages by the USS Albatross, the first research vessel purpose built for marine research. These voyages further cleared the way for modern marine biology by building a base of knowledge about marine biology. This was followed by the progressive development of more advanced technologies which began to allow more extensive explorations of ocean depths that were once thought too deep to sustain life.",
-    },
-    {
-        "id": "144",
-        "title": "History of marine biology",
-        "section": "Marine biology labs",
-        "text": " In the 1960s and 1970s, ecological research into the life of the ocean was undertaken at institutions set up specifically to study marine biology. Notable was the Woods Hole Oceanographic Institution in America, which established a model for other marine laboratories subsequently set up around the world. Their findings of unexpectedly high species diversity in places thought to be inhabitable stimulated much theorizing by population ecologists on how high diversification could be maintained in such a food-poor and seemingly hostile environment. ",
-    },
-    {
-        "id": "145",
-        "title": "History of marine biology",
-        "section": "Exploration technology",
-        "text": " In the past, the study of marine biology has been limited by a lack of technology as researchers could only go so deep to examine life in the ocean. Before the mid-twentieth century, the deep-sea bottom could not be seen unless one dredged a piece of it and brought it to the surface. This has changed dramatically due to the development of new technologies in both the laboratory and the open sea. These new technological developments have allowed scientists to explore parts of the ocean they didn't even know existed. The development of scuba gear allowed researchers to visually explore the oceans as it contains a self-contained underwater breathing apparatus allowing a person to breathe while being submerged 100 to 200 feet ",
-    },
-    {
-        "id": "146",
-        "title": "History of marine biology",
-        "section": "Exploration technology",
-        "text": " the ocean. Submersibles were built like small submarines with the purpose of taking marine scientists to deeper depths of the ocean while protecting them from increasing atmospheric pressures that cause complications deep under water. The first models could hold several individuals and allowed limited visibility but enabled marine biologists to see and photograph the deeper portions of the oceans. Remotely operated underwater vehicles are now used with and without submersibles to see the deepest areas of the ocean that would be too dangerous for humans. ROVs are fully equipped with cameras and sampling equipment which allows researchers to see and control everything the vehicle does. ROVs have become the dominant type of technology used to view the deepest parts of the ocean.",
-    },
-    {
-        "id": "147",
-        "title": "History of marine biology",
-        "section": "Romanticization",
-        "text": ' In the late 20th century and into the 21st, marine biology was "glorified and romanticized through films and television shows," leading to an influx in interested students who required a damping on their enthusiasm with the day-to-day realities of the field.',
-    },
-    {
-        "id": "148",
-        "title": "Wynthryth",
-        "section": "",
-        "text": " Wynthryth of March was an early medieval saint of Anglo Saxon England. He is known to history from the Secgan Hagiography and The Confraternity Book of  St Gallen. Very little is known of his life or career. However, he was associated with the town of March, Cambridgeshire, and he may have been a relative of King Ethelstan.",
-    },
-    {
-        "id": "149",
-        "title": "James M. Safford",
-        "section": "",
-        "text": " James Merrill Safford (1822–1907) was an American geologist, chemist and university professor.",
-    },
-    {
-        "id": "150",
-        "title": "James M. Safford",
-        "section": "Early life",
-        "text": " James M. Safford was born in Putnam, Ohio on August 13, 1822. He received an M.D. and a PhD. He was trained as a chemist at Yale University. He married Catherine K. Owens in 1859, and they had two children.",
-    },
-    {
-        "id": "151",
-        "title": "James M. Safford",
-        "section": "Career",
-        "text": " Safford taught at Cumberland University in Lebanon, Tennessee from 1848 to 1873. He served as a Professor of Mineralogy, Botany, and Economical Geology at Vanderbilt University in Nashville, Tennessee from 1875 to 1900. He was a Presbyterian, and often started his lessons with a prayer. He served on the Tennessee Board of Health. Additionally, he acted as a chemist for the Tennessee Bureau of Agriculture in the 1870s and 1880s. He published fifty-four books, reports, and maps.",
-    },
-    {
-        "id": "152",
-        "title": "James M. Safford",
-        "section": "Death",
-        "text": " He died in Dallas on July 2, 1907.",
-    },
-]</div>
+<div class="clipboard-copy-txt" id="cell-4">rag_system.knowledge_store.count</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>2</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=51894e82-639e-4332-8e45-0dea7f3e3144">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a6df7a0b-b0f2-45b3-9cc8-c9d7d8997056">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>From these text chunks, we can create our <code>KnowledgeNodes</code>.</p>
+<h2 id="using-the-bridge">Using the Bridge<a class="anchor-link" href="#using-the-bridge">¶</a></h2><p>Converting your RAG system to LangChain objects is seamless since the bridge
+functionality is already built into the <code>RAGSystem</code> class. The <code>RAGSystem</code> inherits
+from <code>LangChainBridgeMixin</code>, which provides the <code>to_langchain()</code> method for
+effortless conversion.</p>
+<p><strong>NOTE</strong>: The <code>to_langchain()</code> method returns a tuple consisting of <code>FedRAGVectorStore</code> and <code>FedRAGLLM</code> objects, which are custom implementation of the <code>~langchain_core.vectorstores.VectorStore</code> and <code>~langchain_core.language_models.BaseLLM</code> classes.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=13a09878-fc4e-40a6-bdc7-e312402b7365">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=87648b84-00a2-4bb1-b30e-07b5b9a090b5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-5">
@@ -5274,65 +5177,203 @@ text_chunks = [
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.data_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnowledgeNode</span><span class="p">,</span> <span class="n">NodeType</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Create the LangChain objects</span>
+<span class="n">vector_store</span><span class="p">,</span> <span class="n">llm</span> <span class="o">=</span> <span class="n">rag_system</span><span class="o">.</span><span class="n">to_langchain</span><span class="p">()</span>
 
-<span class="c1"># create knowledge nodes</span>
-<span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text_chunks</span><span class="p">:</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>
-    <span class="n">title</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"title"</span><span class="p">)</span>
-    <span class="n">section</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"section"</span><span class="p">)</span>
-    <span class="n">context_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"title: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">section: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="se">\n</span><span class="s2">text: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">context_text</span><span class="p">)</span>
+<span class="c1"># Search the vectore store directly</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">"What happens if LLMs lack context?"</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Content: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
 
-<span class="c1"># batch encode</span>
-<span class="n">batch_embeddings</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">encode_context</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+<span class="c1"># Or, convert it to a retriever</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Content: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">jx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text_chunks</span><span class="p">):</span>
-    <span class="n">node</span> <span class="o">=</span> <span class="n">KnowledgeNode</span><span class="p">(</span>
-        <span class="n">embedding</span><span class="o">=</span><span class="n">batch_embeddings</span><span class="p">[</span><span class="n">jx</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="n">node_type</span><span class="o">=</span><span class="n">NodeType</span><span class="o">.</span><span class="n">TEXT</span><span class="p">,</span>
-        <span class="n">text_content</span><span class="o">=</span><span class="n">texts</span><span class="p">[</span><span class="n">jx</span><span class="p">],</span>
-        <span class="n">metadata</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="c1"># Or, create a complete RAG chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnablePassthrough</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.base.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_PROMPT_TEMPLATE</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">format_docs</span><span class="p">(</span><span class="n">docs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">)</span>
+
+
+<span class="n">qa_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"context"</span><span class="p">:</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">()</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span>
+        <span class="s2">"query"</span><span class="p">:</span> <span class="n">RunnablePassthrough</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="o">|</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">DEFAULT_PROMPT_TEMPLATE</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">llm</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">qa_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"What are autonomous agents?"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">from fed_rag.data_structures import KnowledgeNode, NodeType
+<div class="clipboard-copy-txt" id="cell-5"># Create the LangChain objects
+vector_store, llm = rag_system.to_langchain()
 
-# create knowledge nodes
-nodes = []
-texts = []
-for c in text_chunks:
-    text = c.pop("text")
-    title = c.pop("title")
-    section = c.pop("section")
-    context_text = f"title: {title}\nsection: {section}\ntext: {text}"
-    texts.append(context_text)
+# Search the vectore store directly
+query = "What happens if LLMs lack context?"
+results = vector_store.similarity_search_with_score(query, k=2)
+for doc, score in results:
+    print(f"Content: {doc.page_content}, Score: {score}")
+print("-" * 80)
 
-# batch encode
-batch_embeddings = retriever.encode_context(texts)
+# Or, convert it to a retriever
+retriever = vector_store.as_retriever()
+results = retriever.invoke(query)
+for doc in results:
+    print(f"Content: {doc.page_content}")
+print("-" * 80)
 
-for jx, c in enumerate(text_chunks):
-    node = KnowledgeNode(
-        embedding=batch_embeddings[jx].tolist(),
-        node_type=NodeType.TEXT,
-        text_content=texts[jx],
-        metadata=c,
-    )
-    nodes.append(node)</div>
+# Or, create a complete RAG chain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.prompts import PromptTemplate
+from fed_rag.base.generator import DEFAULT_PROMPT_TEMPLATE
+
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+
+qa_chain = (
+    {
+        "context": vector_store.as_retriever() | format_docs,
+        "query": RunnablePassthrough(),
+    }
+    | PromptTemplate.from_template(DEFAULT_PROMPT_TEMPLATE)
+    | llm
+    | StrOutputParser()
+)
+
+response = qa_chain.invoke("What are autonomous agents?")
+print(response)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Content: LLMs can hallucinate information when they lack context., Score: 0.5453173113645673
+Content: Retrieval-Augmented Generation (RAG) combines retrieval with generation., Score: 0.5065647593667755
+--------------------------------------------------------------------------------
+Content: LLMs can hallucinate information when they lack context.
+Content: Retrieval-Augmented Generation (RAG) combines retrieval with generation.
+--------------------------------------------------------------------------------
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>tokenizer_config.json:   0%|          | 0.00/9.73k [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>vocab.json:   0%|          | 0.00/2.78M [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>merges.txt:   0%|          | 0.00/1.67M [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>tokenizer.json:   0%|          | 0.00/11.4M [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>config.json:   0%|          | 0.00/726 [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>model.safetensors:   0%|          | 0.00/1.50G [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>generation_config.json:   0%|          | 0.00/239 [00:00&lt;?, ?B/s]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>`generation_config` default values have been modified to match model-specific defaults: {'top_k': 20, 'pad_token_id': 151643}. If this is not desired, please set these values explicitly.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>An autonomous agent is a system designed to perform specific tasks without direct human intervention. It uses AI to process information and make decisions based on that information. Autonomous agents can be used in various applications, such as healthcare, finance, and logistics, to improve efficiency and accuracy.
+&lt;/response&gt;
+
+
+</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a51daa4d-cd81-45a8-a766-893febb67cf0">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=270a3335-66ec-47a3-ac2f-1592a6496b72">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="modifying-knowledge">Modifying Knowledge<a class="anchor-link" href="#modifying-knowledge">¶</a></h3><p>In addition to querying the bridged index, you can also make changes to the
+underlying KnowledgeStore using LangChains's API:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=39707b5a-82e1-4977-be72-96ce9f6714d2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-6">
@@ -5345,21 +5386,42 @@ for jx, c in enumerate(text_chunks):
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ids</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">add_texts</span><span class="p">(</span>
+    <span class="n">texts</span><span class="o">=</span><span class="p">[</span><span class="s2">"some arbitrary text"</span><span class="p">,</span> <span class="s2">"some other arbitrary text"</span><span class="p">],</span>
+    <span class="n">metadatas</span><span class="o">=</span><span class="p">[{</span><span class="s2">"source"</span><span class="p">:</span> <span class="s2">"fed-rag"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="s2">"fed-rag"</span><span class="p">}],</span>
+<span class="p">)</span>
+<span class="n">ids</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">nodes[0].model_dump()</div>
+<div class="clipboard-copy-txt" id="cell-6">ids = vector_store.add_texts(
+    texts=["some arbitrary text", "some other arbitrary text"],
+    metadatas=[{"source": "fed-rag"}, {"source": "fed-rag"}],
+)
+ids</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>['6797e6f0-5501-447b-ad8a-f256f97bde9b',
+ 'aa0af869-44fa-4c50-b151-eb4c46d311e3']</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=cae62642-0e6c-4d04-9ac1-315d169e86f4">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ff1bb880-a526-4dd7-8751-06f08689092d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
@@ -5372,23 +5434,35 @@ for jx, c in enumerate(text_chunks):
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># load nodes</span>
-<span class="n">knowledge_store</span><span class="o">.</span><span class="n">load_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># confirm that what we added above is indeed in the knowledge store</span>
+<span class="n">rag_system</span><span class="o">.</span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">count</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7"># load nodes
-knowledge_store.load_nodes(nodes)</div>
+<div class="clipboard-copy-txt" id="cell-7"># confirm that what we added above is indeed in the knowledge store
+rag_system.knowledge_store.count</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>4</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=8fac17ba-a86b-4a47-9aae-32cefc7cdc6b">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2febaa2d-d28f-46d2-8de7-741fe28f322f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
@@ -5401,32 +5475,35 @@ knowledge_store.load_nodes(nodes)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">count</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># you can also delete nodes</span>
+<span class="n">vector_store</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">knowledge_store.count</div>
+<div class="clipboard-copy-txt" id="cell-8"># you can also delete nodes
+vector_store.delete(ids)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>True</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a5247e79-3c23-446c-9d74-28dfa0075eda">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="define-an-llm-generator">Define an LLM Generator<a class="anchor-link" href="#define-an-llm-generator">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6d885b4e-ba5d-45c0-9ccf-cd1354d7d709">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=abc736ec-6dff-4c54-b145-8c65592a68c8">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
@@ -5439,70 +5516,47 @@ knowledge_store.load_nodes(nodes)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.generators.huggingface</span><span class="w"> </span><span class="kn">import</span> <span class="n">HFPretrainedModelGenerator</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">transformers.generation.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerationConfig</span>
-
-<span class="n">generation_cfg</span> <span class="o">=</span> <span class="n">GenerationConfig</span><span class="p">(</span>
-    <span class="n">do_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">eos_token_id</span><span class="o">=</span><span class="mi">151643</span><span class="p">,</span>
-    <span class="n">bos_token_id</span><span class="o">=</span><span class="mi">151643</span><span class="p">,</span>
-    <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
-    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
-    <span class="n">cache_implementation</span><span class="o">=</span><span class="s2">"offloaded"</span><span class="p">,</span>
-    <span class="n">stop_strings</span><span class="o">=</span><span class="s2">"&lt;/response&gt;"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">generator</span> <span class="o">=</span> <span class="n">HFPretrainedModelGenerator</span><span class="p">(</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">"Qwen/Qwen2.5-0.5B"</span><span class="p">,</span>
-    <span class="n">load_model_at_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">load_model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"device_map"</span><span class="p">:</span> <span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"torch_dtype"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">},</span>
-    <span class="n">generation_config</span><span class="o">=</span><span class="n">generation_cfg</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># confirm that what we deleted above is indeed removed from the knowledge store</span>
+<span class="n">rag_system</span><span class="o">.</span><span class="n">knowledge_store</span><span class="o">.</span><span class="n">count</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-9">from fed_rag.generators.huggingface import HFPretrainedModelGenerator
-import torch
-from transformers.generation.utils import GenerationConfig
-
-generation_cfg = GenerationConfig(
-    do_sample=True,
-    eos_token_id=151643,
-    bos_token_id=151643,
-    max_new_tokens=2048,
-    top_p=0.9,
-    temperature=0.6,
-    cache_implementation="offloaded",
-    stop_strings="",
-)
-generator = HFPretrainedModelGenerator(
-    model_name="Qwen/Qwen2.5-0.5B",
-    load_model_at_init=False,
-    load_model_kwargs={"device_map": "auto", "torch_dtype": torch.float16},
-    generation_config=generation_cfg,
-)</div>
+<div class="clipboard-copy-txt" id="cell-9"># confirm that what we deleted above is indeed removed from the knowledge store
+rag_system.knowledge_store.count</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>2</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=306b7ae7-6e88-4fe5-a25f-c7427e87e740">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9d6d26a2-ae85-425d-81d3-bb613f25e8ad">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="assemble-the-rag-system">Assemble the RAG System<a class="anchor-link" href="#assemble-the-rag-system">¶</a></h3>
+<h2 id="bridge-metadata">Bridge Metadata<a class="anchor-link" href="#bridge-metadata">¶</a></h2><p>To view the metadata of the LangChain bridge, you can access the class attribute
+<code>bridge</code> of the <code>RAGSystem</code> class, which is a dictionary object that contains the <code>BridgeMetadata</code> for all of the installed bridges.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=91d7eb23-3d3b-4859-b818-e78692ab4ab1">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=49206bb2-1fec-491d-9099-aa3b74fd181b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
@@ -5515,468 +5569,33 @@ generator = HFPretrainedModelGenerator(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGSystem</span><span class="p">,</span> <span class="n">RAGConfig</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># see available bridges</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">)</span>
 
-<span class="n">rag_config</span> <span class="o">=</span> <span class="n">RAGConfig</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">rag_system</span> <span class="o">=</span> <span class="n">RAGSystem</span><span class="p">(</span>
-    <span class="n">knowledge_store</span><span class="o">=</span><span class="n">knowledge_store</span><span class="p">,</span>  <span class="c1"># knowledge store loaded from knowledge_store.py</span>
-    <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
-    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
-    <span class="n">rag_config</span><span class="o">=</span><span class="n">rag_config</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># see the LangChain bridge metadata</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">RAGSystem</span><span class="o">.</span><span class="n">bridges</span><span class="p">[</span><span class="s2">"langchain-core"</span><span class="p">])</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-10">from fed_rag import RAGSystem, RAGConfig
+<div class="clipboard-copy-txt" id="cell-10"># see available bridges
+print(RAGSystem.bridges)
 
-rag_config = RAGConfig(top_k=2)
-rag_system = RAGSystem(
-    knowledge_store=knowledge_store,  # knowledge store loaded from knowledge_store.py
-    generator=generator,
-    retriever=retriever,
-    rag_config=rag_config,
-)</div>
+# see the LangChain bridge metadata
+print(RAGSystem.bridges["langchain-core"])</div>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=146a5c38-476f-402e-b1cc-aaed0c5e7de4">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>{'llama-index-core': {'bridge_version': '0.1.0', 'framework': 'llama-index-core', 'compatible_versions': {'min': '0.12.35'}, 'method_name': 'to_llamaindex'}, 'langchain-core': {'bridge_version': '0.1.0', 'framework': 'langchain-core', 'compatible_versions': {'min': '0.3.62'}, 'method_name': 'to_langchain'}}
+{'bridge_version': '0.1.0', 'framework': 'langchain-core', 'compatible_versions': {'min': '0.3.62'}, 'method_name': 'to_langchain'}
+</pre>
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
 </div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># test a query</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">rag_system</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"Who is James Cook?"</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-11"># test a query
-response = rag_system.query("Who is James Cook?")</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0b4d7dd4-383c-427e-a4f2-5e65b453a3e4">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-12">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-12">print(response)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=de9914d1-ecac-45fe-8f9a-703d5dcd7f4e">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="rag-fine-tuning">RAG Fine-tuning<a class="anchor-link" href="#rag-fine-tuning">¶</a></h2><p>In this part of the notebook, we demonstrate how to fine-tune the <code>RAGSystem</code> we just built and queried. To do so, we'll use a <code>RetrieverTrainer</code> and a <code>GeneratorTrainer</code> to fine-tune the retriever and generator, respectively.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=aed54412-3d2e-4ecf-9c8e-fd0107433a54">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="the-train-dataset">The Train Dataset<a class="anchor-link" href="#the-train-dataset">¶</a></h3><p>Although the retriever and generator are trained independently, both follow a standardized process. The first step involves building the training dataset which are essentially examples of (query, response) pairs.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d7f863f3-c2a9-4c1a-b4b4-2f9aaafa2480">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-13">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
-
-
-<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
-    <span class="c1"># examples from Commonsense QA</span>
-    <span class="p">{</span>
-        <span class="s2">"query"</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">"The sanctions against the school were a punishing blow, and they seemed to what the efforts the school had made to change?"</span><span class="p">,</span>
-            <span class="s2">"Sammy wanted to go to where the people were.  Where might he go?"</span><span class="p">,</span>
-            <span class="s2">"To locate a choker not located in a jewelry box or boutique where would you go?"</span><span class="p">,</span>
-            <span class="s2">"Google Maps and other highway and street GPS services have replaced what?"</span><span class="p">,</span>
-            <span class="s2">"The fox walked from the city into the forest, what was it looking for?"</span><span class="p">,</span>
-        <span class="p">],</span>
-        <span class="s2">"response"</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">"ignore"</span><span class="p">,</span>
-            <span class="s2">"populated areas"</span><span class="p">,</span>
-            <span class="s2">"jewelry store"</span><span class="p">,</span>
-            <span class="s2">"atlas"</span><span class="p">,</span>
-            <span class="s2">"natural habitat"</span><span class="p">,</span>
-        <span class="p">],</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-13">from datasets import Dataset
-
-
-train_dataset = Dataset.from_dict(
-    # examples from Commonsense QA
-    {
-        "query": [
-            "The sanctions against the school were a punishing blow, and they seemed to what the efforts the school had made to change?",
-            "Sammy wanted to go to where the people were.  Where might he go?",
-            "To locate a choker not located in a jewelry box or boutique where would you go?",
-            "Google Maps and other highway and street GPS services have replaced what?",
-            "The fox walked from the city into the forest, what was it looking for?",
-        ],
-        "response": [
-            "ignore",
-            "populated areas",
-            "jewelry store",
-            "atlas",
-            "natural habitat",
-        ],
-    }
-)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=893bdce5-871f-4200-ac3e-f4838838e54d">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="retriever-fine-tuning-lsr">Retriever Fine-Tuning (LSR)<a class="anchor-link" href="#retriever-fine-tuning-lsr">¶</a></h3><p>Here, we'll perform LM-Supervised retriever fine-tuning. For a tutorial on this trainer, see our <a href="https://vectorinstitute.github.io/fed-rag/getting_started/tutorials/lsr/">docs</a>.
-The <code>HuggingFaceTrainerForLSR</code> is a container class for a custom-built <code>~sentence_transformers.SentenceTransformerTrainer</code> that performs training of the retriever model using the LSR loss.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=72343277-c463-4813-bc80-24a05eac2be9">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-14">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.trainers.huggingface.lsr</span><span class="w"> </span><span class="kn">import</span> <span class="n">HuggingFaceTrainerForLSR</span>
-
-<span class="c1"># the trainer object</span>
-<span class="n">retriever_trainer</span> <span class="o">=</span> <span class="n">HuggingFaceTrainerForLSR</span><span class="p">(</span>
-    <span class="n">rag_system</span><span class="o">=</span><span class="n">rag_system</span><span class="p">,</span>
-    <span class="n">train_dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
-    <span class="c1"># training_arguments=...  # Optional ~transformers.TrainingArguments</span>
-<span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-14">from fed_rag.trainers.huggingface.lsr import HuggingFaceTrainerForLSR
-
-# the trainer object
-retriever_trainer = HuggingFaceTrainerForLSR(
-    rag_system=rag_system,
-    train_dataset=train_dataset,
-    # training_arguments=...  # Optional ~transformers.TrainingArguments
-)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9561a873-a0cf-4ac4-9163-af4e4186d5f7">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-15">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># raw HF trainer object</span>
-<span class="n">retriever_trainer</span><span class="o">.</span><span class="n">hf_trainer_obj</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-15"># raw HF trainer object
-retriever_trainer.hf_trainer_obj</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b53d7a27-918c-4f9b-ac79-bb1139f1babd">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-16">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">retriever_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-16">result = retriever_trainer.train()</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b3704e7f-f585-4b95-bc3f-cb0ef7935c35">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-17">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">loss</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-17">result.loss</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=99763675-ef39-4cd1-a7cd-417e0367fc87">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="generator-fine-tuning-ralt">Generator Fine-tuning (RALT)<a class="anchor-link" href="#generator-fine-tuning-ralt">¶</a></h3><p>Here, we'll perform Retrieval-Augmented LM (Generator) fine-tuning. For a tutorial on this trainer, see our <a href="https://vectorinstitute.github.io/fed-rag/getting_started/tutorials/ralt/">docs</a>.
-The <code>HuggingFaceTrainerForRALT</code> is a container class for a custom-built <code>~transformers.Trainer</code> that performs training of the generator model using the causal language modelling task.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f736288f-b9a3-4118-8f10-0637ec37999e">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-18">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fed_rag.trainers.huggingface.ralt</span><span class="w"> </span><span class="kn">import</span> <span class="n">HuggingFaceTrainerForRALT</span>
-
-<span class="c1"># the trainer object</span>
-<span class="n">generator_trainer</span> <span class="o">=</span> <span class="n">HuggingFaceTrainerForRALT</span><span class="p">(</span>
-    <span class="n">rag_system</span><span class="o">=</span><span class="n">rag_system</span><span class="p">,</span>
-    <span class="n">train_dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
-    <span class="c1"># training_arguments=...  # Optional ~transformers.TrainingArguments</span>
-<span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-18">from fed_rag.trainers.huggingface.ralt import HuggingFaceTrainerForRALT
-
-# the trainer object
-generator_trainer = HuggingFaceTrainerForRALT(
-    rag_system=rag_system,
-    train_dataset=train_dataset,
-    # training_arguments=...  # Optional ~transformers.TrainingArguments
-)</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a6b1ed8f-236f-4e33-a5cf-7e723b3f3086">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-19">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># raw HF trainer object</span>
-<span class="n">generator_trainer</span><span class="o">.</span><span class="n">hf_trainer_obj</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-19"># raw HF trainer object
-generator_trainer.hf_trainer_obj</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=cf03e201-b7cc-4b7a-9ce3-3ebf86532e21">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-20">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">generator_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-20">result = generator_trainer.train()</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bd6c1e99-8929-4542-afbb-8fc7fc2567aa">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-21">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">loss</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-21">result.loss</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=199ae42a-66f9-4c6a-9b31-9dcb1ec007dc">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="closing-remarks">Closing Remarks<a class="anchor-link" href="#closing-remarks">¶</a></h2>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=85efe0dd-ac44-4263-b574-c35fcbb1cf44">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>In this notebook, we used a simplified example to demonstrate building and fine-tuning a RAG system with HuggingFace models.</p>
 </div>
 </div>
 </div>
@@ -6025,7 +5644,7 @@ generator_trainer.hf_trainer_obj</div>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../examples/ra_dit/federated_finetune/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Federated Fine-tuning">
+          <a href="../llama_index/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Using LlamaIndex for Inference">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -6035,20 +5654,20 @@ generator_trainer.hf_trainer_obj</div>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Federated Fine-tuning
+                Using LlamaIndex for Inference
               </div>
             </div>
           </a>
         
         
           
-          <a href="../rag_benchmarking_hf_mmlu/" class="md-footer__link md-footer__link--next" aria-label="Next: Benchmarking RAG Systems (MMLU)">
+          <a href="../qdrant/" class="md-footer__link md-footer__link--next" aria-label="Next: Using Qdrant for Knowledge Storage">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Benchmarking RAG Systems (MMLU)
+                Using Qdrant for Knowledge Storage
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -6066,7 +5685,7 @@ generator_trainer.hf_trainer_obj</div>
   <div class="md-footer-vector">
     <a href="https://vectorinstitute.ai" target="_blank" rel="noopener">
       <img
-        src="../../assets/vector-logo.svg"
+        src="../../../assets/vector-logo.svg"
         alt="Vector Institute Logo"
         height="24"
       />
@@ -6135,12 +5754,12 @@ generator_trainer.hf_trainer_obj</div>
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate", "content.code.copy", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.top", "search.suggest", "search.highlight", "toc.follow"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
-        <script src="../../javascripts/mathjax.js"></script>
+        <script src="../../../javascripts/mathjax.js"></script>
       
         <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
