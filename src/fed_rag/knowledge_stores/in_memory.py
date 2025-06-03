@@ -20,7 +20,8 @@ DEFAULT_TOP_K = 2
 
 
 def _get_top_k_nodes(
-    nodes: Dict[str, list],
+    nodes: list[str],
+    embeddings: list[float],
     query_emb: list[float],
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
@@ -41,13 +42,13 @@ def _get_top_k_nodes(
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     query_tensor = torch.tensor(query_emb).to(device)
-    if not torch.is_tensor(nodes["embeddings"]):
-        nodes["embeddings"] = torch.tensor(nodes["embeddings"]).to(device)
-    similarities = cosine_sim(query_tensor, nodes["embeddings"])
+    if not torch.is_tensor(embeddings):
+        embeddings = torch.tensor(embeddings).to(device)
+    similarities = cosine_sim(query_tensor, embeddings)
     if similarities.device == device:
         similarities = similarities.to("cpu")
     similarities = similarities.tolist()[0]
-    zipped = list(zip(nodes["node_ids"], similarities))
+    zipped = list(zip(nodes, similarities))
     # scores.sort(key=lambda tup: tup[1], reverse=True)
     sorted_similarities = sorted(zipped, key=lambda row: row[1], reverse=True)
     return sorted_similarities[:top_k]
@@ -57,14 +58,9 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     """InMemoryKnowledgeStore Class."""
 
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
-    _data_storage: torch.Tensor
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
-    _data_list: Dict[str, list] = PrivateAttr(
-        default_factory=lambda: {
-            "node_ids": [],  # Empty KnowledgeNode for key1
-            "embeddings": [],  # Empty KnowledgeNode for key2
-        }
-    )
+    _data_storage: list[float] = PrivateAttr(default_factory=list)
+    _node_list: list[str] = PrivateAttr(default_factory=list)
 
     @classmethod
     def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
@@ -73,17 +69,15 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
-        if isinstance(self._data_list["embeddings"], torch.Tensor):
+        if isinstance(self._data_storage, torch.Tensor):
             device = torch.device("cpu")
-            self._data_list["embeddings"] = self._data_list["embeddings"].to(
-                device
-            )
+            self._data_storage = self._data_storage.to(device)
             gc.collect()  # Clean up Python garbage
             torch.cuda.empty_cache()
         if node.node_id not in self._data:
             self._data[node.node_id] = node
-            self._data_list["node_ids"].append(node.node_id)
-            self._data_list["embeddings"].append(node.embedding)
+            self._node_list.append(node.node_id)
+            self._data_storage.append(node.embedding)
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
@@ -94,7 +88,10 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     ) -> list[tuple[float, KnowledgeNode]]:
         # all_nodes = list(self._data.values())
         node_ids_and_scores = _get_top_k_nodes(
-            nodes=self._data_list, query_emb=query_emb, top_k=top_k
+            nodes=self._node_list,
+            embeddings=self._data_storage,
+            query_emb=query_emb,
+            top_k=top_k,
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
