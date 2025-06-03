@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import torch
 
 from fed_rag.base.knowledge_store import BaseKnowledgeStore
 from fed_rag.data_structures.knowledge_node import KnowledgeNode
@@ -95,6 +96,31 @@ def test_load_nodes(text_nodes: list[KnowledgeNode]) -> None:
 
     assert knowledge_store.count == 3
     assert all(n.node_id in knowledge_store._data for n in text_nodes)
+
+
+@pytest.mark.parametrize(
+    ("query_emb", "top_k", "expected_node_ix"),
+    [([1.0, 1.0, 1.0], 2, [0, 2]), ([0.5, 0.0, 0.0], 1, [1])],
+    ids=[str([1.0, 1.0, 1.0]), str([0.5, 0.0, 0.0])],
+)
+def test_load_and_offload_nodes(
+    query_emb: list[float],
+    top_k: int,
+    expected_node_ix: list[int],
+    text_nodes: list[KnowledgeNode],
+) -> None:
+    knowledge_store = InMemoryKnowledgeStore()
+    assert knowledge_store.count == 0
+
+    knowledge_store.load_nodes(text_nodes)
+    # act
+    res = knowledge_store.retrieve(query_emb, top_k=top_k)
+    # assert
+    assert [el[1] for el in res] == [text_nodes[ix] for ix in expected_node_ix]
+    knowledge_store.delete_node(text_nodes[0].node_id)
+    assert knowledge_store.count == 2
+    knowledge_store.load_nodes(text_nodes)
+    assert not isinstance(knowledge_store._data_storage, torch.Tensor)
 
 
 def test_clear(text_nodes: list[KnowledgeNode]) -> None:

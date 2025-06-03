@@ -96,8 +96,19 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
     def delete_node(self, node_id: str) -> bool:
+        if isinstance(self._data_storage, torch.Tensor):
+            device = torch.device("cpu")
+            self._data_storage = self._data_storage.to(device)
+            gc.collect()  # Clean up Python garbage
+            torch.cuda.empty_cache()
         if node_id in self._data:
             del self._data[node_id]
+            for i in range(len(self._node_list)):
+                print(len(self._node_list))
+                if node_id == self._node_list[i]:
+                    del self._data_storage[i]
+                    del self._node_list[i]
+                    break
             return True
         else:
             return False
