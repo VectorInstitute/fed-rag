@@ -21,8 +21,8 @@ DEFAULT_TOP_K = 2
 
 def _get_top_k_nodes(
     nodes: list[str],
-    embeddings: list[float],
-    query_emb: list[float],
+    embeddings: torch.Tensor,
+    query_emb: torch.Tensor,
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
     """Retrieves the top-k similar nodes against query.
@@ -41,10 +41,7 @@ def _get_top_k_nodes(
         return torch.mm(norm_a, norm_b.transpose(0, 1))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    query_tensor = torch.tensor(query_emb).to(device)
-    if not torch.is_tensor(embeddings):
-        embeddings = torch.tensor(embeddings).to(device)
-    similarities = cosine_sim(query_tensor, embeddings)
+    similarities = cosine_sim(query_emb, embeddings)
     if similarities.device == device:
         similarities = similarities.to("cpu")
     similarities = similarities.tolist()[0]
@@ -71,7 +68,7 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def load_node(self, node: KnowledgeNode) -> None:
         if isinstance(self._data_storage, torch.Tensor):
             device = torch.device("cpu")
-            self._data_storage = self._data_storage.to(device)
+            self._data_storage = self._data_storage.to(device).tolist()
             gc.collect()  # Clean up Python garbage
             torch.cuda.empty_cache()
         if node.node_id not in self._data:
@@ -87,6 +84,10 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
         # all_nodes = list(self._data.values())
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        query_emb = torch.tensor(query_emb).to(device)
+        if not torch.is_tensor(self._data_storage):
+            self._data_storage = torch.tensor(self._data_storage).to(device)
         node_ids_and_scores = _get_top_k_nodes(
             nodes=self._node_list,
             embeddings=self._data_storage,
@@ -98,7 +99,7 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def delete_node(self, node_id: str) -> bool:
         if isinstance(self._data_storage, torch.Tensor):
             device = torch.device("cpu")
-            self._data_storage = self._data_storage.to(device)
+            self._data_storage = self._data_storage.to(device).tolist()
             gc.collect()  # Clean up Python garbage
             torch.cuda.empty_cache()
         if node_id in self._data:
