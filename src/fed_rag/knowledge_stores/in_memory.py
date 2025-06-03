@@ -1,5 +1,6 @@
 """In Memory Knowledge Store"""
 
+import gc
 from pathlib import Path
 from typing import Any, Dict, cast
 
@@ -72,6 +73,13 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
+        if isinstance(self._data_list["embeddings"], torch.Tensor):
+            device = torch.device("cpu")
+            self._data_list["embeddings"] = self._data_list["embeddings"].to(
+                device
+            )
+            gc.collect()  # Clean up Python garbage
+            torch.cuda.empty_cache()
         if node.node_id not in self._data:
             self._data[node.node_id] = node
             self._data_list["node_ids"].append(node.node_id)
