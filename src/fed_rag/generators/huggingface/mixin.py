@@ -20,19 +20,16 @@ class HFGeneratorProtocol(Protocol):
     model: Union["PreTrainedModel", "PeftModel"]
     generation_config: "GenerationConfig"
 
+    def complete(self, prompt: str, **kwargs: Any) -> str:
+        pass  # pragma: no cover
+
 
 class HuggingFaceGeneratorMixin:
-    # generate
-    def generate(
-        self: HFGeneratorProtocol, query: str, context: str, **kwargs: Any
-    ) -> str:
-        formatted_query = self.prompt_template.format(
-            query=query, context=context
-        )
-
+    # complete
+    def complete(self: HFGeneratorProtocol, prompt: str, **kwargs: Any) -> str:
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
-            formatted_query, return_tensors="pt"
+            prompt, return_tensors="pt"
         )
         inputs: torch.Tensor = tokenizer_result.input_ids
         inputs = inputs.to(self.model.device)
@@ -53,6 +50,15 @@ class HuggingFaceGeneratorMixin:
             generated_ids, skip_special_tokens=True
         )
         return outputs[0]
+
+    # generate
+    def generate(
+        self: HFGeneratorProtocol, query: str, context: str, **kwargs: Any
+    ) -> str:
+        formatted_query = self.prompt_template.format(
+            query=query, context=context
+        )
+        return self.complete(prompt=formatted_query)
 
     def compute_target_sequence_proba(
         self: HFGeneratorProtocol, prompt: str, target: str

@@ -132,6 +132,9 @@ class MockGenerator(BaseGenerator):
     _tokenizer = MockTokenizer()
     _prompt_template = "{query} and {context}"
 
+    def complete(self, prompt: str, **kwargs: Any) -> str:
+        return f"mock completion output from '{prompt}'."
+
     def generate(self, query: str, context: str, **kwargs: Any) -> str:
         return f"mock output from '{query}' and '{context}'."
 

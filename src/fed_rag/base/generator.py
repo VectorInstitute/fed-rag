@@ -34,6 +34,10 @@ class BaseGenerator(BaseModel, ABC):
     def generate(self, query: str, context: str, **kwargs: dict) -> str:
         """Generate an output from a given query and context."""
 
+    @abstractmethod
+    def complete(self, prompt: str, **kwargs: dict) -> str:
+        """Completion interface for generator LLMs."""
+
     @property
     @abstractmethod
     def model(self) -> torch.nn.Module:
