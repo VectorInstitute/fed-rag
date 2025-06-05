@@ -120,6 +120,7 @@ def test_load_and_offload_nodes(
     # print(isinstance(knowledge_store._data_storage, torch.Tensor))
     knowledge_store.delete_node(text_nodes[0].node_id)
     assert knowledge_store.count == 2
+    res = knowledge_store.retrieve(query_emb, top_k=top_k)
     node = KnowledgeNode(
         embedding=[1.0, 1.0, 0.0],
         node_type="text",
