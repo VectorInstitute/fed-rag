@@ -1,11 +1,12 @@
 """In Memory Knowledge Store"""
 
+import gc
 from pathlib import Path
 from typing import Any, Dict, cast
 
-import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
+import torch
 from pydantic import Field, PrivateAttr, model_serializer
 from typing_extensions import Self
 
@@ -19,8 +20,9 @@ DEFAULT_TOP_K = 2
 
 
 def _get_top_k_nodes(
-    nodes: list[KnowledgeNode],
-    query_emb: list[float],
+    nodes: list[str],
+    embeddings: torch.Tensor,
+    query_emb: torch.Tensor,
     top_k: int = DEFAULT_TOP_K,
 ) -> list[tuple[str, float]]:
     """Retrieves the top-k similar nodes against query.
@@ -29,20 +31,24 @@ def _get_top_k_nodes(
         list[tuple[float, str]] — the node_ids and similarity scores of top-k nodes
     """
 
-    def cosine_sim(a: list[float], b: list[float]) -> float:
+    def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
         """Compute cosine similarity between two embeddings."""
-        np_a = np.array(a)
-        np_b = np.array(b)
-        cosine_sim: float = np.dot(np_a, np_b) / (
-            np.linalg.norm(np_a) * np.linalg.norm(np_b)
-        )
-        return cosine_sim
+        a = a.unsqueeze(0) if a.dim() == 1 else a
+        b = b.unsqueeze(0) if b.dim() == 1 else b
+        norm_a = torch.nn.functional.normalize(a, p=2, dim=1)
+        norm_b = torch.nn.functional.normalize(b, p=2, dim=1)
 
-    scores = [
-        (node.node_id, cosine_sim(node.embedding, query_emb)) for node in nodes
-    ]
-    scores.sort(key=lambda tup: tup[1], reverse=True)
-    return scores[:top_k]
+        return torch.mm(norm_a, norm_b.transpose(0, 1))
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    similarities = cosine_sim(query_emb, embeddings)
+    if similarities.device == device:
+        similarities = similarities.to("cpu")
+    similarities = similarities.tolist()[0]
+    zipped = list(zip(nodes, similarities))
+    # scores.sort(key=lambda tup: tup[1], reverse=True)
+    sorted_similarities = sorted(zipped, key=lambda row: row[1], reverse=True)
+    return sorted_similarities[:top_k]
 
 
 class InMemoryKnowledgeStore(BaseKnowledgeStore):
@@ -50,6 +56,8 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
 
     cache_dir: str = Field(default=DEFAULT_CACHE_DIR)
     _data: dict[str, KnowledgeNode] = PrivateAttr(default_factory=dict)
+    _data_storage: list[float] = PrivateAttr(default_factory=list)
+    _node_list: list[str] = PrivateAttr(default_factory=list)
 
     @classmethod
     def from_nodes(cls, nodes: list[KnowledgeNode], **kwargs: Any) -> Self:
@@ -58,8 +66,15 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         return instance
 
     def load_node(self, node: KnowledgeNode) -> None:
+        if isinstance(self._data_storage, torch.Tensor):
+            device = torch.device("cpu")
+            self._data_storage = self._data_storage.to(device).tolist()
+            gc.collect()  # Clean up Python garbage
+            torch.cuda.empty_cache()
         if node.node_id not in self._data:
             self._data[node.node_id] = node
+            self._node_list.append(node.node_id)
+            self._data_storage.append(node.embedding)
 
     def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         for node in nodes:
@@ -68,15 +83,33 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
-        all_nodes = list(self._data.values())
+        # all_nodes = list(self._data.values())
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        query_emb = torch.tensor(query_emb).to(device)
+        if not torch.is_tensor(self._data_storage):
+            self._data_storage = torch.tensor(self._data_storage).to(device)
         node_ids_and_scores = _get_top_k_nodes(
-            nodes=all_nodes, query_emb=query_emb, top_k=top_k
+            nodes=self._node_list,
+            embeddings=self._data_storage,
+            query_emb=query_emb,
+            top_k=top_k,
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
     def delete_node(self, node_id: str) -> bool:
+        if isinstance(self._data_storage, torch.Tensor):
+            device = torch.device("cpu")
+            self._data_storage = self._data_storage.to(device).tolist()
+            gc.collect()  # Clean up Python garbage
+            torch.cuda.empty_cache()
         if node_id in self._data:
             del self._data[node_id]
+            for i in range(len(self._node_list)):
+                print(len(self._node_list))
+                if node_id == self._node_list[i]:
+                    del self._data_storage[i]
+                    del self._node_list[i]
+                    break
             return True
         else:
             return False
