@@ -117,10 +117,16 @@ def test_load_and_offload_nodes(
     res = knowledge_store.retrieve(query_emb, top_k=top_k)
     # assert
     assert [el[1] for el in res] == [text_nodes[ix] for ix in expected_node_ix]
-    print(isinstance(knowledge_store._data_storage, torch.Tensor))
+    # print(isinstance(knowledge_store._data_storage, torch.Tensor))
     knowledge_store.delete_node(text_nodes[0].node_id)
     assert knowledge_store.count == 2
-    knowledge_store.load_nodes(text_nodes)
+    node = KnowledgeNode(
+        embedding=[1.0, 1.0, 0.0],
+        node_type="text",
+        text_content="node 4",
+        metadata={"key4": "value4"},
+    )
+    knowledge_store.load_nodes([node])
     assert not isinstance(knowledge_store._data_storage, torch.Tensor)
 
 
