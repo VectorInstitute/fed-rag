@@ -147,3 +147,10 @@ class ProcessMonitor:  # pragma: no cover
         except KeyboardInterrupt:
             print("\n🛑 Monitoring stopped")
             self.running = False
+
+    def stop_all(self) -> None:
+        """Stop all processes"""
+        self.running = False
+        for name in list(self.processes.keys()):
+            self.stop_process(name)
+        print("🛑 All processes stopped")
