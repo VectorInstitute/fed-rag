@@ -11,7 +11,7 @@ from IPython.display import clear_output
 from fed_rag.exceptions import FedRAGError
 
 
-class ProcessMonitor:  # pragma: no cover
+class ProcessMonitor:
     """A class for launching, managing and monitoring subprocesses within Jupyter Notebooks.
 
     NOTE: This is intended mainly for launching and managing FL servers and
