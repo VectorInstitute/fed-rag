@@ -128,14 +128,11 @@ class ProcessMonitor:
                 print("🖥️  PROCESS MONITOR")
                 print("=" * 60)
 
-                for name in self.processes.keys():
-                    status = (
-                        "🟢 RUNNING" if self.is_running(name) else "🔴 STOPPED"
-                    )
-                    print(f"\n{name} {status}")
-                    print("-" * 30)
-                    logs = self.get_logs(name, 15)
-                    print(logs)
+                status = "🟢 RUNNING" if self.is_running(name) else "🔴 STOPPED"
+                print(f"\n{name} {status}")
+                print("-" * 30)
+                logs = self.get_logs(name, 15)
+                print(logs)
 
                 print(
                     f"\n🔄 Last updated: {datetime.now().strftime('%H:%M:%S')}"
