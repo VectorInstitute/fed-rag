@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Fix monitor_live method (#413)
 - Add ProcessMonitor for notebook utils (#412)
 - Add docs for the LangChain Bridge
 
