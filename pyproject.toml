@@ -84,6 +84,11 @@ Repository = "https://github.com/VectorInstitute/fed-rag"
 Issues = "https://github.com/VectorInstitute/fed-rag/issues"
 Changelog = "https://github.com/VectorInstitute/fed-rag/blob/main/CHANGELOG.md"
 
+[tool.coverage.run]
+omit = [
+  "*/fed_rag/utils/notebook.py"
+]
+
 [tool.hatch.build.targets.sdist]
 only-include = ["src", "tests"] # keep build small, exclude examples
 
