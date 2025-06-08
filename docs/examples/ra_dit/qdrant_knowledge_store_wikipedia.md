@@ -186,6 +186,6 @@ All code related to the knowledge store implementation can be found in the
 <!-- References -->
 [^1]: Lin, Xi Victoria, et al. "Ra-dit: Retrieval-augmented dual instruction tuning."
   The Twelfth International Conference on Learning Representations. 2023.
-[^2]: Common Crawl Foundation. (2017-2020). Common Crawl. Retrieved from <https://commoncrawl.org/>
-[^3]: Izacard, Gautier, et al. "Few-shot learning with retrieval augmented language
+[^2]: Izacard, Gautier, et al. "Few-shot learning with retrieval augmented language
   models." arXiv preprint arXiv:2208.03299 1.2 (2022): 4.
+[^3]: Common Crawl Foundation. (2017-2020). Common Crawl. Retrieved from <https://commoncrawl.org/>
