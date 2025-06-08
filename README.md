@@ -96,14 +96,14 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 If you use FedRAG in your research, please cite our library:
 
 ```bibtex
-@software{Fajardo_fed-rag_2024,
+@software{Fajardo_fed-rag_2025,
 author = {Fajardo, Andrei and Emerson, David},
 doi = {10.5281/zenodo.15092361},
 license = {Apache-2.0},
 month = mar,
 title = {{fed-rag}},
 url = {https://github.com/VectorInstitute/fed-rag},
-version = {0.0.14},
+version = {0.0.24},
 year = {2025}
 }
 ```
