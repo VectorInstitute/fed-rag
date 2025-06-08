@@ -1,9 +1,7 @@
-from logging import INFO
 from typing import Literal
 
 import torch
 from datasets import Dataset
-from flwr.common.logger import log
 from transformers.generation.utils import GenerationConfig
 
 from fed_rag import RAGConfig, RAGSystem
@@ -113,7 +111,6 @@ def build_client(
 ) -> HuggingFaceFlowerClient:
     fl_task = train_manager.get_federated_task()
     model = train_manager.model
-    log(INFO, f"loaded generator is on: {model.device}")
     return fl_task.client(
         model=model, train_dataset=TRAIN_DATASET, val_dataset=VAL_DATASET
     )
