@@ -130,6 +130,31 @@ def build_server(
 def main(
     component: Literal["server", "client_0", "client_1"],
 ) -> None:
+    """For starting any of the FL Task components.
+
+    IMPORTANT NOTE: This script requires the Dec. 2021 Wikipedia Qdrant knowledge
+    store to be up an running. Use the shell command below to run the docker image.
+
+        ```sh
+        docker run --gpus all -d \
+        --name qdrant-ra-dit \
+        -p 6333:6333 \
+        -p 6334:6334 \
+        -v qdrant_data:/qdrant_storage \
+        -e SAMPLE_SIZE=tiny \
+        vectorinstitute/qdrant-atlas-dec-wiki-2021
+        ```
+
+    MAIN USAGE:
+        ## server
+        `uv run python example_scripts/cookbook_script-basic_fl.py --component server`
+
+        ## client 1
+        `uv run python example_scripts/cookbook_script-basic_fl.py --component client_0`
+
+        ## client 1
+        `uv run python example_scripts/cookbook_script-basic_fl.py --component client_1`
+    """
     import flwr as fl
 
     if component == "server":
