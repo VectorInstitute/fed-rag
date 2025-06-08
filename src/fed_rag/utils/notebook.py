@@ -112,11 +112,10 @@ class ProcessMonitor:
             del self.processes[name]
             print(f"🛑 Stopped {name}")
 
-    def monitor_live(self, name: str, refresh_interval: int = 2) -> None:
-        """Live monitoring of a specific process."""
-        if name not in self.processes:
-            print(f"Process {name} does not exist")
-            return
+    def monitor_live(
+        self, names: list[str], refresh_interval: int = 2
+    ) -> None:
+        """Live monitoring of a specific set of processes."""
 
         self.running = True
         print("📊 Starting live monitoring (Ctrl+C to stop)...")
@@ -128,16 +127,26 @@ class ProcessMonitor:
                 print("🖥️  PROCESS MONITOR")
                 print("=" * 60)
 
-                status = "🟢 RUNNING" if self.is_running(name) else "🔴 STOPPED"
-                print(f"\n{name} {status}")
-                print("-" * 30)
-                logs = self.get_logs(name, 15)
-                print(logs)
+                for name in names:
+                    if name not in self.processes:
+                        print(f"Process {name} does not exist")
+                        return
+
+                    status = (
+                        "🟢 RUNNING" if self.is_running(name) else "🔴 STOPPED"
+                    )
+                    print(f"\n{name} {status}")
+                    print("-" * 30)
+                    logs = self.get_logs(name, 15)
+                    print(logs)
 
                 print(
                     f"\n🔄 Last updated: {datetime.now().strftime('%H:%M:%S')}"
                 )
                 print("Press Ctrl+C to stop monitoring")
+
+                if all(not self.is_running(name) for name in names):
+                    break
 
                 time.sleep(refresh_interval)
 
