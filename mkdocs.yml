@@ -66,6 +66,7 @@ nav:
     - notebooks/basic_starter_hf.ipynb
     - notebooks/rag_benchmarking_hf_mmlu.ipynb
     - notebooks/no_encode_rag_with_mcp.ipynb
+    - notebooks/basic_fl.ipynb
     - Integrations:
       - notebooks/integrations/llama_index.ipynb
       - notebooks/integrations/langchain.ipynb
