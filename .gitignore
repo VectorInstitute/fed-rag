@@ -36,6 +36,7 @@ qdrant_storage
 
 # notebooks
 dev_notebooks
+**/rag_federated_learning.py
 
 # trainer outputs
 trainer_output
