@@ -13,3 +13,9 @@ test:
 
 coverage: # for ci purposes
 	pytest --cov fed_rag --cov-report=xml tests
+
+coverage-report: ## Show coverage summary in terminal
+	coverage report -m
+
+coverage-html: ## Generate HTML coverage report
+	coverage html

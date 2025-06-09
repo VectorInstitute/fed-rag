@@ -54,3 +54,17 @@ def test_no_internal_leakage() -> None:
     assert (
         "BaseRAGTrainerManager" not in _root_all
     ), "API shouldn't expose base classes"
+
+
+def test_invalid_name_raises_error() -> None:
+    """Tests invalid import raises error."""
+    with pytest.raises(AttributeError):
+        mod = importlib.import_module("fed_rag")
+        getattr(mod, "DummyGenerator")
+
+
+def test_all_in_dir() -> None:
+    """Test all in dir."""
+    import fed_rag
+
+    assert all(el in dir(fed_rag) for el in _root_all)
