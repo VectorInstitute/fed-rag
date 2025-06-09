@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ...
 
+## [0.0.25] - 2025-06-09
+
 ### Changed
 
 - pre-commit hook for mypy with `pass_filenames = False` to resolve error with .pyi and .py files in same dir (#419)
