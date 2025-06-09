@@ -110,9 +110,6 @@ git checkout -b feature/your-feature-name
 
 3. __Commit your changes__ with a clear message
 
-> [!NOTE]
-> When modifying both `.py` and `.pyi` files, commit them separately to avoid mypy conflicts
-
 ```sh
 git commit -m "Add feature: description of changes"
 ```
