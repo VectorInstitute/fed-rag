@@ -53,10 +53,10 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        # entry: bash -c 'mypy --config-file=mypy.ini "$@"' --
         entry: mypy --config-file=mypy.ini --explicit-package-bases
         additional_dependencies:
-          - "pydantic>=2.10.5"
+          - pydantic>=2.10.5
+        pass_filenames: false
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.23.1
     hooks:
