@@ -9,6 +9,7 @@ from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.base.trainer import BaseRetrieverTrainer, BaseTrainer
+from fed_rag.data_structures import KnowledgeNode
 from fed_rag.data_structures.results import TestResult, TrainResult
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 
@@ -145,12 +146,37 @@ def mock_generator() -> BaseGenerator:
     return MockGenerator()
 
 
+def knowledge_nodes() -> list[KnowledgeNode]:
+    return [
+        KnowledgeNode(
+            embedding=[1.0, 0.0, 1.0], node_type="text", text_content="node 1"
+        ),
+        KnowledgeNode(
+            embedding=[1.0, 0.0, 0.0],
+            node_type="multimodal",
+            text_content="node 2",
+            image_content=b"node 2",
+        ),
+        KnowledgeNode(
+            embedding=[
+                1.0,
+                1.0,
+                0.0,
+            ],
+            node_type="multimodal",
+            text_content="node 3",
+            image_content=b"node 3",
+        ),
+    ]
+
+
 @pytest.fixture
 def mock_rag_system(
     mock_generator: BaseGenerator,
     mock_retriever: BaseRetriever,
 ) -> RAGSystem:
     knowledge_store = InMemoryKnowledgeStore()
+    knowledge_store.load_nodes(nodes=knowledge_nodes())
     rag_config = RAGConfig(
         top_k=2,
     )
