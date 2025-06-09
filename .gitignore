@@ -45,3 +45,8 @@ unsloth_compiled_cache
 # import profile
 # python -X importtime -c "import fed_rag" 2> import_profile.txt
 import_profile.txt
+
+# coverage
+.coverage
+coverage.xml
+htmlcov/
