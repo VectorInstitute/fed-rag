@@ -2,7 +2,7 @@
 
 FedRAG provides a carefully designed public API for working with RAG and both centralized
 and federated fine-tuning components. All components exported at the root level
-and from public subpackages are considered stable and follow semantic versioning guidelines.
+and from public submodules are considered stable and follow semantic versioning guidelines.
 
 ## Root Imports
 
