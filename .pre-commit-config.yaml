@@ -53,7 +53,7 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: mypy --config-file=mypy.ini --explicit-package-bases
+        entry: mypy src --config-file=mypy.ini --explicit-package-bases
         additional_dependencies:
           - pydantic>=2.10.5
         pass_filenames: false
