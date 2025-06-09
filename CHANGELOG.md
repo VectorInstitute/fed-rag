@@ -10,8 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ...
 
+### Changed
+
+- pre-commit hook for mypy with `pass_filenames = False` to resolve error with .pyi and .py files in same dir (#419)
+
 ### Added
 
+- Lazy loading of heavy classes and modules to improve import time of top-level module (#419)
 - Fix monitor_live method (#413)
 - Add ProcessMonitor for notebook utils (#412)
 - Add docs for the LangChain Bridge
