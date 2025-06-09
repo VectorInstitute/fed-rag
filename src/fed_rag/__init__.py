@@ -66,7 +66,8 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     """Make lazy classes and modules discoverable"""
-    return __all__
+    default_attrs = list(globals().keys())  # default module dir
+    return sorted(set(default_attrs + __all__))
 
 
 __version__ = VERSION
