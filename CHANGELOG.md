@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ...
 
+## [0.0.26] - 2025-06-10
+
+### Changed
+
+- Batch execution of cosine sim for `InMemoryKnowledgeStore` (#366)
+
 ## [0.0.25] - 2025-06-09
 
 ### Changed
