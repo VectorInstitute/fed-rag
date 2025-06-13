@@ -328,12 +328,12 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
     def persist(self) -> None:
         """Persist a knowledge store to disk."""
         raise NotImplementedError(
-            "`persist()` is not available in QdrantKnowledgeStore."
+            "`persist()` is not available in AsyncQdrantKnowledgeStore."
         )
 
     def load(self) -> None:
         """Load a previously persisted knowledge store."""
         raise NotImplementedError(
-            "`load()` is not available in QdrantKnowledgeStore. "
+            "`load()` is not available in AsyncQdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
         )

@@ -444,295 +444,318 @@ async def test_retrieve(
     mock_ensure_collection_exists.assert_called_once()
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_retrieve_raises_error(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_retrieve_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     mock_client.query_points.side_effect = RuntimeError("mock qdrant error")
+    mock_client.query_points.side_effect = RuntimeError("mock qdrant error")
 
-#     # act
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to retrieve from collection 'test collection': mock qdrant error",
-#     ):
-#         knowledge_store.retrieve(query_emb=[1, 1, 1], top_k=5)
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to retrieve from collection 'test collection': mock qdrant error",
+    ):
+        await knowledge_store.retrieve(query_emb=[1, 1, 1], top_k=5)
 
-#     mock_ensure_collection_exists.assert_called_once()
-
-
-# def test_persist_raises_error() -> None:
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-
-#     with pytest.raises(
-#         NotImplementedError,
-#         match=re.escape("`persist()` is not available in AsyncQdrantKnowledgeStore."),
-#     ):
-#         knowledge_store.persist()
+    mock_ensure_collection_exists.assert_called_once()
 
 
-# def test_load_raises_error() -> None:
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+def test_persist_raises_error() -> None:
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     msg = (
-#         "`load()` is not available in AsyncQdrantKnowledgeStore. "
-#         "Data is automatically persisted and loaded from the Qdrant server."
-#     )
-#     with pytest.raises(NotImplementedError, match=re.escape(msg)):
-#         knowledge_store.load()
-
-
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_delete_node(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     from qdrant_client.http.models import (
-#         FieldCondition,
-#         Filter,
-#         MatchValue,
-#         UpdateResult,
-#         UpdateStatus,
-#     )
-
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-
-#     test_update_result = UpdateResult(status=UpdateStatus.COMPLETED)
-
-#     mock_client.delete.return_value = test_update_result
-
-#     # act
-#     knowledge_store.delete_node(node_id="1")
-
-#     # assert
-#     mock_client.delete.assert_called_once_with(
-#         collection_name="test collection",
-#         points_selector=Filter(
-#             must=[FieldCondition(key="node_id", match=MatchValue(value="1"))]
-#         ),
-#     )
-#     mock_ensure_collection_exists.assert_called_once()
+    with pytest.raises(
+        NotImplementedError,
+        match=re.escape(
+            "`persist()` is not available in AsyncQdrantKnowledgeStore."
+        ),
+    ):
+        knowledge_store.persist()
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_delete_node_raises_error(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+def test_load_raises_error() -> None:
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     mock_client.delete.side_effect = RuntimeError("mock qdrant error")
-
-#     # act
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to delete node: '1' from collection 'test collection'",
-#     ):
-#         knowledge_store.delete_node(node_id="1")
+    msg = (
+        "`load()` is not available in AsyncQdrantKnowledgeStore. "
+        "Data is automatically persisted and loaded from the Qdrant server."
+    )
+    with pytest.raises(NotImplementedError, match=re.escape(msg)):
+        knowledge_store.load()
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_clear(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+def test_count_raises_error() -> None:
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     # act
-#     with does_not_raise():
-#         knowledge_store.clear()
-
-#     # assert
-#     mock_ensure_collection_exists.assert_called_once()
-#     mock_client.delete_collection.assert_called_once_with(
-#         collection_name="test collection"
-#     )
+    with pytest.raises(
+        NotImplementedError, match=re.escape("Use await get_count() instead")
+    ):
+        knowledge_store.count
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_clear_raises_error(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_delete_node(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.http.models import (
+        FieldCondition,
+        Filter,
+        MatchValue,
+        UpdateResult,
+        UpdateStatus,
+    )
 
-#     # act
-#     mock_client.delete_collection.side_effect = RuntimeError("mock qdrant error")
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to delete collection 'test collection': mock qdrant error",
-#     ):
-#         knowledge_store.clear()
+    test_update_result = UpdateResult(status=UpdateStatus.COMPLETED)
 
-#     # assert
-#     mock_ensure_collection_exists.assert_called_once()
-#     mock_client.delete_collection.assert_called_once_with(
-#         collection_name="test collection"
-#     )
+    mock_client.delete.return_value = test_update_result
 
+    # act
+    await knowledge_store.delete_node(node_id="1")
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_count(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     from qdrant_client.http.models import CountResult
-
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-
-#     test_count_result = CountResult(count=10)
-#     mock_client.count.return_value = test_count_result
-
-#     # act
-#     res = knowledge_store.count
-
-#     # assert
-#     assert res == 10
-#     mock_ensure_collection_exists.assert_called_once()
-#     mock_client.count.assert_called_once_with(collection_name="test collection")
+    # assert
+    mock_client.delete.assert_called_once_with(
+        collection_name="test collection",
+        points_selector=Filter(
+            must=[FieldCondition(key="node_id", match=MatchValue(value="1"))]
+        ),
+    )
+    mock_ensure_collection_exists.assert_called_once()
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_count_raises_error(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_delete_node_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    _mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     mock_client.count.side_effect = RuntimeError("mock qdrant error")
+    mock_client.delete.side_effect = RuntimeError("mock qdrant error")
 
-#     # act
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to get vector count for collection 'test collection': mock qdrant error",
-#     ):
-#         knowledge_store.count
-
-#     # assert
-#     mock_ensure_collection_exists.assert_called_once()
-#     mock_client.count.assert_called_once_with(collection_name="test collection")
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to delete node: '1' from collection 'test collection'",
+    ):
+        await knowledge_store.delete_node(node_id="1")
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_collection_exists")
-# @patch.object(AsyncQdrantKnowledgeStore, "_create_collection")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_check_if_collection_exists_otherwise_create_one(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_create_collection: MagicMock,
-#     mock_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     mock_collection_exists.return_value = False
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_clear(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     # act
-#     knowledge_store._check_if_collection_exists_otherwise_create_one(vector_size=10)
+    # act
+    with does_not_raise():
+        await knowledge_store.clear()
 
-#     mock_collection_exists.assert_called_once()
-#     mock_create_collection.assert_called_once_with(
-#         collection_name="test collection", vector_size=10, distance="Cosine"
-#     )
-
-
-# @patch.object(AsyncQdrantKnowledgeStore, "_collection_exists")
-# @patch.object(AsyncQdrantKnowledgeStore, "_create_collection")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_check_if_collection_exists_otherwise_create_one_raises_error(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_create_collection: MagicMock,
-#     mock_collection_exists: MagicMock,
-# ) -> None:
-#     mock_client = AsyncMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     mock_collection_exists.return_value = False
-#     mock_create_collection.side_effect = KnowledgeStoreError("mock error")
-
-#     # act
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to create new collection: 'test collection'",
-#     ):
-#         knowledge_store._check_if_collection_exists_otherwise_create_one(vector_size=10)
-
-#     mock_collection_exists.assert_called_once()
-#     mock_create_collection.assert_called_once_with(
-#         collection_name="test collection", vector_size=10, distance="Cosine"
-#     )
+    # assert
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.delete_collection.assert_called_once_with(
+        collection_name="test collection"
+    )
 
 
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     mock_instance = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_instance
-#     mock_instance.close.side_effect = RuntimeError("mock error from qdrant")
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_clear_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     # act
-#     with pytest.warns(
-#         KnowledgeStoreWarning,
-#         match="Unable to close client: mock error from qdrant",
-#     ):
-#         with knowledge_store.get_client() as _client:
-#             pass
+    # act
+    mock_client.delete_collection.side_effect = RuntimeError(
+        "mock qdrant error"
+    )
+
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to delete collection 'test collection': mock qdrant error",
+    ):
+        await knowledge_store.clear()
+
+    # assert
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.delete_collection.assert_called_once_with(
+        collection_name="test collection"
+    )
 
 
-# def testconvert_knowledge_node_to_qdrant_point_raises_error_none_embedding() -> None:
-#     node = KnowledgeNode(text_content="mock", node_type="text")
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_get_count(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.http.models import CountResult
 
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Cannot load a node with embedding set to None.",
-#     ):
-#         convert_knowledge_node_to_qdrant_point(node)
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    test_count_result = CountResult(count=10)
+    mock_client.count.return_value = test_count_result
+
+    # act
+    res = await knowledge_store.get_count()
+
+    # assert
+    assert res == 10
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.count.assert_called_once_with(
+        collection_name="test collection"
+    )
+
+
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_get_count_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    mock_client.count.side_effect = RuntimeError("mock qdrant error")
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to get vector count for collection 'test collection': mock qdrant error",
+    ):
+        await knowledge_store.get_count()
+
+    # assert
+    mock_ensure_collection_exists.assert_called_once()
+    mock_client.count.assert_called_once_with(
+        collection_name="test collection"
+    )
+
+
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_collection_exists")
+@patch.object(AsyncQdrantKnowledgeStore, "_create_collection")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_check_if_collection_exists_otherwise_create_one(
+    mock_qdrant_client_class: MagicMock,
+    mock_create_collection: MagicMock,
+    mock_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_collection_exists.return_value = False
+
+    # act
+    await knowledge_store._check_if_collection_exists_otherwise_create_one(
+        vector_size=10
+    )
+
+    mock_collection_exists.assert_called_once()
+    mock_create_collection.assert_called_once_with(
+        collection_name="test collection", vector_size=10, distance="Cosine"
+    )
+
+
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_collection_exists")
+@patch.object(AsyncQdrantKnowledgeStore, "_create_collection")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_check_if_collection_exists_otherwise_create_one_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_create_collection: MagicMock,
+    mock_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_collection_exists.return_value = False
+    mock_create_collection.side_effect = KnowledgeStoreError("mock error")
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to create new collection: 'test collection'",
+    ):
+        await knowledge_store._check_if_collection_exists_otherwise_create_one(
+            vector_size=10
+        )
+
+    mock_collection_exists.assert_called_once()
+    mock_create_collection.assert_called_once_with(
+        collection_name="test collection", vector_size=10, distance="Cosine"
+    )
+
+
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_instance = MagicMock()
+    mock_qdrant_client_class.return_value = mock_instance
+    mock_instance.close.side_effect = RuntimeError("mock error from qdrant")
+
+    # act
+    with pytest.warns(
+        KnowledgeStoreWarning,
+        match="Unable to close client: mock error from qdrant",
+    ):
+        async with knowledge_store.get_client() as _client:
+            pass
