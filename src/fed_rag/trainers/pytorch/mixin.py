@@ -24,7 +24,7 @@ class PyTorchTrainerProtocol(Protocol):
 
 
 class PyTorchTrainerMixin(BaseModel, ABC):
-    """HuggingFace Trainer Mixin."""
+    """PyTorch Trainer Mixin."""
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,

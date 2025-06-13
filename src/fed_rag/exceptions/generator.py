@@ -1,4 +1,4 @@
-"""Exceptions for Evals."""
+"""Exceptions for Generators."""
 
 from .core import FedRAGError, FedRAGWarning
 

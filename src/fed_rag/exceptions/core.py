@@ -9,3 +9,5 @@ class FedRAGError(Exception):
 
 class FedRAGWarning(Warning):
     """Base warning for all fed-rag warnings."""
+
+    pass

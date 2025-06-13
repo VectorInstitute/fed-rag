@@ -10,6 +10,8 @@ class FLTaskError(FedRAGError):
 
 
 class MissingFLTaskConfig(FLTaskError):
+    """Raised if fl task `trainer` and `tester` do not have `__fl_task_tester_config` attr set."""
+
     pass
 
 
