@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ...
 
+### Added
+
+- `AsyncQdrantKnowledgeStore` (#430)
+
 ## [0.0.26] - 2025-06-10
 
 ### Changed

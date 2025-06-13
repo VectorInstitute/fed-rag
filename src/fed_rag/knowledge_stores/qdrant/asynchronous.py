@@ -1,12 +1,12 @@
-"""Qdrant Knowledge Store"""
+"""Qdrant Async Knowledge Store"""
 
 import warnings
-from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Generator, Literal, Optional
+from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Literal, Optional
 
 from pydantic import Field, PrivateAttr, SecretStr, model_validator
 
-from fed_rag.base.knowledge_store import BaseKnowledgeStore
+from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
 from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import (
     InvalidDistanceError,
@@ -23,7 +23,7 @@ from .utils import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover
-    from qdrant_client import QdrantClient
+    from qdrant_client import AsyncQdrantClient
 
 
 def _get_qdrant_client(
@@ -35,18 +35,18 @@ def _get_qdrant_client(
     api_key: str | None = None,
     in_memory: bool = False,
     **kwargs: Any,
-) -> "QdrantClient":
-    """Get a QdrantClient
+) -> "AsyncQdrantClient":
+    """Get an AsyncQdrantClient
 
     NOTE: should be used within `QdrantKnowledgeStore` post validation that the
     qdrant extra has been installed.
     """
-    from qdrant_client import QdrantClient
+    from qdrant_client import AsyncQdrantClient
 
     if in_memory:
-        return QdrantClient(":memory:")
+        return AsyncQdrantClient(":memory:")
     else:
-        return QdrantClient(
+        return AsyncQdrantClient(
             host=host,
             port=port,
             grpc_port=grpc_port,
@@ -57,8 +57,8 @@ def _get_qdrant_client(
         )
 
 
-class QdrantKnowledgeStore(BaseKnowledgeStore):
-    """Qdrant Knowledge Store Class
+class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
+    """Async Qdrant Knowledge Store Class
 
     NOTE: This is a minimal implementation in order to just get started using Qdrant.
     """
@@ -81,12 +81,14 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         description="Specifies whether the client should refer to an in-memory service.",
     )
     load_nodes_kwargs: dict[str, Any] = Field(default_factory=dict)
-    _in_memory_client: Optional["QdrantClient"] = PrivateAttr(default=None)
+    _in_memory_client: Optional["AsyncQdrantClient"] = PrivateAttr(
+        default=None
+    )
 
-    @contextmanager
-    def get_client(
+    @asynccontextmanager
+    async def get_client(
         self,
-    ) -> Generator["QdrantClient", None, None]:
+    ) -> AsyncGenerator["AsyncQdrantClient", None]:
         if self.in_memory:
             if self._in_memory_client is None:
                 self._in_memory_client = _get_qdrant_client(
@@ -121,19 +123,19 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                 yield client
             finally:
                 try:
-                    client.close()
+                    await client.close()
                 except Exception as e:
                     warnings.warn(
                         f"Unable to close client: {str(e)}",
                         KnowledgeStoreWarning,
                     )
 
-    def _collection_exists(self) -> bool:
+    async def _collection_exists(self) -> bool:
         """Check if a collection exists."""
-        with self.get_client() as client:
-            return client.collection_exists(self.collection_name)  # type: ignore[no-any-return]
+        async with self.get_client() as client:
+            return await client.collection_exists(self.collection_name)  # type: ignore[no-any-return]
 
-    def _create_collection(
+    async def _create_collection(
         self, collection_name: str, vector_size: int, distance: str
     ) -> None:
         from qdrant_client.models import Distance, VectorParams
@@ -148,9 +150,9 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                 f"Mode must be one of: {', '.join([m.value for m in Distance])}"
             )
 
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                client.create_collection(
+                await client.create_collection(
                     collection_name=collection_name,
                     vectors_config=VectorParams(
                         size=vector_size, distance=distance
@@ -161,18 +163,20 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                     f"Failed to create collection: {str(e)}"
                 ) from e
 
-    def _ensure_collection_exists(self) -> None:
-        if not self._collection_exists():
+    async def _ensure_collection_exists(self) -> None:
+        collection_exists = await self._collection_exists()
+        if not collection_exists:
             raise KnowledgeStoreNotFoundError(
                 f"Collection '{self.collection_name}' does not exist."
             )
 
-    def _check_if_collection_exists_otherwise_create_one(
+    async def _check_if_collection_exists_otherwise_create_one(
         self, vector_size: int
     ) -> None:
-        if not self._collection_exists():
+        collection_exists = await self._collection_exists()
+        if not collection_exists:
             try:
-                self._create_collection(
+                await self._create_collection(
                     collection_name=self.collection_name,
                     vector_size=vector_size,
                     distance=self.collection_distance,
@@ -189,15 +193,15 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         check_qdrant_installed()
         return data
 
-    def load_node(self, node: KnowledgeNode) -> None:
-        self._check_if_collection_exists_otherwise_create_one(
+    async def load_node(self, node: KnowledgeNode) -> None:
+        await self._check_if_collection_exists_otherwise_create_one(
             vector_size=len(node.embedding)
         )
 
         point = convert_knowledge_node_to_qdrant_point(node)
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                client.upsert(
+                await client.upsert(
                     collection_name=self.collection_name, points=[point]
                 )
             except Exception as e:
@@ -205,17 +209,18 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                     f"Failed to load node {node.node_id} into collection '{self.collection_name}': {str(e)}"
                 ) from e
 
-    def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
+    async def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
         if not nodes:
             return
 
-        self._check_if_collection_exists_otherwise_create_one(
+        await self._check_if_collection_exists_otherwise_create_one(
             vector_size=len(nodes[0].embedding)
         )
 
         points = [convert_knowledge_node_to_qdrant_point(n) for n in nodes]
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
+                # upload points is a sync method
                 client.upload_points(
                     collection_name=self.collection_name,
                     points=points,
@@ -226,17 +231,17 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                     f"Loading nodes into collection '{self.collection_name}' failed: {str(e)}"
                 ) from e
 
-    def retrieve(
+    async def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
         """Retrieve top-k nodes from the vector store."""
         from qdrant_client.conversions.common_types import QueryResponse
 
-        self._ensure_collection_exists()
+        await self._ensure_collection_exists()
 
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                hits: QueryResponse = client.query_points(
+                hits: QueryResponse = await client.query_points(
                     collection_name=self.collection_name,
                     query=query_emb,
                     limit=top_k,
@@ -251,7 +256,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             for pt in hits.points
         ]
 
-    def delete_node(self, node_id: str) -> bool:
+    async def delete_node(self, node_id: str) -> bool:
         """Delete a node based on its node_id."""
         from qdrant_client.http.models import (
             FieldCondition,
@@ -261,11 +266,11 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             UpdateStatus,
         )
 
-        self._ensure_collection_exists()
+        await self._ensure_collection_exists()
 
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                res: UpdateResult = client.delete(
+                res: UpdateResult = await client.delete(
                     collection_name=self.collection_name,
                     points_selector=Filter(
                         must=[
@@ -282,27 +287,28 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
 
         return bool(res.status == UpdateStatus.COMPLETED)
 
-    def clear(self) -> None:
-        self._ensure_collection_exists()
+    async def clear(self) -> None:
+        await self._ensure_collection_exists()
 
         # delete the collection
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                client.delete_collection(collection_name=self.collection_name)
+                await client.delete_collection(
+                    collection_name=self.collection_name
+                )
             except Exception as e:
                 raise KnowledgeStoreError(
                     f"Failed to delete collection '{self.collection_name}': {str(e)}"
                 ) from e
 
-    @property
-    def count(self) -> int:
+    async def get_count(self) -> int:
         from qdrant_client.http.models import CountResult
 
-        self._ensure_collection_exists()
+        await self._ensure_collection_exists()
 
-        with self.get_client() as client:
+        async with self.get_client() as client:
             try:
-                res: CountResult = client.count(
+                res: CountResult = await client.count(
                     collection_name=self.collection_name
                 )
                 return int(res.count)
@@ -311,15 +317,23 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                     f"Failed to get vector count for collection '{self.collection_name}': {str(e)}"
                 ) from e
 
+    @property
+    def count(self) -> int:
+        """Get count of knowledge store.
+
+        Since async, this is not supported.
+        """
+        raise NotImplementedError("Use await get_count() instead")
+
     def persist(self) -> None:
         """Persist a knowledge store to disk."""
         raise NotImplementedError(
-            "`persist()` is not available in QdrantKnowledgeStore."
+            "`persist()` is not available in AsyncQdrantKnowledgeStore."
         )
 
     def load(self) -> None:
         """Load a previously persisted knowledge store."""
         raise NotImplementedError(
-            "`load()` is not available in QdrantKnowledgeStore. "
+            "`load()` is not available in AsyncQdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
         )
