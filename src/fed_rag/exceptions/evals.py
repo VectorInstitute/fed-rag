@@ -16,12 +16,18 @@ class EvalsWarning(FedRAGWarning):
 
 
 class BenchmarkGetExamplesError(EvalsError):
+    """Raised if an error occurs when getting examples for a benchmark."""
+
     pass
 
 
 class BenchmarkParseError(EvalsError):
+    """Raised when errors occur during parsing examples."""
+
     pass
 
 
 class EvaluationsFileNotFoundError(EvalsError, FileNotFoundError):
     """Benchmark evaluations file not found error."""
+
+    pass

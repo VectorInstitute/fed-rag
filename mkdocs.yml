@@ -106,12 +106,16 @@ nav:
     - Exceptions:
       - api_reference/exceptions/index.md
       - Bridge: api_reference/exceptions/bridge.md
+      - Data Collator: api_reference/exceptions/data_collator.md
       - Evals: api_reference/exceptions/evals.md
-      - FL Tasks: api_reference/exceptions/fl_tasks.md
-      - Inspectors: api_reference/exceptions/inspectors.md
-      - Knowledge Stores: api_reference/exceptions/knowledge_stores.md
+      - FL Task: api_reference/exceptions/fl_tasks.md
+      - Generator: api_reference/exceptions/generator.md
+      - Inspector: api_reference/exceptions/inspectors.md
+      - Knowledge Store: api_reference/exceptions/knowledge_stores.md
       - Loss: api_reference/exceptions/loss.md
-      - RAG Trainer: api_reference/exceptions/rag_trainer.md
+      - RAG Trainer Manager: api_reference/exceptions/rag_trainer.md
+      - Retriever: api_reference/exceptions/retriever.md
+      - Trainer: api_reference/exceptions/trainer.md
       - Tokenizer: api_reference/exceptions/tokenizer.md
     - Finetuning Datasets:
       - api_reference/finetuning_datasets/index.md

@@ -10,6 +10,8 @@ class BridgeError(FedRAGError):
 
 
 class MissingSpecifiedConversionMethod(BridgeError):
+    """Raised when bridge is missing its specified method."""
+
     pass
 
 

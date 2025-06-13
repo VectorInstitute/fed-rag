@@ -10,4 +10,6 @@ class LossError(FedRAGError):
 
 
 class InvalidReductionParam(LossError):
+    """Raised if an invalid aggregation mode is provided."""
+
     pass

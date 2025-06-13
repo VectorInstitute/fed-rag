@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.exceptions import MissingExtraError, RetrieverError
 
 
 class LoadKwargs(BaseModel):
@@ -25,7 +25,9 @@ class LoadKwargs(BaseModel):
     context_encoder: dict = Field(default_factory=dict)
 
 
-class InvalidLoadType(Exception):
+class InvalidLoadType(RetrieverError):
+    """Raised if an invalid load type was supplied."""
+
     pass
 
 

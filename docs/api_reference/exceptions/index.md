@@ -5,3 +5,5 @@
       members:
         - FedRAGError
         - FedRAGWarning
+
+::: src.fed_rag.exceptions.common

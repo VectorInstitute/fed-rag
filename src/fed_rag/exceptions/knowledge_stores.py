@@ -16,14 +16,20 @@ class KnowledgeStoreWarning(FedRAGWarning):
 
 
 class KnowledgeStoreNotFoundError(KnowledgeStoreError, FileNotFoundError):
+    """Raised if the knowledge store can not be found or loaded from file."""
+
     pass
 
 
 class InvalidDistanceError(KnowledgeStoreError):
+    """Raised if provided an invalid similarity distance."""
+
     pass
 
 
 class LoadNodeError(KnowledgeStoreError):
+    """Raised if an error occurs when loading a node."""
+
     pass
 
 
