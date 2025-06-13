@@ -8,6 +8,9 @@ from qdrant_client import AsyncQdrantClient
 
 from fed_rag.data_structures.knowledge_node import KnowledgeNode
 from fed_rag.exceptions import (
+    InvalidDistanceError,
+    KnowledgeStoreError,
+    KnowledgeStoreNotFoundError,
     KnowledgeStoreWarning,
     LoadNodeError,
     MissingExtraError,
@@ -15,6 +18,7 @@ from fed_rag.exceptions import (
 from fed_rag.knowledge_stores import AsyncQdrantKnowledgeStore
 from fed_rag.knowledge_stores.qdrant.utils import (
     convert_knowledge_node_to_qdrant_point,
+    convert_scored_point_to_knowledge_node_and_score_tuple,
 )
 
 
@@ -292,138 +296,152 @@ async def test_load_nodes_raises_error(
         await knowledge_store.load_nodes(nodes)
 
 
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_ensure_collection_exists(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     mock_client.collection_exists.return_value = True
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_ensure_collection_exists(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_client.collection_exists.return_value = True
 
-#     with does_not_raise():
-#         knowledge_store._ensure_collection_exists()
-
-
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_ensure_collection_exists_raises_not_found(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     mock_client.collection_exists.return_value = False
-
-#     with pytest.raises(
-#         KnowledgeStoreNotFoundError,
-#         match="Collection 'test collection' does not exist.",
-#     ):
-#         knowledge_store._ensure_collection_exists()
+    with does_not_raise():
+        await knowledge_store._ensure_collection_exists()
 
 
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_create_collection(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     from qdrant_client.models import Distance, VectorParams
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_ensure_collection_exists_raises_not_found(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    mock_client.collection_exists.return_value = False
 
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-#     distance = Distance(knowledge_store.collection_distance)
-
-#     # act
-#     knowledge_store._create_collection(
-#         collection_name="test collection", vector_size=100, distance=distance
-#     )
-
-#     mock_client.create_collection.assert_called_once_with(
-#         collection_name="test collection",
-#         vectors_config=VectorParams(size=100, distance=distance),
-#     )
+    with pytest.raises(
+        KnowledgeStoreNotFoundError,
+        match="Collection 'test collection' does not exist.",
+    ):
+        await knowledge_store._ensure_collection_exists()
 
 
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_create_collection_raises_invalid_distance_error(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_create_collection(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    from qdrant_client.models import Distance, VectorParams
 
-#     # act
-#     with pytest.raises(InvalidDistanceError):
-#         knowledge_store._create_collection(
-#             collection_name="test collection",
-#             vector_size=100,
-#             distance="invalid distance",
-#         )
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+    distance = Distance(knowledge_store.collection_distance)
 
+    # act
+    await knowledge_store._create_collection(
+        collection_name="test collection", vector_size=100, distance=distance
+    )
 
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_private_create_collection_raises_qdrant_error(
-#     mock_qdrant_client_class: MagicMock,
-# ) -> None:
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
-
-#     mock_client.create_collection.side_effect = RuntimeError("mock qdrant error")
-
-#     # act
-#     with pytest.raises(
-#         KnowledgeStoreError,
-#         match="Failed to create collection: mock qdrant error",
-#     ):
-#         knowledge_store._create_collection(
-#             collection_name="test collection",
-#             vector_size=100,
-#             distance=knowledge_store.collection_distance,
-#         )
+    mock_client.create_collection.assert_called_once_with(
+        collection_name="test collection",
+        vectors_config=VectorParams(size=100, distance=distance),
+    )
 
 
-# @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
-# @patch("qdrant_client.AsyncQdrantClient")
-# def test_retrieve(
-#     mock_qdrant_client_class: MagicMock,
-#     mock_ensure_collection_exists: MagicMock,
-# ) -> None:
-#     from qdrant_client.conversions.common_types import QueryResponse
-#     from qdrant_client.http.models import ScoredPoint
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_create_collection_raises_invalid_distance_error(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     mock_client = MagicMock()
-#     mock_qdrant_client_class.return_value = mock_client
-#     knowledge_store = AsyncQdrantKnowledgeStore(
-#         collection_name="test collection",
-#     )
+    # act
+    with pytest.raises(InvalidDistanceError):
+        await knowledge_store._create_collection(
+            collection_name="test collection",
+            vector_size=100,
+            distance="invalid distance",
+        )
 
-#     test_node = KnowledgeNode(
-#         node_id="1",
-#         embedding=[1, 1, 1],
-#         node_type="text",
-#         text_content="mock node",
-#     )
-#     test_pt = ScoredPoint(id="1", score=0.42, version=1, payload=test_node.model_dump())
-#     test_query_response = QueryResponse(points=[test_pt])
-#     mock_client.query_points.return_value = test_query_response
 
-#     # act
-#     retrieval_res = knowledge_store.retrieve(query_emb=[1, 1, 1], top_k=5)
+@pytest.mark.asyncio
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_private_create_collection_raises_qdrant_error(
+    mock_qdrant_client_class: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
 
-#     # assert
-#     expected = [convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)]
-#     assert expected == retrieval_res
-#     mock_ensure_collection_exists.assert_called_once()
+    mock_client.create_collection.side_effect = RuntimeError(
+        "mock qdrant error"
+    )
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to create collection: mock qdrant error",
+    ):
+        await knowledge_store._create_collection(
+            collection_name="test collection",
+            vector_size=100,
+            distance=knowledge_store.collection_distance,
+        )
+
+
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_retrieve(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.conversions.common_types import QueryResponse
+    from qdrant_client.http.models import ScoredPoint
+
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    test_node = KnowledgeNode(
+        node_id="1",
+        embedding=[1, 1, 1],
+        node_type="text",
+        text_content="mock node",
+    )
+    test_pt = ScoredPoint(
+        id="1", score=0.42, version=1, payload=test_node.model_dump()
+    )
+    test_query_response = QueryResponse(points=[test_pt])
+    mock_client.query_points.return_value = test_query_response
+
+    # act
+    retrieval_res = await knowledge_store.retrieve(
+        query_emb=[1, 1, 1], top_k=5
+    )
+
+    # assert
+    expected = [
+        convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)
+    ]
+    assert expected == retrieval_res
+    mock_ensure_collection_exists.assert_called_once()
 
 
 # @patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
@@ -432,7 +450,7 @@ async def test_load_nodes_raises_error(
 #     mock_qdrant_client_class: MagicMock,
 #     mock_ensure_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -489,7 +507,7 @@ async def test_load_nodes_raises_error(
 #         UpdateStatus,
 #     )
 
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -518,7 +536,7 @@ async def test_load_nodes_raises_error(
 #     mock_qdrant_client_class: MagicMock,
 #     mock_ensure_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -540,7 +558,7 @@ async def test_load_nodes_raises_error(
 #     mock_qdrant_client_class: MagicMock,
 #     mock_ensure_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -563,7 +581,7 @@ async def test_load_nodes_raises_error(
 #     mock_qdrant_client_class: MagicMock,
 #     mock_ensure_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -593,7 +611,7 @@ async def test_load_nodes_raises_error(
 # ) -> None:
 #     from qdrant_client.http.models import CountResult
 
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -617,7 +635,7 @@ async def test_load_nodes_raises_error(
 #     mock_qdrant_client_class: MagicMock,
 #     mock_ensure_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -645,7 +663,7 @@ async def test_load_nodes_raises_error(
 #     mock_create_collection: MagicMock,
 #     mock_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
@@ -669,7 +687,7 @@ async def test_load_nodes_raises_error(
 #     mock_create_collection: MagicMock,
 #     mock_collection_exists: MagicMock,
 # ) -> None:
-#     mock_client = MagicMock()
+#     mock_client = AsyncMock()
 #     mock_qdrant_client_class.return_value = mock_client
 #     knowledge_store = AsyncQdrantKnowledgeStore(
 #         collection_name="test collection",
