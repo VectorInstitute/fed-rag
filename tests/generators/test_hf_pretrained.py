@@ -180,6 +180,33 @@ def test_generate() -> None:
     mock_model.generate.assert_called_once()
 
 
+def test_generate_value_error() -> None:
+    # arrange
+    generator = HFPretrainedModelGenerator(
+        model_name="fake_name", load_model_at_init=False
+    )
+    mock_tokenizer = MagicMock()
+    mock_model = MagicMock()
+    mock_model.device = torch.device("cpu")
+    mock_model.generate.return_value = torch.Tensor([[1, 2, 3]])
+    mock_tokenizer_result = MagicMock()
+    mock_tokenizer_result.input_ids = torch.ones(2)
+    mock_tokenizer.batch_decode.return_value = ["Mock output"]
+    mock_tokenizer.return_value = mock_tokenizer_result
+    generator.tokenizer.unwrapped = mock_tokenizer
+    generator.model = mock_model
+
+    # act
+    with pytest.raises(
+        ValueError,
+        match="If query is a string, context must also be a string.",
+    ):
+        generator.generate("fake input", ["fake context"])
+
+    mock_tokenizer.assert_not_called()
+    mock_model.generate.assert_not_called()
+
+
 @patch("fed_rag.generators.huggingface.mixin.F")
 def test_compute_target_sequence_proba(
     mock_torch_functional: MagicMock,
