@@ -31,11 +31,15 @@ class BaseGenerator(BaseModel, ABC):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @abstractmethod
-    def generate(self, query: str, context: str, **kwargs: dict) -> str:
+    def generate(
+        self, query: str | list[str], context: str, **kwargs: dict
+    ) -> str | list[str]:
         """Generate an output from a given query and context."""
 
     @abstractmethod
-    def complete(self, prompt: str, **kwargs: dict) -> str:
+    def complete(
+        self, prompt: str | list[str], **kwargs: dict
+    ) -> str | list[str]:
         """Completion interface for generator LLMs."""
 
     @property
