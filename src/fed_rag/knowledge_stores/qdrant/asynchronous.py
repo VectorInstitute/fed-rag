@@ -15,12 +15,15 @@ from fed_rag.exceptions import (
     KnowledgeStoreWarning,
     LoadNodeError,
 )
-from fed_rag.knowledge_stores.qdrant.utils import check_qdrant_installed
+
+from .utils import (
+    check_qdrant_installed,
+    convert_knowledge_node_to_qdrant_point,
+    convert_scored_point_to_knowledge_node_and_score_tuple,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from qdrant_client import AsyncQdrantClient
-    from qdrant_client.http.models import ScoredPoint
-    from qdrant_client.models import PointStruct
 
 
 def _get_qdrant_client(
@@ -52,36 +55,6 @@ def _get_qdrant_client(
             https=https,
             **kwargs,
         )
-
-
-def _convert_knowledge_node_to_qdrant_point(
-    node: KnowledgeNode,
-) -> "PointStruct":
-    from qdrant_client.models import PointStruct
-
-    if node.embedding is None:
-        raise KnowledgeStoreError(
-            "Cannot load a node with embedding set to None."
-        )
-
-    return PointStruct(
-        id=node.node_id,
-        vector=node.embedding,
-        payload=node.model_dump_without_embeddings(),
-    )
-
-
-def _convert_scored_point_to_knowledge_node_and_score_tuple(
-    scored_point: "ScoredPoint",
-) -> tuple[float, KnowledgeNode]:
-    knowledge_data = scored_point.payload
-    knowledge_data.update(
-        embedding=scored_point.vector
-    )  # attach vector to embedding if it is even returned
-    return (
-        scored_point.score,
-        KnowledgeNode.model_validate(knowledge_data),
-    )
 
 
 class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
@@ -225,7 +198,7 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
             vector_size=len(node.embedding)
         )
 
-        point = _convert_knowledge_node_to_qdrant_point(node)
+        point = convert_knowledge_node_to_qdrant_point(node)
         async with self.get_client() as client:
             try:
                 await client.upsert(
@@ -244,7 +217,7 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
             vector_size=len(nodes[0].embedding)
         )
 
-        points = [_convert_knowledge_node_to_qdrant_point(n) for n in nodes]
+        points = [convert_knowledge_node_to_qdrant_point(n) for n in nodes]
         async with self.get_client() as client:
             try:
                 # upload points is a sync method
@@ -279,7 +252,7 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
                 ) from e
 
         return [
-            _convert_scored_point_to_knowledge_node_and_score_tuple(pt)
+            convert_scored_point_to_knowledge_node_and_score_tuple(pt)
             for pt in hits.points
         ]
 

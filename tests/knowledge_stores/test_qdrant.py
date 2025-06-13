@@ -17,8 +17,8 @@ from fed_rag.exceptions import (
 )
 from fed_rag.knowledge_stores.qdrant.sync import (
     QdrantKnowledgeStore,
-    _convert_knowledge_node_to_qdrant_point,
-    _convert_scored_point_to_knowledge_node_and_score_tuple,
+    convert_knowledge_node_to_qdrant_point,
+    convert_scored_point_to_knowledge_node_and_score_tuple,
 )
 
 
@@ -185,7 +185,7 @@ def test_load_node(mock_qdrant_client_class: MagicMock) -> None:
     mock_client.collection_exists.assert_called_once_with("test collection")
     mock_client.upsert.assert_called_once_with(
         collection_name="test collection",
-        points=[_convert_knowledge_node_to_qdrant_point(node)],
+        points=[convert_knowledge_node_to_qdrant_point(node)],
     )
 
 
@@ -240,7 +240,7 @@ def test_load_nodes(mock_qdrant_client_class: MagicMock) -> None:
     mock_client.collection_exists.assert_called_once_with("test collection")
     mock_client.upload_points.assert_called_once_with(
         collection_name="test collection",
-        points=[_convert_knowledge_node_to_qdrant_point(n) for n in nodes],
+        points=[convert_knowledge_node_to_qdrant_point(n) for n in nodes],
         parallel=4,
     )
 
@@ -415,7 +415,7 @@ def test_retrieve(
 
     # assert
     expected = [
-        _convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)
+        convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)
     ]
     assert expected == retrieval_res
     mock_ensure_collection_exists.assert_called_once()
@@ -717,7 +717,7 @@ def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
             pass
 
 
-def test_convert_knowledge_node_to_qdrant_point_raises_error_none_embedding() -> (
+def testconvert_knowledge_node_to_qdrant_point_raises_error_none_embedding() -> (
     None
 ):
     node = KnowledgeNode(text_content="mock", node_type="text")
@@ -726,4 +726,4 @@ def test_convert_knowledge_node_to_qdrant_point_raises_error_none_embedding() ->
         KnowledgeStoreError,
         match="Cannot load a node with embedding set to None.",
     ):
-        _convert_knowledge_node_to_qdrant_point(node)
+        convert_knowledge_node_to_qdrant_point(node)
