@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../bridge/">
+        <link rel="prev" href="../data_collator/">
       
       
         <link rel="next" href="../fl_tasks/">
@@ -2437,6 +2437,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2493,6 +2501,29 @@
   
   <span class="md-ellipsis">
     Bridge
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_collator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Collator
     
   </span>
   
@@ -2574,6 +2605,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.evals.BenchmarkGetExamplesError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BenchmarkGetExamplesError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.evals.BenchmarkParseError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BenchmarkParseError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#src.fed_rag.exceptions.evals.EvaluationsFileNotFoundError" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;EvaluationsFileNotFoundError
@@ -2603,7 +2652,30 @@
   
   
   <span class="md-ellipsis">
-    FL Tasks
+    FL Task
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generator
     
   </span>
   
@@ -2626,7 +2698,7 @@
   
   
   <span class="md-ellipsis">
-    Inspectors
+    Inspector
     
   </span>
   
@@ -2649,7 +2721,7 @@
   
   
   <span class="md-ellipsis">
-    Knowledge Stores
+    Knowledge Store
     
   </span>
   
@@ -2695,7 +2767,53 @@
   
   
   <span class="md-ellipsis">
-    RAG Trainer
+    RAG Trainer Manager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../retriever/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Retriever
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Trainer
     
   </span>
   
@@ -4276,6 +4394,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.evals.BenchmarkGetExamplesError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BenchmarkGetExamplesError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.fed_rag.exceptions.evals.BenchmarkParseError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BenchmarkParseError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#src.fed_rag.exceptions.evals.EvaluationsFileNotFoundError" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;EvaluationsFileNotFoundError
@@ -4419,6 +4555,86 @@
 
 
 
+<h2 id="src.fed_rag.exceptions.evals.BenchmarkGetExamplesError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">BenchmarkGetExamplesError</span>
+
+
+<a href="#src.fed_rag.exceptions.evals.BenchmarkGetExamplesError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            EvalsError (src.fed_rag.exceptions.evals.EvalsError)" href="#src.fed_rag.exceptions.evals.EvalsError">EvalsError</a></code></p>
+
+
+        <p>Raised if an error occurs when getting examples for a benchmark.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/exceptions/evals.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">class</span><span class="w"> </span><span class="nc">BenchmarkGetExamplesError</span><span class="p">(</span><span class="n">EvalsError</span><span class="p">):</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised if an error occurs when getting examples for a benchmark.&quot;&quot;&quot;</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="k">pass</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.fed_rag.exceptions.evals.BenchmarkParseError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">BenchmarkParseError</span>
+
+
+<a href="#src.fed_rag.exceptions.evals.BenchmarkParseError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="            EvalsError (src.fed_rag.exceptions.evals.EvalsError)" href="#src.fed_rag.exceptions.evals.EvalsError">EvalsError</a></code></p>
+
+
+        <p>Raised when errors occur during parsing examples.</p>
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src/fed_rag/exceptions/evals.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="k">class</span><span class="w"> </span><span class="nc">BenchmarkParseError</span><span class="p">(</span><span class="n">EvalsError</span><span class="p">):</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when errors occur during parsing examples.&quot;&quot;&quot;</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="k">pass</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
 <h2 id="src.fed_rag.exceptions.evals.EvaluationsFileNotFoundError" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">EvaluationsFileNotFoundError</span>
 
@@ -4441,9 +4657,13 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/fed_rag/exceptions/evals.py</code></summary>
-                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluationsFileNotFoundError</span><span class="p">(</span><span class="n">EvalsError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark evaluations file not found error.&quot;&quot;&quot;</span>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluationsFileNotFoundError</span><span class="p">(</span><span class="n">EvalsError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark evaluations file not found error.&quot;&quot;&quot;</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="k">pass</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
@@ -4496,7 +4716,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../bridge/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Bridge">
+          <a href="../data_collator/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Data Collator">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -4506,20 +4726,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Bridge
+                Data Collator
               </div>
             </div>
           </a>
         
         
           
-          <a href="../fl_tasks/" class="md-footer__link md-footer__link--next" aria-label="Next: FL Tasks">
+          <a href="../fl_tasks/" class="md-footer__link md-footer__link--next" aria-label="Next: FL Task">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                FL Tasks
+                FL Task
               </div>
             </div>
             <div class="md-footer__button md-icon">
