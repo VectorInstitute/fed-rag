@@ -85,7 +85,7 @@ def _convert_scored_point_to_knowledge_node_and_score_tuple(
 
 
 class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
-    """Qdrant Knowledge Store Class
+    """Async Qdrant Knowledge Store Class
 
     NOTE: This is a minimal implementation in order to just get started using Qdrant.
     """
