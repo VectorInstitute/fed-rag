@@ -20,13 +20,17 @@ class HFGeneratorProtocol(Protocol):
     model: Union["PreTrainedModel", "PeftModel"]
     generation_config: "GenerationConfig"
 
-    def complete(self, prompt: str, **kwargs: Any) -> str:
+    def complete(
+        self, prompt: str | list[str], **kwargs: Any
+    ) -> str | list[str]:
         pass  # pragma: no cover
 
 
 class HuggingFaceGeneratorMixin:
     # complete
-    def complete(self: HFGeneratorProtocol, prompt: str, **kwargs: Any) -> str:
+    def complete(
+        self: HFGeneratorProtocol, prompt: str | list[str], **kwargs: Any
+    ) -> str | list[str]:
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
             prompt, return_tensors="pt"
@@ -49,16 +53,26 @@ class HuggingFaceGeneratorMixin:
         outputs: list[str] = self.tokenizer.unwrapped.batch_decode(
             generated_ids, skip_special_tokens=True
         )
-        return outputs[0]
+        return outputs if len(outputs) > 1 else outputs[0]
 
     # generate
     def generate(
-        self: HFGeneratorProtocol, query: str, context: str, **kwargs: Any
-    ) -> str:
-        formatted_query = self.prompt_template.format(
-            query=query, context=context
-        )
-        return self.complete(prompt=formatted_query)
+        self: HFGeneratorProtocol,
+        query: str | list[str],
+        context: str | list[str],
+        **kwargs: Any,
+    ) -> str | list[str]:
+        if isinstance(query, str):
+            if not isinstance(context, str):
+                raise ValueError(
+                    "If query is a string, context must also be a string."
+                )
+            query, context = [query], [context]
+        formatted_queries = [
+            self.prompt_template.format(query=q, context=c)
+            for q, c in zip(query, context)
+        ]
+        return self.complete(prompt=formatted_queries, **kwargs)
 
     def compute_target_sequence_proba(
         self: HFGeneratorProtocol, prompt: str, target: str
