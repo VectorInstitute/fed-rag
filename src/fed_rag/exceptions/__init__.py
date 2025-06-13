@@ -40,6 +40,7 @@ from .knowledge_stores import (
     LoadNodeError,
     MCPKnowledgeStoreError,
 )
+from .retriever import RetrieverError, RetrieverWarning
 from .tokenizer import TokenizerError, TokenizerWarning
 from .trainer import (
     InconsistentDatasetError,
@@ -104,6 +105,9 @@ __all__ = [
     "UnspecifiedRetrieverTrainer",
     "UnsupportedTrainerMode",
     "InconsistentRAGSystems",
+    # retrievers
+    "RetrieverError",
+    "RetrieverWarning",
     # tokenizer
     "TokenizerError",
     "TokenizerWarning",
