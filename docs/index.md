@@ -12,7 +12,7 @@ hide:
 
 ## Simplified RAG fine-tuning across centralized or federated architectures
 
-[Read the paper](https://d3ddy8balm3goa.cloudfront.net/papers/fedrag-codeml-icml-2025.pdf)
+[Read the paper](https://d3ddy8balm3goa.cloudfront.net/papers/fedrag-codeml-icml-2025-camera-ready.pdf)
 (_Accepted in CODEML Workshop at ICML 2025, Vancouver_)
 
 <div class="grid cards" markdown>
