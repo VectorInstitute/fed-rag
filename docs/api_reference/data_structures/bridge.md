@@ -4,3 +4,4 @@
     options:
       members:
         - BridgeMetadata
+        - CompatibleVersions
