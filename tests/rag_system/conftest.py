@@ -15,10 +15,14 @@ from fed_rag.data_structures import KnowledgeNode
 class MockRetriever(BaseRetriever):
     _encoder: torch.nn.Module = PrivateAttr(default=torch.nn.Linear(3, 3))
 
-    def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
+    def encode_context(
+        self, context: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
         return self._encoder.forward(torch.ones(3))
 
-    def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
+    def encode_query(
+        self, query: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
         return self._encoder.forward(torch.zeros(3))
 
     @property
@@ -42,10 +46,14 @@ class MockDualRetriever(BaseRetriever):
         default=torch.nn.Linear(2, 1)
     )
 
-    def encode_context(self, context: str, **kwargs: Any) -> torch.Tensor:
+    def encode_context(
+        self, context: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
         return self._encoder.forward(torch.ones(2))
 
-    def encode_query(self, query: str, **kwargs: Any) -> torch.Tensor:
+    def encode_query(
+        self, query: str | list[str], **kwargs: Any
+    ) -> torch.Tensor:
         return self._encoder.forward(torch.zeros(2))
 
     @property
@@ -150,10 +158,14 @@ class MockGenerator(BaseGenerator):
     _tokenizer = MockTokenizer()
     _prompt_template = "{query} and {context}"
 
-    def complete(self, prompt: str, **kwargs: Any) -> str:
+    def complete(
+        self, prompt: str | list[str], **kwargs: Any
+    ) -> str | list[str]:
         return f"mock completion output from '{prompt}'."
 
-    def generate(self, query: str, context: str, **kwargs: Any) -> str:
+    def generate(
+        self, query: str | list[str], context: str | list[str], **kwargs: Any
+    ) -> str | list[str]:
         return f"mock output from '{query}' and '{context}'."
 
     def compute_target_sequence_proba(self, prompt: str, target: str) -> float:
