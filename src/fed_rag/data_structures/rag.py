@@ -17,6 +17,8 @@ class SourceNode(BaseModel):
 
 
 class RAGResponse(BaseModel):
+    """Response class returned by querying RAG systems."""
+
     response: str
     raw_response: str | None = None
     source_nodes: list[SourceNode]

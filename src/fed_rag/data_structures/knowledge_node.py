@@ -72,6 +72,19 @@ class KnowledgeNode(BaseModel):
     def validate_image_content(
         cls, value: str | None, info: ValidationInfo
     ) -> str | None:
+        """Validate image content.
+
+        Args:
+            value (str | None): value supplied for `image`
+            info (ValidationInfo): information on the rest of the base model
+
+        Raises:
+            ValueError: _description_
+            ValueError: _description_
+
+        Returns:
+            str | None: _description_
+        """
         node_type = info.data.get("node_type")
         node_type = cast(NodeType, node_type)
         if node_type == NodeType.IMAGE:
@@ -139,5 +152,5 @@ class KnowledgeNode(BaseModel):
         return metadata
 
     def model_dump_without_embeddings(self) -> dict[str, Any]:
-        """Seriliaze the node without the embedding."""
+        """Serialize the node without the embedding."""
         return self.model_dump(exclude={"embedding"})
