@@ -7,6 +7,7 @@ from fed_rag.base.bridge import BaseBridgeMixin
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.no_encode_knowledge_store import BaseNoEncodeKnowledgeStore
 from fed_rag.data_structures import KnowledgeNode, NodeType, SourceNode
+from fed_rag.exceptions import RAGSystemError
 
 from .conftest import MockGenerator
 
@@ -259,7 +260,7 @@ def test_rag_system_batch_generate_list_length_mismatch_error(
 
     # act + assert
     with pytest.raises(
-        ValueError,
+        RAGSystemError,
         match="Queries and contexts must have the same length for batch generation.",
     ):
         rag_system.batch_generate(queries=queries, contexts=contexts)

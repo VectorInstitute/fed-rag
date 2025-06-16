@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
+from fed_rag.exceptions import RAGSystemError
 
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs
@@ -54,6 +55,7 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
     async def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from KnowledgeStore."""
         query_emb: list[float] = self.retriever.encode_query(query).tolist()
+        # TODO: move this to knowledge store batch retrieve once implemented
         raw_retrieval_result = await self.knowledge_store.retrieve(
             query_emb=query_emb, top_k=self.rag_config.top_k
         )
@@ -89,7 +91,7 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
     ) -> list[str]:
         """Batch generate responses to queries with contexts."""
         if len(queries) != len(contexts):
-            raise ValueError(
+            raise RAGSystemError(
                 "Queries and contexts must have the same length for batch generation."
             )
         return self.generator.generate(query=queries, context=contexts)  # type: ignore

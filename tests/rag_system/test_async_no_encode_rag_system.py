@@ -13,6 +13,7 @@ from fed_rag.core.no_encode_rag_system._asynchronous import (
     _AsyncNoEncodeRAGSystem,
 )
 from fed_rag.data_structures import KnowledgeNode, NodeType, SourceNode
+from fed_rag.exceptions import RAGSystemError
 
 from .conftest import MockGenerator
 
@@ -269,7 +270,7 @@ async def test_rag_system_batch_generate_list_length_mismatch_error(
 
     # act + assert
     with pytest.raises(
-        ValueError,
+        RAGSystemError,
         match="Queries and contexts must have the same length for batch generation.",
     ):
         await rag_system.batch_generate(queries=queries, contexts=contexts)
