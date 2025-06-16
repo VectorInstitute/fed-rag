@@ -40,6 +40,7 @@ from .knowledge_stores import (
     LoadNodeError,
     MCPKnowledgeStoreError,
 )
+from .rag_system import RAGSystemError, RAGSystemWarning
 from .retriever import RetrieverError, RetrieverWarning
 from .tokenizer import TokenizerError, TokenizerWarning
 from .trainer import (
@@ -99,6 +100,9 @@ __all__ = [
     "LoadNodeError",
     "MCPKnowledgeStoreError",
     "CallToolResultConversionError",
+    # rag system
+    "RAGSystemError",
+    "RAGSystemWarning",
     # rag trainer manager
     "RAGTrainerManagerError",
     "UnspecifiedGeneratorTrainer",

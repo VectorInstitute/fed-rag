@@ -13,6 +13,7 @@ from fed_rag.core.no_encode_rag_system._asynchronous import (
     _AsyncNoEncodeRAGSystem,
 )
 from fed_rag.data_structures import KnowledgeNode, NodeType, SourceNode
+from fed_rag.exceptions import RAGSystemError
 
 from .conftest import MockGenerator
 
@@ -121,6 +122,63 @@ async def test_rag_system_query(
 
 
 @pytest.mark.asyncio
+@patch.object(AsyncNoEncodeRAGSystem, "batch_generate")
+@patch.object(AsyncNoEncodeRAGSystem, "_format_context")
+@patch.object(AsyncNoEncodeRAGSystem, "batch_retrieve")
+async def test_rag_system_batch_query(
+    mock_batch_retrieve: MagicMock,
+    mock_format_context: MagicMock,
+    mock_batch_generate: MagicMock,
+    mock_generator: BaseGenerator,
+    knowledge_nodes: list[KnowledgeNode],
+    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    # arrange mocks
+    source_nodes = [
+        [
+            SourceNode(score=0.99, node=knowledge_nodes[0]),
+            SourceNode(score=0.85, node=knowledge_nodes[1]),
+        ],
+        [
+            SourceNode(score=0.90, node=knowledge_nodes[0]),
+            SourceNode(score=0.80, node=knowledge_nodes[1]),
+        ],
+    ]
+    mock_batch_retrieve.return_value = source_nodes
+    mock_format_context.return_value = "fake context"
+    mock_batch_generate.return_value = [
+        "fake generation response 1",
+        "fake generation response 2",
+    ]
+
+    # build rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+    queries = ["fake query 1", "fake query 2"]
+
+    # act
+    rag_responses = await rag_system.batch_query(queries=queries)
+
+    # assert
+    mock_batch_retrieve.assert_called_with(queries)
+    mock_format_context.assert_called_with(source_nodes[1])
+    mock_batch_generate.assert_called_with(
+        queries, ["fake context", "fake context"]
+    )
+    assert all(
+        res.source_nodes == sn for res, sn in zip(rag_responses, source_nodes)
+    )
+    assert rag_responses[0].response == "fake generation response 1"
+    assert rag_responses[1].response == "fake generation response 2"
+
+
+@pytest.mark.asyncio
 @patch.object(MockGenerator, "generate")
 async def test_rag_system_generate(
     mock_generate: MagicMock,
@@ -151,6 +209,76 @@ async def test_rag_system_generate(
 
 
 @pytest.mark.asyncio
+@patch.object(MockGenerator, "generate")
+async def test_rag_system_batch_generate(
+    mock_generate: MagicMock,
+    mock_generator: MockGenerator,
+    knowledge_nodes: list[KnowledgeNode],
+    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    # arrange mocks
+    mock_generate.return_value = [
+        "fake generate response 1",
+        "fake generate response 2",
+    ]
+
+    # build rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    # queries and contexts
+    queries = ["fake query 1", "fake query 2"]
+    contexts = ["fake context 1", "fake context 2"]
+
+    # act
+    res = await rag_system.batch_generate(queries=queries, contexts=contexts)
+
+    # assert
+    mock_generate.assert_called_once_with(query=queries, context=contexts)
+    assert isinstance(res, list)
+    assert len(res) == 2
+    assert res[0] == "fake generate response 1"
+    assert res[1] == "fake generate response 2"
+
+
+@pytest.mark.asyncio
+@patch.object(MockGenerator, "generate")
+async def test_rag_system_batch_generate_list_length_mismatch_error(
+    mock_generate: MagicMock,
+    mock_generator: MockGenerator,
+    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    # build rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    # queries and contexts
+    queries = ["fake query 1", "fake query 2"]
+    contexts = ["fake context 1"]  # only one context provided
+
+    # act + assert
+    with pytest.raises(
+        RAGSystemError,
+        match="Queries and contexts must have the same length for batch generation.",
+    ):
+        await rag_system.batch_generate(queries=queries, contexts=contexts)
+
+    mock_generate.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_rag_system_format_context(
     mock_generator: MockGenerator,
     dummy_store: BaseAsyncNoEncodeKnowledgeStore,
@@ -171,6 +299,34 @@ async def test_rag_system_format_context(
 
     # assert
     assert formatted_context == "Dummy text\nDummy text"
+
+
+@pytest.mark.asyncio
+async def test_rag_system_batch_retrieve(
+    mock_generator: BaseGenerator,
+    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    # build rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    # queries and expected retrieved source nodes
+    queries = ["fake query 1", "fake query 2"]
+
+    # act
+    result = await rag_system.batch_retrieve(queries)
+
+    # assert
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert all(isinstance(sn, list) for sn in result)
+    assert all(len(sn) == 2 for sn in result)
 
 
 def test_bridging_no_encode_rag_system(

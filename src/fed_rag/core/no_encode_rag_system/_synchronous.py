@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
+from fed_rag.exceptions import RAGSystemError
 
 if TYPE_CHECKING:  # pragma: no cover
     # to avoid circular imports, using forward refs
@@ -38,6 +39,19 @@ class _NoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
         response = self.generate(query=query, context=context)
         return RAGResponse(source_nodes=source_nodes, response=response)
 
+    def batch_query(self, queries: list[str]) -> list[RAGResponse]:
+        """Batch query the RAG system."""
+        source_nodes_list = self.batch_retrieve(queries)
+        contexts = [
+            self._format_context(source_nodes)
+            for source_nodes in source_nodes_list
+        ]
+        responses = self.batch_generate(queries, contexts)
+        return [
+            RAGResponse(source_nodes=source_nodes, response=response)
+            for source_nodes, response in zip(source_nodes_list, responses)
+        ]
+
     def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from NoEncodeKnowledgeStore."""
         raw_retrieval_result = self.knowledge_store.retrieve(
@@ -47,9 +61,33 @@ class _NoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
             SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
         ]
 
+    def batch_retrieve(self, queries: list[str]) -> list[list[SourceNode]]:
+        """Batch retrieve from NoEncodeKnowledgeStore."""
+        # TODO: move this to knowledge store batch retrieve once implemented
+        raw_retrieval_results = [
+            self.knowledge_store.retrieve(
+                query=query, top_k=self.rag_config.top_k
+            )
+            for query in queries
+        ]
+        return [
+            [SourceNode(score=el[0], node=el[1]) for el in raw_result]
+            for raw_result in raw_retrieval_results
+        ]
+
     def generate(self, query: str, context: str) -> str:
         """Generate response to query with context."""
         return self.generator.generate(query=query, context=context)  # type: ignore
+
+    def batch_generate(
+        self, queries: list[str], contexts: list[str]
+    ) -> list[str]:
+        """Batch generate responses to queries with contexts."""
+        if len(queries) != len(contexts):
+            raise RAGSystemError(
+                "Queries and contexts must have the same length for batch generation."
+            )
+        return self.generator.generate(query=queries, context=contexts)  # type: ignore
 
     def _format_context(self, source_nodes: list[SourceNode]) -> str:
         """Format the context from the source nodes."""

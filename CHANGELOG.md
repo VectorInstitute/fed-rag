@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add batch methods for RAGSystem (#270)
 - `AsyncQdrantKnowledgeStore` (#430)
 
 ## [0.0.26] - 2025-06-10
