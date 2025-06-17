@@ -81,7 +81,7 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
             self.load_node(node)
 
     def retrieve(
-        self, query_emb: list[float], top_k: int
+        self, query_emb: list[float], top_k: int = DEFAULT_TOP_K
     ) -> list[tuple[float, KnowledgeNode]]:
         # all_nodes = list(self._data.values())
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -95,6 +95,13 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
             top_k=top_k,
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
+
+    def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int = DEFAULT_TOP_K
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        raise NotImplementedError(
+            f"batch_retrieve is not implemented for {self.__class__.__name__}."
+        )
 
     def delete_node(self, node_id: str) -> bool:
         if isinstance(self._data_storage, torch.Tensor):

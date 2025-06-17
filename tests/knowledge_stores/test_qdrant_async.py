@@ -759,3 +759,17 @@ async def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
     ):
         async with knowledge_store.get_client() as _client:
             pass
+
+
+@pytest.mark.asyncio
+async def test_batch_retrieve_raises_error() -> None:
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    with pytest.raises(
+        NotImplementedError,
+    ):
+        await knowledge_store.batch_retrieve(
+            query_embs=[[1, 2, 3], [4, 5, 6]], top_k=2
+        )

@@ -38,7 +38,7 @@ class BaseNoEncodeKnowledgeStore(BaseModel, ABC):
     def retrieve(
         self, query: str, top_k: int
     ) -> list[tuple[float, "KnowledgeNode"]]:
-        """Retrieve top-k nodes from NoEncodeKnowledgeStore against.
+        """Retrieve top-k nodes from NoEncodeKnowledgeStore with given query.
 
         Args:
             query (str): the natural language query
@@ -46,6 +46,21 @@ class BaseNoEncodeKnowledgeStore(BaseModel, ABC):
 
         Returns:
             A list of tuples where the first element represents the similarity score
+            of the node to the query, and the second element is the node itself.
+        """
+
+    @abstractmethod
+    def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Batch retrieve top-k nodes from NoEncodeKnowledgeStore with given queries.
+
+        Args:
+            queries (list[str]): the list of natural language queries
+            top_k (int): the number of knowledge nodes to retrieve
+
+        Returns:
+            A list of list of tuples where the first element represents the similarity score
             of the node to the query, and the second element is the node itself.
         """
 
@@ -95,7 +110,7 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
     async def retrieve(
         self, query: str, top_k: int
     ) -> list[tuple[float, "KnowledgeNode"]]:
-        """Asynchronously retrieve top-k nodes from NoEncodeKnowledgeStore against.
+        """Asynchronously retrieve top-k nodes from NoEncodeKnowledgeStore with given query.
 
         Args:
             query (str): the natural language query
@@ -103,6 +118,21 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
 
         Returns:
             A list of tuples where the first element represents the similarity score
+            of the node to the query, and the second element is the node itself.
+        """
+
+    @abstractmethod
+    async def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Asynchronously batch retrieve top-k nodes from NoEncodeKnowledgeStore with given queries.
+
+        Args:
+            queries (list[str]): the list of natural language queries
+            top_k (int): the number of knowledge nodes to retrieve
+
+        Returns:
+            A list of list of tuples where the first element represents the similarity score
             of the node to the query, and the second element is the node itself.
         """
 
@@ -162,6 +192,11 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
             self, query: str, top_k: int
         ) -> list[tuple[float, "KnowledgeNode"]]:
             return asyncio_run(self._async_ks.retrieve(query=query, top_k=top_k))  # type: ignore [no-any-return]
+
+        def batch_retrieve(
+            self, queries: list[str], top_k: int
+        ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+            return asyncio_run(self._async_ks.batch_retrieve(queries=queries, top_k=top_k))  # type: ignore [no-any-return]
 
         def delete_node(self, node_id: str) -> bool:
             return asyncio_run(self._async_ks.delete_node(node_id))  # type: ignore [no-any-return]

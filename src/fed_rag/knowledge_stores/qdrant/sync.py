@@ -323,3 +323,10 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             "`load()` is not available in QdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
         )
+
+    def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        raise NotImplementedError(
+            "batch_retrieve is not implemented for QdrantKnowledgeStore."
+        )

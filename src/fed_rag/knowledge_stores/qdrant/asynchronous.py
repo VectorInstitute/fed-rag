@@ -337,3 +337,10 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
             "`load()` is not available in AsyncQdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
         )
+
+    async def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        raise NotImplementedError(
+            "batch_retrieve is not implemented for AsyncQdrantKnowledgeStore."
+        )

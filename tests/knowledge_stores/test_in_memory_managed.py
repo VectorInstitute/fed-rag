@@ -212,3 +212,13 @@ def test_persist_overwrite(
             )
         )
         assert loaded_knowledge_store._data == knowledge_store._data
+
+
+def test_batch_retrieve_raises_error(text_nodes: list[KnowledgeNode]) -> None:
+    # arrange
+    knowledge_store = ManagedInMemoryKnowledgeStore.from_nodes(
+        nodes=text_nodes
+    )
+
+    with pytest.raises(NotImplementedError):
+        knowledge_store.batch_retrieve(query_embs=[[1, 2, 3], [4, 5, 6]])

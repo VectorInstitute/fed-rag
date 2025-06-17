@@ -49,6 +49,11 @@ class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
     ) -> list[tuple[float, KnowledgeNode]]:
         return []
 
+    async def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        return [[]]
+
     async def delete_node(self, node_id: str) -> bool:
         return True
 
@@ -92,6 +97,7 @@ def test_to_sync_methods() -> None:
         assert sync_store.nodes == nodes[1:]
 
         sync_store.retrieve([1, 2, 3], 1)
+        sync_store.batch_retrieve([[1, 2, 3], [4, 5, 6]], 1)
         sync_store.delete_node("fake id")  # doesn't actually delete
         sync_store.load_node(nodes[0])
 

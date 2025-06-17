@@ -302,3 +302,13 @@ def test_load_raises_not_implemented_error(
 
     with pytest.raises(NotImplementedError):
         store.load()
+
+
+@pytest.mark.asyncio
+async def test_batch_retrieve_raises_not_implemented_error(
+    mcp_streamable_http_source: MCPStreamableHttpKnowledgeSource,
+) -> None:
+    store = MCPKnowledgeStore().add_source(mcp_streamable_http_source)
+
+    with pytest.raises(NotImplementedError):
+        await store.batch_retrieve(queries=["query 1", "query 2"])

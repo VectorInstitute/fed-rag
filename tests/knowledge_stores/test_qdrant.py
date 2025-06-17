@@ -727,3 +727,16 @@ def testconvert_knowledge_node_to_qdrant_point_raises_error_none_embedding() -> 
         match="Cannot load a node with embedding set to None.",
     ):
         convert_knowledge_node_to_qdrant_point(node)
+
+
+def test_batch_retrieve_raises_error() -> None:
+    knowledge_store = QdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    with pytest.raises(
+        NotImplementedError,
+    ):
+        knowledge_store.batch_retrieve(
+            query_embs=[[1, 2, 3], [4, 5, 6]], top_k=2
+        )

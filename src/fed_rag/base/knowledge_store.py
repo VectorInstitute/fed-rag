@@ -43,6 +43,16 @@ class BaseKnowledgeStore(BaseModel, ABC):
         """
 
     @abstractmethod
+    def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Batch retrieve top-k nodes from KnowledgeStore against provided user queries.
+
+        Returns:
+            A list of list of tuples of similarity scores and the knowledge nodes.
+        """
+
+    @abstractmethod
     def delete_node(self, node_id: str) -> bool:
         """Remove a node from the KnowledgeStore by ID, returning success status."""
 
@@ -90,6 +100,16 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
         Returns:
             A list of tuples where the first element represents the similarity score
             of the node to the query, and the second element is the node itself.
+        """
+
+    @abstractmethod
+    async def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Asynchronously batch retrieve top-k nodes from KnowledgeStore against provided user queries.
+
+        Returns:
+            A list of list of tuples of similarity scores and the knowledge nodes.
         """
 
     @abstractmethod
@@ -148,6 +168,11 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
             self, query_emb: list[float], top_k: int
         ) -> list[tuple[float, "KnowledgeNode"]]:
             return asyncio_run(self._async_ks.retrieve(query_emb=query_emb, top_k=top_k))  # type: ignore [no-any-return]
+
+        def batch_retrieve(
+            self, query_embs: list[list[float]], top_k: int
+        ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+            return asyncio_run(self._async_ks.batch_retrieve(query_embs=query_embs, top_k=top_k))  # type: ignore [no-any-return]
 
         def delete_node(self, node_id: str) -> bool:
             return asyncio_run(self._async_ks.delete_node(node_id))  # type: ignore [no-any-return]
