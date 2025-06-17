@@ -96,6 +96,13 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
         )
         return [(el[1], self._data[el[0]]) for el in node_ids_and_scores]
 
+    def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        raise NotImplementedError(
+            f"batch_retrieve is not implemented for {self.__class__.__name__}."
+        )
+
     def delete_node(self, node_id: str) -> bool:
         if isinstance(self._data_storage, torch.Tensor):
             device = torch.device("cpu")

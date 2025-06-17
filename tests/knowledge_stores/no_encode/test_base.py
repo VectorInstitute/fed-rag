@@ -49,6 +49,11 @@ class DummyAsyncKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     ) -> list[tuple[float, KnowledgeNode]]:
         return [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
 
+    async def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        return [[]]
+
     async def delete_node(self, node_id: str) -> bool:
         return True
 
