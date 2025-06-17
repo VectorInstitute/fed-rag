@@ -103,7 +103,7 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
         """
 
     @abstractmethod
-    def batch_retrieve(
+    async def batch_retrieve(
         self, query_embs: list[list[float]], top_k: int
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
         """Asynchronously batch retrieve top-k nodes from KnowledgeStore against provided user queries.
