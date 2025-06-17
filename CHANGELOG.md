@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Add `batch_retrieve` to KnowledgeStore classes that raise `NotImplementedError` by default (#436)
 - Add batch methods for RAGSystem (#270)
 - `AsyncQdrantKnowledgeStore` (#430)
 
