@@ -46,7 +46,7 @@ class BaseKnowledgeStore(BaseModel, ABC):
     def batch_retrieve(
         self, query_embs: list[list[float]], top_k: int
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
-        """Batch retrieve top-k nodes from KnowledgeStored.
+        """Batch retrieve top-k nodes from KnowledgeStore against provided user queries.
 
         Returns:
             A list of list of tuples of similarity scores and the knowledge nodes.
@@ -106,7 +106,7 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
     def batch_retrieve(
         self, query_embs: list[list[float]], top_k: int
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
-        """Asynchronously batch retrieve top-k nodes from KnowledgeStored.
+        """Asynchronously batch retrieve top-k nodes from KnowledgeStore against provided user queries.
 
         Returns:
             A list of list of tuples of similarity scores and the knowledge nodes.

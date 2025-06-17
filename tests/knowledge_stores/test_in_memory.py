@@ -221,3 +221,11 @@ def test_persist_overwrite(text_nodes: list[KnowledgeNode]) -> None:
         loaded_knowledge_store.load()
 
         assert loaded_knowledge_store._data == knowledge_store._data
+
+
+def test_batch_retrieve_raises_error() -> None:
+    with tempfile.TemporaryDirectory() as dirpath:
+        knowledge_store = InMemoryKnowledgeStore(cache_dir=dirpath)
+
+        with pytest.raises(NotImplementedError):
+            knowledge_store.batch_retrieve(query_embs=[[1, 2, 3], [4, 5, 6]])

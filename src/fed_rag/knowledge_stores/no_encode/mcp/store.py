@@ -142,7 +142,7 @@ class MCPKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
 
     # Not implemented methods
     async def batch_retrieve(
-        self, queries: list[str], top_k: int
+        self, queries: list[str], top_k: int = DEFAULT_TOP_K
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
         raise NotImplementedError(
             "batch_retrieve is not implemented for MCPKnowledgeStore."
