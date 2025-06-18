@@ -115,6 +115,13 @@ async def dummy_store_no_batch_retrieval() -> BaseAsyncNoEncodeKnowledgeStore:
     return dummy_store
 
 
+@pytest.fixture()
+def knowledge_store(
+    request: pytest.FixtureRequest,
+) -> BaseAsyncNoEncodeKnowledgeStore:
+    return request.getfixturevalue(request.param)
+
+
 def test_rag_system_init(
     mock_generator: BaseGenerator,
     dummy_store: BaseAsyncNoEncodeKnowledgeStore,
@@ -358,9 +365,14 @@ async def test_rag_system_format_context(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "knowledge_store",
+    ["dummy_store", "dummy_store_no_batch_retrieval"],
+    indirect=True,
+)
 async def test_rag_system_batch_retrieve(
+    knowledge_store: BaseAsyncNoEncodeKnowledgeStore,
     mock_generator: BaseGenerator,
-    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
 ) -> None:
     # build rag system
     rag_config = RAGConfig(
@@ -368,35 +380,7 @@ async def test_rag_system_batch_retrieve(
     )
     rag_system = AsyncNoEncodeRAGSystem(
         generator=mock_generator,
-        knowledge_store=dummy_store,
-        rag_config=rag_config,
-    )
-
-    # queries and expected retrieved source nodes
-    queries = ["fake query 1", "fake query 2"]
-
-    # act
-    result = await rag_system.batch_retrieve(queries)
-
-    # assert
-    assert isinstance(result, list)
-    assert len(result) == 2
-    assert all(isinstance(sn, list) for sn in result)
-    assert all(len(sn) == 2 for sn in result)
-
-
-@pytest.mark.asyncio
-async def test_rag_system_batch_retrieve_ks_no_batch(
-    mock_generator: BaseGenerator,
-    dummy_store_no_batch_retrieval: BaseAsyncNoEncodeKnowledgeStore,
-) -> None:
-    # build rag system
-    rag_config = RAGConfig(
-        top_k=2,
-    )
-    rag_system = AsyncNoEncodeRAGSystem(
-        generator=mock_generator,
-        knowledge_store=dummy_store_no_batch_retrieval,
+        knowledge_store=knowledge_store,
         rag_config=rag_config,
     )
 
