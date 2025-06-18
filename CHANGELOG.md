@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Update `batch_retrieve` for RAGSystems to use `batch_retrieve` of Knowledge Stores if implemented (#441)
 - Implement `batch_retrieve` for Qdrant sync/async knowledge stores (#439)
 - Add `batch_retrieve` to KnowledgeStore classes that raise `NotImplementedError` by default (#436)
 - Add batch methods for RAGSystem (#270)
