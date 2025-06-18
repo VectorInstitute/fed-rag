@@ -63,13 +63,17 @@ class _NoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
 
     def batch_retrieve(self, queries: list[str]) -> list[list[SourceNode]]:
         """Batch retrieve from NoEncodeKnowledgeStore."""
-        # TODO: move this to knowledge store batch retrieve once implemented
-        raw_retrieval_results = [
-            self.knowledge_store.retrieve(
-                query=query, top_k=self.rag_config.top_k
+        try:
+            raw_retrieval_results = self.knowledge_store.batch_retrieve(
+                queries=queries, top_k=self.rag_config.top_k
             )
-            for query in queries
-        ]
+        except NotImplementedError:
+            raw_retrieval_results = [
+                self.knowledge_store.retrieve(
+                    query=query, top_k=self.rag_config.top_k
+                )
+                for query in queries
+            ]
         return [
             [SourceNode(score=el[0], node=el[1]) for el in raw_result]
             for raw_result in raw_retrieval_results

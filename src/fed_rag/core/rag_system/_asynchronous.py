@@ -55,7 +55,6 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
     async def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from KnowledgeStore."""
         query_emb: list[float] = self.retriever.encode_query(query).tolist()
-        # TODO: move this to knowledge store batch retrieve once implemented
         raw_retrieval_result = await self.knowledge_store.retrieve(
             query_emb=query_emb, top_k=self.rag_config.top_k
         )
@@ -70,13 +69,19 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
         query_embs: list[list[float]] = self.retriever.encode_query(
             queries
         ).tolist()
-        raw_retrieval_tasks = [
-            self.knowledge_store.retrieve(
-                query_emb=query_emb, top_k=self.rag_config.top_k
+        try:
+            raw_retrieval_results = await self.knowledge_store.batch_retrieve(
+                query_embs=query_embs, top_k=self.rag_config.top_k
             )
-            for query_emb in query_embs
-        ]
-        raw_retrieval_results = await asyncio.gather(*raw_retrieval_tasks)
+        except NotImplementedError:
+            raw_retrieval_tasks = [
+                self.knowledge_store.retrieve(
+                    query_emb=query_emb, top_k=self.rag_config.top_k
+                )
+                for query_emb in query_embs
+            ]
+            raw_retrieval_results = await asyncio.gather(*raw_retrieval_tasks)
+
         return [
             [SourceNode(score=el[0], node=el[1]) for el in raw_result]
             for raw_result in raw_retrieval_results

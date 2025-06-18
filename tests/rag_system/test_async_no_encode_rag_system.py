@@ -35,7 +35,47 @@ class DummyNoEncodeKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     async def batch_retrieve(
         self, queries: list[str], top_k: int
     ) -> list[list[tuple[float, KnowledgeNode]]]:
-        return [[]]
+        return [
+            [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
+            for jx in range(len(queries))
+        ]
+
+    async def delete_node(self, node_id: str) -> bool:
+        return True
+
+    async def clear(self) -> None:
+        self.nodes.clear()
+
+    async def count(self) -> int:
+        return len(self.nodes)
+
+    async def persist(self) -> None:
+        pass
+
+    async def load(self) -> None:
+        pass
+
+
+class DummyNoEncodeNoBatchRetrievalKnowledgeStore(
+    BaseAsyncNoEncodeKnowledgeStore
+):
+    nodes: list[KnowledgeNode] = []
+
+    async def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    async def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
+        await asyncio.gather(*(self.load_node(n) for n in nodes))
+
+    async def retrieve(
+        self, query: str, top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
+
+    async def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        raise NotImplementedError
 
     async def delete_node(self, node_id: str) -> bool:
         return True
@@ -62,6 +102,24 @@ async def dummy_store() -> BaseAsyncNoEncodeKnowledgeStore:
     ]
     await dummy_store.load_nodes(nodes)
     return dummy_store
+
+
+@pytest.fixture()
+async def dummy_store_no_batch_retrieval() -> BaseAsyncNoEncodeKnowledgeStore:
+    dummy_store = DummyNoEncodeNoBatchRetrievalKnowledgeStore()
+    nodes = [
+        KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
+        for _ in range(5)
+    ]
+    await dummy_store.load_nodes(nodes)
+    return dummy_store
+
+
+@pytest.fixture()
+def knowledge_store(
+    request: pytest.FixtureRequest,
+) -> BaseAsyncNoEncodeKnowledgeStore:
+    return request.getfixturevalue(request.param)
 
 
 def test_rag_system_init(
@@ -307,9 +365,14 @@ async def test_rag_system_format_context(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "knowledge_store",
+    ["dummy_store", "dummy_store_no_batch_retrieval"],
+    indirect=True,
+)
 async def test_rag_system_batch_retrieve(
+    knowledge_store: BaseAsyncNoEncodeKnowledgeStore,
     mock_generator: BaseGenerator,
-    dummy_store: BaseAsyncNoEncodeKnowledgeStore,
 ) -> None:
     # build rag system
     rag_config = RAGConfig(
@@ -317,7 +380,7 @@ async def test_rag_system_batch_retrieve(
     )
     rag_system = AsyncNoEncodeRAGSystem(
         generator=mock_generator,
-        knowledge_store=dummy_store,
+        knowledge_store=knowledge_store,
         rag_config=rag_config,
     )
 

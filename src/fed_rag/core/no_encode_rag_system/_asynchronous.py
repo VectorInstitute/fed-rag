@@ -66,14 +66,18 @@ class _AsyncNoEncodeRAGSystem(BridgeRegistryMixin, BaseModel):
         self, queries: list[str]
     ) -> list[list[SourceNode]]:
         """Batch retrieve from KnowledgeStore."""
-        # TODO: move this to knowledge store batch retrieve once implemented
-        raw_retrieval_tasks = [
-            self.knowledge_store.retrieve(
-                query=query, top_k=self.rag_config.top_k
+        try:
+            raw_retrieval_results = await self.knowledge_store.batch_retrieve(
+                queries=queries, top_k=self.rag_config.top_k
             )
-            for query in queries
-        ]
-        raw_retrieval_results = await asyncio.gather(*raw_retrieval_tasks)
+        except NotImplementedError:
+            raw_retrieval_tasks = [
+                self.knowledge_store.retrieve(
+                    query=query, top_k=self.rag_config.top_k
+                )
+                for query in queries
+            ]
+            raw_retrieval_results = await asyncio.gather(*raw_retrieval_tasks)
         return [
             [SourceNode(score=el[0], node=el[1]) for el in raw_result]
             for raw_result in raw_retrieval_results

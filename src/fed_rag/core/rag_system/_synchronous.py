@@ -66,13 +66,18 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
         query_embs: list[list[float]] = self.retriever.encode_query(
             queries
         ).tolist()
-        # TODO: move this to knowledge store batch retrieve once implemented
-        raw_retrieval_results = [
-            self.knowledge_store.retrieve(
-                query_emb=query_emb, top_k=self.rag_config.top_k
+        try:
+            raw_retrieval_results = self.knowledge_store.batch_retrieve(
+                query_embs=query_embs, top_k=self.rag_config.top_k
             )
-            for query_emb in query_embs
-        ]
+        except NotImplementedError:
+            raw_retrieval_results = [
+                self.knowledge_store.retrieve(
+                    query_emb=query_emb, top_k=self.rag_config.top_k
+                )
+                for query_emb in query_embs
+            ]
+
         return [
             [SourceNode(score=el[0], node=el[1]) for el in raw_result]
             for raw_result in raw_retrieval_results
