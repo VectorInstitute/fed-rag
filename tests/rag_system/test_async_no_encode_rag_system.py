@@ -56,9 +56,57 @@ class DummyNoEncodeKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
         pass
 
 
+class DummyNoEncodeNoBatchRetrievalKnowledgeStore(
+    BaseAsyncNoEncodeKnowledgeStore
+):
+    nodes: list[KnowledgeNode] = []
+
+    async def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    async def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
+        await asyncio.gather(*(self.load_node(n) for n in nodes))
+
+    async def retrieve(
+        self, query: str, top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
+
+    async def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        raise NotImplementedError
+
+    async def delete_node(self, node_id: str) -> bool:
+        return True
+
+    async def clear(self) -> None:
+        self.nodes.clear()
+
+    async def count(self) -> int:
+        return len(self.nodes)
+
+    async def persist(self) -> None:
+        pass
+
+    async def load(self) -> None:
+        pass
+
+
 @pytest.fixture()
 async def dummy_store() -> BaseAsyncNoEncodeKnowledgeStore:
     dummy_store = DummyNoEncodeKnowledgeStore()
+    nodes = [
+        KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
+        for _ in range(5)
+    ]
+    await dummy_store.load_nodes(nodes)
+    return dummy_store
+
+
+@pytest.fixture()
+async def dummy_store_no_batch_retrieval() -> BaseAsyncNoEncodeKnowledgeStore:
+    dummy_store = DummyNoEncodeNoBatchRetrievalKnowledgeStore()
     nodes = [
         KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
         for _ in range(5)
@@ -321,6 +369,34 @@ async def test_rag_system_batch_retrieve(
     rag_system = AsyncNoEncodeRAGSystem(
         generator=mock_generator,
         knowledge_store=dummy_store,
+        rag_config=rag_config,
+    )
+
+    # queries and expected retrieved source nodes
+    queries = ["fake query 1", "fake query 2"]
+
+    # act
+    result = await rag_system.batch_retrieve(queries)
+
+    # assert
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert all(isinstance(sn, list) for sn in result)
+    assert all(len(sn) == 2 for sn in result)
+
+
+@pytest.mark.asyncio
+async def test_rag_system_batch_retrieve_ks_no_batch(
+    mock_generator: BaseGenerator,
+    dummy_store_no_batch_retrieval: BaseAsyncNoEncodeKnowledgeStore,
+) -> None:
+    # build rag system
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncNoEncodeRAGSystem(
+        generator=mock_generator,
+        knowledge_store=dummy_store_no_batch_retrieval,
         rag_config=rag_config,
     )
 
