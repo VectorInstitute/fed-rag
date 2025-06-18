@@ -101,6 +101,38 @@ class DummyAsyncKnowledgeStore(BaseAsyncKnowledgeStore):
         pass
 
 
+class DummyAsyncNoBatchRetrievalKnowledgeStore(BaseAsyncKnowledgeStore):
+    nodes: list[KnowledgeNode] = []
+
+    async def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    async def retrieve(
+        self, query_emb: list[float], top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return []
+
+    async def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        raise NotImplementedError
+
+    async def delete_node(self, node_id: str) -> bool:
+        return True
+
+    async def clear(self) -> None:
+        self.nodes.clear()
+
+    async def count(self) -> int:
+        return len(self.nodes)
+
+    async def persist(self) -> None:
+        pass
+
+    async def load(self) -> None:
+        pass
+
+
 @pytest.fixture
 def mock_retriever() -> MockRetriever:
     return MockRetriever()

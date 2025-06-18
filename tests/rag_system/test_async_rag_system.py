@@ -5,11 +5,34 @@ import torch
 
 from fed_rag import AsyncRAGSystem, RAGConfig
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.data_structures import KnowledgeNode, SourceNode
 from fed_rag.exceptions import RAGSystemError
 
-from .conftest import DummyAsyncKnowledgeStore, MockGenerator, MockRetriever
+from .conftest import (
+    DummyAsyncKnowledgeStore,
+    DummyAsyncNoBatchRetrievalKnowledgeStore,
+    MockGenerator,
+    MockRetriever,
+)
+
+
+@pytest.fixture()
+def dummy_store() -> BaseAsyncKnowledgeStore:
+    return DummyAsyncKnowledgeStore()
+
+
+@pytest.fixture()
+def dummy_store_no_batch_retrieval() -> BaseAsyncKnowledgeStore:
+    return DummyAsyncNoBatchRetrievalKnowledgeStore()
+
+
+@pytest.fixture()
+def knowledge_store(
+    request: pytest.FixtureRequest,
+) -> BaseAsyncKnowledgeStore:
+    return request.getfixturevalue(request.param)
 
 
 @pytest.mark.asyncio
@@ -208,9 +231,15 @@ async def test_rag_system_retrieve(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "knowledge_store",
+    ["dummy_store", "dummy_store_no_batch_retrieval"],
+    indirect=True,
+)
 @patch.object(MockRetriever, "encode_query")
 async def test_rag_system_batch_retrieve(
     mock_encode_query: MagicMock,
+    knowledge_store: BaseAsyncKnowledgeStore,
     mock_generator: BaseGenerator,
     mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
@@ -221,7 +250,6 @@ async def test_rag_system_batch_retrieve(
     )
 
     # build rag system
-    knowledge_store = DummyAsyncKnowledgeStore()
     await knowledge_store.load_nodes(nodes=knowledge_nodes)
     rag_config = RAGConfig(
         top_k=2,
