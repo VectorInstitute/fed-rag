@@ -46,7 +46,6 @@ def _get_top_k_nodes(
         similarities = similarities.to("cpu")
     similarities = similarities.tolist()[0]
     zipped = list(zip(nodes, similarities))
-    # scores.sort(key=lambda tup: tup[1], reverse=True)
     sorted_similarities = sorted(zipped, key=lambda row: row[1], reverse=True)
     return sorted_similarities[:top_k]
 
@@ -83,7 +82,6 @@ class InMemoryKnowledgeStore(BaseKnowledgeStore):
     def retrieve(
         self, query_emb: list[float], top_k: int = DEFAULT_TOP_K
     ) -> list[tuple[float, KnowledgeNode]]:
-        # all_nodes = list(self._data.values())
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         query_emb = torch.tensor(query_emb).to(device)
         if not torch.is_tensor(self._data_storage):

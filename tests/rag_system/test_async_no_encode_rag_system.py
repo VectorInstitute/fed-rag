@@ -35,7 +35,10 @@ class DummyNoEncodeKnowledgeStore(BaseAsyncNoEncodeKnowledgeStore):
     async def batch_retrieve(
         self, queries: list[str], top_k: int
     ) -> list[list[tuple[float, KnowledgeNode]]]:
-        return [[]]
+        return [
+            [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
+            for jx in range(len(queries))
+        ]
 
     async def delete_node(self, node_id: str) -> bool:
         return True
