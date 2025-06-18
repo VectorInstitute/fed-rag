@@ -265,7 +265,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
                 batch_hits: list[QueryResponse] = client.query_batch_points(
                     collection_name=self.collection_name,
                     requests=[
-                        QueryRequest(query=emb, limit=top_k)
+                        QueryRequest(query=emb, limit=top_k, with_payload=True)
                         for emb in query_embs
                     ],
                 )
