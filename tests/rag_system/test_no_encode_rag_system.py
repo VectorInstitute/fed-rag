@@ -51,6 +51,42 @@ class DummyNoEncodeKnowledgeStore(BaseNoEncodeKnowledgeStore):
         pass
 
 
+class DummyNoEncodeNoBatchRetrievalKnowledgeStore(BaseNoEncodeKnowledgeStore):
+    nodes: list[KnowledgeNode] = []
+
+    def load_node(self, node: KnowledgeNode) -> None:
+        self.nodes.append(node)
+
+    def load_nodes(self, nodes: list[KnowledgeNode]) -> None:
+        for n in nodes:
+            self.load_node(n)
+
+    def retrieve(
+        self, query: str, top_k: int
+    ) -> list[tuple[float, KnowledgeNode]]:
+        return [(ix, n) for ix, n in enumerate(self.nodes[:top_k])]
+
+    def batch_retrieve(
+        self, queries: list[str], top_k: int
+    ) -> list[list[tuple[float, KnowledgeNode]]]:
+        raise NotImplementedError
+
+    def delete_node(self, node_id: str) -> bool:
+        return True
+
+    def clear(self) -> None:
+        self.nodes.clear()
+
+    def count(self) -> int:
+        return len(self.nodes)
+
+    def persist(self) -> None:
+        pass
+
+    def load(self) -> None:
+        pass
+
+
 @pytest.fixture()
 def dummy_store() -> BaseNoEncodeKnowledgeStore:
     dummy_store = DummyNoEncodeKnowledgeStore()
@@ -60,6 +96,24 @@ def dummy_store() -> BaseNoEncodeKnowledgeStore:
     ]
     dummy_store.load_nodes(nodes)
     return dummy_store
+
+
+@pytest.fixture()
+def dummy_store_no_batch_retrieval() -> BaseNoEncodeKnowledgeStore:
+    dummy_store = DummyNoEncodeNoBatchRetrievalKnowledgeStore()
+    nodes = [
+        KnowledgeNode(node_type=NodeType.TEXT, text_content="Dummy text")
+        for _ in range(5)
+    ]
+    dummy_store.load_nodes(nodes)
+    return dummy_store
+
+
+@pytest.fixture()
+def knowledge_store(
+    request: pytest.FixtureRequest,
+) -> BaseNoEncodeKnowledgeStore:
+    return request.getfixturevalue(request.param)
 
 
 def test_rag_system_init(
@@ -298,9 +352,14 @@ def test_rag_system_format_context(
     assert formatted_context == "Dummy text\nDummy text"
 
 
+@pytest.mark.parametrize(
+    "knowledge_store",
+    ["dummy_store", "dummy_store_no_batch_retrieval"],
+    indirect=True,
+)
 def test_rag_system_batch_retrieve(
+    knowledge_store: BaseNoEncodeKnowledgeStore,
     mock_generator: BaseGenerator,
-    dummy_store: BaseNoEncodeKnowledgeStore,
 ) -> None:
     # build rag system
     rag_config = RAGConfig(
@@ -308,7 +367,7 @@ def test_rag_system_batch_retrieve(
     )
     rag_system = NoEncodeRAGSystem(
         generator=mock_generator,
-        knowledge_store=dummy_store,
+        knowledge_store=knowledge_store,
         rag_config=rag_config,
     )
 
