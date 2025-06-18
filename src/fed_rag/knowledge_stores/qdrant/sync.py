@@ -254,6 +254,7 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
     def batch_retrieve(
         self, query_embs: list[list[float]], top_k: int
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Batch retrieve top-k nodes from the vector store."""
         from qdrant_client.conversions.common_types import (
             QueryRequest,
             QueryResponse,

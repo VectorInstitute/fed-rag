@@ -234,7 +234,7 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
     async def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, KnowledgeNode]]:
-        """Retrieve top-k nodes from the vector store."""
+        """Asynchronously retrieve top-k nodes from the vector store."""
         from qdrant_client.conversions.common_types import QueryResponse
 
         await self._ensure_collection_exists()
@@ -254,6 +254,41 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
         return [
             convert_scored_point_to_knowledge_node_and_score_tuple(pt)
             for pt in hits.points
+        ]
+
+    async def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        """Asynchronously batch retrieve top-k nodes from the vector store."""
+        from qdrant_client.conversions.common_types import (
+            QueryRequest,
+            QueryResponse,
+        )
+
+        await self._ensure_collection_exists()
+
+        async with self.get_client() as client:
+            try:
+                batch_hits: list[
+                    QueryResponse
+                ] = await client.query_batch_points(
+                    collection_name=self.collection_name,
+                    requests=[
+                        QueryRequest(query=emb, limit=top_k)
+                        for emb in query_embs
+                    ],
+                )
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to batch retrieve from collection '{self.collection_name}': {str(e)}"
+                ) from e
+
+        return [
+            [
+                convert_scored_point_to_knowledge_node_and_score_tuple(pt)
+                for pt in hits.points
+            ]
+            for hits in batch_hits
         ]
 
     async def delete_node(self, node_id: str) -> bool:
@@ -336,11 +371,4 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
         raise NotImplementedError(
             "`load()` is not available in AsyncQdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
-        )
-
-    async def batch_retrieve(
-        self, query_embs: list[list[float]], top_k: int
-    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
-        raise NotImplementedError(
-            "batch_retrieve is not implemented for AsyncQdrantKnowledgeStore."
         )
