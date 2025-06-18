@@ -71,6 +71,7 @@ nav:
       - notebooks/integrations/llama_index.ipynb
       - notebooks/integrations/langchain.ipynb
       - notebooks/integrations/qdrant.ipynb
+      - notebooks/integrations/qdrant_async.ipynb
       - notebooks/integrations/unsloth.ipynb
   - API Reference:
     - api_reference/index.md
