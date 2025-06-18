@@ -260,10 +260,8 @@ class AsyncQdrantKnowledgeStore(BaseAsyncKnowledgeStore):
         self, query_embs: list[list[float]], top_k: int
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
         """Asynchronously batch retrieve top-k nodes from the vector store."""
-        from qdrant_client.conversions.common_types import (
-            QueryRequest,
-            QueryResponse,
-        )
+        from qdrant_client.conversions.common_types import QueryResponse
+        from qdrant_client.http.models import QueryRequest
 
         await self._ensure_collection_exists()
 
