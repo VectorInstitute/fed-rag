@@ -251,6 +251,38 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
             for pt in hits.points
         ]
 
+    def batch_retrieve(
+        self, query_embs: list[list[float]], top_k: int
+    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+        from qdrant_client.conversions.common_types import (
+            QueryRequest,
+            QueryResponse,
+        )
+
+        self._ensure_collection_exists()
+
+        with self.get_client() as client:
+            try:
+                batch_hits: list[QueryResponse] = client.query_batch_points(
+                    collection_name=self.collection_name,
+                    requests=[
+                        QueryRequest(query=emb, limit=top_k)
+                        for emb in query_embs
+                    ],
+                )
+            except Exception as e:
+                raise KnowledgeStoreError(
+                    f"Failed to batch retrieve from collection '{self.collection_name}': {str(e)}"
+                ) from e
+
+        return [
+            [
+                convert_scored_point_to_knowledge_node_and_score_tuple(pt)
+                for pt in hits.points
+            ]
+            for hits in batch_hits
+        ]
+
     def delete_node(self, node_id: str) -> bool:
         """Delete a node based on its node_id."""
         from qdrant_client.http.models import (
@@ -322,11 +354,4 @@ class QdrantKnowledgeStore(BaseKnowledgeStore):
         raise NotImplementedError(
             "`load()` is not available in QdrantKnowledgeStore. "
             "Data is automatically persisted and loaded from the Qdrant server."
-        )
-
-    def batch_retrieve(
-        self, query_embs: list[list[float]], top_k: int
-    ) -> list[list[tuple[float, "KnowledgeNode"]]]:
-        raise NotImplementedError(
-            "batch_retrieve is not implemented for QdrantKnowledgeStore."
         )
