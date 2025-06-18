@@ -103,7 +103,7 @@ license = {Apache-2.0},
 month = mar,
 title = {{fed-rag}},
 url = {https://github.com/VectorInstitute/fed-rag},
-version = {0.0.26},
+version = {0.0.27},
 year = {2025}
 }
 ```

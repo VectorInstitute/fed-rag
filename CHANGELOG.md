@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ...
 
+## [0.0.27] - 2025-06-17
+
 ### Added
 
 - Update `batch_retrieve` for RAGSystems to use `batch_retrieve` of Knowledge Stores if implemented (#441)
