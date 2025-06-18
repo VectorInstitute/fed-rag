@@ -469,6 +469,93 @@ async def test_retrieve_raises_error(
     mock_ensure_collection_exists.assert_called_once()
 
 
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_batch_retrieve(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    from qdrant_client.conversions.common_types import QueryResponse
+    from qdrant_client.http.models import ScoredPoint
+
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    test_node = KnowledgeNode(
+        node_id="1",
+        embedding=[1, 1, 1],
+        node_type="text",
+        text_content="mock node",
+    )
+    another_test_node = KnowledgeNode(
+        node_id="2",
+        embedding=[2, 2, 2],
+        node_type="text",
+        text_content="mock node",
+    )
+    test_pt = ScoredPoint(
+        id="1", score=0.42, version=1, payload=test_node.model_dump()
+    )
+    another_test_pt = ScoredPoint(
+        id="2", score=0.43, version=1, payload=another_test_node.model_dump()
+    )
+    test_query_responses = [
+        QueryResponse(points=[test_pt]),
+        QueryResponse(points=[another_test_pt]),
+    ]
+    mock_client.query_batch_points.return_value = test_query_responses
+
+    # act
+    retrieval_res = await knowledge_store.batch_retrieve(
+        query_embs=[[1, 1, 1], [2, 2, 2]], top_k=5
+    )
+
+    # assert
+    expected = [
+        [convert_scored_point_to_knowledge_node_and_score_tuple(test_pt)],
+        [
+            convert_scored_point_to_knowledge_node_and_score_tuple(
+                another_test_pt
+            )
+        ],
+    ]
+    assert expected == retrieval_res
+    mock_ensure_collection_exists.assert_called_once()
+
+
+@pytest.mark.asyncio
+@patch.object(AsyncQdrantKnowledgeStore, "_ensure_collection_exists")
+@patch("qdrant_client.AsyncQdrantClient")
+async def test_batch_retrieve_raises_error(
+    mock_qdrant_client_class: MagicMock,
+    mock_ensure_collection_exists: MagicMock,
+) -> None:
+    mock_client = AsyncMock()
+    mock_qdrant_client_class.return_value = mock_client
+    knowledge_store = AsyncQdrantKnowledgeStore(
+        collection_name="test collection",
+    )
+
+    mock_client.query_batch_points.side_effect = RuntimeError(
+        "mock qdrant error"
+    )
+
+    # act
+    with pytest.raises(
+        KnowledgeStoreError,
+        match="Failed to batch retrieve from collection 'test collection': mock qdrant error",
+    ):
+        await knowledge_store.batch_retrieve(
+            query_embs=[[1, 1, 1], [2, 2, 2]], top_k=5
+        )
+
+    mock_ensure_collection_exists.assert_called_once()
+
+
 def test_persist_raises_error() -> None:
     knowledge_store = AsyncQdrantKnowledgeStore(
         collection_name="test collection",
@@ -759,17 +846,3 @@ async def test_get_qdrant_client_raises_warning_if_node_has_none_embedding(
     ):
         async with knowledge_store.get_client() as _client:
             pass
-
-
-@pytest.mark.asyncio
-async def test_batch_retrieve_raises_error() -> None:
-    knowledge_store = AsyncQdrantKnowledgeStore(
-        collection_name="test collection",
-    )
-
-    with pytest.raises(
-        NotImplementedError,
-    ):
-        await knowledge_store.batch_retrieve(
-            query_embs=[[1, 2, 3], [4, 5, 6]], top_k=2
-        )
