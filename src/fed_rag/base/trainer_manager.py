@@ -19,15 +19,23 @@ from .fl_task import BaseFLTask
 
 
 class RAGTrainMode(str, Enum):
+    """Modes for training RAG systems."""
+
     RETRIEVER = "retriever"
     GENERATOR = "generator"
 
 
 class BaseRAGTrainerManager(BaseModel, ABC):
-    """Base RAG Trainer Class.
+    """Manages and orchestrates RAG system training workflows.
 
-    The manager becomes solely responsible for orchestration, not for maintaining state
-    (i.e., the RAGSystem).
+    Coordinates training of retriever and generator components based on
+    the specified training mode. Handles trainer selection and execution
+    without maintaining RAG system state.
+
+    Attributes:
+        mode: The training mode specifying which component to train.
+        retriever_trainer: Trainer for the retriever component, if applicable.
+        generator_trainer: Trainer for the generator component, if applicable.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -38,6 +46,7 @@ class BaseRAGTrainerManager(BaseModel, ABC):
     @field_validator("mode", mode="before")
     @classmethod
     def validate_mode(cls, v: str) -> str:
+        """Validate the supplied mode."""
         try:
             # Try to convert to enum
             mode = RAGTrainMode(v)
