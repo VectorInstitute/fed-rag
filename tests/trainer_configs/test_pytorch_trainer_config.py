@@ -47,6 +47,14 @@ def test_init(
         c="3",
     )
 
+    # get item
     assert cfg["a"] == 1
     assert cfg["b"] == 2
     assert cfg["c"] == "3"
+    # get attr
+    assert cfg.a == 1
+    assert cfg.b == 2
+    assert cfg.c == "3"
+    assert cfg.net == mdl
+    assert cfg.train_data == train_dataloader
+    assert cfg.val_data == val_dataloader
