@@ -6,6 +6,17 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr, model_serializer
 
 
 class BaseTrainerConfig(BaseModel):
+    """Train loop configuration.
+
+    Contains information about the parameters used in a training loop that can
+    be federated.
+
+    Attributes:
+        net: The neural net model to train.
+        train_data: The train data parameter.
+        val_data: The val data parameter.
+    """
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
     net: Any
     train_data: Any
@@ -46,6 +57,7 @@ class BaseTrainerConfig(BaseModel):
         return data  # type: ignore[no-any-return]
 
     def __getattr__(self, __name: str) -> Any:
+        """Gets attribute from model fields or extra training kwargs."""
         if (
             __name in self.__private_attributes__
             or __name in self.model_fields
@@ -53,13 +65,14 @@ class BaseTrainerConfig(BaseModel):
             return super().__getattr__(__name)  # type: ignore
         else:
             try:
-                return self._data[__name]
+                return self._extra_train_kwargs[__name]
             except KeyError:
                 raise AttributeError(
                     f"'{self.__class__.__name__}' object has no attribute '{__name}'"
                 )
 
     def __setattr__(self, name: str, value: Any) -> None:
+        """Sets attribute in model fields or stores in extra training kwargs."""
         if name in self.__private_attributes__ or name in self.model_fields:
             super().__setattr__(name, value)
         else:
