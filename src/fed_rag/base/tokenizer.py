@@ -17,7 +17,7 @@ class BaseTokenizer(BaseModel, ABC):
     """Base Tokenizer Class.
 
     This abstract class provides the interface for creating Tokenizer objects that
-    encode strings into numerical vector representations.
+    converts strings into tokens.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
