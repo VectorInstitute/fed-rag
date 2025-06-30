@@ -18,6 +18,9 @@ class BaseNoEncodeKnowledgeStore(BaseModel, ABC):
     """Base No Encode Knowledge Store Class.
 
     This class is part of a RAG system design that skips encoding altogether.
+
+    Attributes:
+        name: The name of knowledge store.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -49,8 +52,8 @@ class BaseNoEncodeKnowledgeStore(BaseModel, ABC):
         """Retrieve top-k nodes from NoEncodeKnowledgeStore with given query.
 
         Args:
-            query (str): the natural language query
-            top_k (int): the number of knowledge nodes to retrieve
+            query (str): the natural language query.
+            top_k (int): the number of knowledge nodes to retrieve.
 
         Returns:
             A list of tuples where the first element represents the similarity score
@@ -115,10 +118,18 @@ class BaseAsyncNoEncodeKnowledgeStore(BaseModel, ABC):
 
     @abstractmethod
     async def load_node(self, node: "KnowledgeNode") -> None:
-        """Asynchronously load a "KnowledgeNode" into the KnowledgeStore."""
+        """Asynchronously load a "KnowledgeNode" into the KnowledgeStore.
+
+        Args:
+            node (KnowledgeNode): The node to load to the knowledge store.
+        """
 
     async def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
-        """Default batch loader via concurrent load_node calls."""
+        """Default batch loader via concurrent load_node calls.
+
+        Args:
+            nodes (list[KnowledgeNode]): The nodes to load.
+        """
         await asyncio.gather(*(self.load_node(n) for n in nodes))
 
     @abstractmethod

@@ -1,4 +1,4 @@
-"""Base Knowledge Store"""
+"""Base Knowledge Store."""
 
 import asyncio
 from abc import ABC, abstractmethod
@@ -15,7 +15,13 @@ DEFAULT_KNOWLEDGE_STORE_NAME = "default"
 
 
 class BaseKnowledgeStore(BaseModel, ABC):
-    """Base Knowledge Store Class."""
+    """Base Knowledge Store Class.
+
+    This class represent the base knowledge store component of a RAG system.
+
+    Attributes:
+        name: The name of knowledge store.
+    """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     name: str = Field(
@@ -25,17 +31,29 @@ class BaseKnowledgeStore(BaseModel, ABC):
 
     @abstractmethod
     def load_node(self, node: "KnowledgeNode") -> None:
-        """Load a "KnowledgeNode" into the KnowledgeStore."""
+        """Load a "KnowledgeNode" into the KnowledgeStore.
+
+        Args:
+            node (KnowledgeNode): The node to load to the knowledge store.
+        """
 
     @abstractmethod
     def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
-        """Load multiple "KnowledgeNode"s in batch."""
+        """Load multiple "KnowledgeNode"s in batch.
+
+        Args:
+            nodes (list[KnowledgeNode]): The nodes to load.
+        """
 
     @abstractmethod
     def retrieve(
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, "KnowledgeNode"]]:
         """Retrieve top-k nodes from KnowledgeStore against a provided user query.
+
+        Args:
+            query_emb (list[float]): the query represented as an encoded vector.
+            top_k (int): the number of knowledge nodes to retrieve.
 
         Returns:
             A list of tuples where the first element represents the similarity score
@@ -48,13 +66,25 @@ class BaseKnowledgeStore(BaseModel, ABC):
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
         """Batch retrieve top-k nodes from KnowledgeStore against provided user queries.
 
+        Args:
+            query_embs (list[list[float]]): the list of encoded queries.
+            top_k (int): the number of knowledge nodes to retrieve.
+
         Returns:
-            A list of list of tuples of similarity scores and the knowledge nodes.
+            A list of list of tuples where the first element represents the similarity score
+            of the node to the query, and the second element is the node itself.
         """
 
     @abstractmethod
     def delete_node(self, node_id: str) -> bool:
-        """Remove a node from the KnowledgeStore by ID, returning success status."""
+        """Remove a node from the KnowledgeStore by ID, returning success status.
+
+        Args:
+            node_id (str): The id of the node to delete.
+
+        Returns:
+            bool: Whether or not the node was successfully deleted.
+        """
 
     @abstractmethod
     def clear(self) -> None:
@@ -85,10 +115,18 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
 
     @abstractmethod
     async def load_node(self, node: "KnowledgeNode") -> None:
-        """Asynchronously load a "KnowledgeNode" into the KnowledgeStore."""
+        """Asynchronously load a "KnowledgeNode" into the KnowledgeStore.
+
+        Args:
+            node (KnowledgeNode): The node to load to the knowledge store.
+        """
 
     async def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
-        """Default batch loader via concurrent load_node calls."""
+        """Default batch loader via concurrent load_node calls.
+
+        Args:
+            nodes (list[KnowledgeNode]): The nodes to load.
+        """
         await asyncio.gather(*(self.load_node(n) for n in nodes))
 
     @abstractmethod
@@ -96,6 +134,10 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
         self, query_emb: list[float], top_k: int
     ) -> list[tuple[float, "KnowledgeNode"]]:
         """Asynchronously retrieve top-k nodes from KnowledgeStore against a provided user query.
+
+        Args:
+            query_emb (list[float]): the query represented as an encoded vector.
+            top_k (int): the number of knowledge nodes to retrieve.
 
         Returns:
             A list of tuples where the first element represents the similarity score
@@ -108,13 +150,24 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
     ) -> list[list[tuple[float, "KnowledgeNode"]]]:
         """Asynchronously batch retrieve top-k nodes from KnowledgeStore against provided user queries.
 
+        Args:
+            query_embs (list[list[float]]): the list of encoded queries.
+            top_k (int): the number of knowledge nodes to retrieve.
+
         Returns:
             A list of list of tuples of similarity scores and the knowledge nodes.
         """
 
     @abstractmethod
     async def delete_node(self, node_id: str) -> bool:
-        """Asynchronously remove a node from the KnowledgeStore by ID, returning success status."""
+        """Asynchronously remove a node from the KnowledgeStore by ID, returning success status.
+
+        Args:
+            node_id (str): The id of the node to delete.
+
+        Returns:
+            bool: Whether or not the node was successfully deleted.
+        """
 
     @abstractmethod
     async def clear(self) -> None:
@@ -159,35 +212,44 @@ class BaseAsyncKnowledgeStore(BaseModel, ABC):
                     setattr(self, field_name, value)
 
         def load_node(self, node: "KnowledgeNode") -> None:
+            """Implements load_node."""
             asyncio_run(self._async_ks.load_node(node))
 
         def load_nodes(self, nodes: list["KnowledgeNode"]) -> None:
+            """Implements load nodes."""
             asyncio_run(self._async_ks.load_nodes(nodes))
 
         def retrieve(
             self, query_emb: list[float], top_k: int
         ) -> list[tuple[float, "KnowledgeNode"]]:
+            """Implements retrieve."""
             return asyncio_run(self._async_ks.retrieve(query_emb=query_emb, top_k=top_k))  # type: ignore [no-any-return]
 
         def batch_retrieve(
             self, query_embs: list[list[float]], top_k: int
         ) -> list[list[tuple[float, "KnowledgeNode"]]]:
+            """Implements batch_retrieve."""
             return asyncio_run(self._async_ks.batch_retrieve(query_embs=query_embs, top_k=top_k))  # type: ignore [no-any-return]
 
         def delete_node(self, node_id: str) -> bool:
+            """Implements delete_node."""
             return asyncio_run(self._async_ks.delete_node(node_id))  # type: ignore [no-any-return]
 
         def clear(self) -> None:
+            """Implements clear."""
             asyncio_run(self._async_ks.clear())
 
         @property
         def count(self) -> int:
+            """Returns the number of nodes in the knowledge store."""
             return self._async_ks.count
 
         def persist(self) -> None:
+            """Implements persist."""
             self._async_ks.persist()
 
         def load(self) -> None:
+            """Implements load."""
             self._async_ks.load()
 
     def to_sync(self) -> BaseKnowledgeStore:
