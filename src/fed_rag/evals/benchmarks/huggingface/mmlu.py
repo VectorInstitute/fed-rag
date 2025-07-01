@@ -9,6 +9,16 @@ from fed_rag.base.evals.benchmark import BaseBenchmark
 from .mixin import HuggingFaceBenchmarkMixin
 from .utils import check_huggingface_evals_installed
 
+DEFAULT_MMLU_PROMPT = (
+    "{question}\n"
+    "A. {A}\n"
+    "B. {B}\n"
+    "C. {C}\n"
+    "D. {D}\n\n"
+    "Please select the correct answer from A, B, C, or D and respond with only the corresponding letter.\n"
+    "Answer:"
+)
+
 
 class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
     """HuggingFace MMLU Benchmark.
@@ -29,11 +39,17 @@ class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
     dataset_name = "cais/mmlu"
     configuration_name: str = "all"
     response_key: ClassVar[dict[int, str]] = {0: "A", 1: "B", 2: "C", 3: "D"}
+    prompt_template: str = DEFAULT_MMLU_PROMPT
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
         choices = example["choices"]
-        formatted_choices = f"A: {choices[0]}\nB: {choices[1]}\nC: {choices[2]}\nD: {choices[3]}"
-        return f"{example['question']}\n\n{formatted_choices}"
+        return self.prompt_template.format(
+            question=example["question"],
+            A=choices[0],
+            B=choices[1],
+            C=choices[2],
+            D=choices[3],
+        )
 
     def _get_response_from_example(self, example: dict[str, Any]) -> str:
         return self.response_key[example["answer"]]
