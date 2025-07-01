@@ -92,6 +92,41 @@ def test_gemma3n_generator_prompt_template_property() -> None:
     assert generator.prompt_template == ""
 
 
+def test_generate_raises_on_empty_decode():
+    gen = Gemma3nGenerator.__new__(Gemma3nGenerator)
+    gen._processor = MagicMock()
+    gen._model = MagicMock()
+    gen._device = "cpu"
+    gen._processor.apply_chat_template.return_value = {
+        "input_ids": torch.tensor([[1, 2, 3, 4]])
+    }
+    gen._model.generate.return_value = torch.tensor([[100, 200, 300, 400]])
+    gen._processor.batch_decode.return_value = []  # Simulate empty decode
+    with pytest.raises(
+        RuntimeError,
+        match="batch_decode did not return a non-empty list of strings",
+    ):
+        gen.generate("prompt")
+
+
+def test_prompt_template_property():
+    gen = Gemma3nGenerator.__new__(Gemma3nGenerator)
+    # Directly test property (no remote/model needed)
+    assert gen.prompt_template == ""
+
+
+def test_complete_not_implemented():
+    gen = Gemma3nGenerator.__new__(Gemma3nGenerator)
+    with pytest.raises(NotImplementedError):
+        gen.complete()
+
+
+def test_compute_target_sequence_proba_not_implemented():
+    gen = Gemma3nGenerator.__new__(Gemma3nGenerator)
+    with pytest.raises(NotImplementedError):
+        gen.compute_target_sequence_proba()
+
+
 @pytest.mark.skipif(
     not _has_hf_token(),
     reason="Hugging Face token not set. Skipping test that requires a remote call.",
