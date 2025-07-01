@@ -2,7 +2,7 @@
 
 from typing import Any, ClassVar
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 
 from fed_rag.base.evals.benchmark import BaseBenchmark
 
@@ -39,7 +39,7 @@ class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
     dataset_name = "cais/mmlu"
     configuration_name: str = "all"
     response_key: ClassVar[dict[int, str]] = {0: "A", 1: "B", 2: "C", 3: "D"}
-    prompt_template: str = DEFAULT_MMLU_PROMPT
+    prompt_template: str = Field(default=DEFAULT_MMLU_PROMPT)
 
     def _get_query_from_example(self, example: dict[str, Any]) -> str:
         choices = example["choices"]
