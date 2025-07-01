@@ -97,6 +97,7 @@ def test_generate_raises_on_empty_decode():
     gen._processor = MagicMock()
     gen._model = MagicMock()
     gen._device = "cpu"
+    gen._model.device = torch.device("cpu")
     gen._processor.apply_chat_template.return_value = {
         "input_ids": torch.tensor([[1, 2, 3, 4]])
     }
