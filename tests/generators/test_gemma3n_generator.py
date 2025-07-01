@@ -1,0 +1,90 @@
+from unittest.mock import MagicMock, patch
+
+import pytest
+import torch
+
+from fed_rag.base.generator import BaseGenerator
+from fed_rag.generators.huggingface.gemma3n_generator import Gemma3nGenerator
+
+
+def test_gemma3n_generator_inherits_base() -> None:
+    names_of_base_classes = [b.__name__ for b in Gemma3nGenerator.__mro__]
+    assert BaseGenerator.__name__ in names_of_base_classes
+
+
+@patch("fed_rag.generators.huggingface.gemma3n_generator.AutoProcessor")
+@patch(
+    "fed_rag.generators.huggingface.gemma3n_generator.AutoModelForImageTextToText"
+)
+def test_gemma3n_generator_init(
+    mock_model_class: MagicMock,
+    mock_processor_class: MagicMock,
+) -> None:
+    # Arrange
+    mock_model = MagicMock()
+    mock_model.to.return_value = mock_model
+    mock_processor = MagicMock()
+    mock_processor_class.from_pretrained.return_value = mock_processor
+    mock_model_class.from_pretrained.return_value = mock_model
+
+    # Act
+    generator = Gemma3nGenerator(model_name="mock-model", device="cpu")
+
+    # Assert
+    mock_processor_class.from_pretrained.assert_called_once_with("mock-model")
+    mock_model_class.from_pretrained.assert_called_once_with("mock-model")
+    mock_model.to.assert_called_once_with("cpu")
+    assert generator.model == mock_model
+    assert generator.tokenizer == mock_processor
+    assert generator._device == "cpu"
+
+
+@patch("fed_rag.generators.huggingface.gemma3n_generator.AutoProcessor")
+@patch(
+    "fed_rag.generators.huggingface.gemma3n_generator.AutoModelForImageTextToText"
+)
+def test_gemma3n_generator_generate(
+    mock_model_class: MagicMock,
+    mock_processor_class: MagicMock,
+) -> None:
+    # Arrange
+    mock_model = MagicMock()
+    mock_model.device = torch.device("cpu")
+    mock_model.to.return_value = mock_model
+    mock_model.generate.return_value = torch.tensor([[100, 200, 300, 400]])
+    mock_processor = MagicMock()
+    mock_processor.apply_chat_template.return_value = {
+        "input_ids": torch.tensor([[1, 2, 3, 4]])
+    }
+    mock_processor.batch_decode.return_value = ["A"]
+    mock_processor_class.from_pretrained.return_value = mock_processor
+    mock_model_class.from_pretrained.return_value = mock_model
+
+    generator = Gemma3nGenerator(model_name="mock-model", device="cpu")
+
+    # Act
+    result = generator.generate(query="What is the capital of France?")
+
+    # Assert
+    mock_processor.apply_chat_template.assert_called()
+    mock_model.generate.assert_called()
+    mock_processor.batch_decode.assert_called()
+    assert result == "A"
+
+
+def test_gemma3n_generator_prompt_template_property() -> None:
+    generator = Gemma3nGenerator(
+        model_name="google/gemma-3n-e2b-it", device="cpu"
+    )
+    assert hasattr(generator, "prompt_template")
+    assert generator.prompt_template == ""
+
+
+def test_gemma3n_generator_not_implemented_methods() -> None:
+    generator = Gemma3nGenerator(
+        model_name="google/gemma-3n-e2b-it", device="cpu"
+    )
+    with pytest.raises(NotImplementedError):
+        generator.complete()
+    with pytest.raises(NotImplementedError):
+        generator.compute_target_sequence_proba()
