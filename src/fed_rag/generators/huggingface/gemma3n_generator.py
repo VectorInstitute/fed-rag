@@ -6,6 +6,7 @@ if TYPE_CHECKING:  # pragma: no cover
     pass
 
 import torch
+from transformers import AutoModelForImageTextToText, AutoProcessor
 
 from fed_rag.base.generator import BaseGenerator
 
@@ -28,8 +29,6 @@ class Gemma3nGenerator(BaseGenerator):
         device_map: str = "auto",
         torch_dtype: str = "auto",
     ):
-        from transformers import AutoModelForImageTextToText, AutoProcessor
-
         self._processor = AutoProcessor.from_pretrained(model_name)
         self._model = AutoModelForImageTextToText.from_pretrained(
             model_name
