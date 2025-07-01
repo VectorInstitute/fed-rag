@@ -1,3 +1,4 @@
+import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -5,6 +6,13 @@ import torch
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.generators.huggingface.gemma3n_generator import Gemma3nGenerator
+
+
+def _has_hf_token():
+    return bool(
+        os.environ.get("HF_TOKEN")
+        or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+    )
 
 
 def test_gemma3n_generator_inherits_base() -> None:
@@ -72,6 +80,10 @@ def test_gemma3n_generator_generate(
     assert result == "A"
 
 
+@pytest.mark.skipif(
+    not _has_hf_token(),
+    reason="Hugging Face token not set. Skipping test that requires a remote call.",
+)
 def test_gemma3n_generator_prompt_template_property() -> None:
     generator = Gemma3nGenerator(
         model_name="google/gemma-3n-e2b-it", device="cpu"
@@ -80,6 +92,10 @@ def test_gemma3n_generator_prompt_template_property() -> None:
     assert generator.prompt_template == ""
 
 
+@pytest.mark.skipif(
+    not _has_hf_token(),
+    reason="Hugging Face token not set. Skipping test that requires a remote call.",
+)
 def test_gemma3n_generator_not_implemented_methods() -> None:
     generator = Gemma3nGenerator(
         model_name="google/gemma-3n-e2b-it", device="cpu"
