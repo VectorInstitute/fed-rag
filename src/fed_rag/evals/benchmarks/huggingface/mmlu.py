@@ -9,15 +9,23 @@ from fed_rag.base.evals.benchmark import BaseBenchmark
 from .mixin import HuggingFaceBenchmarkMixin
 from .utils import check_huggingface_evals_installed
 
-DEFAULT_MMLU_PROMPT = (
-    "{question}\n"
-    "A. {A}\n"
-    "B. {B}\n"
-    "C. {C}\n"
-    "D. {D}\n\n"
-    "Please select the correct answer from A, B, C, or D and respond with only the corresponding letter.\n"
-    "Answer:"
-)
+DEFAULT_MMLU_PROMPT = """
+    {question}
+    A. {A}
+    B. {B}
+    C. {C}
+    D. {D}
+
+    You MUST answer ONLY with a single letter (A, B, C, or D). Do NOT provide any explanation, reasoning, or extra text. Answers with any additional text are considered incorrect.
+
+    Example of a correct answer:
+    B
+
+    Example of an incorrect answer:
+    B. Because...
+
+    Answer:
+"""
 
 
 class HuggingFaceMMLU(HuggingFaceBenchmarkMixin, BaseBenchmark):
