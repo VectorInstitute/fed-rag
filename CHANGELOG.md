@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
-...
+### Added
+
+- `ImageRetrieverMixin` and `HasImageModality` (#472)
 
 ## [0.0.27] - 2025-06-17
 

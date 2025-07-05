@@ -16,11 +16,11 @@ class HasImageModality(Protocol):
     def encode_image(
         self, image: Image.Image | list[Image.Image], **kwargs: Any
     ) -> torch.Tensor:
-        ...
+        ...  # pragma: no cover
 
     @property
     def image_encoder(self) -> torch.nn.Module | None:
-        ...
+        ...  # pragma: no cover
 
 
 class ImageRetrieverMixin(ABC):
