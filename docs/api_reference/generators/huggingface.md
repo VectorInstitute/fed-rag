@@ -9,3 +9,8 @@
     options:
       members:
         - HFPretrainedModelGenerator
+
+::: src.fed_rag.generators.huggingface.gemma3n_generator
+options:
+  members:
+    - Gemma3nGenerator

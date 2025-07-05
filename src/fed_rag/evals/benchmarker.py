@@ -1,10 +1,12 @@
 """Base Benchmark and Benchmarker"""
 
 import contextlib
+import gc
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator
 
+import torch
 from pydantic import BaseModel
 from typing_extensions import assert_never
 
@@ -176,6 +178,9 @@ class Benchmarker(BaseModel):
                     )
 
                     num_seen += 1
+
+                    torch.cuda.empty_cache()
+                    gc.collect()
         finally:
             if f:
                 f.close()
