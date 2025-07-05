@@ -1,10 +1,24 @@
 """Retriever Mixins."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 import torch
 from PIL import Image
+
+
+@runtime_checkable
+class HasImageModality(Protocol):
+    """Associated protocol for `ImageRetrieverMixin`."""
+
+    def encode_image(
+        self, image: Image.Image | list[Image.Image], **kwargs: Any
+    ) -> torch.Tensor:
+        ...
+
+    @property
+    def image_encoder(self) -> torch.nn.Module | None:
+        ...
 
 
 class ImageRetrieverMixin(ABC):
