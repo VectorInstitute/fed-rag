@@ -6,6 +6,8 @@ from typing import Any, Protocol, runtime_checkable
 import torch
 from PIL import Image
 
+from fed_rag.exceptions.retriever import RetrieverError
+
 
 @runtime_checkable
 class HasImageModality(Protocol):
@@ -33,7 +35,7 @@ class ImageRetrieverMixin(ABC):
         super().__init_subclass__()
 
         if "BaseRetriever" not in [t.__name__ for t in cls.__mro__]:
-            raise ValueError(
+            raise RetrieverError(
                 "`ImageRetrieverMixin` must be mixed with `BaseRetriever`."
             )
 

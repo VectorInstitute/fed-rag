@@ -7,6 +7,7 @@ from pydantic import BaseModel, PrivateAttr
 
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.base.retriever_mixins import HasImageModality, ImageRetrieverMixin
+from fed_rag.exceptions.retriever import RetrieverError
 
 from ..conftest import MockRetriever
 
@@ -34,7 +35,10 @@ def test_mixin() -> None:
 
 
 def test_mixin_fails_validation() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        RetrieverError,
+        match="`ImageRetrieverMixin` must be mixed with `BaseRetriever`.",
+    ):
 
         class InvalidMockMMRetriever(ImageRetrieverMixin, BaseModel):
             _image_encoder: torch.nn.Module = PrivateAttr(
