@@ -1,6 +1,6 @@
 """HF Multimodal Model Generator"""
 
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any
 
 import numpy as np
 import torch
@@ -18,6 +18,7 @@ from transformers import (
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.data_structures.generator import Context, Prompt, Query
 from fed_rag.generators.huggingface.utils import check_huggingface_installed
 
 
@@ -26,12 +27,12 @@ class HFMultimodalModelGenerator(BaseGenerator):
         protected_namespaces=("pydantic_model_",), arbitrary_types_allowed=True
     )
     model_name: str = Field(description="HuggingFace model name or path.")
-    modality_types: Set[str] = Field(default_factory=lambda: {"text", "image"})
-    generation_config: "GenerationConfig" = Field(
+    modality_types: set[str] = Field(default_factory=lambda: {"text", "image"})
+    generation_config: GenerationConfig = Field(
         default_factory=GenerationConfig
     )
     load_model_kwargs: dict = Field(default_factory=dict)
-    prompt_template_init: Optional[str] = Field(
+    prompt_template_init: str | None = Field(
         default=None, description="Optional prompt template override."
     )
     _model: PreTrainedModel = PrivateAttr()
@@ -68,47 +69,58 @@ class HFMultimodalModelGenerator(BaseGenerator):
 
     def _pack_messages(
         self,
-        query: str | List[str],
-        context: str = "",
-        images: Optional[List[Union[np.ndarray, Image.Image]]] = None,
-        audios: Optional[List[np.ndarray]] = None,
-        videos: Optional[List[Any]] = None,
-    ) -> List[Dict[str, Any]]:
-        queries = [query] if isinstance(query, str) else query
-        messages: List[Dict[str, Any]] = []
-        for q in queries:
-            content: List[Dict[str, Any]] = []
-            if context:
-                content.append({"type": "text", "text": context})
-            if images:
-                for im in images:
+        query: Query | list[Query],
+        context: Context | list[Context] | None = None,
+    ) -> list[dict[str, Any]]:
+        # Ensure both query/context are lists if batch
+        queries = [query] if not isinstance(query, list) else query
+        contexts = (
+            [context] * len(queries)
+            if isinstance(context, (str, Query, Context, type(None)))
+            else context
+        )
+        # Validation: if both are lists, must be same length
+        if isinstance(contexts, list) and len(contexts) != len(queries):
+            raise ValueError(
+                "Batch mode requires query and context to be the same length"
+            )
+        messages = []
+        for i, q in enumerate(queries):
+            content: list[dict[str, Any]] = []
+            ctx = contexts[i] if isinstance(contexts, list) else contexts
+            if ctx is not None:
+                if getattr(ctx, "text", None):
+                    content.append({"type": "text", "text": ctx.text})
+                if getattr(ctx, "images", None):
+                    for im in ctx.images or []:
+                        if isinstance(im, np.ndarray):
+                            im = Image.fromarray(im)
+                        content.append({"type": "image", "image": im})
+            if getattr(q, "images", None):
+                for im in q.images or []:
                     if isinstance(im, np.ndarray):
                         im = Image.fromarray(im)
                     content.append({"type": "image", "image": im})
-            if audios:
-                for au in audios:
+            if getattr(q, "audios", None):
+                for au in q.audios or []:
                     content.append({"type": "audio", "audio": au})
-            if videos:
-                for vid in videos:
+            if getattr(q, "videos", None):
+                for vid in q.videos or []:
                     content.append({"type": "video", "video": vid})
-            content.append({"type": "text", "text": q})
+            if getattr(q, "text", None):
+                content.append({"type": "text", "text": q.text})
             messages.append({"role": "user", "content": content})
-        return (
-            messages if not isinstance(query, str) else messages
-        )  # always return list for consistency
+        return messages
 
     def generate(
         self,
-        query: str | List[str],
-        context: str = "",
-        images: Optional[List[Union[np.ndarray, Image.Image]]] = None,
-        audios: Optional[List[np.ndarray]] = None,
-        videos: Optional[List[Any]] = None,
+        query: Query | list[Query],
+        context: Context | list[Context] | None = None,
         max_new_tokens: int = 256,
         add_generation_prompt: bool = True,
         **gen_kwargs: Any,
-    ) -> str | List[str]:
-        messages = self._pack_messages(query, context, images, audios, videos)
+    ) -> str | list[str]:
+        messages = self._pack_messages(query, context)
         inputs = self._processor.apply_chat_template(
             messages,
             add_generation_prompt=add_generation_prompt,
@@ -123,53 +135,58 @@ class HFMultimodalModelGenerator(BaseGenerator):
                 **inputs, max_new_tokens=max_new_tokens, **gen_kwargs
             )
             generation = generation[:, input_len:]
-        decoded: List[str] = self._processor.batch_decode(
+        decoded: list[str] = self._processor.batch_decode(
             generation, skip_special_tokens=True
         )
-        if isinstance(query, str):
+        if not isinstance(query, list):
             if not decoded or not isinstance(decoded[0], str):
                 raise RuntimeError("batch_decode did not return valid output")
             return decoded[0]
         return decoded
 
     def complete(
-        self, prompt: str | List[str], **kwargs: Any
-    ) -> str | List[str]:
+        self, prompt: Prompt | list[Prompt], **kwargs: Any
+    ) -> str | list[str]:
+        def prompt_to_query(p: Prompt) -> Query:
+            return Query(text=p.text, images=getattr(p, "images", None))
+
+        queries = (
+            [prompt_to_query(p) for p in prompt]
+            if isinstance(prompt, list)
+            else prompt_to_query(prompt)
+        )
         return self.generate(
-            query=prompt,
-            context="",
-            images=None,
-            audios=None,
-            videos=None,
+            query=queries,
+            context=None,
             **kwargs,
         )
 
     def compute_target_sequence_proba(
         self,
-        prompt: str,
+        prompt: Prompt,
         target: str,
-        context: str = "",
-        images: Optional[List[Union[np.ndarray, Image.Image]]] = None,
-        audios: Optional[List[np.ndarray]] = None,
-        videos: Optional[List[Any]] = None,
+        context: Context | None = None,
         **kwargs: Any,
     ) -> torch.Tensor:
-        text = f"{context}\n\n{prompt}" if context else prompt
+        if getattr(prompt, "text", None) is not None:
+            text = prompt.text
+        else:
+            text = ""
         full_text = text + target
-        content: List[Dict[str, Any]] = []
-        if context:
-            content.append({"type": "text", "text": context})
-        if images:
-            for im in images:
+        content: list[dict[str, Any]] = []
+        if context is not None:
+            if getattr(context, "text", None):
+                content.append({"type": "text", "text": context.text})
+            if getattr(context, "images", None):
+                for im in context.images or []:
+                    if isinstance(im, np.ndarray):
+                        im = Image.fromarray(im)
+                    content.append({"type": "image", "image": im})
+        if getattr(prompt, "images", None):
+            for im in prompt.images or []:
                 if isinstance(im, np.ndarray):
                     im = Image.fromarray(im)
                 content.append({"type": "image", "image": im})
-        if audios:
-            for au in audios:
-                content.append({"type": "audio", "audio": au})
-        if videos:
-            for vid in videos:
-                content.append({"type": "video", "video": vid})
         content.append({"type": "text", "text": full_text})
         messages = [{"role": "user", "content": content}]
         inputs = self._processor.apply_chat_template(
