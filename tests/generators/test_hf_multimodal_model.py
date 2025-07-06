@@ -294,11 +294,13 @@ def test_generate_raises_runtimeerror_on_bad_batch_decode(
 @patch(
     "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
 )
+@pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_model,
     mock_auto_config,
     mock_auto_processor,
     mock_torch_functional,
+    model_output,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -309,8 +311,9 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
     ]
-    # Return object without logits
-    mock_model.return_value = MagicMock()
+    mock_model.return_value = (
+        model_output  # <-- either object() or MagicMock(logits=None)
+    )
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
     with pytest.raises(
