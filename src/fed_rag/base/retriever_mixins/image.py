@@ -10,7 +10,7 @@ from fed_rag.exceptions.retriever import RetrieverError
 
 
 @runtime_checkable
-class HasImageModality(Protocol):
+class RetrieverHasImageModality(Protocol):
     """Associated protocol for `ImageRetrieverMixin`."""
 
     def encode_image(

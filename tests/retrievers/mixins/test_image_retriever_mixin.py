@@ -6,7 +6,10 @@ from PIL import Image
 from pydantic import BaseModel, PrivateAttr
 
 from fed_rag.base.retriever import BaseRetriever
-from fed_rag.base.retriever_mixins import HasImageModality, ImageRetrieverMixin
+from fed_rag.base.retriever_mixins import (
+    ImageRetrieverMixin,
+    RetrieverHasImageModality,
+)
 from fed_rag.exceptions.retriever import RetrieverError
 
 from ..conftest import MockRetriever
@@ -30,7 +33,7 @@ class MockMMRetriever(ImageRetrieverMixin, MockRetriever):
 def test_mixin() -> None:
     mixed_retriever = MockMMRetriever()
 
-    assert isinstance(mixed_retriever, HasImageModality)
+    assert isinstance(mixed_retriever, RetrieverHasImageModality)
     assert isinstance(mixed_retriever, BaseRetriever)
 
 
