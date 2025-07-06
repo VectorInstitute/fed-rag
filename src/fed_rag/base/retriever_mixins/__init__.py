@@ -1,3 +1,3 @@
-from .image import HasImageModality, ImageRetrieverMixin
+from .image import ImageRetrieverMixin, RetrieverHasImageModality
 
-__all__ = ["ImageRetrieverMixin", "HasImageModality"]
+__all__ = ["ImageRetrieverMixin", "RetrieverHasImageModality"]
