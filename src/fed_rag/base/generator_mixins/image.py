@@ -2,11 +2,11 @@
 
 from typing import Protocol, runtime_checkable
 
-from fed_rag.exceptions.retriever import RetrieverError
+from fed_rag.exceptions.generator import GeneratorError
 
 
 @runtime_checkable
-class HasImageModality(Protocol):
+class GeneratorHasImageModality(Protocol):
     """Associated protocol for `ImageModalityMixin`."""
 
     __supports_images__: bool = True
@@ -26,6 +26,6 @@ class ImageModalityMixin:
         super().__init_subclass__()
 
         if "BaseGenerator" not in [t.__name__ for t in cls.__mro__]:
-            raise RetrieverError(
+            raise GeneratorError(
                 "`ImageModalityMixin` must be mixed with `BaseGenerator`."
             )
