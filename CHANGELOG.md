@@ -8,8 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Rename `HasImageModality` to `RetrieverHasImageModality` (#475)
+
 ### Added
 
+- Expand `BaseGenerator` methods to accommodate multi-modal (#474)
+- `Query`, `Context` and `Prompt` data structures (#474)
 - `ImageRetrieverMixin` and `HasImageModality` (#472)
 
 ## [0.0.27] - 2025-06-17
