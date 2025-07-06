@@ -11,6 +11,7 @@ from .evals import (
     BenchmarkExample,
     BenchmarkResult,
 )
+from .generator import Context, Prompt, Query
 from .knowledge_node import KnowledgeNode, NodeContent, NodeType
 from .rag import RAGConfig, RAGResponse, SourceNode
 from .results import TestResult, TrainResult
@@ -24,6 +25,10 @@ __all__ = [
     "BenchmarkExample",
     "BenchmarkResult",
     "BenchmarkEvaluatedExample",
+    # generator
+    "Query",
+    "Context",
+    "Prompt",
     # results
     "TrainResult",
     "TestResult",

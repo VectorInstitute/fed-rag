@@ -6,6 +6,7 @@ import torch
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.tokenizer import BaseTokenizer
+from fed_rag.data_structures import Context, Prompt, Query
 
 DEFAULT_PROMPT_TEMPLATE = """
 You are a helpful assistant. Given the user's query, provide a succinct
@@ -32,13 +33,16 @@ class BaseGenerator(BaseModel, ABC):
 
     @abstractmethod
     def generate(
-        self, query: str | list[str], context: str, **kwargs: dict
+        self,
+        query: str | list[str] | Query | list[Query],
+        context: str | list[str] | Context | list[Context],
+        **kwargs: dict,
     ) -> str | list[str]:
         """Generate an output from a given query and context."""
 
     @abstractmethod
     def complete(
-        self, prompt: str | list[str], **kwargs: dict
+        self, prompt: str | list[str] | Prompt | list[Prompt], **kwargs: dict
     ) -> str | list[str]:
         """Completion interface for generator LLMs."""
 
@@ -54,7 +58,7 @@ class BaseGenerator(BaseModel, ABC):
 
     @abstractmethod
     def compute_target_sequence_proba(
-        self, prompt: str, target: str
+        self, prompt: str | Prompt, target: str
     ) -> torch.Tensor:
         """Compute P(target | prompt).
 

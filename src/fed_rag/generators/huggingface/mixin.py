@@ -10,6 +10,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers import PreTrainedModel
     from transformers.generation.utils import GenerationConfig
 
+from fed_rag.data_structures import Context, Prompt, Query
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -29,7 +30,9 @@ class HFGeneratorProtocol(Protocol):
 class HuggingFaceGeneratorMixin:
     # complete
     def complete(
-        self: HFGeneratorProtocol, prompt: str | list[str], **kwargs: Any
+        self: HFGeneratorProtocol,
+        prompt: str | list[str] | Prompt | list[Prompt],
+        **kwargs: Any,
     ) -> str | list[str]:
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
@@ -58,8 +61,8 @@ class HuggingFaceGeneratorMixin:
     # generate
     def generate(
         self: HFGeneratorProtocol,
-        query: str | list[str],
-        context: str | list[str],
+        query: str | list[str] | Query | list[Query],
+        context: str | list[str] | Context | list[Context],
         **kwargs: Any,
     ) -> str | list[str]:
         if isinstance(query, str):
@@ -75,13 +78,13 @@ class HuggingFaceGeneratorMixin:
         return self.complete(prompt=formatted_queries, **kwargs)
 
     def compute_target_sequence_proba(
-        self: HFGeneratorProtocol, prompt: str, target: str
+        self: HFGeneratorProtocol, prompt: str | Prompt, target: str
     ) -> torch.Tensor:
         """Computes the target sequence probability given the prompt.
 
         Args:
             generator (BaseGenerator): The generator LLM
-            prompt (str): The input i.e. conditional prompt sequence
+            prompt (str | Prompt): The input i.e. conditional prompt sequence
             target (str): The target sequence
 
         Returns:
