@@ -7,6 +7,7 @@ from PIL import Image
 from transformers import AutoModel, AutoModelForImageTextToText
 
 from fed_rag.data_structures.generator import Context, Prompt, Query
+from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.generators.huggingface.hf_multimodal_model import (
     HFMultimodalModelGenerator,
 )
@@ -398,6 +399,52 @@ def test_model_property_and_tokenizer():
     )
 
 
+def test_tokenizer_returns_processor_tokenizer():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    fake_processor = MagicMock()
+    fake_tokenizer = MagicMock()
+    fake_processor.tokenizer = fake_tokenizer
+    generator._processor = fake_processor
+    assert (
+        HFMultimodalModelGenerator.tokenizer.fget(generator) is fake_tokenizer
+    )
+
+
+def test_tokenizer_returns_processor_if_encode():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    fake_processor = MagicMock()
+    del fake_processor.tokenizer  # Ensure no tokenizer attribute
+    fake_processor.encode = MagicMock()
+    generator._processor = fake_processor
+    assert (
+        HFMultimodalModelGenerator.tokenizer.fget(generator) is fake_processor
+    )
+
+
+def test_tokenizer_raises_if_neither_tokenizer_nor_encode():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    fake_processor = MagicMock()
+    # No tokenizer, no encode
+    if hasattr(fake_processor, "tokenizer"):
+        del fake_processor.tokenizer
+    if hasattr(fake_processor, "encode"):
+        del fake_processor.encode
+    generator._processor = fake_processor
+    with pytest.raises(
+        AttributeError, match="does not have a `.tokenizer` attribute"
+    ):
+        HFMultimodalModelGenerator.tokenizer.fget(generator)
+
+
+def test_processor_property():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    fake_processor = MagicMock()
+    generator._processor = fake_processor
+    assert (
+        HFMultimodalModelGenerator.processor.fget(generator) is fake_processor
+    )
+
+
 def test_prompt_template_property():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
     generator._prompt_template = "prompt!"
@@ -449,7 +496,7 @@ def test_compute_target_sequence_proba_ndarray_image(
 @patch(
     "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
 )
-def test_generate_raises_runtimeerror_on_bad_batch_decode(
+def test_generate_raises_generatorerror_on_bad_batch_decode(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
     mock_proc = MagicMock()
@@ -468,7 +515,7 @@ def test_generate_raises_runtimeerror_on_bad_batch_decode(
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
     c = Context(text="ctx", images=[], audios=[], videos=[])
     with pytest.raises(
-        RuntimeError, match="batch_decode did not return valid output"
+        GeneratorError, match="batch_decode did not return valid output"
     ):
         generator.generate(
             query=q,
@@ -504,7 +551,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     img = dummy_image()
     q = Query(text="what is this?", images=[img], audios=[], videos=[])
     with pytest.raises(
-        RuntimeError,
+        GeneratorError,
         match="Underlying model does not expose logits; cannot compute probabilities.",
     ):
         generator.compute_target_sequence_proba(

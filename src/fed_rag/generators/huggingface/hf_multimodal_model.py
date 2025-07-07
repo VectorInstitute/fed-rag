@@ -1,27 +1,24 @@
 """HF Multimodal Model Generator"""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from PIL import Image
 from pydantic import ConfigDict, Field, PrivateAttr, model_validator
-from transformers import (
-    AutoConfig,
-    AutoModel,
-    AutoModelForImageTextToText,
-    AutoProcessor,
-    GenerationConfig,
-    PreTrainedModel,
-)
+
+if TYPE_CHECKING:
+    from transformers import (
+        GenerationConfig,
+        PreTrainedModel,
+    )
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.generator_mixins.audio import AudioModalityMixin
 from fed_rag.base.generator_mixins.image import ImageModalityMixin
 from fed_rag.base.generator_mixins.video import VideoModalityMixin
-from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.data_structures.generator import Context, Prompt, Query
+from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.generators.huggingface.utils import check_huggingface_installed
 
 
@@ -38,14 +35,14 @@ class HFMultimodalModelGenerator(
     modality_types: set[str] = Field(
         default_factory=lambda: {"text", "image", "audio", "video"}
     )
-    generation_config: GenerationConfig = Field(
-        default_factory=GenerationConfig
+    generation_config: "GenerationConfig" = Field(
+        default_factory=lambda: None  # will set in __init__
     )
     load_model_kwargs: dict = Field(default_factory=dict)
     prompt_template_init: str | None = Field(default=None)
     load_model_at_init: bool = Field(default=True)
 
-    _model: PreTrainedModel = PrivateAttr(default=None)
+    _model: "PreTrainedModel" = PrivateAttr(default=None)
     _model_cls: Any = PrivateAttr(default=None)
     _processor: Any = PrivateAttr(default=None)
     _prompt_template: str = PrivateAttr(default="")
@@ -58,21 +55,26 @@ class HFMultimodalModelGenerator(
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
+        from transformers import AutoConfig, AutoProcessor, GenerationConfig
+
         self._prompt_template = self.prompt_template_init or ""
         self._processor = AutoProcessor.from_pretrained(self.model_name)
         cfg = AutoConfig.from_pretrained(self.model_name)
+        self.generation_config = self.generation_config or GenerationConfig()
         self._model_cls = self._detect_model_class(cfg)
         self._model = None
         if self.load_model_at_init:
             self._model = self._load_model_from_hf()
 
-    def _load_model_from_hf(self) -> PreTrainedModel:
+    def _load_model_from_hf(self) -> "PreTrainedModel":
         return self._model_cls.from_pretrained(
             self.model_name, **self.load_model_kwargs
         )
 
     @staticmethod
-    def _detect_model_class(cfg: AutoConfig) -> Any:
+    def _detect_model_class(cfg: Any) -> Any:
+        from transformers import AutoModel, AutoModelForImageTextToText
+
         if any(
             getattr(cfg, attr, None) is not None
             for attr in ("vision_config", "audio_config", "video_config")
@@ -126,16 +128,20 @@ class HFMultimodalModelGenerator(
                 if getattr(ctx, "text", None):
                     content.append({"type": "text", "text": ctx.text})
                 for im in getattr(ctx, "images", []) or []:
+                    from PIL import Image as PILImage
+
                     if isinstance(im, np.ndarray):
-                        im = Image.fromarray(im)
+                        im = PILImage.fromarray(im)
                     content.append({"type": "image", "image": im})
                 for au in getattr(ctx, "audios", []) or []:
                     content.append({"type": "audio", "audio": au})
                 for vid in getattr(ctx, "videos", []) or []:
                     content.append({"type": "video", "video": vid})
             for im in getattr(q, "images", []) or []:
+                from PIL import Image as PILImage
+
                 if isinstance(im, np.ndarray):
-                    im = Image.fromarray(im)
+                    im = PILImage.fromarray(im)
                 content.append({"type": "image", "image": im})
             for au in getattr(q, "audios", []) or []:
                 content.append({"type": "audio", "audio": au})
@@ -173,7 +179,9 @@ class HFMultimodalModelGenerator(
         )
         if not isinstance(query, list):
             if not decoded or not isinstance(decoded[0], str):
-                raise RuntimeError("batch_decode did not return valid output")
+                raise GeneratorError(
+                    "batch_decode did not return valid output"
+                )
             return decoded[0]
         return decoded
 
@@ -193,6 +201,8 @@ class HFMultimodalModelGenerator(
         context: Context | str | None = None,
         **kwargs: Any,
     ) -> torch.Tensor:
+        from PIL import Image as PILImage
+
         q = self.to_query(prompt)
         ctx = self.to_context(context)
         base_text = getattr(q, "text", "") or ""
@@ -204,7 +214,7 @@ class HFMultimodalModelGenerator(
                 content.append({"type": "text", "text": ctx.text})
             for im in getattr(ctx, "images", []) or []:
                 if isinstance(im, np.ndarray):
-                    im = Image.fromarray(im)
+                    im = PILImage.fromarray(im)
                 content.append({"type": "image", "image": im})
             for au in getattr(ctx, "audios", []) or []:
                 content.append({"type": "audio", "audio": au})
@@ -213,7 +223,7 @@ class HFMultimodalModelGenerator(
 
         for im in getattr(q, "images", []) or []:
             if isinstance(im, np.ndarray):
-                im = Image.fromarray(im)
+                im = PILImage.fromarray(im)
             content.append({"type": "image", "image": im})
         for au in getattr(q, "audios", []) or []:
             content.append({"type": "audio", "audio": au})
@@ -246,7 +256,7 @@ class HFMultimodalModelGenerator(
         with torch.no_grad():
             outputs = self.model(**inputs)
         if not hasattr(outputs, "logits") or outputs.logits is None:
-            raise RuntimeError(
+            raise GeneratorError(
                 "Underlying model does not expose logits; cannot compute probabilities."
             )
         logits = outputs.logits
@@ -259,14 +269,22 @@ class HFMultimodalModelGenerator(
         return torch.exp(torch.tensor(sum(log_probs)))
 
     @property
-    def model(self) -> PreTrainedModel:
+    def model(self) -> "PreTrainedModel":
         if self._model is None:
             self._model = self._load_model_from_hf()
         return self._model
 
     @property
-    def tokenizer(self) -> BaseTokenizer:
-        return self._processor
+    def tokenizer(self) -> Any:
+        if hasattr(self._processor, "tokenizer"):
+            return self._processor.tokenizer
+        # If processor IS the tokenizer (common for text-only)
+        if callable(getattr(self._processor, "encode", None)):
+            return self._processor
+        raise AttributeError(
+            f"{self.__class__.__name__}: This processor does not have a `.tokenizer` attribute. "
+            "For some multimodal models, please use `.processor` directly."
+        )
 
     @property
     def processor(self) -> Any:
