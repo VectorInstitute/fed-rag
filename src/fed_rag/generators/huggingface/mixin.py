@@ -37,10 +37,10 @@ class HuggingFaceGeneratorMixin:
     ) -> str | list[str]:
         # convert to str | list[str]
         if isinstance(prompt, Prompt):
-            prompt = prompt.text
+            prompt = str(prompt)
 
         if isinstance(prompt, list):
-            prompt = [p.text if isinstance(p, Prompt) else p for p in prompt]
+            prompt = [str(p) for p in prompt]
 
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
@@ -74,18 +74,21 @@ class HuggingFaceGeneratorMixin:
         **kwargs: Any,
     ) -> str | list[str]:
         """Implements generate method."""
-        # convert nonlists to lists
-        if isinstance(query, str) or isinstance(query, Query):
-            query = [query]
-        if isinstance(context, str) or isinstance(context, Context):
-            context = [context]
+        # convert query and context to list[str]
+        if isinstance(query, (Query, str)):
+            query = [str(query)]
+        if isinstance(query, list):
+            query = [str(q) for q in query]
+
+        if isinstance(context, (Context, str)):
+            context = [str(context)]
+        if isinstance(context, list):
+            context = [str(q) for q in context]
 
         if len(query) != len(context):
             raise GeneratorError(
                 "There should be one context for every query."
             )
-
-        query = [q.text if isinstance(q, Query) else q for q in query]
 
         formatted_queries = [
             self.prompt_template.format(query=q, context=c)

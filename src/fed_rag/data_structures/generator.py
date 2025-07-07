@@ -18,6 +18,9 @@ class _MultiModalDataContainer(BaseModel):
     text: str
     images: list[Image.Image] | None = None
 
+    def __str__(self) -> str:
+        return self.text
+
 
 class Query(_MultiModalDataContainer):
     """Query data structure.
