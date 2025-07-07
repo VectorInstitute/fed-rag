@@ -36,11 +36,11 @@ class HuggingFaceGeneratorMixin:
         **kwargs: Any,
     ) -> str | list[str]:
         # convert to str | list[str]
-        if isinstance(prompt, Prompt):
-            prompt = str(prompt)
-
-        if isinstance(prompt, list):
-            prompt = [str(p) for p in prompt]
+        prompt = (
+            [str(p) for p in prompt]
+            if isinstance(prompt, list)
+            else str(prompt)
+        )
 
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
@@ -75,15 +75,16 @@ class HuggingFaceGeneratorMixin:
     ) -> str | list[str]:
         """Implements generate method."""
         # convert query and context to list[str]
-        if isinstance(query, (Query, str)):
-            query = [str(query)]
-        if isinstance(query, list):
-            query = [str(q) for q in query]
-
-        if isinstance(context, (Context, str)):
-            context = [str(context)]
-        if isinstance(context, list):
-            context = [str(q) for q in context]
+        query = (
+            [str(q) for q in query]
+            if isinstance(query, list)
+            else [str(query)]
+        )
+        context = (
+            [str(c) for c in context]
+            if isinstance(context, list)
+            else [str(context)]
+        )
 
         if len(query) != len(context):
             raise GeneratorError(
