@@ -1,5 +1,7 @@
 """Auxiliary types for RAG System"""
 
+from typing import Any
+
 from PIL import Image
 from pydantic import BaseModel, ConfigDict
 
@@ -12,11 +14,15 @@ class _MultiModalDataContainer(BaseModel):
     Attributes:
         text: Text content of query.
         images: Images content of query.
+        audios: Audios content of query.
+        videos: Videos content of query.
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     text: str
     images: list[Image.Image] | None = None
+    audios: list[Any] | None = None  # <-- Added
+    videos: list[Any] | None = None  # <-- Added
 
     def __str__(self) -> str:
         return self.text
@@ -30,6 +36,8 @@ class Query(_MultiModalDataContainer):
     Attributes:
         text: Text content of query.
         images: Images content of query.
+        audios: Audios content of query.
+        videos: Videos content of query.
     """
 
     pass
@@ -43,6 +51,8 @@ class Context(_MultiModalDataContainer):
     Attributes:
         text: Text content of query.
         images: Images content of query.
+        audios: Audios content of query.
+        videos: Videos content of query.
     """
 
     pass
@@ -57,6 +67,8 @@ class Prompt(_MultiModalDataContainer):
     Attributes:
         text: Text content of query.
         images: Images content of query.
+        audios: Audios content of query.
+        videos: Videos content of query.
     """
 
     pass
