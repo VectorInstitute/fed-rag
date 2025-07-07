@@ -110,6 +110,8 @@ class HuggingFaceGeneratorMixin:
             proba (torch.Tensor): The probability of target sequence given a prompt.
                 i.e., P_{LLM}(target | prompt)
         """
+        if isinstance(prompt, Prompt):
+            prompt = str(prompt)
         input_text = prompt + target
         encode_result = self.tokenizer.encode(input_text)
         input_ids = encode_result["input_ids"]
