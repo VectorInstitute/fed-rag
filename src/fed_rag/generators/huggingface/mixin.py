@@ -11,6 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers.generation.utils import GenerationConfig
 
 from fed_rag.data_structures import Context, Prompt, Query
+from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -22,7 +23,7 @@ class HFGeneratorProtocol(Protocol):
     generation_config: "GenerationConfig"
 
     def complete(
-        self, prompt: str | list[str], **kwargs: Any
+        self, prompt: str | list[str] | Prompt | list[Prompt], **kwargs: Any
     ) -> str | list[str]:
         pass  # pragma: no cover
 
@@ -34,6 +35,13 @@ class HuggingFaceGeneratorMixin:
         prompt: str | list[str] | Prompt | list[Prompt],
         **kwargs: Any,
     ) -> str | list[str]:
+        # convert to str | list[str]
+        if isinstance(prompt, Prompt):
+            prompt = prompt.text
+
+        if isinstance(prompt, list):
+            prompt = [p.text if isinstance(p, Prompt) else p for p in prompt]
+
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
             prompt, return_tensors="pt"
@@ -65,12 +73,20 @@ class HuggingFaceGeneratorMixin:
         context: str | list[str] | Context | list[Context],
         **kwargs: Any,
     ) -> str | list[str]:
-        if isinstance(query, str):
-            if not isinstance(context, str):
-                raise ValueError(
-                    "If query is a string, context must also be a string."
-                )
-            query, context = [query], [context]
+        """Implements generate method."""
+        # convert nonlists to lists
+        if isinstance(query, str) or isinstance(query, Query):
+            query = [query]
+        if isinstance(context, str) or isinstance(context, Context):
+            context = [context]
+
+        if len(query) != len(context):
+            raise GeneratorError(
+                "There should be one context for every query."
+            )
+
+        query = [q.text if isinstance(q, Query) else q for q in query]
+
         formatted_queries = [
             self.prompt_template.format(query=q, context=c)
             for q, c in zip(query, context)
