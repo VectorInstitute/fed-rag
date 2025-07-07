@@ -6,6 +6,7 @@ import torch
 from PIL import Image
 from transformers import AutoModel, AutoModelForImageTextToText
 
+from fed_rag.data_structures.generator import Context, Prompt, Query
 from fed_rag.generators.huggingface.hf_multimodal_model import (
     HFMultimodalModelGenerator,
 )
@@ -20,7 +21,6 @@ def dummy_audio() -> np.ndarray:
 
 
 def dummy_video() -> np.ndarray:
-    # 1 frame of "video"
     return (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
 
 
@@ -46,6 +46,12 @@ def test_hf_multimodal_generator_init(
 
 def test_pack_messages_single_and_batch():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
+    generator.to_query.side_effect = (
+        lambda x: Query(text=x) if isinstance(x, str) else x
+    )
+    generator.to_context.side_effect = (
+        lambda x: Context(text=x) if isinstance(x, str) else x
+    )
     generator._pack_messages = (
         HFMultimodalModelGenerator._pack_messages.__get__(generator)
     )
@@ -54,13 +60,9 @@ def test_pack_messages_single_and_batch():
     img = dummy_image()
     audio = dummy_audio()
     video = dummy_video()
-    messages = generator._pack_messages(
-        "hello world",
-        context="ctx",
-        images=[img],
-        audios=[audio],
-        videos=[video],
-    )
+    q = Query(text="hello world", images=[img], audios=[audio], videos=[video])
+    c = Context(text="ctx")
+    messages = generator._pack_messages(q, context=c)
     assert isinstance(messages, list)
     assert messages[0]["role"] == "user"
     content = messages[0]["content"]
@@ -71,16 +73,14 @@ def test_pack_messages_single_and_batch():
     assert {"type": "text", "text": "hello world"} in content
 
     # Batch
-    messages_batch = generator._pack_messages(
-        ["q1", "q2"],
-        context="ctx",
-        images=[img],
-        audios=[audio],
-        videos=[video],
-    )
+    q1 = Query(text="q1", images=[img], audios=[audio], videos=[video])
+    q2 = Query(text="q2", images=[img], audios=[audio], videos=[video])
+    c1 = Context(text="ctx")
+    c2 = Context(text="ctx")
+    messages_batch = generator._pack_messages([q1, q2], context=[c1, c2])
     assert len(messages_batch) == 2
-    for msg, q in zip(messages_batch, ["q1", "q2"]):
-        assert {"type": "text", "text": q} in msg["content"]
+    for msg, q in zip(messages_batch, [q1, q2]):
+        assert {"type": "text", "text": q.text} in msg["content"]
 
 
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
@@ -96,8 +96,6 @@ def test_generate_and_complete(
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-
-    # Simulate apply_chat_template
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
     }
@@ -109,25 +107,25 @@ def test_generate_and_complete(
     img = dummy_image()
     audio = dummy_audio()
     video = dummy_video()
-
+    q = Query(
+        text="what do you see?", images=[img], audios=[audio], videos=[video]
+    )
+    c = Context(text="")
     out = generator.generate(
-        query="what do you see?",
-        context="",
-        images=[img],
-        audios=[audio],
-        videos=[video],
+        query=q,
+        context=c,
         max_new_tokens=4,
     )
     assert isinstance(out, str)
     assert out == "a test response"
     # Test complete() calls generate with correct args
-    out2 = generator.complete(prompt="another prompt")
+    p = Prompt(text="another prompt")
+    out2 = generator.complete(prompt=p)
     assert out2 == "a test response"
 
 
 def test_prompt_template_setter():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
-    # Patch the _prompt_template to ensure setter works
     generator._prompt_template = ""
     HFMultimodalModelGenerator.prompt_template.fset(generator, "abc {context}")
     assert generator._prompt_template == "abc {context}"
@@ -152,27 +150,19 @@ def test_compute_target_sequence_proba(
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
-        {
-            "input_ids": torch.arange(10).unsqueeze(0)
-        },  # input_ids for full prompt+target
-        {
-            "input_ids": torch.arange(5).unsqueeze(0)
-        },  # input_ids for just prompt
+        {"input_ids": torch.arange(10).unsqueeze(0)},
+        {"input_ids": torch.arange(5).unsqueeze(0)},
     ]
     logits = torch.randn(1, 10, 100)
     mock_model.return_value = MagicMock(logits=logits)
     mock_torch_functional.log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-    img = dummy_image()
-    audio = dummy_audio()
-    video = dummy_video()
+    p = Prompt(text="what is this?")
+    c = Context(text="context")
     prob = generator.compute_target_sequence_proba(
-        prompt="what is this?",
+        prompt=p,
         target="test",
-        context="context",
-        images=[img],
-        audios=[audio],
-        videos=[video],
+        context=c,
     )
     assert isinstance(prob, torch.Tensor)
 
@@ -205,16 +195,23 @@ def test_prompt_template_property():
 
 def test_pack_messages_converts_ndarray_to_image():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
+    generator.to_query.side_effect = (
+        lambda x: Query(
+            text=x, images=[(np.random.rand(32, 32, 3) * 255).astype("uint8")]
+        )
+        if isinstance(x, str)
+        else x
+    )
+    generator.to_context.side_effect = (
+        lambda x: Context(text=x) if isinstance(x, str) else x
+    )
     generator._pack_messages = (
         HFMultimodalModelGenerator._pack_messages.__get__(generator)
     )
     # Pass an ndarray
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
-    messages = generator._pack_messages(
-        "test image",
-        images=[img_np],
-    )
-    # Check that the content contains a PIL.Image.Image (not ndarray)
+    q = Query(text="test image", images=[img_np])
+    messages = generator._pack_messages(q)
     content = messages[0]["content"]
     assert any(
         x["type"] == "image" and isinstance(x["image"], Image.Image)
@@ -249,8 +246,9 @@ def test_compute_target_sequence_proba_ndarray_image(
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     # ndarray instead of PIL.Image
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
+    q = Query(text="what is this?", images=[img_np])
     prob = generator.compute_target_sequence_proba(
-        prompt="what is this?",
+        prompt=q,
         target="test",
         images=[img_np],
     )
@@ -279,12 +277,13 @@ def test_generate_raises_runtimeerror_on_bad_batch_decode(
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
 
+    q = Query(text="what do you see?")
     with pytest.raises(
         RuntimeError, match="batch_decode did not return valid output"
     ):
         generator.generate(
-            query="what do you see?",
-            context="",
+            query=q,
+            context=Context(text=""),
         )
 
 
@@ -311,17 +310,16 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
     ]
-    mock_model.return_value = (
-        model_output  # <-- either object() or MagicMock(logits=None)
-    )
+    mock_model.return_value = model_output
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
+    q = Query(text="what is this?", images=[img])
     with pytest.raises(
         RuntimeError,
         match="Underlying model does not expose logits; cannot compute probabilities.",
     ):
         generator.compute_target_sequence_proba(
-            prompt="what is this?",
+            prompt=q,
             target="test",
             images=[img],
         )

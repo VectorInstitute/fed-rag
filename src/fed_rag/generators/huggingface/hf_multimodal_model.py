@@ -17,24 +17,32 @@ from transformers import (
 )
 
 from fed_rag.base.generator import BaseGenerator
+from fed_rag.base.generator_mixins.audio import AudioModalityMixin
+from fed_rag.base.generator_mixins.image import ImageModalityMixin
+from fed_rag.base.generator_mixins.video import VideoModalityMixin
 from fed_rag.base.tokenizer import BaseTokenizer
 from fed_rag.data_structures.generator import Context, Prompt, Query
 from fed_rag.generators.huggingface.utils import check_huggingface_installed
 
 
-class HFMultimodalModelGenerator(BaseGenerator):
+class HFMultimodalModelGenerator(
+    ImageModalityMixin,
+    AudioModalityMixin,
+    VideoModalityMixin,
+    BaseGenerator,
+):
     model_config = ConfigDict(
         protected_namespaces=("pydantic_model_",), arbitrary_types_allowed=True
     )
     model_name: str = Field(description="HuggingFace model name or path.")
-    modality_types: set[str] = Field(default_factory=lambda: {"text", "image"})
+    modality_types: set[str] = Field(
+        default_factory=lambda: {"text", "image", "audio", "video"}
+    )
     generation_config: GenerationConfig = Field(
         default_factory=GenerationConfig
     )
     load_model_kwargs: dict = Field(default_factory=dict)
-    prompt_template_init: str | None = Field(
-        default=None, description="Optional prompt template override."
-    )
+    prompt_template_init: str | None = Field(default=None)
     _model: PreTrainedModel = PrivateAttr()
     _processor: Any = PrivateAttr(default=None)
     _prompt_template: str = PrivateAttr(default="")
@@ -67,55 +75,73 @@ class HFMultimodalModelGenerator(BaseGenerator):
                 return AutoModelForImageTextToText
         return AutoModel
 
+    def to_query(self, q: str | Query | Prompt) -> Query:
+        if isinstance(q, Query):
+            return q
+        if isinstance(q, Prompt):
+            return Query(
+                text=q.text,
+                images=getattr(q, "images", None),
+                audios=getattr(q, "audios", None),
+                videos=getattr(q, "videos", None),
+            )
+        return Query(text=str(q))
+
+    def to_context(self, c: str | Context | None) -> Context | None:
+        if c is None or isinstance(c, Context):
+            return c
+        return Context(text=str(c))
+
     def _pack_messages(
         self,
-        query: Query | list[Query],
-        context: Context | list[Context] | None = None,
+        query: str | Query | list[str] | list[Query],
+        context: str | Context | list[str] | list[Context] | None = None,
     ) -> list[dict[str, Any]]:
-        # Ensure both query/context are lists if batch
-        queries = [query] if not isinstance(query, list) else query
-        contexts = (
-            [context] * len(queries)
-            if isinstance(context, (str, Query, Context, type(None)))
-            else context
+        queries = (
+            [query] if not isinstance(query, list) else query  # type: ignore[arg-type]
         )
-        # Validation: if both are lists, must be same length
-        if isinstance(contexts, list) and len(contexts) != len(queries):
-            raise ValueError(
-                "Batch mode requires query and context to be the same length"
-            )
-        messages = []
-        for i, q in enumerate(queries):
+        queries = [self.to_query(q) for q in queries]
+
+        if isinstance(context, list):
+            contexts = [self.to_context(c) for c in context]
+            if len(contexts) != len(queries):
+                raise ValueError(
+                    "Batch mode requires query and context to be the same length"
+                )
+        else:
+            contexts = [self.to_context(context)] * len(queries)
+
+        messages: list[dict[str, Any]] = []
+        for q, ctx in zip(queries, contexts):
             content: list[dict[str, Any]] = []
-            ctx = contexts[i] if isinstance(contexts, list) else contexts
             if ctx is not None:
-                if getattr(ctx, "text", None):
+                if ctx.text:
                     content.append({"type": "text", "text": ctx.text})
-                if getattr(ctx, "images", None):
-                    for im in ctx.images or []:
-                        if isinstance(im, np.ndarray):
-                            im = Image.fromarray(im)
-                        content.append({"type": "image", "image": im})
-            if getattr(q, "images", None):
-                for im in q.images or []:
+                for im in ctx.images or []:
                     if isinstance(im, np.ndarray):
                         im = Image.fromarray(im)
                     content.append({"type": "image", "image": im})
-            if getattr(q, "audios", None):
-                for au in q.audios or []:
+                for au in ctx.audios or []:
                     content.append({"type": "audio", "audio": au})
-            if getattr(q, "videos", None):
-                for vid in q.videos or []:
+                for vid in ctx.videos or []:
                     content.append({"type": "video", "video": vid})
-            if getattr(q, "text", None):
+            for im in q.images or []:
+                if isinstance(im, np.ndarray):
+                    im = Image.fromarray(im)
+                content.append({"type": "image", "image": im})
+            for au in q.audios or []:
+                content.append({"type": "audio", "audio": au})
+            for vid in q.videos or []:
+                content.append({"type": "video", "video": vid})
+            if q.text:
                 content.append({"type": "text", "text": q.text})
             messages.append({"role": "user", "content": content})
         return messages
 
     def generate(
         self,
-        query: Query | list[Query],
-        context: Context | list[Context] | None = None,
+        query: str | Query | list[str] | list[Query],
+        context: str | Context | list[str] | list[Context] | None = None,
         max_new_tokens: int = 256,
         add_generation_prompt: bool = True,
         **gen_kwargs: Any,
@@ -129,7 +155,6 @@ class HFMultimodalModelGenerator(BaseGenerator):
             return_dict=True,
         )
         input_len = inputs["input_ids"].shape[-1]
-
         with torch.inference_mode():
             generation = self._model.generate(
                 **inputs, max_new_tokens=max_new_tokens, **gen_kwargs
@@ -145,48 +170,48 @@ class HFMultimodalModelGenerator(BaseGenerator):
         return decoded
 
     def complete(
-        self, prompt: Prompt | list[Prompt], **kwargs: Any
+        self, prompt: Prompt | list[Prompt] | str | list[str], **kwargs: Any
     ) -> str | list[str]:
-        def prompt_to_query(p: Prompt) -> Query:
-            return Query(text=p.text, images=getattr(p, "images", None))
-
-        queries = (
-            [prompt_to_query(p) for p in prompt]
-            if isinstance(prompt, list)
-            else prompt_to_query(prompt)
-        )
-        return self.generate(
-            query=queries,
-            context=None,
-            **kwargs,
-        )
+        if isinstance(prompt, list):
+            queries = [self.to_query(p) for p in prompt]
+        else:
+            queries = self.to_query(prompt)
+        return self.generate(query=queries, context=None, **kwargs)
 
     def compute_target_sequence_proba(
         self,
-        prompt: Prompt,
+        prompt: Prompt | str,
         target: str,
-        context: Context | None = None,
+        context: Context | str | None = None,
         **kwargs: Any,
     ) -> torch.Tensor:
-        if getattr(prompt, "text", None) is not None:
-            text = prompt.text
-        else:
-            text = ""
-        full_text = text + target
+        q = self.to_query(prompt)
+        ctx = self.to_context(context)
+        base_text = q.text or ""
+        full_text = base_text + target
         content: list[dict[str, Any]] = []
-        if context is not None:
-            if getattr(context, "text", None):
-                content.append({"type": "text", "text": context.text})
-            if getattr(context, "images", None):
-                for im in context.images or []:
-                    if isinstance(im, np.ndarray):
-                        im = Image.fromarray(im)
-                    content.append({"type": "image", "image": im})
-        if getattr(prompt, "images", None):
-            for im in prompt.images or []:
+
+        if ctx:
+            if ctx.text:
+                content.append({"type": "text", "text": ctx.text})
+            for im in ctx.images or []:
                 if isinstance(im, np.ndarray):
                     im = Image.fromarray(im)
                 content.append({"type": "image", "image": im})
+            for au in ctx.audios or []:
+                content.append({"type": "audio", "audio": au})
+            for vid in ctx.videos or []:
+                content.append({"type": "video", "video": vid})
+
+        for im in q.images or []:
+            if isinstance(im, np.ndarray):
+                im = Image.fromarray(im)
+            content.append({"type": "image", "image": im})
+        for au in q.audios or []:
+            content.append({"type": "audio", "audio": au})
+        for vid in q.videos or []:
+            content.append({"type": "video", "video": vid})
+
         content.append({"type": "text", "text": full_text})
         messages = [{"role": "user", "content": content}]
         inputs = self._processor.apply_chat_template(
@@ -198,7 +223,12 @@ class HFMultimodalModelGenerator(BaseGenerator):
         )
         input_ids = inputs["input_ids"]
         prompt_inputs = self._processor.apply_chat_template(
-            [{"role": "user", "content": [{"type": "text", "text": text}]}],
+            [
+                {
+                    "role": "user",
+                    "content": [{"type": "text", "text": base_text}],
+                }
+            ],
             add_generation_prompt=False,
             tokenize=True,
             return_dict=True,
