@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Make text-only HF generators be able to accept `Query`, `Context` an `Prompt` types (#477)
 - Rename `HasImageModality` to `RetrieverHasImageModality` (#475)
 
 ### Added

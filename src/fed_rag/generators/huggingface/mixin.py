@@ -11,6 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from transformers.generation.utils import GenerationConfig
 
 from fed_rag.data_structures import Context, Prompt, Query
+from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
 
@@ -22,7 +23,7 @@ class HFGeneratorProtocol(Protocol):
     generation_config: "GenerationConfig"
 
     def complete(
-        self, prompt: str | list[str], **kwargs: Any
+        self, prompt: str | list[str] | Prompt | list[Prompt], **kwargs: Any
     ) -> str | list[str]:
         pass  # pragma: no cover
 
@@ -34,6 +35,13 @@ class HuggingFaceGeneratorMixin:
         prompt: str | list[str] | Prompt | list[Prompt],
         **kwargs: Any,
     ) -> str | list[str]:
+        # convert to str | list[str]
+        prompt = (
+            [str(p) for p in prompt]
+            if isinstance(prompt, list)
+            else str(prompt)
+        )
+
         # encode query
         tokenizer_result = self.tokenizer.unwrapped(
             prompt, return_tensors="pt"
@@ -65,12 +73,24 @@ class HuggingFaceGeneratorMixin:
         context: str | list[str] | Context | list[Context],
         **kwargs: Any,
     ) -> str | list[str]:
-        if isinstance(query, str):
-            if not isinstance(context, str):
-                raise ValueError(
-                    "If query is a string, context must also be a string."
-                )
-            query, context = [query], [context]
+        """Implements generate method."""
+        # convert query and context to list[str]
+        query = (
+            [str(q) for q in query]
+            if isinstance(query, list)
+            else [str(query)]
+        )
+        context = (
+            [str(c) for c in context]
+            if isinstance(context, list)
+            else [str(context)]
+        )
+
+        if len(query) != len(context):
+            raise GeneratorError(
+                "There should be one context for every query."
+            )
+
         formatted_queries = [
             self.prompt_template.format(query=q, context=c)
             for q, c in zip(query, context)
@@ -91,6 +111,8 @@ class HuggingFaceGeneratorMixin:
             proba (torch.Tensor): The probability of target sequence given a prompt.
                 i.e., P_{LLM}(target | prompt)
         """
+        if isinstance(prompt, Prompt):
+            prompt = str(prompt)
         input_text = prompt + target
         encode_result = self.tokenizer.encode(input_text)
         input_ids = encode_result["input_ids"]
