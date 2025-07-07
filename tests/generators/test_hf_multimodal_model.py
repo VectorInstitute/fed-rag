@@ -192,6 +192,64 @@ def test_to_query_and_to_context_types():
     assert gen.to_context(ctx) is ctx
 
 
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
+@patch(
+    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
+)
+def test_compute_target_sequence_proba_with_modalities(
+    mock_auto_model,
+    mock_auto_config,
+    mock_auto_processor,
+    mock_torch_functional,
+):
+    # Mock setup as before
+    mock_proc = MagicMock()
+    mock_model = MagicMock()
+    mock_auto_processor.from_pretrained.return_value = mock_proc
+    mock_auto_config.from_pretrained.return_value = MagicMock()
+    mock_auto_model.from_pretrained.return_value = mock_model
+    # Two calls for apply_chat_template
+    mock_proc.apply_chat_template.side_effect = [
+        {"input_ids": torch.arange(10).unsqueeze(0)},
+        {"input_ids": torch.arange(5).unsqueeze(0)},
+    ]
+    logits = torch.randn(1, 10, 100)
+    mock_model.return_value = MagicMock(logits=logits)
+    mock_torch_functional.log_softmax.return_value = torch.zeros(100)
+
+    generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
+
+    # --- Here's the important part! Pass images as numpy array, and non-empty audios/videos ---
+    img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
+    audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
+    video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
+
+    # Create valid Query/Context, then bypass Pydantic to inject ndarray
+    q = Query(
+        text="what is this?",
+        images=[dummy_image()],
+        audios=[audio_np],
+        videos=[video_np],
+    )
+    c = Context(
+        text="context",
+        images=[dummy_image()],
+        audios=[audio_np],
+        videos=[video_np],
+    )
+    q.images = [img_np]
+    c.images = [img_np]
+
+    prob = generator.compute_target_sequence_proba(
+        prompt=q,  # q will be used, includes ndarray image, audio, video
+        target="test",
+        context=c,  # c will be used, also includes ndarray image, audio, video
+    )
+    assert isinstance(prob, torch.Tensor)
+
+
 def test_pack_messages_with_ndarray_inputs():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
     generator.to_query.side_effect = (
