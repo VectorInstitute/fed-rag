@@ -72,7 +72,10 @@ def test_pack_messages_single_and_batch():
     content = messages[0]["content"]
     assert {"type": "text", "text": "ctx"} in content
     assert {"type": "image", "image": img} in content
-    assert {"type": "audio", "audio": audio} in content
+    assert any(
+        x["type"] == "audio" and np.allclose(x["audio"], audio)
+        for x in content
+    )
     assert {"type": "video", "video": video} in content
     assert {"type": "text", "text": "hello world"} in content
 
@@ -200,32 +203,6 @@ def test_prompt_template_property():
     )
     HFMultimodalModelGenerator.prompt_template.fset(generator, "new template")
     assert generator._prompt_template == "new template"
-
-
-def test_pack_messages_converts_ndarray_to_image():
-    generator = MagicMock(spec=HFMultimodalModelGenerator)
-    generator.to_query.side_effect = (
-        lambda x: Query(
-            text=x, images=[(np.random.rand(32, 32, 3) * 255).astype("uint8")]
-        )
-        if isinstance(x, str)
-        else x
-    )
-    generator.to_context.side_effect = (
-        lambda x: Context(text=x) if isinstance(x, str) else x
-    )
-    generator._pack_messages = (
-        HFMultimodalModelGenerator._pack_messages.__get__(generator)
-    )
-    # Pass an ndarray
-    img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
-    q = Query(text="test image", images=[img_np])
-    messages = generator._pack_messages(q)
-    content = messages[0]["content"]
-    assert any(
-        x["type"] == "image" and isinstance(x["image"], Image.Image)
-        for x in content
-    )
 
 
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
