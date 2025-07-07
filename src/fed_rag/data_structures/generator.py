@@ -21,8 +21,8 @@ class _MultiModalDataContainer(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     text: str
     images: list[Image.Image] | None = None
-    audios: list[Any] | None = None  # <-- Added
-    videos: list[Any] | None = None  # <-- Added
+    audios: list[Any] | None = None
+    videos: list[Any] | None = None
 
     def __str__(self) -> str:
         return self.text
