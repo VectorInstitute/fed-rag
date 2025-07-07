@@ -115,25 +115,25 @@ class HFMultimodalModelGenerator(
         for q, ctx in zip(queries, contexts):
             content: list[dict[str, Any]] = []
             if ctx is not None:
-                if ctx.text:
+                if getattr(ctx, "text", None):
                     content.append({"type": "text", "text": ctx.text})
-                for im in ctx.images or []:
+                for im in getattr(ctx, "images", []) or []:
                     if isinstance(im, np.ndarray):
                         im = Image.fromarray(im)
                     content.append({"type": "image", "image": im})
-                for au in ctx.audios or []:
+                for au in getattr(ctx, "audios", []) or []:
                     content.append({"type": "audio", "audio": au})
-                for vid in ctx.videos or []:
+                for vid in getattr(ctx, "videos", []) or []:
                     content.append({"type": "video", "video": vid})
-            for im in q.images or []:
+            for im in getattr(q, "images", []) or []:
                 if isinstance(im, np.ndarray):
                     im = Image.fromarray(im)
                 content.append({"type": "image", "image": im})
-            for au in q.audios or []:
+            for au in getattr(q, "audios", []) or []:
                 content.append({"type": "audio", "audio": au})
-            for vid in q.videos or []:
+            for vid in getattr(q, "videos", []) or []:
                 content.append({"type": "video", "video": vid})
-            if q.text:
+            if getattr(q, "text", None):
                 content.append({"type": "text", "text": q.text})
             messages.append({"role": "user", "content": content})
         return messages
@@ -187,29 +187,29 @@ class HFMultimodalModelGenerator(
     ) -> torch.Tensor:
         q = self.to_query(prompt)
         ctx = self.to_context(context)
-        base_text = q.text or ""
+        base_text = getattr(q, "text", "") or ""
         full_text = base_text + target
         content: list[dict[str, Any]] = []
 
         if ctx:
-            if ctx.text:
+            if getattr(ctx, "text", None):
                 content.append({"type": "text", "text": ctx.text})
-            for im in ctx.images or []:
+            for im in getattr(ctx, "images", []) or []:
                 if isinstance(im, np.ndarray):
                     im = Image.fromarray(im)
                 content.append({"type": "image", "image": im})
-            for au in ctx.audios or []:
+            for au in getattr(ctx, "audios", []) or []:
                 content.append({"type": "audio", "audio": au})
-            for vid in ctx.videos or []:
+            for vid in getattr(ctx, "videos", []) or []:
                 content.append({"type": "video", "video": vid})
 
-        for im in q.images or []:
+        for im in getattr(q, "images", []) or []:
             if isinstance(im, np.ndarray):
                 im = Image.fromarray(im)
             content.append({"type": "image", "image": im})
-        for au in q.audios or []:
+        for au in getattr(q, "audios", []) or []:
             content.append({"type": "audio", "audio": au})
-        for vid in q.videos or []:
+        for vid in getattr(q, "videos", []) or []:
             content.append({"type": "video", "video": vid})
 
         content.append({"type": "text", "text": full_text})

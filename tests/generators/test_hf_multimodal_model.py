@@ -61,7 +61,7 @@ def test_pack_messages_single_and_batch():
     audio = dummy_audio()
     video = dummy_video()
     q = Query(text="hello world", images=[img], audios=[audio], videos=[video])
-    c = Context(text="ctx")
+    c = Context(text="ctx", images=None, audios=None, videos=None)
     messages = generator._pack_messages(q, context=c)
     assert isinstance(messages, list)
     assert messages[0]["role"] == "user"
@@ -74,9 +74,9 @@ def test_pack_messages_single_and_batch():
 
     # Batch
     q1 = Query(text="q1", images=[img], audios=[audio], videos=[video])
-    q2 = Query(text="q2", images=[img], audios=[audio], videos=[video])
-    c1 = Context(text="ctx")
-    c2 = Context(text="ctx")
+    q2 = Query(text="q2", images=None, audios=None, videos=None)
+    c1 = Context(text="ctx1", images=None, audios=None, videos=None)
+    c2 = Context(text="ctx2", images=None, audios=None, videos=None)
     messages_batch = generator._pack_messages([q1, q2], context=[c1, c2])
     assert len(messages_batch) == 2
     for msg, q in zip(messages_batch, [q1, q2]):
@@ -110,7 +110,8 @@ def test_generate_and_complete(
     q = Query(
         text="what do you see?", images=[img], audios=[audio], videos=[video]
     )
-    c = Context(text="")
+    c = Context(text="", images=None, audios=None, videos=None)
+
     out = generator.generate(
         query=q,
         context=c,
@@ -157,8 +158,8 @@ def test_compute_target_sequence_proba(
     mock_model.return_value = MagicMock(logits=logits)
     mock_torch_functional.log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-    p = Prompt(text="what is this?")
-    c = Context(text="context")
+    p = Prompt(text="what is this?", images=None, audios=None, videos=None)
+    c = Context(text="context", images=None, audios=None, videos=None)
     prob = generator.compute_target_sequence_proba(
         prompt=p,
         target="test",
@@ -246,11 +247,11 @@ def test_compute_target_sequence_proba_ndarray_image(
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     # ndarray instead of PIL.Image
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
-    q = Query(text="what is this?", images=[img_np])
+    img = Image.fromarray(img_np)
+    q = Query(text="what is this?", images=[img], audios=None, videos=None)
     prob = generator.compute_target_sequence_proba(
         prompt=q,
         target="test",
-        images=[img_np],
     )
     assert isinstance(prob, torch.Tensor)
 
@@ -276,14 +277,14 @@ def test_generate_raises_runtimeerror_on_bad_batch_decode(
     mock_proc.batch_decode.return_value = [1234]  # Not a string!
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-
-    q = Query(text="what do you see?")
+    q = Query(text="what do you see?", images=None, audios=None, videos=None)
+    c = Context(text="", images=None, audios=None, videos=None)
     with pytest.raises(
         RuntimeError, match="batch_decode did not return valid output"
     ):
         generator.generate(
             query=q,
-            context=Context(text=""),
+            context=c,
         )
 
 
@@ -313,7 +314,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_model.return_value = model_output
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
-    q = Query(text="what is this?", images=[img])
+    q = Query(text="what is this?", images=[img], audios=None, videos=None)
     with pytest.raises(
         RuntimeError,
         match="Underlying model does not expose logits; cannot compute probabilities.",
@@ -321,7 +322,6 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         generator.compute_target_sequence_proba(
             prompt=q,
             target="test",
-            images=[img],
         )
 
 
