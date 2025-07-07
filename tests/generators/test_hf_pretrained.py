@@ -14,7 +14,8 @@ from transformers import (
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.tokenizer import EncodeResult
-from fed_rag.exceptions import MissingExtraError
+from fed_rag.data_structures import Prompt
+from fed_rag.exceptions import GeneratorError, MissingExtraError
 from fed_rag.generators.huggingface import HFPretrainedModelGenerator
 from fed_rag.tokenizers.hf_pretrained_tokenizer import HFPretrainedTokenizer
 
@@ -180,7 +181,7 @@ def test_generate() -> None:
     mock_model.generate.assert_called_once()
 
 
-def test_generate_value_error() -> None:
+def test_generate_raises_error_with_query_context_length_mismatch() -> None:
     # arrange
     generator = HFPretrainedModelGenerator(
         model_name="fake_name", load_model_at_init=False
@@ -198,10 +199,12 @@ def test_generate_value_error() -> None:
 
     # act
     with pytest.raises(
-        ValueError,
-        match="If query is a string, context must also be a string.",
+        GeneratorError,
+        match="There should be one context for every query.",
     ):
-        generator.generate("fake input", ["fake context"])
+        generator.generate(
+            ["fake input", "another fake input"], ["fake context"]
+        )
 
     mock_tokenizer.assert_not_called()
     mock_model.generate.assert_not_called()
@@ -218,8 +221,8 @@ def test_compute_target_sequence_proba(
     )
     mock_tokenizer = MagicMock()
     mock_tokenizer.encode.side_effect = [
-        EncodeResult(input_ids=[0, 1, 2, 3, 4]),
-        EncodeResult(input_ids=[0, 1, 2]),
+        EncodeResult(input_ids=[0, 1, 2, 3, 4], attention_mask=None),
+        EncodeResult(input_ids=[0, 1, 2], attention_mask=None),
     ]
     mock_torch_functional.softmax.return_value = torch.tensor(
         [0.2, 0.2, 0.2, 0.2, 0.2]
@@ -231,7 +234,7 @@ def test_compute_target_sequence_proba(
 
     # act
     result = generator.compute_target_sequence_proba(
-        prompt="fake prompt", target=" fake target"
+        prompt=Prompt(text="fake prompt"), target=" fake target"
     )
 
     mock_tokenizer.encode.assert_any_call("fake prompt fake target")
