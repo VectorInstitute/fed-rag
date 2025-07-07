@@ -94,6 +94,49 @@ def test_pack_messages_single_and_batch():
         assert {"type": "text", "text": qobj.text} in msg["content"]
 
 
+def test_pack_messages_with_ndarray_inputs():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    generator.to_query.side_effect = (
+        lambda x: x
+        if isinstance(x, Query)
+        else Query(text=x, images=[], audios=[], videos=[])
+    )
+    generator.to_context.side_effect = (
+        lambda x: x
+        if isinstance(x, Context)
+        else Context(text=x, images=[], audios=[], videos=[])
+    )
+    generator._pack_messages = (
+        HFMultimodalModelGenerator._pack_messages.__get__(generator)
+    )
+
+    # Use ndarray for image/audio/video
+    img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
+    img_pil = Image.fromarray(img_np)
+    audio_np = dummy_audio()
+    video_np = dummy_video()
+    q = Query(
+        text="hello ndarray",
+        images=[img_pil],
+        audios=[audio_np],
+        videos=[video_np],
+    )
+    c = Context(
+        text="ctx ndarray",
+        images=[img_pil],
+        audios=[audio_np],
+        videos=[video_np],
+    )
+
+    messages = generator._pack_messages(q, context=c)
+    assert isinstance(messages, list)
+    assert messages[0]["role"] == "user"
+    content = messages[0]["content"]
+    assert any(x["type"] == "image" for x in content)
+    assert any(x["type"] == "audio" for x in content)
+    assert any(x["type"] == "video" for x in content)
+
+
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch(
