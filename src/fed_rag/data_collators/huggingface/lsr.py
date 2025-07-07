@@ -1,6 +1,6 @@
 """HuggingFace Data Collator For LM-Supervised Retriever Training"""
 
-from typing import Any, Callable
+from typing import Any, Callable, override
 
 import torch
 from pydantic import Field, PrivateAttr
@@ -56,14 +56,26 @@ DEFAULT_TARGET_TEMPLATE = """
 """
 
 
-class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
-    """A HuggingFace DataCollator for LM-Supervised Retrieval."""
+class _DataCollatorForLSRAttributes(BaseDataCollator):
+    """Attributes for DataCollatorForLSR.
+
+    This is needed to instantiate a `DataCollatorForLSR` since
+    `SentenceTransformerDataCollator` is a standard Python dataclass object.
+    """
 
     prompt_template: str = Field(default=DEFAULT_PROMPT_TEMPLATE)
     target_template: str = Field(default=DEFAULT_TARGET_TEMPLATE)
     default_return_tensors: str = Field(default="pt")
 
     # Add these fields to make Pydantic aware of them
+    router_mapping: dict[str, str] | dict[str, dict[str, str]] | None = Field(
+        default_factory=lambda: {}
+    )
+    prompts: dict[str, str] | dict[str, dict[str, str]] | None = Field(
+        default_factory=lambda: {}
+    )
+    include_prompt_lengths: bool = Field(default=False)
+    all_special_ids: set[int] = Field(default_factory=set)
     tokenize_fn: Callable = Field(
         default_factory=lambda: (lambda *args, **kwargs: {})
     )
@@ -73,6 +85,25 @@ class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
     _warned_columns: set = PrivateAttr(
         default_factory=set
     )  # exclude=True to match dataclass repr=False
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+
+    def __call__(
+        self, features: list[dict[str, Any]], return_tensors: str | None = None
+    ) -> dict[str, Any]:
+        """This is just a data container.
+
+        `DataCollatorForLSR` contains the implementation.
+        """
+        raise NotImplementedError
+
+
+class DataCollatorForLSR(
+    SentenceTransformerDataCollator,
+    _DataCollatorForLSRAttributes,
+):
+    """A HuggingFace DataCollator for LM-Supervised Retrieval."""
 
     def __init__(
         self,
@@ -95,7 +126,7 @@ class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
         target_template = target_template or DEFAULT_TARGET_TEMPLATE
 
         # init pydantic base model
-        BaseDataCollator.__init__(
+        _DataCollatorForLSRAttributes.__init__(
             self,
             rag_system=rag_system,
             prompt_template=prompt_template,
@@ -105,6 +136,7 @@ class DataCollatorForLSR(SentenceTransformerDataCollator, BaseDataCollator):
             **kwargs,
         )
 
+    @override
     def __call__(
         self, features: list[dict[str, Any]], return_tensors: str | None = None
     ) -> dict[str, Any]:
