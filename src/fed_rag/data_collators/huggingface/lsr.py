@@ -97,7 +97,7 @@ class _DataCollatorForLSRAttributes(BaseDataCollator):
 
         `DataCollatorForLSR` contains the implementation.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class DataCollatorForLSR(
