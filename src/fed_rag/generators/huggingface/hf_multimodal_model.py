@@ -43,7 +43,10 @@ class HFMultimodalModelGenerator(
     )
     load_model_kwargs: dict = Field(default_factory=dict)
     prompt_template_init: str | None = Field(default=None)
-    _model: PreTrainedModel = PrivateAttr()
+    load_model_at_init: bool = Field(default=True)
+
+    _model: PreTrainedModel = PrivateAttr(default=None)
+    _model_cls: Any = PrivateAttr(default=None)
     _processor: Any = PrivateAttr(default=None)
     _prompt_template: str = PrivateAttr(default="")
 
@@ -58,8 +61,13 @@ class HFMultimodalModelGenerator(
         self._prompt_template = self.prompt_template_init or ""
         self._processor = AutoProcessor.from_pretrained(self.model_name)
         cfg = AutoConfig.from_pretrained(self.model_name)
-        model_cls = self._detect_model_class(cfg)
-        self._model = model_cls.from_pretrained(
+        self._model_cls = self._detect_model_class(cfg)
+        self._model = None
+        if self.load_model_at_init:
+            self._model = self._load_model_from_hf()
+
+    def _load_model_from_hf(self) -> PreTrainedModel:
+        return self._model_cls.from_pretrained(
             self.model_name, **self.load_model_kwargs
         )
 
@@ -156,7 +164,7 @@ class HFMultimodalModelGenerator(
         )
         input_len = inputs["input_ids"].shape[-1]
         with torch.inference_mode():
-            generation = self._model.generate(
+            generation = self.model.generate(
                 **inputs, max_new_tokens=max_new_tokens, **gen_kwargs
             )
             generation = generation[:, input_len:]
@@ -236,7 +244,7 @@ class HFMultimodalModelGenerator(
         )
         prompt_len = prompt_inputs["input_ids"].shape[-1]
         with torch.no_grad():
-            outputs = self._model(**inputs)
+            outputs = self.model(**inputs)
         if not hasattr(outputs, "logits") or outputs.logits is None:
             raise RuntimeError(
                 "Underlying model does not expose logits; cannot compute probabilities."
@@ -252,6 +260,8 @@ class HFMultimodalModelGenerator(
 
     @property
     def model(self) -> PreTrainedModel:
+        if self._model is None:
+            self._model = self._load_model_from_hf()
         return self._model
 
     @property

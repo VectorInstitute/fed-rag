@@ -456,6 +456,37 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         )
 
 
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
+@patch(
+    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
+)
+def test_lazy_loading_model(
+    mock_auto_model, mock_auto_config, mock_auto_processor
+):
+    # Setup mocks
+    mock_proc = MagicMock()
+    mock_model = MagicMock()
+    mock_auto_processor.from_pretrained.return_value = mock_proc
+    mock_auto_config.from_pretrained.return_value = MagicMock()
+    mock_auto_model.from_pretrained.return_value = mock_model
+
+    # Instantiate with lazy loading
+    generator = HFMultimodalModelGenerator(
+        model_name="fake-mm-model", load_model_at_init=False
+    )
+    # Model should not be loaded yet
+    assert generator._model is None
+
+    # Now trigger lazy loading
+    _ = generator.model  # This should load the model
+    assert generator._model is not None
+
+    # Access again to ensure no double loading (the mock loader should only be called once)
+    _ = generator.model
+    assert generator._model is not None
+
+
 def test_detect_model_class_all_branches():
     class DummyConfig:
         pass
