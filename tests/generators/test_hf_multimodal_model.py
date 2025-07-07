@@ -47,10 +47,14 @@ def test_hf_multimodal_generator_init(
 def test_pack_messages_single_and_batch():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
     generator.to_query.side_effect = (
-        lambda x: Query(text=x) if isinstance(x, str) else x
+        lambda x: x
+        if isinstance(x, Query)
+        else Query(text=x, images=[], audios=[], videos=[])
     )
     generator.to_context.side_effect = (
-        lambda x: Context(text=x) if isinstance(x, str) else x
+        lambda x: x
+        if isinstance(x, Context)
+        else Context(text=x, images=[], audios=[], videos=[])
     )
     generator._pack_messages = (
         HFMultimodalModelGenerator._pack_messages.__get__(generator)
@@ -61,7 +65,7 @@ def test_pack_messages_single_and_batch():
     audio = dummy_audio()
     video = dummy_video()
     q = Query(text="hello world", images=[img], audios=[audio], videos=[video])
-    c = Context(text="ctx", images=None, audios=None, videos=None)
+    c = Context(text="ctx", images=[img], audios=[audio], videos=[video])
     messages = generator._pack_messages(q, context=c)
     assert isinstance(messages, list)
     assert messages[0]["role"] == "user"
@@ -73,14 +77,18 @@ def test_pack_messages_single_and_batch():
     assert {"type": "text", "text": "hello world"} in content
 
     # Batch
-    q1 = Query(text="q1", images=[img], audios=[audio], videos=[video])
-    q2 = Query(text="q2", images=None, audios=None, videos=None)
-    c1 = Context(text="ctx1", images=None, audios=None, videos=None)
-    c2 = Context(text="ctx2", images=None, audios=None, videos=None)
-    messages_batch = generator._pack_messages([q1, q2], context=[c1, c2])
+    qs = [
+        Query(text="q1", images=[img], audios=[audio], videos=[video]),
+        Query(text="q2", images=[img], audios=[audio], videos=[video]),
+    ]
+    cs = [
+        Context(text="ctx1", images=[img], audios=[audio], videos=[video]),
+        Context(text="ctx2", images=[img], audios=[audio], videos=[video]),
+    ]
+    messages_batch = generator._pack_messages(qs, context=cs)
     assert len(messages_batch) == 2
-    for msg, q in zip(messages_batch, [q1, q2]):
-        assert {"type": "text", "text": q.text} in msg["content"]
+    for msg, qobj in zip(messages_batch, qs):
+        assert {"type": "text", "text": qobj.text} in msg["content"]
 
 
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
@@ -110,7 +118,7 @@ def test_generate_and_complete(
     q = Query(
         text="what do you see?", images=[img], audios=[audio], videos=[video]
     )
-    c = Context(text="", images=None, audios=None, videos=None)
+    c = Context(text="", images=[img], audios=[audio], videos=[video])
 
     out = generator.generate(
         query=q,
@@ -158,8 +166,8 @@ def test_compute_target_sequence_proba(
     mock_model.return_value = MagicMock(logits=logits)
     mock_torch_functional.log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-    p = Prompt(text="what is this?", images=None, audios=None, videos=None)
-    c = Context(text="context", images=None, audios=None, videos=None)
+    p = Prompt(text="what is this?")
+    c = Context(text="context", images=[], audios=[], videos=[])
     prob = generator.compute_target_sequence_proba(
         prompt=p,
         target="test",
@@ -278,7 +286,7 @@ def test_generate_raises_runtimeerror_on_bad_batch_decode(
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
-    c = Context(text="", images=None, audios=None, videos=None)
+    c = Context(text="ctx", images=[], audios=[], videos=[])
     with pytest.raises(
         RuntimeError, match="batch_decode did not return valid output"
     ):
@@ -314,7 +322,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_model.return_value = model_output
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
-    q = Query(text="what is this?", images=[img], audios=None, videos=None)
+    q = Query(text="what is this?", images=[img], audios=[], videos=[])
     with pytest.raises(
         RuntimeError,
         match="Underlying model does not expose logits; cannot compute probabilities.",
@@ -322,6 +330,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         generator.compute_target_sequence_proba(
             prompt=q,
             target="test",
+            context=Context(text="context", images=[], audios=[], videos=[]),
         )
 
 
