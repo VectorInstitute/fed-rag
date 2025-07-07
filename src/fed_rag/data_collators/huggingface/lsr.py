@@ -1,9 +1,10 @@
 """HuggingFace Data Collator For LM-Supervised Retriever Training"""
 
-from typing import Any, Callable, override
+from typing import Any, Callable
 
 import torch
 from pydantic import Field, PrivateAttr
+from typing_extensions import override
 
 from fed_rag import RAGSystem
 from fed_rag.base.data_collator import BaseDataCollator
