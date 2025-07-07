@@ -44,6 +44,38 @@ def test_hf_multimodal_generator_init(
     assert isinstance(generator, HFMultimodalModelGenerator)
 
 
+def test_pack_messages_batch_mismatch_raises():
+    generator = MagicMock(spec=HFMultimodalModelGenerator)
+    generator.to_query.side_effect = (
+        lambda x: x
+        if isinstance(x, Query)
+        else Query(text=x, images=[], audios=[], videos=[])
+    )
+    generator.to_context.side_effect = (
+        lambda x: x
+        if isinstance(x, Context)
+        else Context(text=x, images=[], audios=[], videos=[])
+    )
+    generator._pack_messages = (
+        HFMultimodalModelGenerator._pack_messages.__get__(generator)
+    )
+
+    img = dummy_image()
+    audio = dummy_audio()
+    video = dummy_video()
+    qs = [
+        Query(text="q1", images=[img], audios=[audio], videos=[video]),
+        Query(text="q2", images=[img], audios=[audio], videos=[video]),
+    ]
+    # Only one context, should raise
+    c = Context(text="ctx1", images=[img], audios=[audio], videos=[video])
+    with pytest.raises(
+        ValueError,
+        match="Batch mode requires query and context to be the same length",
+    ):
+        generator._pack_messages(qs, context=[c])
+
+
 def test_pack_messages_single_and_batch():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
     generator.to_query.side_effect = (
@@ -88,10 +120,76 @@ def test_pack_messages_single_and_batch():
         Context(text="ctx1", images=[img], audios=[audio], videos=[video]),
         Context(text="ctx2", images=[img], audios=[audio], videos=[video]),
     ]
+
     messages_batch = generator._pack_messages(qs, context=cs)
     assert len(messages_batch) == 2
     for msg, qobj in zip(messages_batch, qs):
         assert {"type": "text", "text": qobj.text} in msg["content"]
+
+
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
+@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
+@patch(
+    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
+)
+def test_generate_returns_batch(
+    mock_auto_model, mock_auto_config, mock_auto_processor
+):
+    mock_proc = MagicMock()
+    mock_model = MagicMock()
+    mock_auto_processor.from_pretrained.return_value = mock_proc
+    mock_auto_config.from_pretrained.return_value = MagicMock()
+    mock_auto_model.from_pretrained.return_value = mock_model
+    mock_proc.apply_chat_template.return_value = {
+        "input_ids": torch.ones((2, 8), dtype=torch.long)
+    }
+    mock_model.generate.return_value = torch.ones((2, 10), dtype=torch.long)
+    mock_proc.batch_decode.return_value = ["resp1", "resp2"]
+
+    generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
+    img = dummy_image()
+    audio = dummy_audio()
+    video = dummy_video()
+    qs = [
+        Query(
+            text="what do you see?",
+            images=[img],
+            audios=[audio],
+            videos=[video],
+        ),
+        Query(
+            text="what do you see next?",
+            images=[img],
+            audios=[audio],
+            videos=[video],
+        ),
+    ]
+    cs = [
+        Context(text="", images=[img], audios=[audio], videos=[video]),
+        Context(text="", images=[img], audios=[audio], videos=[video]),
+    ]
+    out = generator.generate(query=qs, context=cs)
+    assert isinstance(out, list)
+    assert out == ["resp1", "resp2"]
+
+
+def test_to_query_and_to_context_types():
+    gen = HFMultimodalModelGenerator.__new__(
+        HFMultimodalModelGenerator
+    )  # bypass init for unit test
+    # String
+    assert gen.to_query("abc").text == "abc"
+    # Prompt
+    prompt = Prompt(text="prompt")
+    q = gen.to_query(prompt)
+    assert isinstance(q, Query) and q.text == "prompt"
+    # Query
+    real_q = Query(text="qtext")
+    assert gen.to_query(real_q) is real_q
+    # Context
+    assert gen.to_context("ctx").text == "ctx"
+    ctx = Context(text="ctx_obj")
+    assert gen.to_context(ctx) is ctx
 
 
 def test_pack_messages_with_ndarray_inputs():
@@ -112,23 +210,27 @@ def test_pack_messages_with_ndarray_inputs():
 
     # Use ndarray for image/audio/video
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
-    img_pil = Image.fromarray(img_np)
     audio_np = dummy_audio()
     video_np = dummy_video()
     q = Query(
         text="hello ndarray",
-        images=[img_pil],
+        images=[dummy_image()],
         audios=[audio_np],
         videos=[video_np],
     )
     c = Context(
         text="ctx ndarray",
-        images=[img_pil],
+        images=[dummy_image()],
         audios=[audio_np],
         videos=[video_np],
     )
+    q.images = [img_np]
+    c.images = [img_np]
 
     messages = generator._pack_messages(q, context=c)
+    imgs = [x["image"] for x in messages[0]["content"] if x["type"] == "image"]
+    # All should be PIL Image
+    assert all(isinstance(im, Image.Image) for im in imgs)
     assert isinstance(messages, list)
     assert messages[0]["role"] == "user"
     content = messages[0]["content"]
