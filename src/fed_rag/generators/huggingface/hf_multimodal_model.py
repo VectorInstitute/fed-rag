@@ -278,7 +278,6 @@ class HFMultimodalModelGenerator(
     def tokenizer(self) -> Any:
         if hasattr(self._processor, "tokenizer"):
             return self._processor.tokenizer
-        # If processor IS the tokenizer (common for text-only)
         if callable(getattr(self._processor, "encode", None)):
             return self._processor
         raise AttributeError(

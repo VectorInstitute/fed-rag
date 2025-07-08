@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 import torch
 from PIL import Image
-from transformers import AutoModel, AutoModelForImageTextToText
 
 from fed_rag.data_structures.generator import Context, Prompt, Query
 from fed_rag.exceptions.generator import GeneratorError
@@ -183,15 +182,12 @@ def test_to_query_and_to_context_types():
     assert gen.to_context(ctx) is ctx
 
 
-@patch("transformers.F")
+@patch("torch.nn.functional.log_softmax")
 @patch("transformers.AutoModelForImageTextToText")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_with_modalities(
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_torch_functional,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     # Mock setup as before
     mock_proc = MagicMock()
@@ -206,7 +202,7 @@ def test_compute_target_sequence_proba_with_modalities(
     ]
     logits = torch.randn(1, 10, 100)
     mock_model.return_value = MagicMock(logits=logits)
-    mock_torch_functional.log_softmax.return_value = torch.zeros(100)
+    mock_log_softmax.return_value = torch.zeros(100)
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
@@ -328,15 +324,12 @@ def test_prompt_template_setter():
     assert generator._prompt_template == "abc {context}"
 
 
-@patch("transformers.F")
+@patch("torch.nn.functional.log_softmax")
 @patch("transformers.AutoModelForImageTextToText")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba(
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_torch_functional,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     # Mock model, processor, logits
     mock_proc = MagicMock()
@@ -350,7 +343,7 @@ def test_compute_target_sequence_proba(
     ]
     logits = torch.randn(1, 10, 100)
     mock_model.return_value = MagicMock(logits=logits)
-    mock_torch_functional.log_softmax.return_value = torch.zeros(100)
+    mock_log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     p = Prompt(text="what is this?")
     c = Context(text="context", images=[], audios=[], videos=[])
@@ -435,15 +428,12 @@ def test_prompt_template_property():
     assert generator._prompt_template == "new template"
 
 
-@patch("transformers.F")
+@patch("torch.nn.functional.log_softmax")
 @patch("transformers.AutoModelForImageTextToText")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_ndarray_image(
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_torch_functional,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -456,7 +446,7 @@ def test_compute_target_sequence_proba_ndarray_image(
     ]
     logits = torch.randn(1, 10, 100)
     mock_model.return_value = MagicMock(logits=logits)
-    mock_torch_functional.log_softmax.return_value = torch.zeros(100)
+    mock_log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
@@ -498,7 +488,7 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
         )
 
 
-@patch("transformers.F")
+@patch("torch.nn.functional.log_softmax")
 @patch("transformers.AutoModelForImageTextToText")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
@@ -507,7 +497,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_processor,
     mock_auto_config,
     mock_auto_model,
-    mock_torch_functional,
+    mock_log_softmax,
     model_output,
 ):
     mock_proc = MagicMock()
@@ -557,6 +547,8 @@ def test_lazy_loading_model(
 
 
 def test_detect_model_class_all_branches():
+    from transformers import AutoModel, AutoModelForImageTextToText
+
     class DummyConfig:
         pass
 
