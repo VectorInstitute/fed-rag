@@ -29,17 +29,12 @@ def dummy_video() -> np.ndarray:
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_hf_multimodal_generator_init(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_auto_processor.from_pretrained.return_value = MagicMock()
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = MagicMock()
-    mock_generation_config.return_value = MagicMock()
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
 
@@ -137,19 +132,14 @@ def test_pack_messages_single_and_batch():
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_generate_returns_batch(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((2, 8), dtype=torch.long)
     }
@@ -202,13 +192,8 @@ def test_to_query_and_to_context_types():
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_compute_target_sequence_proba_with_modalities(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_log_softmax,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     # Mock setup as before
     mock_proc = MagicMock()
@@ -216,7 +201,6 @@ def test_compute_target_sequence_proba_with_modalities(
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     # Two calls for apply_chat_template
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
@@ -305,19 +289,14 @@ def test_pack_messages_with_ndarray_inputs():
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_generate_and_complete(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
     }
@@ -359,13 +338,8 @@ def test_prompt_template_setter():
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_compute_target_sequence_proba(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_log_softmax,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     # Mock model, processor, logits
     mock_proc = MagicMock()
@@ -373,7 +347,6 @@ def test_compute_target_sequence_proba(
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -475,20 +448,14 @@ def test_prompt_template_property():
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_compute_target_sequence_proba_ndarray_image(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
-    mock_log_softmax,
+    mock_auto_processor, mock_auto_config, mock_auto_model, mock_log_softmax
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -512,19 +479,14 @@ def test_compute_target_sequence_proba_ndarray_image(
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_generate_raises_generatorerror_on_bad_batch_decode(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
 
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
@@ -550,10 +512,8 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
-    mock_generation_config,
     mock_auto_processor,
     mock_auto_config,
     mock_auto_model,
@@ -565,7 +525,6 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -590,19 +549,14 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
 )
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
 @patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.GenerationConfig")
 def test_lazy_loading_model(
-    mock_generation_config,
-    mock_auto_processor,
-    mock_auto_config,
-    mock_auto_model,
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
-    mock_generation_config.return_value = MagicMock()
 
     generator = HFMultimodalModelGenerator(
         model_name="fake-mm-model", load_model_at_init=False
