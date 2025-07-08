@@ -25,11 +25,11 @@ def dummy_video() -> np.ndarray:
     return (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
 
 
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_hf_multimodal_generator_init(
-    mock_auto_model, mock_auto_config, mock_auto_processor
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_auto_processor.from_pretrained.return_value = MagicMock()
     mock_auto_config.from_pretrained.return_value = MagicMock()
@@ -126,11 +126,11 @@ def test_pack_messages_single_and_batch():
         assert {"type": "text", "text": qobj.text} in msg["content"]
 
 
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_generate_returns_batch(
-    mock_auto_model, mock_auto_config, mock_auto_processor
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -171,32 +171,26 @@ def test_generate_returns_batch(
 
 
 def test_to_query_and_to_context_types():
-    gen = HFMultimodalModelGenerator.__new__(
-        HFMultimodalModelGenerator
-    )  # bypass init for unit test
-    # String
+    gen = HFMultimodalModelGenerator.__new__(HFMultimodalModelGenerator)
     assert gen.to_query("abc").text == "abc"
-    # Prompt
     prompt = Prompt(text="prompt")
     q = gen.to_query(prompt)
     assert isinstance(q, Query) and q.text == "prompt"
-    # Query
     real_q = Query(text="qtext")
     assert gen.to_query(real_q) is real_q
-    # Context
     assert gen.to_context("ctx").text == "ctx"
     ctx = Context(text="ctx_obj")
     assert gen.to_context(ctx) is ctx
 
 
 @patch("transformers.F")
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_with_modalities(
-    mock_auto_model,
-    mock_auto_config,
     mock_auto_processor,
+    mock_auto_config,
+    mock_auto_model,
     mock_torch_functional,
 ):
     # Mock setup as before
@@ -215,13 +209,9 @@ def test_compute_target_sequence_proba_with_modalities(
     mock_torch_functional.log_softmax.return_value = torch.zeros(100)
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-
-    # --- Here's the important part! Pass images as numpy array, and non-empty audios/videos ---
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
     video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
-
-    # Create valid Query/Context, then bypass Pydantic to inject ndarray
     q = Query(
         text="what is this?",
         images=[dummy_image()],
@@ -292,11 +282,11 @@ def test_pack_messages_with_ndarray_inputs():
     assert any(x["type"] == "video" for x in content)
 
 
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_generate_and_complete(
-    mock_auto_model, mock_auto_config, mock_auto_processor
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -326,7 +316,6 @@ def test_generate_and_complete(
     )
     assert isinstance(out, str)
     assert out == "a test response"
-    # Test complete() calls generate with correct args
     p = Prompt(text="another prompt")
     out2 = generator.complete(prompt=p)
     assert out2 == "a test response"
@@ -340,13 +329,13 @@ def test_prompt_template_setter():
 
 
 @patch("transformers.F")
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba(
-    mock_auto_model,
-    mock_auto_config,
     mock_auto_processor,
+    mock_auto_config,
+    mock_auto_model,
     mock_torch_functional,
 ):
     # Mock model, processor, logits
@@ -403,7 +392,8 @@ def test_tokenizer_returns_processor_tokenizer():
 def test_tokenizer_returns_processor_if_encode():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
     fake_processor = MagicMock()
-    del fake_processor.tokenizer  # Ensure no tokenizer attribute
+    if hasattr(fake_processor, "tokenizer"):
+        del fake_processor.tokenizer
     fake_processor.encode = MagicMock()
     generator._processor = fake_processor
     assert (
@@ -446,13 +436,13 @@ def test_prompt_template_property():
 
 
 @patch("transformers.F")
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_ndarray_image(
-    mock_auto_model,
-    mock_auto_config,
     mock_auto_processor,
+    mock_auto_config,
+    mock_auto_model,
     mock_torch_functional,
 ):
     mock_proc = MagicMock()
@@ -468,7 +458,6 @@ def test_compute_target_sequence_proba_ndarray_image(
     mock_model.return_value = MagicMock(logits=logits)
     mock_torch_functional.log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-    # ndarray instead of PIL.Image
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
     q = Query(text="what is this?", images=[img], audios=None, videos=None)
@@ -479,11 +468,11 @@ def test_compute_target_sequence_proba_ndarray_image(
     assert isinstance(prob, torch.Tensor)
 
 
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_generate_raises_generatorerror_on_bad_batch_decode(
-    mock_auto_model, mock_auto_config, mock_auto_processor
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -495,7 +484,7 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
         "input_ids": torch.ones((1, 8), dtype=torch.long)
     }
     mock_model.generate.return_value = torch.ones((1, 10), dtype=torch.long)
-    mock_proc.batch_decode.return_value = [1234]  # Not a string!
+    mock_proc.batch_decode.return_value = [1234]
 
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
@@ -510,14 +499,14 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 
 
 @patch("transformers.F")
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
-    mock_auto_model,
-    mock_auto_config,
     mock_auto_processor,
+    mock_auto_config,
+    mock_auto_model,
     mock_torch_functional,
     model_output,
 ):
@@ -545,31 +534,24 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         )
 
 
-@patch("transformers.AutoProcessor")
-@patch("transformers.AutoConfig")
 @patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_lazy_loading_model(
-    mock_auto_model, mock_auto_config, mock_auto_processor
+    mock_auto_processor, mock_auto_config, mock_auto_model
 ):
-    # Setup mocks
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
     mock_auto_config.from_pretrained.return_value = MagicMock()
     mock_auto_model.from_pretrained.return_value = mock_model
 
-    # Instantiate with lazy loading
     generator = HFMultimodalModelGenerator(
         model_name="fake-mm-model", load_model_at_init=False
     )
-    # Model should not be loaded yet
     assert generator._model is None
-
-    # Now trigger lazy loading
-    _ = generator.model  # This should load the model
+    _ = generator.model
     assert generator._model is not None
-
-    # Access again to ensure no double loading (the mock loader should only be called once)
     _ = generator.model
     assert generator._model is not None
 
@@ -578,13 +560,10 @@ def test_detect_model_class_all_branches():
     class DummyConfig:
         pass
 
-    # Should return AutoModel if nothing
     assert (
         HFMultimodalModelGenerator._detect_model_class(DummyConfig())
         is AutoModel
     )
-
-    # Should return AutoModelForImageTextToText if vision/audio/video config present
     for attr in ["vision_config", "audio_config", "video_config"]:
         c = DummyConfig()
         setattr(c, attr, object())
@@ -592,7 +571,6 @@ def test_detect_model_class_all_branches():
             HFMultimodalModelGenerator._detect_model_class(c)
             is AutoModelForImageTextToText
         )
-    # Should return AutoModelForImageTextToText if architectures includes ImageTextToText
     c = DummyConfig()
     c.architectures = ["SomeImageTextToTextModel"]
     assert (
