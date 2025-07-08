@@ -5,7 +5,7 @@ import pytest
 import torch
 from PIL import Image
 
-from fed_rag.data_structures.generator import Context, Prompt, Query
+from fed_rag.data_structures.rag import Context, Prompt, Query
 from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.generators.huggingface.hf_multimodal_model import (
     HFMultimodalModelGenerator,
@@ -51,13 +51,13 @@ def test_hf_multimodal_generator_init(
 
 def test_pack_messages_batch_mismatch_raises():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
-    generator.to_query.side_effect = (
-        lambda x: x
+    generator.to_query.side_effect = lambda x: (
+        x
         if isinstance(x, Query)
         else Query(text=x, images=[], audios=[], videos=[])
     )
-    generator.to_context.side_effect = (
-        lambda x: x
+    generator.to_context.side_effect = lambda x: (
+        x
         if isinstance(x, Context)
         else Context(text=x, images=[], audios=[], videos=[])
     )
@@ -83,13 +83,13 @@ def test_pack_messages_batch_mismatch_raises():
 
 def test_pack_messages_single_and_batch():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
-    generator.to_query.side_effect = (
-        lambda x: x
+    generator.to_query.side_effect = lambda x: (
+        x
         if isinstance(x, Query)
         else Query(text=x, images=[], audios=[], videos=[])
     )
-    generator.to_context.side_effect = (
-        lambda x: x
+    generator.to_context.side_effect = lambda x: (
+        x
         if isinstance(x, Context)
         else Context(text=x, images=[], audios=[], videos=[])
     )
@@ -248,13 +248,13 @@ def test_compute_target_sequence_proba_with_modalities(
 
 def test_pack_messages_with_ndarray_inputs():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
-    generator.to_query.side_effect = (
-        lambda x: x
+    generator.to_query.side_effect = lambda x: (
+        x
         if isinstance(x, Query)
         else Query(text=x, images=[], audios=[], videos=[])
     )
-    generator.to_context.side_effect = (
-        lambda x: x
+    generator.to_context.side_effect = lambda x: (
+        x
         if isinstance(x, Context)
         else Context(text=x, images=[], audios=[], videos=[])
     )
