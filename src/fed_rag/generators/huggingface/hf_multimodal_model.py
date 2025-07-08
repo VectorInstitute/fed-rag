@@ -113,7 +113,7 @@ class HFMultimodalModelGenerator(
         if isinstance(context, list):
             contexts = [self.to_context(c) for c in context]
             if len(contexts) != len(queries):
-                raise ValueError(
+                raise GeneratorError(
                     "Batch mode requires query and context to be the same length"
                 )
         else:
@@ -154,10 +154,10 @@ class HFMultimodalModelGenerator(
         self,
         query: str | Query | list[str] | list[Query],
         context: str | Context | list[str] | list[Context] | None = None,
-        max_new_tokens: int = 256,
-        add_generation_prompt: bool = True,
         **gen_kwargs: Any,
     ) -> str | list[str]:
+        max_new_tokens = gen_kwargs.pop("max_new_tokens", 256)
+        add_generation_prompt = gen_kwargs.pop("add_generation_prompt", True)
         messages = self._pack_messages(query, context)
         inputs = self._processor.apply_chat_template(
             messages,
@@ -196,29 +196,17 @@ class HFMultimodalModelGenerator(
         self,
         prompt: Prompt | str,
         target: str,
-        context: Context | str | None = None,
         **kwargs: Any,
     ) -> torch.Tensor:
         from PIL import Image as PILImage
 
+        # `prompt` is expected to be already bundled with any context!
         q = self.to_query(prompt)
-        ctx = self.to_context(context)
         base_text = getattr(q, "text", "") or ""
         full_text = base_text + target
         content: list[dict[str, Any]] = []
 
-        if ctx:
-            if getattr(ctx, "text", None):
-                content.append({"type": "text", "text": ctx.text})
-            for im in getattr(ctx, "images", []) or []:
-                if isinstance(im, np.ndarray):
-                    im = PILImage.fromarray(im)
-                content.append({"type": "image", "image": im})
-            for au in getattr(ctx, "audios", []) or []:
-                content.append({"type": "audio", "audio": au})
-            for vid in getattr(ctx, "videos", []) or []:
-                content.append({"type": "video", "video": vid})
-
+        # If you need multimodal, require `prompt` to be a Query with .images, .audios, etc.
         for im in getattr(q, "images", []) or []:
             if isinstance(im, np.ndarray):
                 im = PILImage.fromarray(im)
@@ -227,6 +215,8 @@ class HFMultimodalModelGenerator(
             content.append({"type": "audio", "audio": au})
         for vid in getattr(q, "videos", []) or []:
             content.append({"type": "video", "video": vid})
+        if getattr(q, "text", None):
+            content.append({"type": "text", "text": q.text})
 
         content.append({"type": "text", "text": full_text})
         messages = [{"role": "user", "content": content}]

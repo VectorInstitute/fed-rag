@@ -75,7 +75,7 @@ def test_pack_messages_batch_mismatch_raises():
     # Only one context, should raise
     c = Context(text="ctx1", images=[img], audios=[audio], videos=[video])
     with pytest.raises(
-        ValueError,
+        GeneratorError,
         match="Batch mode requires query and context to be the same length",
     ):
         generator._pack_messages(qs, context=[c])
@@ -202,6 +202,12 @@ def test_to_query_and_to_context_types():
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
+@patch("torch.nn.functional.log_softmax")
+@patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoModel")
+@patch("transformers.GenerationConfig")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_with_modalities(
     mock_auto_processor,
     mock_auto_config,
@@ -230,25 +236,18 @@ def test_compute_target_sequence_proba_with_modalities(
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
     video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
+
+    # Combine context and query into one Query
     q = Query(
-        text="what is this?",
-        images=[dummy_image()],
-        audios=[audio_np],
-        videos=[video_np],
+        text="context" + "what is this?",  # concatenate context and query text
+        images=[dummy_image(), img_np],  # add both images
+        audios=[audio_np, audio_np],  # add both audios
+        videos=[video_np, video_np],  # add both videos
     )
-    c = Context(
-        text="context",
-        images=[dummy_image()],
-        audios=[audio_np],
-        videos=[video_np],
-    )
-    q.images = [img_np]
-    c.images = [img_np]
 
     prob = generator.compute_target_sequence_proba(
-        prompt=q,  # q will be used, includes ndarray image, audio, video
+        prompt=q,
         target="test",
-        context=c,  # c will be used, also includes ndarray image, audio, video
     )
     assert isinstance(prob, torch.Tensor)
 
@@ -359,6 +358,12 @@ def test_prompt_template_setter():
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
+@patch("torch.nn.functional.log_softmax")
+@patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoModel")
+@patch("transformers.GenerationConfig")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba(
     mock_auto_processor,
     mock_auto_config,
@@ -367,7 +372,6 @@ def test_compute_target_sequence_proba(
     mock_auto_model_itt,
     mock_log_softmax,
 ):
-    # Mock model, processor, logits
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_auto_processor.from_pretrained.return_value = mock_proc
@@ -382,12 +386,17 @@ def test_compute_target_sequence_proba(
     mock_model.return_value = MagicMock(logits=logits)
     mock_log_softmax.return_value = torch.zeros(100)
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
-    p = Prompt(text="what is this?")
-    c = Context(text="context", images=[], audios=[], videos=[])
+
+    # Combine context and query into one Query
+    q = Query(
+        text="context" + "what is this?",  # concatenate
+        images=[],
+        audios=[],
+        videos=[],
+    )
     prob = generator.compute_target_sequence_proba(
-        prompt=p,
+        prompt=q,
         target="test",
-        context=c,
     )
     assert isinstance(prob, torch.Tensor)
 
@@ -475,6 +484,12 @@ def test_prompt_template_property():
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
+@patch("torch.nn.functional.log_softmax")
+@patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoModel")
+@patch("transformers.GenerationConfig")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_ndarray_image(
     mock_auto_processor,
     mock_auto_config,
@@ -499,7 +514,11 @@ def test_compute_target_sequence_proba_ndarray_image(
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
-    q = Query(text="what is this?", images=[img], audios=None, videos=None)
+
+    # Only prompt arg, context info merged in
+    q = Query(
+        text="what is this?", images=[img, img_np], audios=None, videos=None
+    )
     prob = generator.compute_target_sequence_proba(
         prompt=q,
         target="test",
@@ -551,6 +570,13 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
+@patch("torch.nn.functional.log_softmax")
+@patch("transformers.AutoModelForImageTextToText")
+@patch("transformers.AutoModel")
+@patch("transformers.GenerationConfig")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoProcessor")
+@pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_processor,
     mock_auto_config,
@@ -573,6 +599,8 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_model.return_value = model_output
     generator = HFMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
+
+    # No context, only prompt (merge info if needed)
     q = Query(text="what is this?", images=[img], audios=[], videos=[])
     with pytest.raises(
         GeneratorError,
@@ -581,7 +609,6 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         generator.compute_target_sequence_proba(
             prompt=q,
             target="test",
-            context=Context(text="context", images=[], audios=[], videos=[]),
         )
 
 
