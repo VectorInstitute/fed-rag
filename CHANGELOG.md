@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Move `Query`, `Prompt`, `Context` to `~data_structures.rag` (#480)
 - Introduce `_DataCollatorForLSRAttributes` to bypass updated pydantic complaints with update to deps (#479)
 - Make text-only HF generators be able to accept `Query`, `Context` an `Prompt` types (#477)
 - Rename `HasImageModality` to `RetrieverHasImageModality` (#475)
 
 ### Added
 
+- Add `HFMultimodalModelGenerator` (#473)
 - Expand `BaseGenerator` methods to accommodate multi-modal (#474)
 - `Query`, `Context` and `Prompt` data structures (#474)
 - `ImageRetrieverMixin` and `HasImageModality` (#472)

@@ -16,7 +16,7 @@ from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.generator_mixins.audio import AudioModalityMixin
 from fed_rag.base.generator_mixins.image import ImageModalityMixin
 from fed_rag.base.generator_mixins.video import VideoModalityMixin
-from fed_rag.data_structures.generator import Context, Prompt, Query
+from fed_rag.data_structures.rag import Context, Prompt, Query
 from fed_rag.exceptions.generator import GeneratorError
 from fed_rag.generators.huggingface.utils import check_huggingface_installed
 
