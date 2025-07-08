@@ -202,12 +202,6 @@ def test_to_query_and_to_context_types():
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
-@patch("torch.nn.functional.log_softmax")
-@patch("transformers.AutoModelForImageTextToText")
-@patch("transformers.AutoModel")
-@patch("transformers.GenerationConfig")
-@patch("transformers.AutoConfig")
-@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba_with_modalities(
     mock_auto_processor,
     mock_auto_config,
@@ -358,12 +352,6 @@ def test_prompt_template_setter():
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
-@patch("torch.nn.functional.log_softmax")
-@patch("transformers.AutoModelForImageTextToText")
-@patch("transformers.AutoModel")
-@patch("transformers.GenerationConfig")
-@patch("transformers.AutoConfig")
-@patch("transformers.AutoProcessor")
 def test_compute_target_sequence_proba(
     mock_auto_processor,
     mock_auto_config,
@@ -478,12 +466,6 @@ def test_prompt_template_property():
     assert generator._prompt_template == "new template"
 
 
-@patch("torch.nn.functional.log_softmax")
-@patch("transformers.AutoModelForImageTextToText")
-@patch("transformers.AutoModel")
-@patch("transformers.GenerationConfig")
-@patch("transformers.AutoConfig")
-@patch("transformers.AutoProcessor")
 @patch("torch.nn.functional.log_softmax")
 @patch("transformers.AutoModelForImageTextToText")
 @patch("transformers.AutoModel")
