@@ -234,7 +234,7 @@ def test_compute_target_sequence_proba_with_modalities(
     # Combine context and query into one Query
     q = Query(
         text="context" + "what is this?",  # concatenate context and query text
-        images=[dummy_image(), img_np],  # add both images
+        images=[dummy_image(), Image.fromarray(img_np)],  # add both images
         audios=[audio_np, audio_np],  # add both audios
         videos=[video_np, video_np],  # add both videos
     )
@@ -499,7 +499,10 @@ def test_compute_target_sequence_proba_ndarray_image(
 
     # Only prompt arg, context info merged in
     q = Query(
-        text="what is this?", images=[img, img_np], audios=None, videos=None
+        text="what is this?",
+        images=[img, Image.fromarray(img_np)],
+        audios=None,
+        videos=None,
     )
     prob = generator.compute_target_sequence_proba(
         prompt=q,
