@@ -570,13 +570,6 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
-@patch("torch.nn.functional.log_softmax")
-@patch("transformers.AutoModelForImageTextToText")
-@patch("transformers.AutoModel")
-@patch("transformers.GenerationConfig")
-@patch("transformers.AutoConfig")
-@patch("transformers.AutoProcessor")
-@pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_processor,
     mock_auto_config,
