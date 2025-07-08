@@ -9,3 +9,8 @@
     options:
       members:
         - HFPretrainedModelGenerator
+
+::: src.fed_rag.generators.huggingface.hf_multimodal_model
+    options:
+      members:
+        - HFMultimodalModelGenerator
