@@ -1,6 +1,6 @@
 """HF Multimodal Model Generator"""
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 import torch
@@ -9,7 +9,6 @@ from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 
 if TYPE_CHECKING:
     from transformers import (
-        GenerationConfig,
         PreTrainedModel,
     )
 
@@ -35,14 +34,12 @@ class HFMultimodalModelGenerator(
     modality_types: set[str] = Field(
         default_factory=lambda: {"text", "image", "audio", "video"}
     )
-    generation_config: "GenerationConfig" = Field(
-        default_factory=lambda: None  # will set in __init__
-    )
+    generation_config: Optional[Any] = Field(default=None)
     load_model_kwargs: dict = Field(default_factory=dict)
     prompt_template_init: str | None = Field(default=None)
     load_model_at_init: bool = Field(default=True)
 
-    _model: "PreTrainedModel" = PrivateAttr(default=None)
+    _model: Optional["PreTrainedModel"] = PrivateAttr(default=None)
     _model_cls: Any = PrivateAttr(default=None)
     _processor: Any = PrivateAttr(default=None)
     _prompt_template: str = PrivateAttr(default="")
@@ -60,7 +57,8 @@ class HFMultimodalModelGenerator(
         self._prompt_template = self.prompt_template_init or ""
         self._processor = AutoProcessor.from_pretrained(self.model_name)
         cfg = AutoConfig.from_pretrained(self.model_name)
-        self.generation_config = self.generation_config or GenerationConfig()
+        if self.generation_config is None:
+            self.generation_config = GenerationConfig()
         self._model_cls = self._detect_model_class(cfg)
         self._model = None
         if self.load_model_at_init:
