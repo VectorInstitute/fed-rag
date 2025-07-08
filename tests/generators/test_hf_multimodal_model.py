@@ -25,11 +25,9 @@ def dummy_video() -> np.ndarray:
     return (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_hf_multimodal_generator_init(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
@@ -128,11 +126,9 @@ def test_pack_messages_single_and_batch():
         assert {"type": "text", "text": qobj.text} in msg["content"]
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_generate_returns_batch(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
@@ -193,12 +189,10 @@ def test_to_query_and_to_context_types():
     assert gen.to_context(ctx) is ctx
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.F")
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_compute_target_sequence_proba_with_modalities(
     mock_auto_model,
     mock_auto_config,
@@ -298,11 +292,9 @@ def test_pack_messages_with_ndarray_inputs():
     assert any(x["type"] == "video" for x in content)
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_generate_and_complete(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
@@ -347,12 +339,10 @@ def test_prompt_template_setter():
     assert generator._prompt_template == "abc {context}"
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.F")
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_compute_target_sequence_proba(
     mock_auto_model,
     mock_auto_config,
@@ -455,12 +445,10 @@ def test_prompt_template_property():
     assert generator._prompt_template == "new template"
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.F")
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_compute_target_sequence_proba_ndarray_image(
     mock_auto_model,
     mock_auto_config,
@@ -491,11 +479,9 @@ def test_compute_target_sequence_proba_ndarray_image(
     assert isinstance(prob, torch.Tensor)
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_generate_raises_generatorerror_on_bad_batch_decode(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
@@ -523,12 +509,10 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
         )
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.F")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.F")
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_auto_model,
@@ -561,11 +545,9 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         )
 
 
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoProcessor")
-@patch("fed_rag.generators.huggingface.hf_multimodal_model.AutoConfig")
-@patch(
-    "fed_rag.generators.huggingface.hf_multimodal_model.AutoModelForImageTextToText"
-)
+@patch("transformers.AutoProcessor")
+@patch("transformers.AutoConfig")
+@patch("transformers.AutoModelForImageTextToText")
 def test_lazy_loading_model(
     mock_auto_model, mock_auto_config, mock_auto_processor
 ):
