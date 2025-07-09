@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, TypedDict
-from fed_rag.data_structures.rag import Query
+from fed_rag.data_structures.rag import Context, Query
 
 import torch
 from pydantic import BaseModel, ConfigDict
@@ -27,7 +27,7 @@ class BaseRetriever(BaseModel, ABC):
         """Encode a string query into a torch.Tensor.
 
         Args:
-            query (str | list[str]): The query or list of queries to encode.
+            query (str | list[str] | Query | list[Query]): The query or list of queries to encode.
 
         Returns:
             torch.Tensor: The vector representation(s) of the encoded query/queries.
@@ -35,12 +35,12 @@ class BaseRetriever(BaseModel, ABC):
 
     @abstractmethod
     def encode_context(
-        self, context: str | list[str] | Query | list[Query], **kwargs: Any
+        self, context: str | list[str] | Context | list[Context], **kwargs: Any
     ) -> torch.Tensor:
         """Encode a string context into a torch.Tensor.
 
         Args:
-            context (str | list[str]): The context or list of contexts to encode.
+            context (str | list[str] | Context | list[Context]): The context or list of contexts to encode.
 
         Returns:
             torch.Tensor: The vector representation(s) of the encoded context(s).
