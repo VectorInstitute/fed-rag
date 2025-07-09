@@ -10,6 +10,8 @@ from fed_rag.data_structures.rag import Context, Query
 
 
 class EncoderType(TypedDict):
+    """Type definition for encoder modules supporting different modalities."""
+
     text: torch.nn.Module | None
     image: torch.nn.Module | None
 
