@@ -1,10 +1,7 @@
 """Retriever Mixins."""
 
-from abc import ABC, abstractmethod
-from typing import Any, Protocol, runtime_checkable
-
-import torch
-from PIL import Image
+from abc import ABC
+from typing import Protocol, runtime_checkable
 
 from fed_rag.exceptions.retriever import RetrieverError
 
@@ -14,15 +11,6 @@ class RetrieverHasImageModality(Protocol):
     """Associated protocol for `ImageRetrieverMixin`."""
 
     __supports_images__: bool = True
-
-    def encode_image(
-        self, image: Image.Image | list[Image.Image], **kwargs: Any
-    ) -> torch.Tensor:
-        ...  # pragma: no cover
-
-    @property
-    def image_encoder(self) -> torch.nn.Module | None:
-        ...  # pragma: no cover
 
 
 class ImageRetrieverMixin(ABC):
@@ -42,22 +30,3 @@ class ImageRetrieverMixin(ABC):
             raise RetrieverError(
                 "`ImageRetrieverMixin` must be mixed with `BaseRetriever`."
             )
-
-    @abstractmethod
-    def encode_image(
-        self, image: Image.Image | list[Image.Image], **kwargs: Any
-    ) -> torch.Tensor:
-        """Encode a PIL Image or a list of PIL Images into a ~torch.Tensor.
-
-        Args:
-            image (Image.Image | list[Image.Image]): image or list of images to
-                encode.
-
-        Returns:
-            torch.Tensor: The encoded representations of the image(s).
-        """
-
-    @property
-    @abstractmethod
-    def image_encoder(self) -> torch.nn.Module | None:
-        """PyTorch model associated with the image encoder associated with retriever."""
