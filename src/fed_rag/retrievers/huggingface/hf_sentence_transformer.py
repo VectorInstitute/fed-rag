@@ -16,6 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
+from fed_rag.data_structures.rag import Context, Query
 from fed_rag.exceptions import MissingExtraError, RetrieverError
 
 
@@ -120,8 +121,14 @@ class HFSentenceTransformerRetriever(BaseRetriever):
             raise InvalidLoadType("Invalid `load_type` supplied.")
 
     def encode_context(
-        self, context: str | list[str], **kwargs: Any
+        self, context: str | list[str] | Context | list[Context], **kwargs: Any
     ) -> torch.Tensor:
+        # convert query to list[str]
+        context = (
+            [str(c) for c in context]
+            if isinstance(context, list)
+            else [str(context)]
+        )
         # validation guarantees one of these is not None
         encoder = self.encoder if self.encoder else self.context_encoder
         encoder = cast(SentenceTransformer, encoder)
@@ -129,8 +136,14 @@ class HFSentenceTransformerRetriever(BaseRetriever):
         return encoder.encode(context)
 
     def encode_query(
-        self, query: str | list[str], **kwargs: Any
+        self, query: str | list[str] | Query | list[Query], **kwargs: Any
     ) -> torch.Tensor:
+        # convert query to list[str]
+        query = (
+            [str(q) for q in query]
+            if isinstance(query, list)
+            else [str(query)]
+        )
         # validation guarantees one of these is not None
         encoder = self.encoder if self.encoder else self.query_encoder
         encoder = cast(SentenceTransformer, encoder)

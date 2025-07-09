@@ -1,10 +1,21 @@
 """Base Retriever."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, TypedDict
 
 import torch
 from pydantic import BaseModel, ConfigDict
+
+from fed_rag.data_structures.rag import Context, Query
+
+
+class EncoderType(TypedDict):
+    """Type definition for encoder modules supporting different modalities."""
+
+    text: torch.nn.Module | None
+    image: torch.nn.Module | None
+    audio: torch.nn.Module | None
+    video: torch.nn.Module | None
 
 
 class BaseRetriever(BaseModel, ABC):
@@ -18,12 +29,12 @@ class BaseRetriever(BaseModel, ABC):
 
     @abstractmethod
     def encode_query(
-        self, query: str | list[str], **kwargs: Any
+        self, query: str | list[str] | Query | list[Query], **kwargs: Any
     ) -> torch.Tensor:
         """Encode a string query into a torch.Tensor.
 
         Args:
-            query (str | list[str]): The query or list of queries to encode.
+            query (str | list[str] | Query | list[Query]): The query or list of queries to encode.
 
         Returns:
             torch.Tensor: The vector representation(s) of the encoded query/queries.
@@ -31,12 +42,12 @@ class BaseRetriever(BaseModel, ABC):
 
     @abstractmethod
     def encode_context(
-        self, context: str | list[str], **kwargs: Any
+        self, context: str | list[str] | Context | list[Context], **kwargs: Any
     ) -> torch.Tensor:
         """Encode a string context into a torch.Tensor.
 
         Args:
-            context (str | list[str]): The context or list of contexts to encode.
+            context (str | list[str] | Context | list[Context]): The context or list of contexts to encode.
 
         Returns:
             torch.Tensor: The vector representation(s) of the encoded context(s).
@@ -44,15 +55,15 @@ class BaseRetriever(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def encoder(self) -> torch.nn.Module | None:
+    def encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the encoder associated with retriever."""
 
     @property
     @abstractmethod
-    def query_encoder(self) -> torch.nn.Module | None:
+    def query_encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the query encoder associated with retriever."""
 
     @property
     @abstractmethod
-    def context_encoder(self) -> torch.nn.Module | None:
+    def context_encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the context encoder associated with retriever."""

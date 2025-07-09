@@ -30,14 +30,14 @@ class MockMMRetriever(ImageRetrieverMixin, MockRetriever):
         return self._image_encoder.forward(torch.ones(2))
 
 
-def test_mixin() -> None:
+def test_image_retriever_mixin() -> None:
     mixed_retriever = MockMMRetriever()
 
     assert isinstance(mixed_retriever, RetrieverHasImageModality)
     assert isinstance(mixed_retriever, BaseRetriever)
 
 
-def test_mixin_fails_validation() -> None:
+def test_image_retriever_mixin_fails_validation() -> None:
     with pytest.raises(
         RetrieverError,
         match="`ImageRetrieverMixin` must be mixed with `BaseRetriever`.",

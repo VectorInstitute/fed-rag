@@ -7,20 +7,20 @@ from fed_rag.exceptions.retriever import RetrieverError
 
 
 @runtime_checkable
-class RetrieverHasImageModality(Protocol):
-    """Associated protocol for `ImageRetrieverMixin`."""
+class RetrieverHasVideoModality(Protocol):
+    """Associated protocol for `VideoRetrieverMixin`."""
 
-    __supports_images__: bool = True
+    __supports_video__: bool = True
 
 
-class ImageRetrieverMixin(ABC):
-    """Image Retriever Mixin.
+class VideoRetrieverMixin(ABC):
+    """Video Retriever Mixin.
 
-    Meant to be mixed with a `BaseRetriever` to add image modality for
+    Meant to be mixed with a `BaseRetriever` to add video modality for
     retrieval.
     """
 
-    __supports_images__ = True
+    __supports_video__ = True
 
     def __init_subclass__(cls) -> None:
         """Validate this is mixed with `BaseRetriever`."""
@@ -28,5 +28,5 @@ class ImageRetrieverMixin(ABC):
 
         if "BaseRetriever" not in [t.__name__ for t in cls.__mro__]:
             raise RetrieverError(
-                "`ImageRetrieverMixin` must be mixed with `BaseRetriever`."
+                "`VideoRetrieverMixin` must be mixed with `BaseRetriever`."
             )
