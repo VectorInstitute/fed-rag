@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- Expansion of `BaseRetriever` to match `BaseGenerator` for multimodal (#483)
-
+- Expansion of `BaseRetriever` to match `BaseGenerator` for multimodal and add `AudioRetrieverMixin`, `HasAudioModality`, `VideoRetrieverMixin`, `HasVideoModality` (#483)
 
 ### Changed
 
