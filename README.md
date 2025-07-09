@@ -9,7 +9,7 @@
 [![Linting](https://github.com/VectorInstitute/fed-rag/actions/workflows/lint.yml/badge.svg)](https://github.com/VectorInstitute/fed-rag/actions/workflows/lint.yml)
 [![Unit Testing and Upload Coverage](https://github.com/VectorInstitute/fed-rag/actions/workflows/unit_test.yml/badge.svg)](https://github.com/VectorInstitute/fed-rag/actions/workflows/unit_test.yml)
 [![codecov](https://codecov.io/github/VectorInstitute/fed-rag/graph/badge.svg?token=JjJBPckP8v)](https://codecov.io/github/VectorInstitute/fed-rag)
-![GitHub License](https://img.shields.io/github/license/VectorInstitute/fed-rag)
+[![GitHub License](https://img.shields.io/github/license/VectorInstitute/fed-rag)](https://github.com/VectorInstitute/fed-rag/blob/main/LICENSE)
 ![GitHub Release](https://img.shields.io/github/v/release/VectorInstitute/fed-rag)
 [![DOI](https://zenodo.org/badge/918377874.svg)](https://doi.org/10.5281/zenodo.15092361)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/VectorInstitute/fed-rag)
