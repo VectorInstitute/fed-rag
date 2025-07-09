@@ -13,6 +13,8 @@ from fed_rag.exceptions.retriever import RetrieverError
 class RetrieverHasImageModality(Protocol):
     """Associated protocol for `ImageRetrieverMixin`."""
 
+    __supports_images__: bool = True
+
     def encode_image(
         self, image: Image.Image | list[Image.Image], **kwargs: Any
     ) -> torch.Tensor:
@@ -29,6 +31,8 @@ class ImageRetrieverMixin(ABC):
     Meant to be mixed with a `BaseRetriever` to add image modality for
     retrieval.
     """
+
+    __supports_images__ = True
 
     def __init_subclass__(cls) -> None:
         """Validate this is mixed with `BaseRetriever`."""
