@@ -16,8 +16,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from sentence_transformers import SentenceTransformer
 
 from fed_rag.base.retriever import BaseRetriever
-from fed_rag.exceptions import MissingExtraError, RetrieverError
 from fed_rag.data_structures.rag import Context, Query
+from fed_rag.exceptions import MissingExtraError, RetrieverError
+
 
 class LoadKwargs(BaseModel):
     encoder: dict = Field(default_factory=dict)
@@ -142,7 +143,7 @@ class HFSentenceTransformerRetriever(BaseRetriever):
             [str(q) for q in query]
             if isinstance(query, list)
             else [str(query)]
-        )   
+        )
         # validation guarantees one of these is not None
         encoder = self.encoder if self.encoder else self.query_encoder
         encoder = cast(SentenceTransformer, encoder)

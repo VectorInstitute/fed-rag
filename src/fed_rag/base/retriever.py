@@ -2,14 +2,17 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, TypedDict
-from fed_rag.data_structures.rag import Context, Query
 
 import torch
 from pydantic import BaseModel, ConfigDict
 
+from fed_rag.data_structures.rag import Context, Query
+
+
 class EncoderType(TypedDict):
     text: torch.nn.Module | None
     image: torch.nn.Module | None
+
 
 class BaseRetriever(BaseModel, ABC):
     """Base Retriever Class.
