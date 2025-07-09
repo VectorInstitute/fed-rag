@@ -1,11 +1,15 @@
 """Base Retriever."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, TypedDict
+from fed_rag.data_structures.rag import Query
 
 import torch
 from pydantic import BaseModel, ConfigDict
 
+class EncoderType(TypedDict):
+    text: torch.nn.Module | None
+    image: torch.nn.Module | None
 
 class BaseRetriever(BaseModel, ABC):
     """Base Retriever Class.
@@ -18,7 +22,7 @@ class BaseRetriever(BaseModel, ABC):
 
     @abstractmethod
     def encode_query(
-        self, query: str | list[str], **kwargs: Any
+        self, query: str | list[str] | Query | list[Query], **kwargs: Any
     ) -> torch.Tensor:
         """Encode a string query into a torch.Tensor.
 
@@ -31,7 +35,7 @@ class BaseRetriever(BaseModel, ABC):
 
     @abstractmethod
     def encode_context(
-        self, context: str | list[str], **kwargs: Any
+        self, context: str | list[str] | Query | list[Query], **kwargs: Any
     ) -> torch.Tensor:
         """Encode a string context into a torch.Tensor.
 
@@ -44,15 +48,15 @@ class BaseRetriever(BaseModel, ABC):
 
     @property
     @abstractmethod
-    def encoder(self) -> torch.nn.Module | None:
+    def encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the encoder associated with retriever."""
 
     @property
     @abstractmethod
-    def query_encoder(self) -> torch.nn.Module | None:
+    def query_encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the query encoder associated with retriever."""
 
     @property
     @abstractmethod
-    def context_encoder(self) -> torch.nn.Module | None:
+    def context_encoder(self) -> torch.nn.Module | EncoderType | None:
         """PyTorch model associated with the context encoder associated with retriever."""
