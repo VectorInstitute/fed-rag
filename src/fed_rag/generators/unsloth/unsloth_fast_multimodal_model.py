@@ -151,6 +151,14 @@ class UnslothFastMultimodalModelGenerator(
             return_tensors="pt",
             return_dict=True,
         )
+
+        # Unsloth: must manually move all input tensors to the model device.
+        model_device = next(self.model.parameters()).device
+        inputs = {
+            k: v.to(model_device) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
+
         input_len = inputs["input_ids"].shape[-1]
         with torch.inference_mode():
             generation = self.model.generate(
@@ -210,6 +218,12 @@ class UnslothFastMultimodalModelGenerator(
             return_dict=True,
             return_tensors="pt",
         )
+        model_device = next(self.model.parameters()).device
+        inputs = {
+            k: v.to(model_device) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
+
         input_ids = inputs["input_ids"]
         prompt_inputs = self._processor.apply_chat_template(
             [
