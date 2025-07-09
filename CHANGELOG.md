@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Expansion of `BaseRetriever` to match `BaseGenerator` for multimodal (#483)
+
+
+### Changed
+
 - Move `Query`, `Prompt`, `Context` to `~data_structures.rag` (#480)
 - Introduce `_DataCollatorForLSRAttributes` to bypass updated pydantic complaints with update to deps (#479)
 - Make text-only HF generators be able to accept `Query`, `Context` an `Prompt` types (#477)
