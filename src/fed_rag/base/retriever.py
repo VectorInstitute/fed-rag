@@ -14,6 +14,8 @@ class EncoderType(TypedDict):
 
     text: torch.nn.Module | None
     image: torch.nn.Module | None
+    audio: torch.nn.Module | None
+    video: torch.nn.Module | None
 
 
 class BaseRetriever(BaseModel, ABC):
