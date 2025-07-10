@@ -7,6 +7,12 @@ import torch
 import torch.nn.functional as F
 from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 
+# Expose FastModel for patching/tests (unlike HF classes, it's not always module-level).
+try:
+    from unsloth import FastModel
+except ImportError:
+    FastModel = None  # for testing/mocking
+
 if TYPE_CHECKING:
     from unsloth import FastModel
 
