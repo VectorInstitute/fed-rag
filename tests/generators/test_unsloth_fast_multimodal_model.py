@@ -130,7 +130,12 @@ def test_pack_messages_single_and_batch():
 def test_generate_returns_batch(mock_model_property, mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((2, 8), dtype=torch.long)
@@ -196,7 +201,12 @@ def test_compute_target_sequence_proba_with_modalities(
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
@@ -281,7 +291,12 @@ def test_pack_messages_with_ndarray_inputs():
 def test_generate_and_complete(mock_model_property, mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
@@ -336,7 +351,12 @@ def test_compute_target_sequence_proba(
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
@@ -461,7 +481,12 @@ def test_compute_target_sequence_proba_ndarray_image(
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
@@ -501,7 +526,12 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
@@ -538,7 +568,12 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_model.device = torch.device("cpu")
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.return_value = iter([mock_param])
+
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
