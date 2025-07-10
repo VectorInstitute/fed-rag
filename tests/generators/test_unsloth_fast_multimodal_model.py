@@ -628,13 +628,13 @@ def test_load_model_from_unsloth_actual_implementation():
 
     # Patch the unsloth import
     with patch.dict("sys.modules", {"unsloth": mock_unsloth_module}):
-        generator = UnslothFastMultimodalModelGenerator.__new__(
-            UnslothFastMultimodalModelGenerator
+        generator = UnslothFastMultimodalModelGenerator(
+            model_name="test-model",
+            load_model_at_init=False,
+            load_model_kwargs={"some": "kwargs"},
         )
-        generator.model_name = "test-model"
-        generator.load_model_kwargs = {"some": "kwargs"}
 
-        # Call the actual method
+        # Now call the actual method
         model, processor = generator._load_model_from_unsloth()
 
         # Verify the calls
