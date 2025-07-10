@@ -1,3 +1,5 @@
+import importlib.machinery
+import types
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import numpy as np
@@ -612,6 +614,41 @@ def test_lazy_loading_model(
     assert generator._model is not None
     _ = generator.model
     assert generator._model is not None
+
+
+def test_load_model_from_unsloth_actual_implementation():
+    """Test the actual _load_model_from_unsloth implementation by mocking unsloth module."""
+
+    # Create a real module object for 'unsloth'
+    mock_unsloth_module = types.ModuleType("unsloth")
+    mock_unsloth_module.__spec__ = importlib.machinery.ModuleSpec(
+        "unsloth", None
+    )
+    mock_fast_model = MagicMock()
+    mock_model = MagicMock()
+    mock_processor = MagicMock()
+
+    # Set up the mock to return model and processor
+    mock_fast_model.from_pretrained.return_value = (mock_model, mock_processor)
+    mock_unsloth_module.FastModel = mock_fast_model
+
+    # Patch the unsloth import
+    with patch.dict("sys.modules", {"unsloth": mock_unsloth_module}):
+        generator = UnslothFastMultimodalModelGenerator(
+            model_name="test-model",
+            load_model_at_init=False,
+            load_model_kwargs={"some": "kwargs"},
+        )
+
+        # Now call the actual method
+        model, processor = generator._load_model_from_unsloth()
+
+        # Verify the calls
+        mock_fast_model.from_pretrained.assert_called_once_with(
+            model_name="test-model", some="kwargs"
+        )
+        assert model is mock_model
+        assert processor is mock_processor
 
 
 def test_type_checking_import_path():
