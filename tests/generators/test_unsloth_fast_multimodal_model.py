@@ -136,6 +136,7 @@ def test_generate_returns_batch(mock_load_model):
     mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    generator._model = mock_model
     img = dummy_image()
     audio = dummy_audio()
     video = dummy_video()
@@ -200,6 +201,8 @@ def test_compute_target_sequence_proba_with_modalities(
     mock_log_softmax.return_value = torch.zeros(100)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
     video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
@@ -278,6 +281,8 @@ def test_generate_and_complete(mock_load_model):
     mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
 
     img = dummy_image()
     audio = dummy_audio()
@@ -330,6 +335,8 @@ def test_compute_target_sequence_proba(
     mock_proc.batch_decode.return_value = ["dummy"]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
 
     q = Query(
         text="context" + "what is this?",  # concatenate
@@ -450,6 +457,8 @@ def test_compute_target_sequence_proba_ndarray_image(
     mock_proc.batch_decode.return_value = ["dummy"]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
     q = Query(
@@ -482,6 +491,8 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
     mock_proc.batch_decode.return_value = [1234]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
     c = Context(text="ctx", images=[], audios=[], videos=[])
     with pytest.raises(
@@ -514,6 +525,8 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_model.return_value = model_output
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+    # Ensure the generator's model property returns the mocked model with proper device
+    generator._model = mock_model
     img = dummy_image()
     q = Query(text="what is this?", images=[img], audios=[], videos=[])
     with pytest.raises(
