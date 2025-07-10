@@ -25,12 +25,12 @@ def dummy_video() -> np.ndarray:
 
 
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
-def test_unsloth_multimodal_generator_init(mock_from_pretrained):
+def test_unsloth_multimodal_generator_init(mock_load_model):
     mock_model = MagicMock()
     mock_processor = MagicMock()
-    mock_from_pretrained.return_value = (mock_model, mock_processor)
+    mock_load_model.return_value = (mock_model, mock_processor)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
 
@@ -121,9 +121,9 @@ def test_pack_messages_single_and_batch():
 
 
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
-def test_generate_returns_batch(mock_from_pretrained):
+def test_generate_returns_batch(mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_proc.apply_chat_template.return_value = {
@@ -131,7 +131,7 @@ def test_generate_returns_batch(mock_from_pretrained):
     }
     mock_model.generate.return_value = torch.ones((2, 10), dtype=torch.long)
     mock_proc.batch_decode.return_value = ["resp1", "resp2"]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
@@ -177,10 +177,10 @@ def test_to_query_and_to_context_types():
 
 @patch("torch.nn.functional.log_softmax")
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 def test_compute_target_sequence_proba_with_modalities(
-    mock_from_pretrained,
+    mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
@@ -192,7 +192,7 @@ def test_compute_target_sequence_proba_with_modalities(
     logits = torch.randn(1, 10, 100)
     mock_model.return_value = MagicMock(logits=logits)
     mock_proc.batch_decode.return_value = ["dummy"]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     mock_log_softmax.return_value = torch.zeros(100)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
@@ -259,9 +259,9 @@ def test_pack_messages_with_ndarray_inputs():
 
 
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
-def test_generate_and_complete(mock_from_pretrained):
+def test_generate_and_complete(mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
     mock_proc.apply_chat_template.return_value = {
@@ -269,7 +269,7 @@ def test_generate_and_complete(mock_from_pretrained):
     }
     mock_model.generate.return_value = torch.ones((1, 10), dtype=torch.long)
     mock_proc.batch_decode.return_value = ["a test response"]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
 
@@ -304,10 +304,10 @@ def test_prompt_template_setter():
 
 @patch("torch.nn.functional.log_softmax")
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 def test_compute_target_sequence_proba(
-    mock_from_pretrained,
+    mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
@@ -320,7 +320,7 @@ def test_compute_target_sequence_proba(
     mock_model.return_value = MagicMock(logits=logits)
     mock_log_softmax.return_value = torch.zeros(100)
     mock_proc.batch_decode.return_value = ["dummy"]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
 
     q = Query(
@@ -422,10 +422,10 @@ def test_prompt_template_property():
 
 @patch("torch.nn.functional.log_softmax")
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 def test_compute_target_sequence_proba_ndarray_image(
-    mock_from_pretrained,
+    mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
@@ -438,7 +438,7 @@ def test_compute_target_sequence_proba_ndarray_image(
     mock_model.return_value = MagicMock(logits=logits)
     mock_log_softmax.return_value = torch.zeros(100)
     mock_proc.batch_decode.return_value = ["dummy"]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
@@ -456,10 +456,10 @@ def test_compute_target_sequence_proba_ndarray_image(
 
 
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 def test_generate_raises_generatorerror_on_bad_batch_decode(
-    mock_from_pretrained,
+    mock_load_model,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -468,7 +468,7 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
     }
     mock_model.generate.return_value = torch.ones((1, 10), dtype=torch.long)
     mock_proc.batch_decode.return_value = [1234]
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
     c = Context(text="ctx", images=[], audios=[], videos=[])
@@ -483,11 +483,11 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 
 @patch("torch.nn.functional.log_softmax")
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
-    mock_from_pretrained,
+    mock_load_model,
     mock_log_softmax,
     model_output,
 ):
@@ -498,7 +498,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         {"input_ids": torch.arange(5).unsqueeze(0)},
     ]
     mock_model.return_value = model_output
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
     img = dummy_image()
     q = Query(text="what is this?", images=[img], audios=[], videos=[])
@@ -513,14 +513,14 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
 
 
 @patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
 def test_lazy_loading_model(
-    mock_from_pretrained,
+    mock_load_model,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    mock_from_pretrained.return_value = (mock_model, mock_proc)
+    mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(
         model_name="fake-mm-model", load_model_at_init=False
     )
