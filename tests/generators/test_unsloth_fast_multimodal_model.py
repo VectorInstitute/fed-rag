@@ -330,6 +330,15 @@ def test_generate_and_complete(mock_model_property, mock_load_model):
     assert out2 == "a test response"
 
 
+def test_complete_with_list_of_str():
+    gen = UnslothFastMultimodalModelGenerator.__new__(
+        UnslothFastMultimodalModelGenerator
+    )
+    gen.generate = MagicMock(return_value=["output1", "output2"])
+    result = gen.complete(["a", "b"])
+    assert result == ["output1", "output2"]
+
+
 def test_prompt_template_setter():
     generator = MagicMock(spec=UnslothFastMultimodalModelGenerator)
     generator._prompt_template = ""

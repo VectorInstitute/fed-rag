@@ -10,7 +10,7 @@ from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 if TYPE_CHECKING:
     from unsloth import FastModel
 else:
-    FastModel = None  # type: ignore
+    FastModel = None  # for patching/mocking
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.generator_mixins.audio import AudioModalityMixin
