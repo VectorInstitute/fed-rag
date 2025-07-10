@@ -134,7 +134,7 @@ def test_generate_returns_batch(mock_model_property, mock_load_model):
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
@@ -205,7 +205,7 @@ def test_compute_target_sequence_proba_with_modalities(
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
@@ -295,7 +295,8 @@ def test_generate_and_complete(mock_model_property, mock_load_model):
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    # Make parameters() return a new iterator each time it's called
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
@@ -355,7 +356,7 @@ def test_compute_target_sequence_proba(
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
@@ -485,7 +486,7 @@ def test_compute_target_sequence_proba_ndarray_image(
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
@@ -530,7 +531,7 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
@@ -572,7 +573,7 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     # Set up mock parameter with device attribute
     mock_param = MagicMock()
     mock_param.device = torch.device("cpu")
-    mock_model.parameters.return_value = iter([mock_param])
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
 
     mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
