@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import numpy as np
 import pytest
@@ -123,11 +123,15 @@ def test_pack_messages_single_and_batch():
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
-def test_generate_returns_batch(mock_load_model):
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
+def test_generate_returns_batch(mock_model_property, mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((2, 8), dtype=torch.long)
     }
@@ -136,7 +140,6 @@ def test_generate_returns_batch(mock_load_model):
     mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    generator._model = mock_model
     img = dummy_image()
     audio = dummy_audio()
     video = dummy_video()
@@ -182,14 +185,19 @@ def test_to_query_and_to_context_types():
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
 def test_compute_target_sequence_proba_with_modalities(
+    mock_model_property,
     mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -201,8 +209,6 @@ def test_compute_target_sequence_proba_with_modalities(
     mock_log_softmax.return_value = torch.zeros(100)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
     video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
@@ -268,11 +274,15 @@ def test_pack_messages_with_ndarray_inputs():
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
-def test_generate_and_complete(mock_load_model):
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
+def test_generate_and_complete(mock_model_property, mock_load_model):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
     }
@@ -281,8 +291,6 @@ def test_generate_and_complete(mock_load_model):
     mock_load_model.return_value = (mock_model, mock_proc)
 
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
 
     img = dummy_image()
     audio = dummy_audio()
@@ -317,14 +325,19 @@ def test_prompt_template_setter():
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
 def test_compute_target_sequence_proba(
+    mock_model_property,
     mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -335,8 +348,6 @@ def test_compute_target_sequence_proba(
     mock_proc.batch_decode.return_value = ["dummy"]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
 
     q = Query(
         text="context" + "what is this?",  # concatenate
@@ -439,14 +450,19 @@ def test_prompt_template_property():
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
 def test_compute_target_sequence_proba_ndarray_image(
+    mock_model_property,
     mock_load_model,
     mock_log_softmax,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -457,8 +473,6 @@ def test_compute_target_sequence_proba_ndarray_image(
     mock_proc.batch_decode.return_value = ["dummy"]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
     img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
     img = Image.fromarray(img_np)
     q = Query(
@@ -477,13 +491,18 @@ def test_compute_target_sequence_proba_ndarray_image(
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
 def test_generate_raises_generatorerror_on_bad_batch_decode(
+    mock_model_property,
     mock_load_model,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.return_value = {
         "input_ids": torch.ones((1, 8), dtype=torch.long)
     }
@@ -491,8 +510,6 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
     mock_proc.batch_decode.return_value = [1234]
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
     q = Query(text="what do you see?", images=None, audios=None, videos=None)
     c = Context(text="ctx", images=[], audios=[], videos=[])
     with pytest.raises(
@@ -508,16 +525,21 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 @patch(
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
 )
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
+    mock_model_property,
     mock_load_model,
     mock_log_softmax,
     model_output,
 ):
     mock_proc = MagicMock()
     mock_model = MagicMock()
-    # Mock the device property to return a proper torch.device
     mock_model.device = torch.device("cpu")
+    mock_model_property.return_value = mock_model
     mock_proc.apply_chat_template.side_effect = [
         {"input_ids": torch.arange(10).unsqueeze(0)},
         {"input_ids": torch.arange(5).unsqueeze(0)},
@@ -525,8 +547,6 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_model.return_value = model_output
     mock_load_model.return_value = (mock_model, mock_proc)
     generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    # Ensure the generator's model property returns the mocked model with proper device
-    generator._model = mock_model
     img = dummy_image()
     q = Query(text="what is this?", images=[img], audios=[], videos=[])
     with pytest.raises(
