@@ -24,7 +24,9 @@ def dummy_video() -> np.ndarray:
     return (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
 
 
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_unsloth_multimodal_generator_init(mock_from_pretrained):
     mock_model = MagicMock()
     mock_processor = MagicMock()
@@ -118,7 +120,9 @@ def test_pack_messages_single_and_batch():
         assert {"type": "text", "text": qobj.text} in msg["content"]
 
 
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_generate_returns_batch(mock_from_pretrained):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -172,7 +176,9 @@ def test_to_query_and_to_context_types():
 
 
 @patch("torch.nn.functional.log_softmax")
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_compute_target_sequence_proba_with_modalities(
     mock_from_pretrained,
     mock_log_softmax,
@@ -252,7 +258,9 @@ def test_pack_messages_with_ndarray_inputs():
     assert any(x["type"] == "video" for x in content)
 
 
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_generate_and_complete(mock_from_pretrained):
     mock_proc = MagicMock()
     mock_model = MagicMock()
@@ -295,7 +303,9 @@ def test_prompt_template_setter():
 
 
 @patch("torch.nn.functional.log_softmax")
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_compute_target_sequence_proba(
     mock_from_pretrained,
     mock_log_softmax,
@@ -411,7 +421,9 @@ def test_prompt_template_property():
 
 
 @patch("torch.nn.functional.log_softmax")
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_compute_target_sequence_proba_ndarray_image(
     mock_from_pretrained,
     mock_log_softmax,
@@ -443,7 +455,9 @@ def test_compute_target_sequence_proba_ndarray_image(
     assert isinstance(prob, torch.Tensor)
 
 
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_generate_raises_generatorerror_on_bad_batch_decode(
     mock_from_pretrained,
 ):
@@ -468,7 +482,9 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
 
 
 @patch("torch.nn.functional.log_softmax")
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 @pytest.mark.parametrize("model_output", [object(), MagicMock(logits=None)])
 def test_compute_target_sequence_proba_raises_on_missing_logits(
     mock_from_pretrained,
@@ -496,7 +512,9 @@ def test_compute_target_sequence_proba_raises_on_missing_logits(
         )
 
 
-@patch("unsloth.FastModel.from_pretrained")
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.FastModel.from_pretrained"
+)
 def test_lazy_loading_model(
     mock_from_pretrained,
 ):
