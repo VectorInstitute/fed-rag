@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 import numpy as np
 import torch
 import torch.nn.functional as F
+from PIL import Image as PILImage
 from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 
 if TYPE_CHECKING:
@@ -126,8 +127,6 @@ class HFMultimodalModelGenerator(
                 if getattr(ctx, "text", None):
                     content.append({"type": "text", "text": ctx.text})
                 for im in getattr(ctx, "images", []) or []:
-                    from PIL import Image as PILImage
-
                     if isinstance(im, np.ndarray):
                         im = PILImage.fromarray(im)
                     content.append({"type": "image", "image": im})
@@ -136,8 +135,6 @@ class HFMultimodalModelGenerator(
                 for vid in getattr(ctx, "videos", []) or []:
                     content.append({"type": "video", "video": vid})
             for im in getattr(q, "images", []) or []:
-                from PIL import Image as PILImage
-
                 if isinstance(im, np.ndarray):
                     im = PILImage.fromarray(im)
                 content.append({"type": "image", "image": im})
@@ -147,18 +144,31 @@ class HFMultimodalModelGenerator(
                 content.append({"type": "video", "video": vid})
             if getattr(q, "text", None):
                 content.append({"type": "text", "text": q.text})
+
             messages.append({"role": "user", "content": content})
         return messages
 
-    def generate(
+    def complete(
         self,
-        query: str | Query | list[str] | list[Query],
+        prompt: Prompt | list[Prompt] | str | list[str] | None = None,
+        query: str | Query | list[str] | list[Query] | None = None,
         context: str | Context | list[str] | list[Context] | None = None,
-        **gen_kwargs: Any,
+        **kwargs: Any,
     ) -> str | list[str]:
-        max_new_tokens = gen_kwargs.pop("max_new_tokens", 256)
-        add_generation_prompt = gen_kwargs.pop("add_generation_prompt", True)
-        messages = self._pack_messages(query, context)
+        """Core generation method - contains the main generation logic."""
+        max_new_tokens = kwargs.pop("max_new_tokens", 256)
+        add_generation_prompt = kwargs.pop("add_generation_prompt", True)
+
+        # Handle both prompt-only and query+context cases
+        if prompt is not None:
+            # Traditional complete() usage: convert prompt to query, no context
+            messages = self._pack_messages(prompt, context=None)
+            is_batch = isinstance(prompt, list)
+        else:
+            # Called from generate(): use query and context
+            messages = self._pack_messages(query, context)
+            is_batch = isinstance(query, list)
+
         inputs = self._processor.apply_chat_template(
             messages,
             add_generation_prompt=add_generation_prompt,
@@ -166,16 +176,17 @@ class HFMultimodalModelGenerator(
             return_tensors="pt",
             return_dict=True,
         )
+
         input_len = inputs["input_ids"].shape[-1]
         with torch.inference_mode():
             generation = self.model.generate(
-                **inputs, max_new_tokens=max_new_tokens, **gen_kwargs
+                **inputs, max_new_tokens=max_new_tokens, **kwargs
             )
             generation = generation[:, input_len:]
         decoded: list[str] = self._processor.batch_decode(
             generation, skip_special_tokens=True
         )
-        if not isinstance(query, list):
+        if not is_batch:
             if not decoded or not isinstance(decoded[0], str):
                 raise GeneratorError(
                     "batch_decode did not return valid output"
@@ -183,14 +194,14 @@ class HFMultimodalModelGenerator(
             return decoded[0]
         return decoded
 
-    def complete(
-        self, prompt: Prompt | list[Prompt] | str | list[str], **kwargs: Any
+    def generate(
+        self,
+        query: str | Query | list[str] | list[Query],
+        context: str | Context | list[str] | list[Context] | None = None,
+        **gen_kwargs: Any,
     ) -> str | list[str]:
-        if isinstance(prompt, list):
-            queries = [self.to_query(p) for p in prompt]
-        else:
-            queries = self.to_query(prompt)
-        return self.generate(query=queries, context=None, **kwargs)
+        """Generate method - formats query+context and calls complete()."""
+        return self.complete(query=query, context=context, **gen_kwargs)
 
     def compute_target_sequence_proba(
         self,
@@ -198,28 +209,20 @@ class HFMultimodalModelGenerator(
         target: str,
         **kwargs: Any,
     ) -> torch.Tensor:
-        from PIL import Image as PILImage
-
-        # `prompt` is expected to be already bundled with any context!
         q = self.to_query(prompt)
         base_text = getattr(q, "text", "") or ""
         full_text = base_text + target
-        content: list[dict[str, Any]] = []
 
-        # If you need multimodal, require `prompt` to be a Query with .images, .audios, etc.
-        for im in getattr(q, "images", []) or []:
-            if isinstance(im, np.ndarray):
-                im = PILImage.fromarray(im)
-            content.append({"type": "image", "image": im})
-        for au in getattr(q, "audios", []) or []:
-            content.append({"type": "audio", "audio": au})
-        for vid in getattr(q, "videos", []) or []:
-            content.append({"type": "video", "video": vid})
-        if getattr(q, "text", None):
-            content.append({"type": "text", "text": q.text})
+        # Create a query with the full text for processing
+        full_query = Query(
+            text=full_text,
+            images=getattr(q, "images", None),
+            audios=getattr(q, "audios", None),
+            videos=getattr(q, "videos", None),
+        )
 
-        content.append({"type": "text", "text": full_text})
-        messages = [{"role": "user", "content": content}]
+        # Reuse _pack_messages logic
+        messages = self._pack_messages(full_query, context=None)
         inputs = self._processor.apply_chat_template(
             messages,
             add_generation_prompt=False,
@@ -228,13 +231,17 @@ class HFMultimodalModelGenerator(
             return_tensors="pt",
         )
         input_ids = inputs["input_ids"]
+
+        # Create base prompt messages for length calculation
+        base_query = Query(
+            text=base_text,
+            images=getattr(q, "images", None),
+            audios=getattr(q, "audios", None),
+            videos=getattr(q, "videos", None),
+        )
+        base_messages = self._pack_messages(base_query, context=None)
         prompt_inputs = self._processor.apply_chat_template(
-            [
-                {
-                    "role": "user",
-                    "content": [{"type": "text", "text": base_text}],
-                }
-            ],
+            base_messages,
             add_generation_prompt=False,
             tokenize=True,
             return_dict=True,
