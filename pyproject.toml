@@ -38,7 +38,7 @@ authors = [
 ]
 maintainers = [
   {name = "Andrei Fajardo", email = "andrei.fajardo@vectorinstitute.ai"},
-  {name = "Izuki Matsuba", email = "izuki.matsuba@gmail.com"}
+  {name = "Izuki Matsuba", email = "Izukimat@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
