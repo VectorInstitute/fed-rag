@@ -188,14 +188,6 @@ def test_to_query_and_to_context_types():
     assert gen.to_context(ctx) is ctx
 
 
-@patch("torch.nn.functional.log_softmax")
-@patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
-)
-@patch(
-    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
-    new_callable=PropertyMock,
-)
 def test_pack_messages_with_ndarray_inputs():
     generator = MagicMock(spec=UnslothFastMultimodalModelGenerator)
     generator.to_query.side_effect = lambda x: (
