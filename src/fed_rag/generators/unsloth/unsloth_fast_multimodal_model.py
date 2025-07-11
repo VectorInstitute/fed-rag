@@ -202,21 +202,17 @@ class UnslothFastMultimodalModelGenerator(
         q = self.to_query(prompt)
         base_text = getattr(q, "text", "") or ""
         full_text = base_text + target
-        content: list[dict[str, Any]] = []
 
-        for im in getattr(q, "images", []) or []:
-            if isinstance(im, np.ndarray):
-                im = PILImage.fromarray(im)
-            content.append({"type": "image", "image": im})
-        for au in getattr(q, "audios", []) or []:
-            content.append({"type": "audio", "audio": au})
-        for vid in getattr(q, "videos", []) or []:
-            content.append({"type": "video", "video": vid})
-        if getattr(q, "text", None):
-            content.append({"type": "text", "text": q.text})
+        # Create a query with the full text for processing
+        full_query = Query(
+            text=full_text,
+            images=getattr(q, "images", None),
+            audios=getattr(q, "audios", None),
+            videos=getattr(q, "videos", None),
+        )
 
-        content.append({"type": "text", "text": full_text})
-        messages = [{"role": "user", "content": content}]
+        # Reuse _pack_messages logic
+        messages = self._pack_messages(full_query, context=None)
         inputs = self._processor.apply_chat_template(
             messages,
             add_generation_prompt=False,
@@ -231,13 +227,17 @@ class UnslothFastMultimodalModelGenerator(
         }
 
         input_ids = inputs["input_ids"]
+
+        # Create base prompt messages for length calculation
+        base_query = Query(
+            text=base_text,
+            images=getattr(q, "images", None),
+            audios=getattr(q, "audios", None),
+            videos=getattr(q, "videos", None),
+        )
+        base_messages = self._pack_messages(base_query, context=None)
         prompt_inputs = self._processor.apply_chat_template(
-            [
-                {
-                    "role": "user",
-                    "content": [{"type": "text", "text": base_text}],
-                }
-            ],
+            base_messages,
             add_generation_prompt=False,
             tokenize=True,
             return_dict=True,

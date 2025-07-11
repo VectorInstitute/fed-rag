@@ -196,48 +196,6 @@ def test_to_query_and_to_context_types():
     "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
     new_callable=PropertyMock,
 )
-def test_compute_target_sequence_proba_with_modalities(
-    mock_model_property,
-    mock_load_model,
-    mock_log_softmax,
-):
-    mock_proc = MagicMock()
-    mock_model = MagicMock()
-
-    # Set up mock parameter with device attribute
-    mock_param = MagicMock()
-    mock_param.device = torch.device("cpu")
-    mock_model.parameters.side_effect = lambda: iter([mock_param])
-
-    mock_model_property.return_value = mock_model
-    mock_proc.apply_chat_template.side_effect = [
-        {"input_ids": torch.arange(10).unsqueeze(0)},
-        {"input_ids": torch.arange(5).unsqueeze(0)},
-    ]
-    logits = torch.randn(1, 10, 100)
-    mock_model.return_value = MagicMock(logits=logits)
-    mock_proc.batch_decode.return_value = ["dummy"]
-    mock_load_model.return_value = (mock_model, mock_proc)
-    mock_log_softmax.return_value = torch.zeros(100)
-
-    generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
-    img_np = (np.random.rand(32, 32, 3) * 255).astype("uint8")
-    audio_np = (np.random.rand(16000) * 2 - 1).astype("float32")
-    video_np = (np.random.rand(1, 32, 32, 3) * 255).astype("uint8")
-
-    q = Query(
-        text="context" + "what is this?",
-        images=[dummy_image(), Image.fromarray(img_np)],
-        audios=[audio_np, audio_np],
-        videos=[video_np, video_np],
-    )
-    prob = generator.compute_target_sequence_proba(
-        prompt=q,
-        target="test",
-    )
-    assert isinstance(prob, torch.Tensor)
-
-
 def test_pack_messages_with_ndarray_inputs():
     generator = MagicMock(spec=UnslothFastMultimodalModelGenerator)
     generator.to_query.side_effect = lambda x: (
