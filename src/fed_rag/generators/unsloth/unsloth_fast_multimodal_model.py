@@ -35,9 +35,6 @@ class UnslothFastMultimodalModelGenerator(
         protected_namespaces=("pydantic_model_",), arbitrary_types_allowed=True
     )
     model_name: str = Field(description="Unsloth model name or path.")
-    modality_types: set[str] = Field(
-        default_factory=lambda: {"text", "image", "audio", "video"}
-    )
     generation_config: Optional[Any] = Field(default=None)
     load_model_kwargs: dict = Field(default_factory=dict)
     prompt_template_init: str | None = Field(default=None)

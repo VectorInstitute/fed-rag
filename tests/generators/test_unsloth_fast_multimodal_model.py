@@ -729,12 +729,14 @@ def test_pack_messages_converts_ndarray_to_pil():
 
     img_np_query = (np.random.rand(16, 16, 3) * 255).astype("uint8")
     img_np_ctx = (np.random.rand(16, 16, 3) * 255).astype("uint8")
-    q = Query(
-        text="ndarray as image", images=[img_np_query], audios=[], videos=[]
-    )
-    c = Context(
-        text="context ndarray", images=[img_np_ctx], audios=[], videos=[]
-    )
+
+    # Create valid Query/Context objects first, then assign numpy arrays to bypass validation
+    q = Query(text="ndarray as image", images=[], audios=[], videos=[])
+    c = Context(text="context ndarray", images=[], audios=[], videos=[])
+
+    # Now assign numpy arrays directly (bypassing Pydantic validation)
+    q.images = [img_np_query]
+    c.images = [img_np_ctx]
 
     messages = generator._pack_messages(q, context=c)
     # Both query and context should be included and converted
