@@ -330,17 +330,35 @@ def test_generate_and_complete(mock_model_property, mock_load_model):
     assert out2 == "a test response"
 
 
-def test_complete_with_list_of_str():
-    gen = UnslothFastMultimodalModelGenerator.__new__(
-        UnslothFastMultimodalModelGenerator
-    )
-    with patch.object(
-        UnslothFastMultimodalModelGenerator,
-        "generate",
-        return_value=["output1", "output2"],
-    ):
-        result = gen.complete(["a", "b"])
-        assert result == ["output1", "output2"]
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator._load_model_from_unsloth"
+)
+@patch(
+    "fed_rag.generators.unsloth.unsloth_fast_multimodal_model.UnslothFastMultimodalModelGenerator.model",
+    new_callable=PropertyMock,
+)
+def test_complete_with_list_of_prompts(mock_model_property, mock_load_model):
+    """Test complete() method with list of prompts (updated for new architecture)."""
+    mock_proc = MagicMock()
+    mock_model = MagicMock()
+
+    # Set up mock parameter with device attribute
+    mock_param = MagicMock()
+    mock_param.device = torch.device("cpu")
+    mock_model.parameters.side_effect = lambda: iter([mock_param])
+
+    mock_model_property.return_value = mock_model
+    mock_proc.apply_chat_template.return_value = {
+        "input_ids": torch.ones((2, 8), dtype=torch.long)
+    }
+    mock_model.generate.return_value = torch.ones((2, 10), dtype=torch.long)
+    mock_proc.batch_decode.return_value = ["output1", "output2"]
+    mock_load_model.return_value = (mock_model, mock_proc)
+
+    generator = UnslothFastMultimodalModelGenerator(model_name="fake-mm-model")
+
+    result = generator.complete(["prompt a", "prompt b"])
+    assert result == ["output1", "output2"]
 
 
 def test_prompt_template_setter():
@@ -691,3 +709,36 @@ def test_type_checking_import_path():
     # Clean up
     if module_name in sys.modules:
         del sys.modules[module_name]
+
+
+def test_pack_messages_converts_ndarray_to_pil():
+    generator = MagicMock(spec=UnslothFastMultimodalModelGenerator)
+    generator.to_query.side_effect = lambda x: (
+        x
+        if isinstance(x, Query)
+        else Query(text=x, images=[], audios=[], videos=[])
+    )
+    generator.to_context.side_effect = lambda x: (
+        x
+        if isinstance(x, Context)
+        else Context(text=x, images=[], audios=[], videos=[])
+    )
+    generator._pack_messages = (
+        UnslothFastMultimodalModelGenerator._pack_messages.__get__(generator)
+    )
+
+    img_np_query = (np.random.rand(16, 16, 3) * 255).astype("uint8")
+    img_np_ctx = (np.random.rand(16, 16, 3) * 255).astype("uint8")
+    q = Query(
+        text="ndarray as image", images=[img_np_query], audios=[], videos=[]
+    )
+    c = Context(
+        text="context ndarray", images=[img_np_ctx], audios=[], videos=[]
+    )
+
+    messages = generator._pack_messages(q, context=c)
+    # Both query and context should be included and converted
+    imgs = [x["image"] for x in messages[0]["content"] if x["type"] == "image"]
+    assert all(isinstance(im, Image.Image) for im in imgs)
+    # At least two images: one from context, one from query
+    assert len(imgs) == 2
