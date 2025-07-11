@@ -1,4 +1,4 @@
-"""HF Multimodal Model Generator"""
+"""Unsloth Fast Multimodal Model Generator (aligned with HF style)"""
 
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -8,10 +8,10 @@ import torch.nn.functional as F
 from PIL import Image as PILImage
 from pydantic import ConfigDict, Field, PrivateAttr, model_validator
 
-if TYPE_CHECKING:
-    from transformers import (
-        PreTrainedModel,
-    )
+if TYPE_CHECKING:  # pragma: no cover
+    from unsloth import FastModel
+else:
+    FastModel = None  # for patching/mocking
 
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.generator_mixins.audio import AudioModalityMixin
@@ -19,70 +19,53 @@ from fed_rag.base.generator_mixins.image import ImageModalityMixin
 from fed_rag.base.generator_mixins.video import VideoModalityMixin
 from fed_rag.data_structures.rag import Context, Prompt, Query
 from fed_rag.exceptions.generator import GeneratorError
-from fed_rag.generators.huggingface.utils import check_huggingface_installed
+
+from .mixin import UnslothGeneratorMixin
+from .utils import check_unsloth_installed
 
 
-class HFMultimodalModelGenerator(
+class UnslothFastMultimodalModelGenerator(
     ImageModalityMixin,
     AudioModalityMixin,
     VideoModalityMixin,
+    UnslothGeneratorMixin,
     BaseGenerator,
 ):
     model_config = ConfigDict(
         protected_namespaces=("pydantic_model_",), arbitrary_types_allowed=True
     )
-    model_name: str = Field(description="HuggingFace model name or path.")
-    modality_types: set[str] = Field(
-        default_factory=lambda: {"text", "image", "audio", "video"}
-    )
+    model_name: str = Field(description="Unsloth model name or path.")
     generation_config: Optional[Any] = Field(default=None)
     load_model_kwargs: dict = Field(default_factory=dict)
     prompt_template_init: str | None = Field(default=None)
     load_model_at_init: bool = Field(default=True)
 
-    _model: Optional["PreTrainedModel"] = PrivateAttr(default=None)
-    _model_cls: Any = PrivateAttr(default=None)
+    _model: Optional["FastModel"] = PrivateAttr(default=None)
     _processor: Any = PrivateAttr(default=None)
     _prompt_template: str = PrivateAttr(default="")
 
     @model_validator(mode="before")
     @classmethod
-    def _check_hf_available(cls, data: Any) -> Any:
-        check_huggingface_installed(cls.__name__)
+    def _check_unsloth_available(cls, data: Any) -> Any:
+        check_unsloth_installed(cls.__name__)
         return data
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
-        from transformers import AutoConfig, AutoProcessor, GenerationConfig
-
         self._prompt_template = self.prompt_template_init or ""
-        self._processor = AutoProcessor.from_pretrained(self.model_name)
-        cfg = AutoConfig.from_pretrained(self.model_name)
-        if self.generation_config is None:
-            self.generation_config = GenerationConfig()
-        self._model_cls = self._detect_model_class(cfg)
         self._model = None
+        self._processor = None
         if self.load_model_at_init:
-            self._model = self._load_model_from_hf()
+            self._model, self._processor = self._load_model_from_unsloth()
 
-    def _load_model_from_hf(self) -> "PreTrainedModel":
-        return self._model_cls.from_pretrained(
-            self.model_name, **self.load_model_kwargs
+    def _load_model_from_unsloth(self) -> tuple[Any, Any]:
+        from unsloth import FastModel
+
+        model, processor = FastModel.from_pretrained(
+            model_name=self.model_name,
+            **self.load_model_kwargs,
         )
-
-    @staticmethod
-    def _detect_model_class(cfg: Any) -> Any:
-        from transformers import AutoModel, AutoModelForImageTextToText
-
-        if any(
-            getattr(cfg, attr, None) is not None
-            for attr in ("vision_config", "audio_config", "video_config")
-        ):
-            return AutoModelForImageTextToText
-        if getattr(cfg, "architectures", None):
-            if any("ImageTextToText" in arch for arch in cfg.architectures):
-                return AutoModelForImageTextToText
-        return AutoModel
+        return model, processor
 
     def to_query(self, q: str | Query | Prompt) -> Query:
         if isinstance(q, Query):
@@ -177,6 +160,13 @@ class HFMultimodalModelGenerator(
             return_dict=True,
         )
 
+        # Unsloth: must manually move all input tensors to the model device.
+        model_device = next(self.model.parameters()).device
+        inputs = {
+            k: v.to(model_device) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
+
         input_len = inputs["input_ids"].shape[-1]
         with torch.inference_mode():
             generation = self.model.generate(
@@ -230,6 +220,12 @@ class HFMultimodalModelGenerator(
             return_dict=True,
             return_tensors="pt",
         )
+        model_device = next(self.model.parameters()).device
+        inputs = {
+            k: v.to(model_device) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
+
         input_ids = inputs["input_ids"]
 
         # Create base prompt messages for length calculation
@@ -264,9 +260,9 @@ class HFMultimodalModelGenerator(
         return torch.exp(torch.tensor(sum(log_probs)))
 
     @property
-    def model(self) -> "PreTrainedModel":
+    def model(self) -> "FastModel":
         if self._model is None:
-            self._model = self._load_model_from_hf()
+            self._model, self._processor = self._load_model_from_unsloth()
         return self._model
 
     @property

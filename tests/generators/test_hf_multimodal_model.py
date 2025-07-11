@@ -338,6 +338,9 @@ def test_generate_and_complete(
     out2 = generator.complete(prompt=p)
     assert out2 == "a test response"
 
+    out3 = generator.complete(query=q, context=c, max_new_tokens=4)
+    assert out3 == "a test response"
+
 
 def test_prompt_template_setter():
     generator = MagicMock(spec=HFMultimodalModelGenerator)
@@ -516,7 +519,7 @@ def test_compute_target_sequence_proba_ndarray_image(
 @patch("transformers.GenerationConfig")
 @patch("transformers.AutoConfig")
 @patch("transformers.AutoProcessor")
-def test_generate_raises_generatorerror_on_bad_batch_decode(
+def test_complete_raises_generatorerror_on_bad_batch_decode(
     mock_auto_processor,
     mock_auto_config,
     mock_generation_config,
@@ -546,6 +549,12 @@ def test_generate_raises_generatorerror_on_bad_batch_decode(
             query=q,
             context=c,
         )
+
+    # Test that complete() also raises the error directly
+    with pytest.raises(
+        GeneratorError, match="batch_decode did not return valid output"
+    ):
+        generator.complete(query=q, context=c)
 
 
 @patch("torch.nn.functional.log_softmax")
