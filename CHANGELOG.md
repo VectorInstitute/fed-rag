@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- `HFSentenceTransformerRetriever` encode methods were returning `np.ndarrays` - change to `torch.Tensor` (#487)
 - Add `data_structres.retriever.EncodeResult` type and expanded return type of encode methods for `BaseRetriever` (#487)
 - Expansion of `BaseRetriever` to match `BaseGenerator` for multimodal and add `AudioRetrieverMixin`, `HasAudioModality`, `VideoRetrieverMixin`, `HasVideoModality` (#483)
 - Move `Query`, `Prompt`, `Context` to `~data_structures.rag` (#480)
