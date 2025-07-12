@@ -7,6 +7,7 @@ import torch
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.data_structures.rag import Context, Query
+from fed_rag.data_structures.retriever import EncodeResult
 
 
 class EncoderType(TypedDict):
@@ -30,7 +31,7 @@ class BaseRetriever(BaseModel, ABC):
     @abstractmethod
     def encode_query(
         self, query: str | list[str] | Query | list[Query], **kwargs: Any
-    ) -> torch.Tensor:
+    ) -> torch.Tensor | EncodeResult:
         """Encode a string query into a torch.Tensor.
 
         Args:
@@ -43,7 +44,7 @@ class BaseRetriever(BaseModel, ABC):
     @abstractmethod
     def encode_context(
         self, context: str | list[str] | Context | list[Context], **kwargs: Any
-    ) -> torch.Tensor:
+    ) -> torch.Tensor | EncodeResult:
         """Encode a string context into a torch.Tensor.
 
         Args:
