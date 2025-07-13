@@ -2,10 +2,12 @@
 
 from typing import TYPE_CHECKING
 
+import torch
 from pydantic import BaseModel, ConfigDict
 
 from fed_rag.base.bridge import BridgeRegistryMixin
 from fed_rag.data_structures import RAGConfig, RAGResponse, SourceNode
+from fed_rag.data_structures.rag import Query
 from fed_rag.exceptions import RAGSystemError
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -31,14 +33,14 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
     knowledge_store: "BaseKnowledgeStore"
     rag_config: RAGConfig
 
-    def query(self, query: str) -> RAGResponse:
+    def query(self, query: str | Query) -> RAGResponse:
         """Query the RAG system."""
         source_nodes = self.retrieve(query)
         context = self._format_context(source_nodes)
         response = self.generate(query=query, context=context)
         return RAGResponse(source_nodes=source_nodes, response=response)
 
-    def batch_query(self, queries: list[str]) -> list[RAGResponse]:
+    def batch_query(self, queries: list[str | Query]) -> list[RAGResponse]:
         """Batch query the RAG system."""
         source_nodes_list = self.batch_retrieve(queries)
         contexts = [
@@ -51,44 +53,110 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
             for source_nodes, response in zip(source_nodes_list, responses)
         ]
 
-    def retrieve(self, query: str) -> list[SourceNode]:
-        """Retrieve from KnowledgeStore."""
-        query_emb: list[float] = self.retriever.encode_query(query).tolist()
-        raw_retrieval_result = self.knowledge_store.retrieve(
-            query_emb=query_emb, top_k=self.rag_config.top_k
+    def retrieve(self, query: str | Query) -> list[SourceNode]:
+        """Retrieve from multiple collections based on query modalities."""
+        # Get multimodal embeddings from retriever
+        query_emb_tensor = self.retriever.encode_query(query)
+
+        # Convert to separate embeddings by modality
+        modality_embeddings = self._prepare_modality_embeddings(
+            query_emb_tensor, query
         )
-        return [
-            SourceNode(score=el[0], node=el[1]) for el in raw_retrieval_result
-        ]
 
-    def batch_retrieve(self, queries: list[str]) -> list[list[SourceNode]]:
-        """Batch retrieve from KnowledgeStore."""
-        query_embs: list[list[float]] = self.retriever.encode_query(
-            queries
-        ).tolist()
-        try:
-            raw_retrieval_results = self.knowledge_store.batch_retrieve(
-                query_embs=query_embs, top_k=self.rag_config.top_k
-            )
-        except NotImplementedError:
-            raw_retrieval_results = [
-                self.knowledge_store.retrieve(
-                    query_emb=query_emb, top_k=self.rag_config.top_k
+        # Retrieve from each modality collection separately
+        all_results = []
+        for modality, embedding in modality_embeddings.items():
+            if embedding is not None:
+                # Use modality-specific collection in knowledge store
+                modality_results = self.knowledge_store.retrieve_by_modality(
+                    modality=modality,
+                    query_emb=embedding,
+                    top_k=self.rag_config.top_k,
                 )
-                for query_emb in query_embs
-            ]
+                # Add modality info to source nodes
+                for score, node in modality_results:
+                    source_node = SourceNode(score=score, node=node)
+                    source_node.modality = modality
+                    all_results.append(source_node)
 
-        return [
-            [SourceNode(score=el[0], node=el[1]) for el in raw_result]
-            for raw_result in raw_retrieval_results
-        ]
+        all_results.sort(key=lambda x: x.score, reverse=True)
+        return all_results[: self.rag_config.top_k]
 
-    def generate(self, query: str, context: str) -> str:
+    def batch_retrieve(
+        self, queries: list[str | Query]
+    ) -> list[list[SourceNode]]:
+        """Batch retrieve from multiple collections."""
+        return [self.retrieve(query) for query in queries]
+
+    def _prepare_modality_embeddings(
+        self, embedding_tensor: torch.Tensor, query: str | Query
+    ) -> dict[str, list[float]]:
+        """Extract embeddings for each modality present in the query."""
+        modality_embeddings = {}
+
+        if isinstance(query, str):
+            # Text-only query
+            modality_embeddings["text"] = embedding_tensor.squeeze().tolist()
+        elif isinstance(query, Query):
+            # Check what modalities are present in the query
+            available_modalities = []
+            if query.text is not None:
+                available_modalities.append("text")
+            if query.images is not None and len(query.images) > 0:
+                available_modalities.append("image")
+            if query.audios is not None and len(query.audios) > 0:
+                available_modalities.append("audio")
+            if query.videos is not None and len(query.videos) > 0:
+                available_modalities.append("video")
+
+            # Map tensor outputs to modalities
+            if embedding_tensor.dim() == 1:
+                primary_modality = (
+                    available_modalities[0] if available_modalities else "text"
+                )
+                modality_embeddings[
+                    primary_modality
+                ] = embedding_tensor.tolist()
+            elif embedding_tensor.dim() == 2:
+                for i, modality in enumerate(available_modalities):
+                    if i < embedding_tensor.shape[0]:
+                        modality_embeddings[modality] = embedding_tensor[
+                            i
+                        ].tolist()
+            else:
+                # Handle unexpected tensor dimensions
+                if embedding_tensor.dim() > 2:
+                    # Flatten to 2D and try again
+                    flattened = embedding_tensor.view(
+                        embedding_tensor.shape[0], -1
+                    )
+                    if flattened.shape[0] == len(available_modalities):
+                        for i, modality in enumerate(available_modalities):
+                            modality_embeddings[modality] = flattened[
+                                i
+                            ].tolist()
+                    else:
+                        modality_embeddings[
+                            "text"
+                        ] = embedding_tensor.flatten().tolist()
+                else:
+                    # dim() == 0, treat as single text embedding
+                    modality_embeddings["text"] = (
+                        [embedding_tensor.item()]
+                        if embedding_tensor.numel() == 1
+                        else embedding_tensor.flatten().tolist()
+                    )
+        else:
+            modality_embeddings["text"] = embedding_tensor.squeeze().tolist()
+
+        return modality_embeddings
+
+    def generate(self, query: str | Query, context: str) -> str:
         """Generate response to query with context."""
         return self.generator.generate(query=query, context=context)  # type: ignore
 
     def batch_generate(
-        self, queries: list[str], contexts: list[str]
+        self, queries: list[str | Query], contexts: list[str]
     ) -> list[str]:
         """Batch generate responses to queries with contexts."""
         if len(queries) != len(contexts):
@@ -98,13 +166,60 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
         return self.generator.generate(query=queries, context=contexts)  # type: ignore
 
     def _format_context(self, source_nodes: list[SourceNode]) -> str:
-        """Format the context from the source nodes."""
-        # TODO: how to format image context
-        return str(
-            self.rag_config.context_separator.join(
-                [node.get_content()["text_content"] for node in source_nodes]
-            )
-        )
+        """Format context from nodes retrieved from different modality collections."""
+        modality_groups: dict[str, list[SourceNode]] = {}
+        for node in source_nodes:
+            modality = getattr(node, "modality", "text")
+            if modality not in modality_groups:
+                modality_groups[modality] = []
+            modality_groups[modality].append(node)
+
+        # Modality-specific content extraction rules
+        modality_config = {
+            "text": {
+                "title": "Text Context",
+                "content_keys": ["text_content"],
+                "prefix": "",
+            },
+            "image": {
+                "title": "Image Context",
+                "content_keys": ["text_content", "image_description"],
+                "prefix": "Image: ",
+            },
+            "audio": {
+                "title": "Audio Context",
+                "content_keys": ["text_content", "audio_transcript"],
+                "prefix": "Audio: ",
+            },
+            "video": {
+                "title": "Video Context",
+                "content_keys": ["text_content", "video_description"],
+                "prefix": "Video: ",
+            },
+        }
+
+        context_parts = []
+        for modality in ["text", "image", "audio", "video"]:
+            if modality in modality_groups:
+                config = modality_config[modality]
+                descriptions = []
+
+                for node in modality_groups[modality]:
+                    content = node.get_content()
+                    for key in config["content_keys"]:
+                        if key in content and content[key]:
+                            descriptions.append(
+                                f"{config['prefix']}{content[key]}"
+                            )
+                            break
+
+                if descriptions:
+                    section = self.rag_config.context_separator.join(
+                        descriptions
+                    )
+                    context_parts.append(f"{config['title']}:\n{section}")
+
+        return "\n\n".join(context_parts)
 
 
 def _resolve_forward_refs() -> None:
