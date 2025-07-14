@@ -281,6 +281,69 @@ def test_rag_system_batch_retrieve(
     )
 
 
+@patch.object(MockRetriever, "encode_query")
+def test_rag_system_retrieve_raises_error_with_invalid_encode_result(
+    mock_encode_query: MagicMock,
+    mock_generator: BaseGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_encode_query.return_value = EncodeResult(
+        text=None, image=None, audio=None, video=None
+    )
+
+    # build rag system
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    with pytest.raises(
+        RAGSystemError, match="Encode result does not have a text embedding."
+    ):
+        _ = rag_system.retrieve("fake query")
+
+
+@patch.object(MockRetriever, "encode_query")
+def test_rag_system_batch_retrieve_raises_error_with_invalid_encode_result(
+    mock_encode_query: MagicMock,
+    mock_generator: BaseGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_encode_query.return_value = EncodeResult(
+        text=None, image=None, audio=None, video=None
+    )
+
+    # build rag system
+    knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = RAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    # queries and expected retrieved source nodes
+    queries = ["fake query 1", "fake query 2"]
+    with pytest.raises(
+        RAGSystemError, match="Encode result does not have a text embedding."
+    ):
+        # act
+        _ = rag_system.batch_retrieve(queries)
+
+
 @patch.object(MockGenerator, "generate")
 def test_rag_system_generate(
     mock_generate: MagicMock,

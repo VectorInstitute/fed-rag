@@ -321,6 +321,80 @@ async def test_rag_system_batch_retrieve(
 
 
 @pytest.mark.asyncio
+@patch.object(MockRetriever, "encode_query")
+async def test_rag_system_retrieve_raises_error_invalid_encode_result(
+    mock_encode_query: AsyncMock,
+    mock_generator: BaseGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_encode_query.return_value = EncodeResult(
+        text=None, image=None, audio=None, video=None
+    )
+
+    # build rag system
+    knowledge_store = DummyAsyncKnowledgeStore()
+    await knowledge_store.load_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncRAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    with pytest.raises(
+        RAGSystemError, match="Encode result does not have a text embedding."
+    ):
+        # act
+        _ = await rag_system.retrieve("fake query")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "knowledge_store",
+    ["dummy_store", "dummy_store_no_batch_retrieval"],
+    indirect=True,
+)
+@patch.object(MockRetriever, "encode_query")
+async def test_rag_system_batch_retrieve_raises_error_invalid_encode_result(
+    mock_encode_query: MagicMock,
+    knowledge_store: BaseAsyncKnowledgeStore,
+    mock_generator: BaseGenerator,
+    mock_retriever: MockRetriever,
+    knowledge_nodes: list[KnowledgeNode],
+) -> None:
+    # arrange mocks
+    mock_encode_query.return_value = EncodeResult(
+        text=None, image=None, audio=None, video=None
+    )
+
+    # build rag system
+    await knowledge_store.load_nodes(nodes=knowledge_nodes)
+    rag_config = RAGConfig(
+        top_k=2,
+    )
+    rag_system = AsyncRAGSystem(
+        generator=mock_generator,
+        retriever=mock_retriever,
+        knowledge_store=knowledge_store,
+        rag_config=rag_config,
+    )
+
+    # queries and expected retrieved source nodes
+    queries = ["fake query 1", "fake query 2"]
+
+    with pytest.raises(
+        RAGSystemError, match="Encode result does not have a text embedding."
+    ):
+        # act
+        _ = await rag_system.batch_retrieve(queries)
+
+
+@pytest.mark.asyncio
 @patch.object(MockGenerator, "generate")
 async def test_rag_system_generate(
     mock_generate: AsyncMock,
