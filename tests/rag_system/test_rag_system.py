@@ -7,6 +7,7 @@ from fed_rag import RAGConfig, RAGSystem
 from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.data_structures import KnowledgeNode, SourceNode
+from fed_rag.data_structures.retriever import EncodeResult
 from fed_rag.exceptions import RAGSystemError
 from fed_rag.knowledge_stores.in_memory import InMemoryKnowledgeStore
 
@@ -159,15 +160,30 @@ def test_rag_system_batch_query(
     assert rag_responses[1].response == "fake generation response 2"
 
 
+@pytest.mark.parametrize(
+    ("encode_result",),
+    [
+        (torch.Tensor([[1.0, 1.0, 1.0]]),),
+        (
+            EncodeResult(
+                text=torch.Tensor([[1.0, 1.0, 1.0]]),
+                image=None,
+                audio=None,
+                video=None,
+            ),
+        ),
+    ],
+)
 @patch.object(MockRetriever, "encode_query")
 def test_rag_system_retrieve(
     mock_encode_query: MagicMock,
+    encode_result: torch.Tensor | EncodeResult,
     mock_generator: BaseGenerator,
     mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange mocks
-    mock_encode_query.return_value = torch.Tensor([[1.0, 1.0, 1.0]])
+    mock_encode_query.return_value = encode_result
 
     # build rag system
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
@@ -198,17 +214,30 @@ def test_rag_system_retrieve(
     )
 
 
+@pytest.mark.parametrize(
+    ("encode_result",),
+    [
+        (torch.Tensor([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]),),
+        (
+            EncodeResult(
+                text=torch.Tensor([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]),
+                image=None,
+                audio=None,
+                video=None,
+            ),
+        ),
+    ],
+)
 @patch.object(MockRetriever, "encode_query")
 def test_rag_system_batch_retrieve(
     mock_encode_query: MagicMock,
+    encode_result: torch.Tensor | EncodeResult,
     mock_generator: BaseGenerator,
     mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange mocks
-    mock_encode_query.return_value = torch.Tensor(
-        [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
-    )
+    mock_encode_query.return_value = encode_result
 
     # build rag system
     knowledge_store = InMemoryKnowledgeStore.from_nodes(nodes=knowledge_nodes)
