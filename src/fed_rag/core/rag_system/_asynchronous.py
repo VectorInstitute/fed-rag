@@ -54,7 +54,19 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
 
     async def retrieve(self, query: str) -> list[SourceNode]:
         """Retrieve from KnowledgeStore."""
-        query_emb: list[float] = self.retriever.encode_query(query).tolist()
+        from torch import Tensor
+
+        encode_result = self.retriever.encode_query(query)
+        if isinstance(encode_result, Tensor):
+            query_emb: list[float] = encode_result.tolist()
+        else:
+            try:
+                query_emb = encode_result["text"].tolist()
+            except AttributeError:
+                raise RAGSystemError(
+                    "Encode result does not have a text embedding."
+                )
+
         raw_retrieval_result = await self.knowledge_store.retrieve(
             query_emb=query_emb, top_k=self.rag_config.top_k
         )
@@ -66,9 +78,19 @@ class _AsyncRAGSystem(BridgeRegistryMixin, BaseModel):
         self, queries: list[str]
     ) -> list[list[SourceNode]]:
         """Batch retrieve from KnowledgeStore."""
-        query_embs: list[list[float]] = self.retriever.encode_query(
-            queries
-        ).tolist()
+        from torch import Tensor
+
+        encode_result = self.retriever.encode_query(queries)
+        if isinstance(encode_result, Tensor):
+            query_embs: list[list[float]] = encode_result.tolist()
+        else:
+            try:
+                query_embs = encode_result["text"].tolist()
+            except AttributeError:
+                raise RAGSystemError(
+                    "Encode result does not have a text embedding."
+                )
+
         try:
             raw_retrieval_results = await self.knowledge_store.batch_retrieve(
                 query_embs=query_embs, top_k=self.rag_config.top_k
