@@ -52,7 +52,10 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
         ]
 
     def retrieve(self, query: str) -> list[SourceNode]:
-        """Retrieve from KnowledgeStore."""
+        """Retrieve from KnowledgeStore.
+
+        NOTE: This method currently only handles text queries.
+        """
         from torch import Tensor
 
         encode_result = self.retriever.encode_query(query)
@@ -74,7 +77,10 @@ class _RAGSystem(BridgeRegistryMixin, BaseModel):
         ]
 
     def batch_retrieve(self, queries: list[str]) -> list[list[SourceNode]]:
-        """Batch retrieve from KnowledgeStore."""
+        """Batch retrieve from KnowledgeStore.
+
+        NOTE: This method currently only handles text queries.
+        """
         from torch import Tensor
 
         encode_result = self.retriever.encode_query(queries)
