@@ -8,6 +8,7 @@ from fed_rag.base.generator import BaseGenerator
 from fed_rag.base.knowledge_store import BaseAsyncKnowledgeStore
 from fed_rag.base.retriever import BaseRetriever
 from fed_rag.data_structures import KnowledgeNode, SourceNode
+from fed_rag.data_structures.retriever import EncodeResult
 from fed_rag.exceptions import RAGSystemError
 
 from .conftest import (
@@ -190,15 +191,30 @@ async def test_rag_system_batch_query(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("encode_result",),
+    [
+        (torch.Tensor([[1.0, 1.0, 1.0]]),),
+        (
+            EncodeResult(
+                text=torch.Tensor([[1.0, 1.0, 1.0]]),
+                image=None,
+                audio=None,
+                video=None,
+            ),
+        ),
+    ],
+)
 @patch.object(MockRetriever, "encode_query")
 async def test_rag_system_retrieve(
     mock_encode_query: AsyncMock,
+    encode_result: torch.Tensor | EncodeResult,
     mock_generator: BaseGenerator,
     mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange mocks
-    mock_encode_query.return_value = torch.Tensor([1.0, 1.0, 1.0])
+    mock_encode_query.return_value = encode_result
 
     # build rag system
     knowledge_store = DummyAsyncKnowledgeStore()
@@ -236,18 +252,31 @@ async def test_rag_system_retrieve(
     ["dummy_store", "dummy_store_no_batch_retrieval"],
     indirect=True,
 )
+@pytest.mark.parametrize(
+    ("encode_result",),
+    [
+        (torch.Tensor([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]),),
+        (
+            EncodeResult(
+                text=torch.Tensor([[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]),
+                image=None,
+                audio=None,
+                video=None,
+            ),
+        ),
+    ],
+)
 @patch.object(MockRetriever, "encode_query")
 async def test_rag_system_batch_retrieve(
     mock_encode_query: MagicMock,
     knowledge_store: BaseAsyncKnowledgeStore,
+    encode_result: torch.Tensor | EncodeResult,
     mock_generator: BaseGenerator,
     mock_retriever: MockRetriever,
     knowledge_nodes: list[KnowledgeNode],
 ) -> None:
     # arrange mocks
-    mock_encode_query.return_value = torch.Tensor(
-        [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
-    )
+    mock_encode_query.return_value = encode_result
 
     # build rag system
     await knowledge_store.load_nodes(nodes=knowledge_nodes)
