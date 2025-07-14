@@ -6057,6 +6057,7 @@ and this project adheres to <a href="https://semver.org/">Semantic Versioning</a
 <h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>Update <code>RAGSystem.retrieve</code> and batch version to handled expanded return type of retriever.encode_query (#488)</li>
 <li><code>HFSentenceTransformerRetriever</code> encode methods were returning <code>np.ndarrays</code> - change to <code>torch.Tensor</code> (#487)</li>
 <li>Add <code>data_structres.retriever.EncodeResult</code> type and expanded return type of encode methods for <code>BaseRetriever</code> (#487)</li>
 <li>Expansion of <code>BaseRetriever</code> to match <code>BaseGenerator</code> for multimodal and add <code>AudioRetrieverMixin</code>, <code>HasAudioModality</code>, <code>VideoRetrieverMixin</code>, <code>HasVideoModality</code> (#483)</li>
