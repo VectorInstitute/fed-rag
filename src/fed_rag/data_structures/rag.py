@@ -9,6 +9,19 @@ from .knowledge_node import KnowledgeNode
 
 
 class SourceNode(BaseModel):
+    """
+    Represents a source node with an associated score and a reference to a knowledge node.
+
+    This class is used to associate a score with a specific knowledge node, allowing
+    for the evaluation or ranking of knowledge entities. It provides access to the
+    underlying node's attributes and functionalities through a convenient getattr wrapper.
+
+    Attributes:
+        score (float): The score associated with the node, representing some metric
+            of evaluation or importance.
+        node (KnowledgeNode): The knowledge node this source node is referencing.
+    """
+
     score: float
     node: KnowledgeNode
 
@@ -18,7 +31,23 @@ class SourceNode(BaseModel):
 
 
 class RAGResponse(BaseModel):
-    """Response class returned by querying RAG systems."""
+    """
+    Represents a response object for a Retrieval-Augmented Generation (RAG)
+    system.
+
+    This class is used to encapsulate information about the response including
+    the generated response text, optional raw response details, and the source
+    nodes leveraged in generating the response.
+
+    Attributes:
+        response (str): The generated response text from the RAG system.
+        raw_response (str | None): Optional raw response details, if available.
+        source_nodes (list[SourceNode]): A list of source nodes that were used
+            to generate the response, each with an associated score and reference
+            to a knowledge node.
+
+
+    """
 
     response: str
     raw_response: str | None = None
@@ -29,6 +58,20 @@ class RAGResponse(BaseModel):
 
 
 class RAGConfig(BaseModel):
+    """
+    Configuration class for a Retrieval-Augmented Generation (RAG) model.
+
+    RAGConfig stores configuration parameters used to define behavior and
+    constraints for the RAG model, including retrieval result limits and token
+    separation for contexts.
+
+    Attributes:
+        top_k: int
+            The maximum number of retrieved documents to consider.
+        context_separator: str
+            The string used to separate contexts during text generation.
+    """
+
     top_k: int
     context_separator: str = "\n"
 
