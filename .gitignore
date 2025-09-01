@@ -12,7 +12,8 @@ dev_notebooks/
 .env
 fed-rag.code-workspace
 .fed_rag/
-
+# PyCharm
+.idea/
 # docs
 site/
 docs/stylesheets/extra.css.map

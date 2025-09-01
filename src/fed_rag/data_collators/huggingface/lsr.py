@@ -23,7 +23,11 @@ except ModuleNotFoundError:
 
     # Create a dummy class with a different name to avoid the redefinition
     class _SentenceTransformerDataCollator:
-        """Dummy placeholder when transformers is not available."""
+        """Placeholder for SentenceTransformerDataCollator when transformers is unavailable.
+
+        This class exists as a fallback to allow code to run when the `transformers`
+        library is not installed. It does not implement any functionality.
+        """
 
         pass
 
@@ -58,10 +62,21 @@ DEFAULT_TARGET_TEMPLATE = """
 
 
 class _DataCollatorForLSRAttributes(BaseDataCollator):
-    """Attributes for DataCollatorForLSR.
+    """Attributes container for DataCollatorForLSR.
 
-    This is needed to instantiate a `DataCollatorForLSR` since
-    `SentenceTransformerDataCollator` is a standard Python dataclass object.
+    This class defines the attributes required to instantiate a DataCollatorForLSR.
+    It serves as a container; the actual implementation is in DataCollatorForLSR.
+
+    Attributes:
+        prompt_template (str): Template used for generating prompts.
+        target_template (str): Template defining target text structure.
+        default_return_tensors (str): Default tensor type (e.g., "pt").
+        router_mapping (dict[str, str] | dict[str, dict[str, str]] | None): Routing mapping.
+        prompts (dict[str, str] | dict[str, dict[str, str]] | None): Prompt definitions.
+        include_prompt_lengths (bool): Whether to include prompt lengths in results.
+        all_special_ids (set[int]): Special token IDs used during processing.
+        tokenize_fn (Callable): Function used for tokenizing input data.
+        valid_label_columns (list[str]): Expected label columns in input data.
     """
 
     prompt_template: str = Field(default=DEFAULT_PROMPT_TEMPLATE)
@@ -104,7 +119,30 @@ class DataCollatorForLSR(
     SentenceTransformerDataCollator,
     _DataCollatorForLSRAttributes,
 ):
-    """A HuggingFace DataCollator for LM-Supervised Retrieval."""
+    """A HuggingFace DataCollator for LM-Supervised Retrieval (LSR).
+
+    This class extends `SentenceTransformerDataCollator` with additional attributes and
+    mechanisms specific to LSR. It processes dataset features for retrieval and
+    language model scores used during fine-tuning tasks. The data collator interfaces
+    directly with a RAGSystem for retrieval and scoring operations.
+
+    Attributes:
+        rag_system (RAGSystem): The RAG system used for retrieval and generation.
+        prompt_template (str, optional): Template for generating prompts (default: DEFAULT_PROMPT_TEMPLATE).
+        target_template (str, optional): Template for generating targets (default: DEFAULT_TARGET_TEMPLATE).
+        default_return_tensors (str, optional): Default tensor type (e.g., "pt").
+
+    Args:
+        rag_system (RAGSystem): Retrieval-augmented generation system.
+        prompt_template (str, optional): Template string for prompts (default: system default).
+        target_template (str, optional): Template string for targets (default: system default).
+        default_return_tensors (str, optional): Tensor type for return values, defaults to "pt".
+        **kwargs: Additional keyword arguments passed to the base class.
+
+    Raises:
+        MissingExtraError: If required dependencies (e.g., HuggingFace) are missing.
+        FedRAGError: If an unsupported return_tensors type is passed.
+    """
 
     def __init__(
         self,
