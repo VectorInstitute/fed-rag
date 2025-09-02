@@ -13,6 +13,10 @@ dev_notebooks/
 fed-rag.code-workspace
 .fed_rag/
 
+# JetBrains IDE files
+.idea/
+*.iml
+
 # docs
 site/
 docs/stylesheets/extra.css.map
