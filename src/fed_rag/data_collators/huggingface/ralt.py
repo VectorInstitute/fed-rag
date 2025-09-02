@@ -19,7 +19,12 @@ except ModuleNotFoundError:
 
     # Create a dummy class with a different name to avoid the redefinition
     class _DummyDataCollatorMixin:
-        """Dummy placeholder when transformers is not available."""
+        """Mixin providing placeholder data collation functionality.
+
+        This class serves as a base mixin for implementing data collation methods. It is
+        intended to be extended by other classes where data collation is required. This
+        class does not implement any methods or attributes itself.
+        """
 
         pass
 
@@ -54,7 +59,23 @@ ignore it and use your parametric knowledge to answer the question.
 
 
 class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
-    """A HuggingFace DataCollator for LM-Supervised Retrieval."""
+    """
+    Data collator class for Retrieval-Augmented Language Tuning (RALT).
+
+    This class is responsible for processing dataset features to create proper
+    inputs and labels for the fine-tuning of a retrieval-augmented language model.
+    It uses an example template and a RAG (Retrieval-Augmented Generation) system
+    to build and encode fine-tuning instances, and applies padding to align the
+    training data.
+
+    Attributes:
+        example_template(str): A string template used to format fine-tuning instances.
+        default_return_tensors(str): The default framework type for returned tensors ('pt').
+        model_dtype(torch.dtype|None): The model's data type (e.g., torch.float32). Initialized from
+            the generator model in the RAG system, if available.
+        rag_system(RAGSystem|NoEncodeRAGSystem): An instance of a RAG system supporting the retrieval and in-context
+            augmentation for fine-tuning.
+    """
 
     example_template: str = Field(default=DEFAULT_EXAMPLE_TEMPLATE)
     default_return_tensors: str = Field(default="pt")
@@ -68,6 +89,24 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
         default_return_tensors: str = "pt",
         **kwargs: Any,
     ):
+        """
+        Initialize an instance with a RAG system, example template, and optional parameters.
+
+        Validates the RAG system and ensures required dependencies are installed.
+
+        Args:
+            rag_system (RAGSystem | NoEncodeRAGSystem): The RAG system to be used, which can
+                be either a standard RAGSystem or a NoEncodeRAGSystem.
+            example_template (str | None, optional): Template for examples. Defaults to None;
+                if not specified, a predefined template is used.
+            default_return_tensors (str, optional): Default tensor format (e.g., "pt" for PyTorch).
+                Defaults to "pt".
+            **kwargs (Any): Additional keyword arguments passed to the superclass or used
+                during initialization.
+
+        Raises:
+            MissingExtraError: If required Hugging Face dependencies are missing.
+        """
         if not _has_huggingface:
             msg = (
                 f"`{self.__class__.__name__}` requires `huggingface` extra to be installed. "
@@ -173,25 +212,30 @@ class DataCollatorForRALT(DataCollatorMixin, BaseDataCollator):
     def __call__(
         self, features: list[dict[str, Any]], return_tensors: str | None = None
     ) -> dict[str, Any]:
-        """Use the features of the dataset in order to get the `input_ids` and `labels`.
+        """Prepare input tensors for fine-tuning using RAG system features.
 
-        Steps:
-            1. process the features using the RAG system and example template to create
-               the retrieval-augmented lm fine-tuning text
-            2. apply padding and get required ~torch.Tensors
-
+        Converts a list of features into input tensors suitable for retrieval-augmented
+        language model (RALT) fine-tuning. Each ('query', 'response') pair generates
+        `rag_system.config.top_k` fine-tuning instances.
 
         Args:
-            features (list[Any]): Should contain a 'query' and 'response' field.
-            return_tensors (_type_, optional): supports right now only 'pt'
+            features (list[dict[str, Any]]): List of examples, each containing
+                'query' and 'response' fields.
+            return_tensors (str | None, optional): Tensor framework to use. Only 'pt'
+                is supported. Defaults to None (uses `self.default_return_tensors`).
 
         Returns:
-            dict[str, Any]: a dictionary of ~torch.Tensors with keys 'input_ids'
-                and 'labels'
+            dict[str, Any]: Dictionary of PyTorch tensors with keys:
+                - 'input_ids': Token IDs.
+                - 'labels': Target IDs.
 
-        Note that each ('query', 'response') pair generates rag_system.config.top_k
-        fine-tuning instance for RALT.
+        Raises:
+            DataCollatorError: If `return_tensors` is not 'pt'.
+
+        Note:
+            Applies left-padding to all sequences to ensure uniform length.
         """
+
         return_tensors = (
             return_tensors if return_tensors else self.default_return_tensors
         )
