@@ -11,18 +11,32 @@ from fed_rag.exceptions import IncompatibleVersionError, MissingExtraError
 
 
 class BridgeRegistryMixin:
-    """Mixin to manage bridge registration."""
+    """Mixin to manage bridge registration.
+
+    This mixin provides a registry for managing bridge metadata across
+    subclasses of `BaseBridgeMixin`. Bridges are automatically registered
+    when subclasses are created.
+    """
 
     bridges: ClassVar[dict[str, BridgeMetadata]] = {}
 
     @classmethod
     def _register_bridge(cls, metadata: BridgeMetadata) -> None:
-        """Register a bridge's metadata."""
+        """Register a bridge's metadata.
+
+        Args:
+            metadata (BridgeMetadata): Metadata describing the bridge.
+        """
         if metadata["framework"] not in cls.bridges:
             cls.bridges[metadata["framework"]] = metadata
 
     def __init_subclass__(cls) -> None:
-        """Register bridges on subclass creation."""
+        """Register bridges on subclass creation.
+
+        Called when a new subclass is defined. Automatically collects
+        metadata from parent classes that inherit from `BaseBridgeMixin`
+        and registers them if valid.
+        """
         super().__init_subclass__()
         for base in cls.__mro__:
             if issubclass(base, BaseBridgeMixin) and hasattr(
@@ -34,7 +48,11 @@ class BridgeRegistryMixin:
 
 
 class BaseBridgeMixin(BaseModel):
-    """Base Bridge Class."""
+    """Base Bridge Class.
+
+    Provides a foundation for defining bridges to external frameworks,
+    including versioning and compatibility checks.
+    """
 
     # Version of the bridge implementation.
     _bridge_version: ClassVar[str]
@@ -47,6 +65,12 @@ class BaseBridgeMixin(BaseModel):
 
     @classmethod
     def get_bridge_metadata(cls) -> BridgeMetadata:
+        """Get the bridge's metadata.
+
+        Returns:
+            BridgeMetadata: Metadata containing the bridge's version,
+            framework, compatibility constraints, and method name.
+        """
         metadata: BridgeMetadata = {
             "bridge_version": cls._bridge_version,
             "framework": cls._framework,
@@ -57,7 +81,13 @@ class BaseBridgeMixin(BaseModel):
 
     @classmethod
     def _validate_framework_installed(cls) -> None:
-        """Check if the framework is installed and compatible."""
+        """Check if the framework is installed and compatible.
+
+        Raises:
+            MissingExtraError: If the required framework or extra is not installed.
+            IncompatibleVersionError: If the installed framework version
+                does not meet compatibility requirements.
+        """
         try:
             installed_version = Version(
                 importlib.metadata.version(cls._framework.replace("-", "_"))
@@ -82,7 +112,17 @@ class BaseBridgeMixin(BaseModel):
         bound_name: str,
         installed: Version,
     ) -> None:
-        """Check one side of compatibility and raise if it fails."""
+        """Check one side of compatibility and raise if it fails.
+
+        Args:
+            bound_name (str): Either `"min"` or `"max"`, specifying which
+                bound to check.
+            installed (Version): The installed version of the framework.
+
+        Raises:
+            IncompatibleVersionError: If the installed version is outside
+            the allowed compatibility bounds.
+        """
         if bound_name not in cls._compatible_versions:
             return
 
