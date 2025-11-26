@@ -40,7 +40,7 @@ maintaining full flexibility and control.
 
 ```sh
 # pypi
-pip install fedrag
+pip install fed-rag
 
 # conda-forge
 conda install -c conda-forge fed-rag
