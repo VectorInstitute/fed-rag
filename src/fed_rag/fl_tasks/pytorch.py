@@ -58,7 +58,7 @@ class PyTorchFlowerClient(NumPyClient):
         self.task_bundle = task_bundle
 
     def __getattr__(self, name: str) -> Any:
-        if name in self.task_bundle.model_fields:
+        if name in self.task_bundle.__class__.model_fields:
             return getattr(self.task_bundle, name)
         else:
             return super().__getattr__(name)

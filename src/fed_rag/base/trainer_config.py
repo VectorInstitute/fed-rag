@@ -35,7 +35,7 @@ class BaseTrainerConfig(BaseModel):
         private_attrs = {}
         extra_train_kwargs = {}
         for k, v in params.items():
-            if k in self.model_fields:
+            if k in self.__class__.model_fields:
                 fields[k] = v
             elif k in self.__private_attributes__:
                 private_attrs[k] = v
@@ -60,7 +60,7 @@ class BaseTrainerConfig(BaseModel):
         """Gets attribute from model fields or extra training kwargs."""
         if (
             __name in self.__private_attributes__
-            or __name in self.model_fields
+            or __name in self.__class__.model_fields
         ):
             return super().__getattr__(__name)  # type: ignore
         else:
@@ -73,7 +73,10 @@ class BaseTrainerConfig(BaseModel):
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Sets attribute in model fields or stores in extra training kwargs."""
-        if name in self.__private_attributes__ or name in self.model_fields:
+        if (
+            name in self.__private_attributes__
+            or name in self.__class__.model_fields
+        ):
             super().__setattr__(name, value)
         else:
             self._extra_train_kwargs.__setitem__(name, value)
