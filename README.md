@@ -120,3 +120,5 @@ FedRAG is released under the [Apache License 2.0](LICENSE).
 ## Acknowledgements
 
 FedRAG is developed and maintained by the [Vector Institute](https://vectorinstitute.ai/).
+
+- [AgentMarket](https://agentmarket.cloud) - Real energy data API. 28M+ records for AI applications.
